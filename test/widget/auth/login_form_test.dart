@@ -7,7 +7,6 @@ import 'package:usago/features/auth/presentation/bloc/auth_event.dart';
 import 'package:usago/features/auth/presentation/bloc/auth_state.dart';
 import 'package:usago/features/auth/presentation/widgets/login_form.dart';
 import '../../fixtures/auth_fixtures.dart';
-import '../../mocks/auth_mocks.dart';
 
 void main() {
   group('LoginForm Widget', () {
@@ -218,27 +217,13 @@ void main() {
       expect(toggleButton, findsOneWidget);
 
       // Initially password should be obscured
-      final passwordField = tester.widget<TextFormField>(find.byKey(const Key('password_field')));
-      // Note: In actual implementation, you'd need to access the obscureText property
-      // This is a simplified test structure
-
       // Tap to show password
       await tester.tap(toggleButton);
       await tester.pump();
 
-      // Password should be visible
-      final updatedPasswordField = tester.widget<TextFormField>(find.byKey(const Key('password_field')));
-      // Note: In actual implementation, you'd check the obscureText property
-      // This is a simplified test structure
-
       // Tap to hide password
       await tester.tap(toggleButton);
       await tester.pump();
-
-      // Password should be obscured again
-      final hiddenPasswordField = tester.widget<TextFormField>(find.byKey(const Key('password_field')));
-      // Note: In actual implementation, you'd check the obscureText property
-      // This is a simplified test structure
     });
 
     testWidgets('should navigate to forgot password when link is tapped', (WidgetTester tester) async {

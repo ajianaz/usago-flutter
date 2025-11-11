@@ -1,15 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:usago/core/errors/failure.dart';
 import 'package:usago/features/auth/domain/entities/user.dart';
 import 'package:usago/features/auth/domain/usecases/change_password_usecase.dart';
-import 'package:usago/features/auth/domain/usecases/check_auth_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/delete_account_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/forgot_password_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/login_usecase.dart';
-import 'package:usago/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/register_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/reset_password_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/resend_verification_email_usecase.dart';

@@ -1,49 +1,57 @@
-/// Better Auth Integration Connection Test
-/// Purpose: Verify basic connectivity to Better Auth endpoints
-/// Run with: dart run test/integration/better_auth_connection_test.dart
+// Better Auth Integration Connection Test
+// Purpose: Verify basic connectivity to Better Auth endpoints
+// Run with: dart run test/integration/better_auth_connection_test.dart
 
 import 'dart:io';
 import 'dart:convert';
+import 'better_auth_connection_logger.dart';
 
 void main() async {
-  print('🧪 Better Auth Integration Connection Test');
-  print('==========================================');
+  // Arrange - Initialize test suite
+  AuthTestLogger.header('Better Auth Integration Connection Test');
 
-  await TestServerConnectivity.run();
-  await TestRegisterEndpoint.run();
-  await TestLoginEndpoint.run();
-  await TestLogoutEndpoint.run();
-  await TestRefreshTokenEndpoint.run();
-  await TestForgotPasswordEndpoint.run();
-  await TestResetPasswordEndpoint.run();
+  try {
+    // Act - Run all connectivity tests
+    await TestServerConnectivity.run();
+    await TestRegisterEndpoint.run();
+    await TestLoginEndpoint.run();
+    await TestLogoutEndpoint.run();
+    await TestRefreshTokenEndpoint.run();
+    await TestForgotPasswordEndpoint.run();
+    await TestResetPasswordEndpoint.run();
 
-  print('\n✅ All connection tests completed!');
-  print('📋 Summary:');
-  print('   - Server connectivity verified');
-  print('   - Login endpoint accessible');
-  print('   - Register endpoint accessible');
-  print('   - Better Auth integration ready');
+    // Assert - All tests completed successfully
+    AuthTestLogger.summary([
+      'Server connectivity verified',
+      'Login endpoint accessible',
+      'Register endpoint accessible',
+      'Better Auth integration ready',
+    ]);
+  } catch (e) {
+    // Error handling for test suite failure
+    AuthTestLogger.error('Test suite failed: $e');
+    rethrow;
+  }
 }
 
 /// Test server connectivity and basic response
 class TestServerConnectivity {
   static Future<void> run() async {
-    print('\n📡 Test 1: Server Connectivity');
-    print('----------------------------------------');
+    AuthTestLogger.testHeader('Test 1: Server Connectivity');
 
     try {
       final client = HttpClient();
       final request = await client.getUrl(Uri.parse('http://localhost:3000'));
       final response = await request.close();
 
-      print('Server Status: ${response.statusCode}');
+      AuthTestLogger.info('Server Status: ${response.statusCode}');
       if (response.statusCode == 200) {
-        print('✅ Server is reachable');
+        AuthTestLogger.success('Server is reachable');
       } else {
-        print('⚠️ Server responded with: ${response.statusCode}');
+        AuthTestLogger.warning('Server responded with: ${response.statusCode}');
       }
     } catch (e) {
-      print('❌ Server connection failed: $e');
+      AuthTestLogger.error('Server connection failed: $e');
     }
   }
 }
@@ -51,8 +59,7 @@ class TestServerConnectivity {
 /// Test login endpoint accessibility and response format
 class TestLoginEndpoint {
   static Future<void> run() async {
-    print('\n🔐 Test 2: Login Endpoint');
-    print('----------------------------------------');
+    AuthTestLogger.testHeader('Test 2: Login Endpoint');
 
     try {
       final client = HttpClient();
@@ -72,60 +79,54 @@ class TestLoginEndpoint {
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();
 
-      print('Login Status: ${response.statusCode}');
-      print('Response Body: $responseBody');
+      AuthTestLogger.info('Login Status: ${response.statusCode}');
+      AuthTestLogger.info('Response Body: $responseBody');
 
       // Analyze response
       if (response.statusCode == 200) {
-        print('✅ Login endpoint working correctly');
+        AuthTestLogger.success('Login endpoint working correctly');
         _analyzeResponse(responseBody, response.headers);
       } else if (response.statusCode == 401) {
-        print('✅ Login endpoint reachable (401 = invalid credentials, expected)');
+        AuthTestLogger.success('Login endpoint reachable (401 = invalid credentials, expected)');
         _analyzeError(responseBody);
       } else if (response.statusCode == 404) {
-        print('❌ Login endpoint not found');
+        AuthTestLogger.error('Login endpoint not found');
       } else if (response.statusCode == 500) {
-        print('⚠️ Server error occurred');
+        AuthTestLogger.warning('Server error occurred');
         _analyzeError(responseBody);
       } else {
-        print('⚠️ Unexpected status: ${response.statusCode}');
+        AuthTestLogger.warning('Unexpected status: ${response.statusCode}');
         _analyzeError(responseBody);
       }
 
       // Check for Better Auth token in headers
       final authHeader = response.headers['set-auth-token'];
       if (authHeader != null && authHeader.isNotEmpty) {
-        print('✅ Bearer token header found: ${authHeader.first}');
+        AuthTestLogger.success('Bearer token header found: ${authHeader.first}');
       } else {
-        print('ℹ️ No Bearer token in response headers');
+        AuthTestLogger.info('No Bearer token in response headers');
       }
 
     } catch (e) {
-      print('❌ Login test failed: $e');
+      AuthTestLogger.error('Login test failed: $e');
     }
   }
 
   static void _analyzeResponse(String responseBody, HttpHeaders headers) {
     try {
       final data = jsonDecode(responseBody) as Map<String, dynamic>;
-      print('📊 Response Analysis:');
-      print('   - Has user data: ${data.containsKey('user')}');
-      print('   - Has session data: ${data.containsKey('session')}');
-      print('   - Response structure: ${data.keys.toList()}');
+      AuthTestLogger.responseAnalysis(data);
     } catch (e) {
-      print('⚠️ Could not parse response: $e');
+      AuthTestLogger.warning('Could not parse response: $e');
     }
   }
 
   static void _analyzeError(String responseBody) {
     try {
       final data = jsonDecode(responseBody) as Map<String, dynamic>;
-      print('🚨 Error Analysis:');
-      print('   - Error code: ${data['code']}');
-      print('   - Error message: ${data['message']}');
-      print('   - Error type: ${data['type']}');
+      AuthTestLogger.errorAnalysis(data);
     } catch (e) {
-      print('⚠️ Could not parse error response: $e');
+      AuthTestLogger.warning('Could not parse error response: $e');
     }
   }
 }
@@ -133,8 +134,7 @@ class TestLoginEndpoint {
 /// Test logout endpoint accessibility and response format
 class TestLogoutEndpoint {
   static Future<void> run() async {
-    print('\n🚪 Test 4: Logout Endpoint');
-    print('----------------------------------------');
+    AuthTestLogger.testHeader('Test 4: Logout Endpoint');
 
     try {
       final client = HttpClient();
@@ -149,24 +149,24 @@ class TestLogoutEndpoint {
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();
 
-      print('Logout Status: ${response.statusCode}');
-      print('Response Body: $responseBody');
+      AuthTestLogger.info('Logout Status: ${response.statusCode}');
+      AuthTestLogger.info('Response Body: $responseBody');
 
       // Analyze response
       if (response.statusCode == 200) {
-        print('✅ Logout endpoint working correctly');
+        AuthTestLogger.success('Logout endpoint working correctly');
       } else if (response.statusCode == 401) {
-        print('✅ Logout endpoint reachable (401 = not authenticated, expected)');
+        AuthTestLogger.success('Logout endpoint reachable (401 = not authenticated, expected)');
       } else if (response.statusCode == 404) {
-        print('❌ Logout endpoint not found');
+        AuthTestLogger.error('Logout endpoint not found');
       } else if (response.statusCode == 500) {
-        print('⚠️ Server error occurred');
+        AuthTestLogger.warning('Server error occurred');
       } else {
-        print('⚠️ Unexpected status: ${response.statusCode}');
+        AuthTestLogger.warning('Unexpected status: ${response.statusCode}');
       }
 
     } catch (e) {
-      print('❌ Logout test failed: $e');
+      AuthTestLogger.error('Logout test failed: $e');
     }
   }
 }
@@ -174,8 +174,7 @@ class TestLogoutEndpoint {
 /// Test refresh token endpoint accessibility and response format
 class TestRefreshTokenEndpoint {
   static Future<void> run() async {
-    print('\n🔄 Test 5: Refresh Token Endpoint');
-    print('----------------------------------------');
+    AuthTestLogger.testHeader('Test 5: Refresh Token Endpoint');
 
     try {
       final client = HttpClient();
@@ -190,32 +189,32 @@ class TestRefreshTokenEndpoint {
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();
 
-      print('Refresh Token Status: ${response.statusCode}');
-      print('Response Body: $responseBody');
+      AuthTestLogger.info('Refresh Token Status: ${response.statusCode}');
+      AuthTestLogger.info('Response Body: $responseBody');
 
       // Analyze response
       if (response.statusCode == 200) {
-        print('✅ Refresh token endpoint working correctly');
+        AuthTestLogger.success('Refresh token endpoint working correctly');
       } else if (response.statusCode == 401) {
-        print('✅ Refresh token endpoint reachable (401 = invalid token, expected)');
+        AuthTestLogger.success('Refresh token endpoint reachable (401 = invalid token, expected)');
       } else if (response.statusCode == 404) {
-        print('❌ Refresh token endpoint not found');
+        AuthTestLogger.error('Refresh token endpoint not found');
       } else if (response.statusCode == 500) {
-        print('⚠️ Server error occurred');
+        AuthTestLogger.warning('Server error occurred');
       } else {
-        print('⚠️ Unexpected status: ${response.statusCode}');
+        AuthTestLogger.warning('Unexpected status: ${response.statusCode}');
       }
 
       // Check for auth token in headers
       final authHeader = response.headers['set-auth-token'];
       if (authHeader != null && authHeader.isNotEmpty) {
-        print('✅ Bearer token header found: ${authHeader.first}');
+        AuthTestLogger.success('Bearer token header found: ${authHeader.first}');
       } else {
-        print('ℹ️ No Bearer token in response headers');
+        AuthTestLogger.info('No Bearer token in response headers');
       }
 
     } catch (e) {
-      print('❌ Refresh token test failed: $e');
+      AuthTestLogger.error('Refresh token test failed: $e');
     }
   }
 }
@@ -223,8 +222,7 @@ class TestRefreshTokenEndpoint {
 /// Test forgot password endpoint accessibility and response format
 class TestForgotPasswordEndpoint {
   static Future<void> run() async {
-    print('\n📧 Test 6: Forgot Password Endpoint');
-    print('----------------------------------------');
+    AuthTestLogger.testHeader('Test 6: Forgot Password Endpoint');
 
     try {
       final client = HttpClient();
@@ -243,24 +241,24 @@ class TestForgotPasswordEndpoint {
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();
 
-      print('Forgot Password Status: ${response.statusCode}');
-      print('Response Body: $responseBody');
+      AuthTestLogger.info('Forgot Password Status: ${response.statusCode}');
+      AuthTestLogger.info('Response Body: $responseBody');
 
       // Analyze response
       if (response.statusCode == 200) {
-        print('✅ Forgot password endpoint working correctly');
+        AuthTestLogger.success('Forgot password endpoint working correctly');
       } else if (response.statusCode == 401) {
-        print('✅ Forgot password endpoint reachable (401 = validation error, expected)');
+        AuthTestLogger.success('Forgot password endpoint reachable (401 = validation error, expected)');
       } else if (response.statusCode == 404) {
-        print('❌ Forgot password endpoint not found');
+        AuthTestLogger.error('Forgot password endpoint not found');
       } else if (response.statusCode == 500) {
-        print('⚠️ Server error occurred');
+        AuthTestLogger.warning('Server error occurred');
       } else {
-        print('⚠️ Unexpected status: ${response.statusCode}');
+        AuthTestLogger.warning('Unexpected status: ${response.statusCode}');
       }
 
     } catch (e) {
-      print('❌ Forgot password test failed: $e');
+      AuthTestLogger.error('Forgot password test failed: $e');
     }
   }
 }
@@ -268,8 +266,7 @@ class TestForgotPasswordEndpoint {
 /// Test reset password endpoint accessibility and response format
 class TestResetPasswordEndpoint {
   static Future<void> run() async {
-    print('\n🔑 Test 7: Reset Password Endpoint');
-    print('----------------------------------------');
+    AuthTestLogger.testHeader('Test 7: Reset Password Endpoint');
 
     try {
       final client = HttpClient();
@@ -289,24 +286,24 @@ class TestResetPasswordEndpoint {
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();
 
-      print('Reset Password Status: ${response.statusCode}');
-      print('Response Body: $responseBody');
+      AuthTestLogger.info('Reset Password Status: ${response.statusCode}');
+      AuthTestLogger.info('Response Body: $responseBody');
 
       // Analyze response
       if (response.statusCode == 200) {
-        print('✅ Reset password endpoint working correctly');
+        AuthTestLogger.success('Reset password endpoint working correctly');
       } else if (response.statusCode == 401) {
-        print('✅ Reset password endpoint reachable (401 = invalid token, expected)');
+        AuthTestLogger.success('Reset password endpoint reachable (401 = invalid token, expected)');
       } else if (response.statusCode == 404) {
-        print('❌ Reset password endpoint not found');
+        AuthTestLogger.error('Reset password endpoint not found');
       } else if (response.statusCode == 500) {
-        print('⚠️ Server error occurred');
+        AuthTestLogger.warning('Server error occurred');
       } else {
-        print('⚠️ Unexpected status: ${response.statusCode}');
+        AuthTestLogger.warning('Unexpected status: ${response.statusCode}');
       }
 
     } catch (e) {
-      print('❌ Reset password test failed: $e');
+      AuthTestLogger.error('Reset password test failed: $e');
     }
   }
 }
@@ -314,8 +311,7 @@ class TestResetPasswordEndpoint {
 /// Test register endpoint accessibility and response format
 class TestRegisterEndpoint {
   static Future<void> run() async {
-    print('\n📝 Test 3: Register Endpoint');
-    print('----------------------------------------');
+    AuthTestLogger.testHeader('Test 3: Register Endpoint');
 
     try {
       final client = HttpClient();
@@ -336,39 +332,39 @@ class TestRegisterEndpoint {
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();
 
-      print('Register Status: ${response.statusCode}');
-      print('Response Body: $responseBody');
+      AuthTestLogger.info('Register Status: ${response.statusCode}');
+      AuthTestLogger.info('Response Body: $responseBody');
 
       // Analyze response
       if (response.statusCode == 200) {
-        print('✅ Register endpoint working correctly');
+        AuthTestLogger.success('Register endpoint working correctly');
         TestLoginEndpoint._analyzeResponse(responseBody, response.headers);
       } else if (response.statusCode == 401) {
-        print('✅ Register endpoint reachable (401 = validation error, expected)');
+        AuthTestLogger.success('Register endpoint reachable (401 = validation error, expected)');
         TestLoginEndpoint._analyzeError(responseBody);
       } else if (response.statusCode == 409) {
-        print('✅ Register endpoint reachable (409 = conflict, expected)');
+        AuthTestLogger.success('Register endpoint reachable (409 = conflict, expected)');
         TestLoginEndpoint._analyzeError(responseBody);
       } else if (response.statusCode == 404) {
-        print('❌ Register endpoint not found');
+        AuthTestLogger.error('Register endpoint not found');
       } else if (response.statusCode == 500) {
-        print('⚠️ Server error occurred');
+        AuthTestLogger.warning('Server error occurred');
         TestLoginEndpoint._analyzeError(responseBody);
       } else {
-        print('⚠️ Unexpected status: ${response.statusCode}');
+        AuthTestLogger.warning('Unexpected status: ${response.statusCode}');
         TestLoginEndpoint._analyzeError(responseBody);
       }
 
       // Check for Better Auth token in headers
       final authHeader = response.headers['set-auth-token'];
       if (authHeader != null && authHeader.isNotEmpty) {
-        print('✅ Bearer token header found: ${authHeader.first}');
+        AuthTestLogger.success('Bearer token header found: ${authHeader.first}');
       } else {
-        print('ℹ️ No Bearer token in response headers');
+        AuthTestLogger.info('No Bearer token in response headers');
       }
 
     } catch (e) {
-      print('❌ Register test failed: $e');
+      AuthTestLogger.error('Register test failed: $e');
     }
   }
 }

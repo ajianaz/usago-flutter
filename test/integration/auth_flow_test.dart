@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:usago/app/app.dart';
 import 'package:usago/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:usago/features/auth/presentation/bloc/auth_event.dart';
 import 'package:usago/features/auth/presentation/bloc/auth_state.dart';
 import 'package:usago/features/auth/presentation/pages/login_page.dart';
 import 'package:usago/features/auth/presentation/pages/register_page.dart';
 import '../fixtures/auth_fixtures.dart';
-import '../mocks/auth_mocks.dart';
 
 void main() {
   group('Authentication Flow Integration Tests', () {

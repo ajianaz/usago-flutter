@@ -3,7 +3,6 @@ import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:usago/core/errors/failure.dart';
 import 'package:usago/features/auth/domain/entities/user.dart';
-import 'package:usago/features/auth/domain/repositories/auth_repository.dart';
 import 'package:usago/features/auth/domain/usecases/login_usecase.dart';
 import '../../../../fixtures/auth_fixtures.dart';
 import '../../../../mocks/auth_mocks.dart';
