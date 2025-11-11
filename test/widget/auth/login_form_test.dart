@@ -7,6 +7,7 @@ import 'package:usago/features/auth/presentation/bloc/auth_event.dart';
 import 'package:usago/features/auth/presentation/bloc/auth_state.dart';
 import 'package:usago/features/auth/presentation/widgets/login_form.dart';
 import '../../fixtures/auth_fixtures.dart';
+import '../../mocks/auth_bloc_mocks.dart';
 
 void main() {
   group('LoginForm Widget', () {
@@ -311,10 +312,4 @@ void main() {
       verify(() => mockAuthBloc.add(any())).called(greaterThan(0));
     });
   });
-}
-
-// Mock AuthBloc for testing
-class MockAuthBloc extends Mock implements AuthBloc {
-  @override
-  AuthState get state => const AuthInitial();
 }
