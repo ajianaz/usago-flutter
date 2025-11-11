@@ -7,6 +7,9 @@ import 'unit/auth/domain/usecases/login_usecase_test.dart' as login_usecase_test
 import 'unit/auth/presentation/bloc/auth_bloc_test.dart' as auth_bloc_tests;
 import 'unit/auth/data/repositories/auth_repository_impl_test.dart' as auth_repository_tests;
 import 'integration/auth_flow_test.dart' as auth_flow_tests;
+import 'integration/token_lifecycle_test.dart' as token_lifecycle_tests;
+import 'integration/constants_validation_test.dart' as constants_validation_tests;
+import 'integration/real_network_test.dart' as real_network_tests;
 
 /// Main test runner for all auth feature tests
 void main() {
@@ -20,5 +23,8 @@ void main() {
 
     // Integration Tests
     auth_flow_tests.main();
+    token_lifecycle_tests.main();
+    constants_validation_tests.main();
+    real_network_tests.main();
   });
 }
