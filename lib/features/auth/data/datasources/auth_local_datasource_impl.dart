@@ -59,10 +59,10 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
   @override
   Future<void> saveToken(String token) async {
     try {
-      await _prefs.setString(AppConstants.authTokenKey, token);
-      _logger.info('Auth token saved to local storage');
+      await _prefs.setString(AppConstants.bearerTokenKey, token);
+      _logger.info('Bearer token saved to local storage');
     } catch (e) {
-      _logger.error('Failed to save auth token to local storage', e);
+      _logger.error('Failed to save bearer token to local storage', e);
       rethrow;
     }
   }
@@ -70,11 +70,11 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
   @override
   Future<String?> getToken() async {
     try {
-      final token = _prefs.getString(AppConstants.authTokenKey);
-      _logger.info('Auth token retrieved from local storage');
+      final token = _prefs.getString(AppConstants.bearerTokenKey);
+      _logger.info('Bearer token retrieved from local storage');
       return token;
     } catch (e) {
-      _logger.error('Failed to get auth token from local storage', e);
+      _logger.error('Failed to get bearer token from local storage', e);
       return null;
     }
   }
@@ -82,10 +82,10 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
   @override
   Future<void> clearToken() async {
     try {
-      await _prefs.remove(AppConstants.authTokenKey);
-      _logger.info('Auth token cleared from local storage');
+      await _prefs.remove(AppConstants.bearerTokenKey);
+      _logger.info('Bearer token cleared from local storage');
     } catch (e) {
-      _logger.error('Failed to clear auth token from local storage', e);
+      _logger.error('Failed to clear bearer token from local storage', e);
       rethrow;
     }
   }

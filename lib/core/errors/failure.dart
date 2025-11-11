@@ -55,3 +55,16 @@ class ValidationFailure extends Failure {
   @override
   List<Object?> get props => [message, originalError];
 }
+
+class BetterAuthFailure extends Failure {
+  final String? code;
+
+  const BetterAuthFailure({
+    required String message,
+    this.code,
+    dynamic originalError,
+  }) : super(message: message, originalError: originalError);
+
+  @override
+  List<Object?> get props => [message, code, originalError];
+}

@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection_container.dart';
 import '../features/auth/presentation/pages/login_page.dart';
+import '../features/auth/presentation/pages/register_page.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/auth/presentation/bloc/auth_state.dart';
 import '../features/home/presentation/pages/home_page.dart';
@@ -20,6 +21,11 @@ class AppRouter extends RootStackRouter {
       page: LoginRoute.page,
       path: '/login',
       initial: true,
+    ),
+    // Register route
+    AutoRoute(
+      page: RegisterRoute.page,
+      path: '/register',
     ),
     // Home route - protected route
     AutoRoute(

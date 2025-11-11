@@ -61,6 +61,26 @@ class DioClient {
     }
   }
 
+  /// Special method for Better Auth that returns full response to access headers
+  Future<Response> postWithHeaders(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
+    try {
+      final response = await _dio.post(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      );
+      return response;
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
+  }
+
   Future<Map<String, dynamic>> put(
     String path, {
     dynamic data,
@@ -149,6 +169,7 @@ class LogInterceptor extends Interceptor {
 
 class AuthInterceptor extends Interceptor {
   final AppLogger _logger;
+  bool _isRefreshing = false;
 
   AuthInterceptor({required AppLogger logger}) : _logger = logger;
 
@@ -156,7 +177,7 @@ class AuthInterceptor extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     // Add auth token if available
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(AppConstants.authTokenKey);
+    final token = prefs.getString(AppConstants.bearerTokenKey);
 
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
@@ -166,12 +187,60 @@ class AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioException error, ErrorInterceptorHandler handler) {
+  void onError(DioException error, ErrorInterceptorHandler handler) async {
     // Handle 401 unauthorized
-    if (error.response?.statusCode == 401) {
-      _logger.warning('Unauthorized - need to refresh token');
-      // TODO: Implement token refresh logic
+    if (error.response?.statusCode == 401 && !_isRefreshing) {
+      _logger.warning('Unauthorized - attempting token refresh');
+      _isRefreshing = true;
+
+      try {
+        // Get current request options
+        final options = error.requestOptions;
+
+        // Create a new Dio instance to avoid infinite loop
+        final dio = Dio(BaseOptions(
+          baseUrl: AppConstants.apiBaseUrl,
+          connectTimeout: AppConstants.apiTimeout,
+          receiveTimeout: AppConstants.apiTimeout,
+        ));
+
+        // Refresh token
+        final refreshResponse = await dio.post(
+          AppConstants.refreshTokenEndpoint,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+          ),
+        );
+
+        // Extract new token from response headers
+        final newToken = refreshResponse.headers['set-auth-token'];
+        if (newToken != null && newToken.isNotEmpty) {
+          // Save new token
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(AppConstants.bearerTokenKey, newToken.first);
+          _logger.info('Token refreshed and saved');
+
+          // Update original request with new token
+          options.headers['Authorization'] = 'Bearer ${newToken.first}';
+
+          // Retry original request with new token
+          final retryResponse = await dio.fetch(options);
+          handler.resolve(retryResponse);
+        } else {
+          _logger.warning('Token refresh failed - no new token in response');
+          handler.next(error);
+        }
+      } catch (e) {
+        _logger.error('Token refresh failed', e);
+        handler.next(error);
+      } finally {
+        _isRefreshing = false;
+      }
+    } else {
+      handler.next(error);
     }
-    handler.next(error);
   }
 }

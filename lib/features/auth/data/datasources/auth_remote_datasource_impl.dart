@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
 import '../models/user_model.dart';
+import 'auth_local_datasource.dart';
 import 'auth_remote_datasource.dart';
 
 /// Remote datasource implementation
@@ -9,12 +11,15 @@ import 'auth_remote_datasource.dart';
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   final DioClient _dioClient;
   final AppLogger _logger;
+  final AuthLocalDatasource _localDatasource;
 
   AuthRemoteDatasourceImpl({
     required DioClient dioClient,
     required AppLogger logger,
+    required AuthLocalDatasource localDatasource,
   })  : _dioClient = dioClient,
-        _logger = logger;
+        _logger = logger,
+        _localDatasource = localDatasource;
 
   @override
   Future<UserModel> login({
@@ -24,19 +29,27 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     try {
       _logger.info('Attempting login for email: $email');
 
-      final response = await _dioClient.post(
-        '/auth/login',
+      final response = await _dioClient.postWithHeaders(
+        AppConstants.signInEndpoint,
         data: {
           'email': email.trim(),
           'password': password,
         },
       );
 
-      _logger.info('Login successful for user: ${response['user']['id']}');
+      // Extract Bearer token from response headers
+      final authToken = response.headers['set-auth-token'];
+      if (authToken != null && authToken.isNotEmpty) {
+        await _localDatasource.saveToken(authToken.first);
+        _logger.info('Bearer token extracted and saved');
+      }
 
-      return UserModel.fromJson(response['user']);
+      _logger.info('Login successful for user: ${response.data['user']['id']}');
+
+      return UserModel.fromJson(response.data['user']);
     } on DioException catch (e) {
       _logger.error('Login failed', e);
+      _handleBetterAuthError(e);
       rethrow;
     } catch (e) {
       _logger.error('Unexpected error during login', e);
@@ -53,8 +66,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     try {
       _logger.info('Attempting registration for email: $email');
 
-      final response = await _dioClient.post(
-        '/auth/register',
+      final response = await _dioClient.postWithHeaders(
+        AppConstants.signUpEndpoint,
         data: {
           'email': email.trim(),
           'password': password,
@@ -62,11 +75,19 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         },
       );
 
-      _logger.info('Registration successful for user: ${response['user']['id']}');
+      // Extract Bearer token from response headers
+      final authToken = response.headers['set-auth-token'];
+      if (authToken != null && authToken.isNotEmpty) {
+        await _localDatasource.saveToken(authToken.first);
+        _logger.info('Bearer token extracted and saved after registration');
+      }
 
-      return UserModel.fromJson(response['user']);
+      _logger.info('Registration successful for user: ${response.data['user']['id']}');
+
+      return UserModel.fromJson(response.data['user']);
     } on DioException catch (e) {
       _logger.error('Registration failed', e);
+      _handleBetterAuthError(e);
       rethrow;
     } catch (e) {
       _logger.error('Unexpected error during registration', e);
@@ -79,11 +100,12 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     try {
       _logger.info('Attempting logout');
 
-      await _dioClient.post('/auth/logout');
+      await _dioClient.post(AppConstants.signOutEndpoint);
 
       _logger.info('Logout successful');
     } on DioException catch (e) {
       _logger.error('Logout failed', e);
+      _handleBetterAuthError(e);
       rethrow;
     } catch (e) {
       _logger.error('Unexpected error during logout', e);
@@ -96,13 +118,21 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     try {
       _logger.info('Attempting token refresh');
 
-      final response = await _dioClient.post('/auth/refresh-token');
+      final response = await _dioClient.postWithHeaders(AppConstants.refreshTokenEndpoint);
+
+      // Extract new Bearer token from response headers
+      final authToken = response.headers['set-auth-token'];
+      if (authToken != null && authToken.isNotEmpty) {
+        await _localDatasource.saveToken(authToken.first);
+        _logger.info('New Bearer token extracted and saved after refresh');
+      }
 
       _logger.info('Token refresh successful');
 
-      return UserModel.fromJson(response['user']);
+      return UserModel.fromJson(response.data['user']);
     } on DioException catch (e) {
       _logger.error('Token refresh failed', e);
+      _handleBetterAuthError(e);
       rethrow;
     } catch (e) {
       _logger.error('Unexpected error during token refresh', e);
@@ -116,7 +146,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       _logger.info('Sending password reset email to: $email');
 
       await _dioClient.post(
-        '/auth/forgot-password',
+        AppConstants.forgotPasswordEndpoint,
         data: {'email': email.trim()},
       );
 
@@ -139,7 +169,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       _logger.info('Resetting password with token');
 
       await _dioClient.post(
-        '/auth/reset-password',
+        AppConstants.resetPasswordEndpoint,
         data: {
           'token': token,
           'newPassword': newPassword,
@@ -165,7 +195,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       _logger.info('Changing password');
 
       await _dioClient.post(
-        '/auth/change-password',
+        AppConstants.changePasswordEndpoint,
         data: {
           'currentPassword': currentPassword,
           'newPassword': newPassword,
@@ -195,7 +225,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       if (profilePicture != null) data['profilePicture'] = profilePicture;
 
       final response = await _dioClient.put(
-        '/auth/profile',
+        AppConstants.updateProfileEndpoint,
         data: data,
       );
 
@@ -217,7 +247,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       _logger.info('Verifying email with token');
 
       await _dioClient.post(
-        '/auth/verify-email',
+        AppConstants.verifyEmailEndpoint,
         data: {'token': token},
       );
 
@@ -236,7 +266,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     try {
       _logger.info('Resending verification email');
 
-      await _dioClient.post('/auth/resend-verification');
+      await _dioClient.post(AppConstants.resendVerificationEmailEndpoint);
 
       _logger.info('Verification email resent successfully');
     } on DioException catch (e) {
@@ -253,7 +283,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     try {
       _logger.info('Deleting user account');
 
-      await _dioClient.delete('/auth/account');
+      await _dioClient.delete(AppConstants.deleteAccountEndpoint);
 
       _logger.info('Account deletion successful');
     } on DioException catch (e) {
@@ -262,6 +292,38 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     } catch (e) {
       _logger.error('Unexpected error during account deletion', e);
       throw Exception('Account deletion failed: ${e.toString()}');
+    }
+  }
+
+  /// Handle Better Auth specific error format
+  void _handleBetterAuthError(DioException e) {
+    if (e.response?.data != null) {
+      final errorData = e.response?.data as Map<String, dynamic>;
+      final code = errorData['code'] as String?;
+      final message = errorData['message'] as String? ?? 'Unknown error';
+
+      _logger.error('Better Auth error - Code: $code, Message: $message');
+
+      // Log specific Better Auth error codes for debugging
+      switch (code) {
+        case 'INVALID_CREDENTIALS':
+          _logger.warning('Invalid email or password');
+          break;
+        case 'USER_NOT_FOUND':
+          _logger.warning('User not found');
+          break;
+        case 'EMAIL_ALREADY_EXISTS':
+          _logger.warning('Email already exists');
+          break;
+        case 'WEAK_PASSWORD':
+          _logger.warning('Password is too weak');
+          break;
+        case 'INVALID_TOKEN':
+          _logger.warning('Invalid or expired token');
+          break;
+        default:
+          _logger.warning('Unhandled Better Auth error code: $code');
+      }
     }
   }
 }

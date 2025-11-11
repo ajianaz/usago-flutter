@@ -28,13 +28,18 @@ void setupAuthDependencies(GetIt getIt) {
   final logger = getIt<AppLogger>();
   final errorHandler = getIt<ErrorHandler>();
 
-  // Register datasources
-  getIt.registerSingleton<AuthRemoteDatasource>(
-    AuthRemoteDatasourceImpl(dioClient: dioClient, logger: logger),
-  );
-
+  // Register local datasource first
   getIt.registerSingleton<AuthLocalDatasource>(
     AuthLocalDatasourceImpl(logger: logger, prefs: getIt()),
+  );
+
+  // Register remote datasource with local datasource dependency
+  getIt.registerSingleton<AuthRemoteDatasource>(
+    AuthRemoteDatasourceImpl(
+      dioClient: dioClient,
+      logger: logger,
+      localDatasource: getIt(),
+    ),
   );
 
   // Register repository
