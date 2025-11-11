@@ -1,10 +1,13 @@
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_constants.dart';
+import '../utils/logger.dart';
 
 class DioClient {
   late Dio _dio;
+  final AppLogger _logger;
 
-  DioClient() {
+  DioClient({AppLogger? logger}) : _logger = logger ?? AppLogger() {
     _dio = Dio(BaseOptions(
       baseUrl: AppConstants.apiBaseUrl,
       connectTimeout: AppConstants.apiTimeout,
@@ -16,8 +19,8 @@ class DioClient {
     ));
 
     // Add interceptors
-    _dio.interceptors.add(LogInterceptor());
-    _dio.interceptors.add(AuthInterceptor());
+    _dio.interceptors.add(LogInterceptor(logger: _logger));
+    _dio.interceptors.add(AuthInterceptor(logger: _logger));
   }
 
   Dio get dio => _dio;
@@ -119,32 +122,46 @@ class DioClient {
 }
 
 class LogInterceptor extends Interceptor {
+  final AppLogger _logger;
+
+  LogInterceptor({required AppLogger logger}) : _logger = logger;
+
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print('REQUEST: ${options.method} ${options.path}');
-    print('DATA: ${options.data}');
+    _logger.debug('REQUEST: ${options.method} ${options.path}');
+    _logger.debug('DATA: ${options.data}');
     handler.next(options);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    print('RESPONSE: ${response.statusCode} ${response.requestOptions.path}');
-    print('DATA: ${response.data}');
+    _logger.debug('RESPONSE: ${response.statusCode} ${response.requestOptions.path}');
+    _logger.debug('DATA: ${response.data}');
     handler.next(response);
   }
 
   @override
   void onError(DioException error, ErrorInterceptorHandler handler) {
-    print('ERROR: ${error.message}');
+    _logger.error('NETWORK ERROR: ${error.message}', error);
     handler.next(error);
   }
 }
 
 class AuthInterceptor extends Interceptor {
+  final AppLogger _logger;
+
+  AuthInterceptor({required AppLogger logger}) : _logger = logger;
+
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     // Add auth token if available
-    // This will be implemented when we have auth
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(AppConstants.authTokenKey);
+
+    if (token != null) {
+      options.headers['Authorization'] = 'Bearer $token';
+    }
+
     handler.next(options);
   }
 
@@ -152,8 +169,8 @@ class AuthInterceptor extends Interceptor {
   void onError(DioException error, ErrorInterceptorHandler handler) {
     // Handle 401 unauthorized
     if (error.response?.statusCode == 401) {
-      // Handle token refresh or logout
-      print('Unauthorized - need to refresh token');
+      _logger.warning('Unauthorized - need to refresh token');
+      // TODO: Implement token refresh logic
     }
     handler.next(error);
   }

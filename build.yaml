@@ -1,0 +1,22 @@
+targets:
+  $default:
+    builders:
+      auto_route_generator:auto_route_generator:
+        generate_for:
+          - lib/**/*_page.dart
+          - lib/**/*_screen.dart
+        options:
+          enable_cached_builds: true
+      auto_route_generator:auto_router_generator:
+        generate_for:
+          - lib/app/router.dart
+        options:
+          enable_cached_builds: true
+      injectable_generator:injectable_builder:
+        generate_for:
+          - lib/**/*.dart
+        options:
+          enable_cached_builds: true
+      injectable_generator:injectable_config_builder:
+        options:
+          enable_cached_builds: true

@@ -1,6 +1,8 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../network/dio_client.dart';
+import '../utils/logger.dart';
+import '../errors/error_handler.dart';
 import '../../features/auth/di/auth_injection.dart';
 // import '../../features/profile/di/profile_injection.dart';
 // import '../../features/payment/di/payment_injection.dart';
@@ -29,9 +31,11 @@ Future<void> _setupCoreServices() async {
   // Register Dio HTTP client
   getIt.registerSingleton(DioClient());
 
-  // Register other core services
-  // getIt.registerSingleton(Logger());
-  // getIt.registerSingleton(LocalStorage());
+  // Register Logger
+  getIt.registerSingleton(AppLogger());
+
+  // Register Error Handler
+  getIt.registerSingleton(ErrorHandler());
 }
 
 /// Reset all dependencies
