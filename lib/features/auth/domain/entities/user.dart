@@ -83,14 +83,22 @@ class User extends Equatable {
 
   /// Get user's initials
   String get initials {
-    final nameParts = name.trim().split(' ');
-    if (nameParts.length >= 2) {
-      return '${nameParts[0][0]}${nameParts[1][0]}'.toUpperCase();
-    } else if (nameParts.isNotEmpty) {
-      return nameParts[0][0].toUpperCase();
-    } else {
-      return email[0].toUpperCase();
+    final trimmedName = name.trim();
+    if (trimmedName.isNotEmpty) {
+      final nameParts = trimmedName.split(' ');
+      if (nameParts.length >= 2) {
+        return '${nameParts[0][0]}${nameParts[1][0]}'.toUpperCase();
+      } else if (nameParts.isNotEmpty) {
+        return nameParts[0][0].toUpperCase();
+      }
     }
+
+    final trimmedEmail = email.trim();
+    if (trimmedEmail.isNotEmpty) {
+      return trimmedEmail[0].toUpperCase();
+    }
+
+    return '?';
   }
 
   /// Create empty user

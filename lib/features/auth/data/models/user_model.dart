@@ -26,15 +26,18 @@ class UserModel extends User {
   /// Create from JSON API response
   factory UserModel.fromJson(Map<String, dynamic> json) {
     try {
+      // Try to parse the date first, if it fails we'll catch it below
+      final createdAt = json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : DateTime.now();
+
       return UserModel(
         id: json['id'] as String? ?? '',
         email: json['email'] as String? ?? '',
         name: json['name'] as String? ?? '',
         profilePicture: json['profilePicture'] as String?,
         isEmailVerified: json['isEmailVerified'] as bool? ?? false,
-        createdAt: json['createdAt'] != null
-            ? DateTime.parse(json['createdAt'] as String)
-            : DateTime.now(),
+        createdAt: createdAt,
         updatedAt: json['updatedAt'] != null
             ? DateTime.parse(json['updatedAt'] as String)
             : null,
@@ -43,11 +46,11 @@ class UserModel extends User {
             : null,
       );
     } catch (e) {
-      // Return empty user if JSON parsing fails
+      // Return user with available fields if JSON parsing partially fails
       return UserModel(
-        id: '',
-        email: '',
-        name: '',
+        id: json['id'] as String? ?? '',
+        email: json['email'] as String? ?? '',
+        name: json['name'] as String? ?? '',
         isEmailVerified: false,
         createdAt: DateTime.now(),
       );
