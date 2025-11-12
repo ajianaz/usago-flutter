@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import '../shared/themes/theme.dart';
 import '../core/di/injection_container.dart';
 import '../core/services/locale_service.dart';
@@ -32,6 +33,9 @@ class MyApp extends StatelessWidget {
         supportedLocales: localeService.getSupportedLocales(),
         localizationsDelegates: const [
           AppLocalizationsDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
         ],
       ),
     );
