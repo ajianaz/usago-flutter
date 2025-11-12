@@ -4,6 +4,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import '../shared/themes/theme.dart';
 import '../core/di/injection_container.dart';
 import '../core/services/locale_service.dart';
+import '../core/helpers/instant_theme_helper.dart';
+import '../core/helpers/instant_locale_helper.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../l10n/app_localizations.g.dart';
 import 'router.dart';
@@ -22,21 +24,31 @@ class MyApp extends StatelessWidget {
           create: (_) => getIt<AuthBloc>(),
         ),
       ],
-      child: MaterialApp.router(
-        title: 'Usago',
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
-        routerConfig: appRouter.config(),
-        debugShowCheckedModeBanner: false,
-        locale: localeService.getCurrentLocale(),
-        supportedLocales: localeService.getSupportedLocales(),
-        localizationsDelegates: const [
-          AppLocalizationsDelegate(),
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
+      child: ValueListenableBuilder<ThemeMode>(
+        valueListenable: InstantThemeHelper.instance.themeNotifier,
+        builder: (context, themeMode, child) {
+          return ValueListenableBuilder<Locale>(
+            valueListenable: InstantLocaleHelper.instance.localeNotifier,
+            builder: (context, locale, child) {
+              return MaterialApp.router(
+                title: 'Usago',
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
+                themeMode: themeMode,
+                routerConfig: appRouter.config(),
+                debugShowCheckedModeBanner: false,
+                locale: locale,
+                supportedLocales: localeService.getSupportedLocales(),
+                localizationsDelegates: const [
+                  AppLocalizationsDelegate(),
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+              );
+            },
+          );
+        },
       ),
     );
   }
@@ -60,7 +72,7 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
 
   @override
   bool shouldReload(LocalizationsDelegate<AppLocalizations> old) {
-    return false;
+    return true;
   }
 
   @override

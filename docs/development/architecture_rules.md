@@ -186,6 +186,8 @@ my_app/
 │   │   │   ├── custom_app_bar.dart
 │   │   │   ├── custom_button.dart
 │   │   │   ├── custom_text_field.dart
+│   │   │   ├── theme_switcher.dart
+│   │   │   ├── language_switcher.dart
 │   │   │   └── common_widgets.dart
 │   │   │
 │   │   ├── themes/
@@ -329,7 +331,7 @@ import '../../presentation/bloc/auth_bloc.dart'; // Wrong!
 ```dart
 // ❌ FORBIDDEN PATTERN 1: Direct Feature-to-Feature
 features/auth/
-  └── imports from features/payment/ 
+  └── imports from features/payment/
     └── imports from features/auth/ ← CIRCULAR!
 
 // ❌ FORBIDDEN PATTERN 2: Cross-Feature Domain Sharing
@@ -436,9 +438,9 @@ class LoginPage extends StatelessWidget {
 // ✅ GOOD - Pure business logic
 class LoginUsecase {
   final AuthRepository repository;
-  
+
   LoginUsecase({required this.repository});
-  
+
   Future<Either<Failure, User>> call(LoginParams params) {
     // Business validation
     if (params.email.isEmpty) {
@@ -451,7 +453,7 @@ class LoginUsecase {
 // ❌ BAD - Depends on data layer
 class LoginUsecase {
   final AuthRemoteDatasource datasource; // Wrong! Depends on implementation
-  
+
   Future<User> call(LoginParams params) {
     return datasource.login(...);
   }
@@ -482,7 +484,7 @@ abstract class AuthRemoteDatasource {
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   final DioClient client;
-  
+
   @override
   Future<UserModel> login({...}) async {
     final response = await client.post('/login', data: {...});
@@ -493,7 +495,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDatasource remote;
   final AuthLocalDatasource local;
-  
+
   @override
   Future<Either<Failure, User>> login({...}) async {
     try {
@@ -598,7 +600,7 @@ export 'presentation/bloc/auth_bloc.dart';
 
 ```dart
 /// # Auth Feature
-/// 
+///
 /// Handles all user authentication related functionality including:
 /// - User login/registration
 /// - Password management
@@ -796,7 +798,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onLoginEvent(LoginEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
-    
+
     final result = await loginUsecase(
       LoginParams(email: event.email, password: event.password),
     );
@@ -809,7 +811,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onLogoutEvent(LogoutEvent event, Emitter<AuthState> emit) async {
     final result = await logoutUsecase();
-    
+
     result.fold(
       (failure) => emit(AuthFailure(message: failure.message)),
       (_) => emit(const AuthInitial()),
@@ -919,10 +921,10 @@ import 'app/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Setup all dependencies at startup
   await setupDependencies();
-  
+
   runApp(const MyApp());
 }
 
@@ -938,7 +940,7 @@ final getIt = GetIt.instance;
 Future<void> setupDependencies() async {
   // Core layer setup first
   _setupCoreServices();
-  
+
   // Feature-specific setup (can depend on core)
   setupAuthDependencies(getIt);
   setupProfileDependencies(getIt);
@@ -1050,7 +1052,7 @@ class UserModel extends User {
 class User {
   final String id;
   final String email;
-  
+
   factory User.fromJson(...) { } // Serialization in entity
   Map<String, dynamic> toJson() { } // Wrong place
 }
@@ -1196,11 +1198,11 @@ void main() {
     test('Login flow from page to repository', () async {
       // Setup mocks
       setupAuthDependencies(testGetIt);
-      
+
       // Test complete flow
       final bloc = testGetIt<AuthBloc>();
       bloc.add(LoginEvent(...));
-      
+
       await expectLater(bloc.stream, emitsInOrder([...]));
     });
   });

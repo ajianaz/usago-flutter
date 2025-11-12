@@ -64,9 +64,16 @@ class _LoginFormState extends State<LoginForm> {
             decoration: InputDecoration(
               labelText: context.tr('authEmail'),
               hintText: context.tr('enterYourEmail'),
-              prefixIcon: const FaIcon(FontAwesomeIcons.envelope),
+              prefixIcon: Icon(
+                FontAwesomeIcons.envelope,
+                size: 20,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16.0,
               ),
             ),
             validator: (value) {
@@ -89,13 +96,23 @@ class _LoginFormState extends State<LoginForm> {
             decoration: InputDecoration(
               labelText: context.tr('authPassword'),
               hintText: context.tr('enterYourPassword'),
-              prefixIcon: const FaIcon(FontAwesomeIcons.lock),
+              prefixIcon: Icon(
+                FontAwesomeIcons.lock,
+                size: 20,
+              ),
               suffixIcon: IconButton(
-                icon: FaIcon(_obscurePassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash),
+                icon: Icon(
+                  _obscurePassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
+                  size: 20,
+                ),
                 onPressed: _togglePasswordVisibility,
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16.0,
               ),
             ),
             validator: (value) {

@@ -6,6 +6,7 @@ import '../bloc/auth_state.dart';
 import '../widgets/login_form.dart';
 import '../../../../app/router.dart';
 import '../../../../shared/widgets/language_switcher.dart';
+import '../../../../shared/widgets/theme_switcher.dart';
 import '../../../../core/extensions/context_extension.dart';
 
 /// Login page
@@ -23,6 +24,10 @@ class LoginPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: const ThemeSwitcher(),
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: const LanguageSwitcher(),

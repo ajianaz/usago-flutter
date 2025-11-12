@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Primary Colors
-  static const Color primary = Color(0xFF6200EE);
-  static const Color primaryVariant = Color(0xFF3700B3);
+  // Primary Colors - Modern Blue Gradient
+  static const Color primary = Color(0xFF4F46E5);
+  static const Color primaryVariant = Color(0xFF4338CA);
   static const Color onPrimary = Color(0xFFFFFFFF);
 
-  // Secondary Colors
-  static const Color secondary = Color(0xFF03DAC6);
-  static const Color secondaryVariant = Color(0xFF018786);
-  static const Color onSecondary = Color(0xFF000000);
+  // Secondary Colors - Warm Teal
+  static const Color secondary = Color(0xFF14B8A6);
+  static const Color secondaryVariant = Color(0xFF0D9488);
+  static const Color onSecondary = Color(0xFFFFFFFF);
 
   // Background Colors
   static const Color background = Color(0xFFFAFAFA);
@@ -49,12 +49,12 @@ class AppColors {
 
   // Gradient Colors
   static const List<Color> primaryGradient = [
-    Color(0xFF6200EE),
-    Color(0xFF3700B3),
+    Color(0xFF4F46E5),
+    Color(0xFF4338CA),
   ];
 
   static const List<Color> secondaryGradient = [
-    Color(0xFF03DAC6),
-    Color(0xFF018786),
+    Color(0xFF14B8A6),
+    Color(0xFF0D9488),
   ];
 }

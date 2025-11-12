@@ -126,11 +126,13 @@ class AppTheme {
         brightness: Brightness.dark,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.surface,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: const Color(0xFF121212),
+        foregroundColor: const Color(0xFFFFFFFF),
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: AppTextStyles.headline4,
+        titleTextStyle: AppTextStyles.headline4?.copyWith(
+          color: const Color(0xFFFFFFFF),
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -166,14 +168,14 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surface,
+        fillColor: const Color(0xFF1E1E1E),
         border: OutlineInputBorder(
           borderRadius: AppSpacing.radiusInput,
-          borderSide: const BorderSide(color: AppColors.border),
+          borderSide: const BorderSide(color: Color(0xFF333333)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: AppSpacing.radiusInput,
-          borderSide: const BorderSide(color: AppColors.border),
+          borderSide: const BorderSide(color: Color(0xFF333333)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: AppSpacing.radiusInput,
@@ -183,16 +185,20 @@ class AppTheme {
           borderRadius: AppSpacing.radiusInput,
           borderSide: const BorderSide(color: AppColors.error),
         ),
-        labelStyle: AppTextStyles.inputLabel,
-        hintStyle: AppTextStyles.inputHint,
+        labelStyle: AppTextStyles.inputLabel?.copyWith(
+          color: const Color(0xFFAAAAAA),
+        ),
+        hintStyle: AppTextStyles.inputHint?.copyWith(
+          color: const Color(0xFF666666),
+        ),
         contentPadding: AppSpacing.paddingAllMd,
       ),
       cardTheme: CardTheme(
-        color: AppColors.surface,
+        color: const Color(0xFF1E1E1E),
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: AppSpacing.radiusCard,
-          side: const BorderSide(color: AppColors.border),
+          side: const BorderSide(color: Color(0xFF333333)),
         ),
         margin: EdgeInsets.zero,
       ),
@@ -203,12 +209,14 @@ class AppTheme {
         ),
       ),
       dividerTheme: const DividerThemeData(
-        color: AppColors.border,
+        color: Color(0xFF333333),
         thickness: 1,
       ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.surface,
-        contentTextStyle: AppTextStyles.bodyMedium,
+        backgroundColor: const Color(0xFF1E1E1E),
+        contentTextStyle: AppTextStyles.bodyMedium?.copyWith(
+          color: const Color(0xFFFFFFFF),
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: AppSpacing.radiusCard,
         ),
@@ -216,9 +224,9 @@ class AppTheme {
         elevation: 4,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: AppColors.surface,
+        backgroundColor: const Color(0xFF121212),
         selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.textSecondary,
+        unselectedItemColor: const Color(0xFFAAAAAA),
         type: BottomNavigationBarType.fixed,
         elevation: 8,
         selectedLabelStyle: AppTextStyles.buttonSmall,
@@ -227,6 +235,7 @@ class AppTheme {
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: AppColors.primary,
       ),
+      scaffoldBackgroundColor: const Color(0xFF121212),
     );
   }
 }

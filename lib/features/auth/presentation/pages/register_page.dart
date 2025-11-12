@@ -5,6 +5,8 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/register_form.dart';
 import '../../../../app/router.dart';
+import '../../../../shared/widgets/language_switcher.dart';
+import '../../../../shared/widgets/theme_switcher.dart';
 import '../../../../core/extensions/context_extension.dart';
 
 /// Register page
@@ -21,6 +23,16 @@ class RegisterPage extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: const ThemeSwitcher(),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: const LanguageSwitcher(),
+          ),
+        ],
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {

@@ -1,81 +1,68 @@
 import 'package:flutter/material.dart';
-import '../../core/di/injection_container.dart';
-import '../../core/services/locale_service.dart';
-import '../../core/extensions/context_extension.dart';
+import '../../core/helpers/instant_locale_helper.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-/// Language switcher widget
-/// Allows users to switch between supported languages
-class LanguageSwitcher extends StatelessWidget {
+/// Language switcher widget with no delay
+/// Uses InstantLocaleHelper for immediate language updates
+class LanguageSwitcher extends StatefulWidget {
   const LanguageSwitcher({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final localeService = getIt<LocaleService>();
-    final supportedLocales = localeService.getSupportedLocales();
-    final currentLocale = Localizations.localeOf(context);
+  State<LanguageSwitcher> createState() => _LanguageSwitcherState();
+}
 
-    return PopupMenuButton<Locale>(
-      icon: const FaIcon(FontAwesomeIcons.language, size: 20),
-      tooltip: 'Change Language',
-      onSelected: (Locale locale) {
-        _changeLanguage(context, locale);
-      },
-      itemBuilder: (BuildContext context) {
-        return supportedLocales.map((Locale locale) {
-          final isSelected = currentLocale.languageCode == locale.languageCode;
-          final displayName = localeService.getLocaleDisplayName(locale);
+class _LanguageSwitcherState extends State<LanguageSwitcher> {
+  final InstantLocaleHelper _localeHelper = InstantLocaleHelper.instance;
 
-          return PopupMenuItem<Locale>(
-            value: locale,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (isSelected)
-                  const Padding(
-                    padding: EdgeInsets.only(right: 8.0),
-                    child: Icon(Icons.check, color: Colors.blue, size: 16),
-                  )
-                else
-                  const SizedBox(width: 24),
-                Flexible(
-                  child: Text(
-                    displayName,
-                    style: const TextStyle(fontSize: 14),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList();
-      },
-    );
+  @override
+  void initState() {
+    super.initState();
+    _localeHelper.initialize();
   }
 
-  void _changeLanguage(BuildContext context, Locale locale) {
-    // Show confirmation dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(context.tr('commonSave')),
-          content: Text('Change language to ${getIt<LocaleService>().getLocaleDisplayName(locale)}?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(context.tr('commonCancel')),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                // Change the language using locale service
-                getIt<LocaleService>().changeLocale(locale);
-                _showLanguageChangedSnackBar(context, locale);
-              },
-              child: Text(context.tr('commonOk')),
-            ),
-          ],
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<Locale>(
+      valueListenable: _localeHelper.localeNotifier,
+      builder: (context, currentLocale, child) {
+        final supportedLocales = _localeHelper.getSupportedLocales();
+
+        return PopupMenuButton<Locale>(
+          icon: const FaIcon(FontAwesomeIcons.language, size: 20),
+          tooltip: 'Change Language',
+          onSelected: (Locale locale) {
+            _localeHelper.changeLocale(locale);
+            _showLanguageChangedSnackBar(context, locale);
+          },
+          itemBuilder: (BuildContext context) {
+            return supportedLocales.map((Locale locale) {
+              final isSelected = currentLocale.languageCode == locale.languageCode;
+              final displayName = _localeHelper.getLocaleDisplayName(locale);
+
+              return PopupMenuItem<Locale>(
+                value: locale,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isSelected)
+                      const Padding(
+                        padding: EdgeInsets.only(right: 8.0),
+                        child: Icon(Icons.check, color: Colors.blue, size: 16),
+                      )
+                    else
+                      const SizedBox(width: 24),
+                    Flexible(
+                      child: Text(
+                        displayName,
+                        style: const TextStyle(fontSize: 14),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList();
+          },
         );
       },
     );
@@ -84,7 +71,7 @@ class LanguageSwitcher extends StatelessWidget {
   void _showLanguageChangedSnackBar(BuildContext context, Locale locale) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Language changed to ${getIt<LocaleService>().getLocaleDisplayName(locale)}'),
+        content: Text('Language changed to ${_localeHelper.getLocaleDisplayName(locale)}'),
         duration: const Duration(seconds: 2),
       ),
     );

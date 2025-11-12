@@ -23,6 +23,17 @@ auth:
   enter_your_email: Masukkan email Anda
   enter_your_password: Masukkan kata sandi Anda
   confirm_your_password: Konfirmasi kata sandi Anda
+  authEmail: Email
+  authPassword: Kata Sandi
+  authLogin: Masuk
+  authRegister: Daftar
+  authForgotPassword: Lupa Kata Sandi?
+  authDontHaveAccount: Belum punya akun?
+  authWelcomeBack: Selamat Datang Kembali
+  authSignInToContinue: Masuk untuk melanjutkan
+  authCreateAccount: Buat Akun
+  authSignUpToContinue: Daftar untuk melanjutkan
+  authAlreadyHaveAccount: Sudah punya akun?
 
 # Validation
 validation:
@@ -30,6 +41,9 @@ validation:
   email_invalid: Masukkan email yang valid
   password_too_short: Kata sandi minimal 6 karakter
   password_too_long: Kata sandi maksimal 50 karakter
+  validationRequired: Field ini wajib diisi
+  validationEmailInvalid: Masukkan email yang valid
+  validationPasswordTooShort: Kata sandi minimal 6 karakter
 
 # Messages
 messages:

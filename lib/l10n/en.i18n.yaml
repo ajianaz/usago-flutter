@@ -23,6 +23,17 @@ auth:
   enter_your_email: Enter your email
   enter_your_password: Enter your password
   confirm_your_password: Confirm your password
+  authEmail: Email
+  authPassword: Password
+  authLogin: Login
+  authRegister: Register
+  authForgotPassword: Forgot Password?
+  authDontHaveAccount: Don't have an account?
+  authWelcomeBack: Welcome Back
+  authSignInToContinue: Sign in to continue
+  authCreateAccount: Create Account
+  authSignUpToContinue: Sign up to continue
+  authAlreadyHaveAccount: Already have an account?
 
 # Validation
 validation:
@@ -30,6 +41,9 @@ validation:
   email_invalid: Please enter a valid email
   password_too_short: Password must be at least 6 characters
   password_too_long: Password must be less than 50 characters
+  validationRequired: This field is required
+  validationEmailInvalid: Please enter a valid email
+  validationPasswordTooShort: Password must be at least 6 characters
 
 # Messages
 messages:

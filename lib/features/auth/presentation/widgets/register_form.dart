@@ -57,9 +57,16 @@ class _RegisterFormState extends State<RegisterForm> {
             decoration: InputDecoration(
               labelText: context.tr('name'),
               hintText: context.tr('enterYourName'),
-              prefixIcon: const FaIcon(FontAwesomeIcons.user),
+              prefixIcon: Icon(
+                FontAwesomeIcons.user,
+                size: 20,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16.0,
               ),
             ),
             validator: (value) {
@@ -77,9 +84,16 @@ class _RegisterFormState extends State<RegisterForm> {
             decoration: InputDecoration(
               labelText: context.tr('authEmail'),
               hintText: context.tr('enterYourEmail'),
-              prefixIcon: const FaIcon(FontAwesomeIcons.envelope),
+              prefixIcon: Icon(
+                FontAwesomeIcons.envelope,
+                size: 20,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16.0,
               ),
             ),
             keyboardType: TextInputType.emailAddress,
@@ -102,9 +116,15 @@ class _RegisterFormState extends State<RegisterForm> {
             decoration: InputDecoration(
               labelText: context.tr('authPassword'),
               hintText: context.tr('enterYourPassword'),
-              prefixIcon: const FaIcon(FontAwesomeIcons.lock),
+              prefixIcon: Icon(
+                FontAwesomeIcons.lock,
+                size: 20,
+              ),
               suffixIcon: IconButton(
-                icon: FaIcon(_obscurePassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash),
+                icon: Icon(
+                  _obscurePassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
+                  size: 20,
+                ),
                 onPressed: () {
                   setState(() {
                     _obscurePassword = !_obscurePassword;
@@ -113,6 +133,10 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16.0,
               ),
             ),
             validator: (value) {
@@ -134,9 +158,15 @@ class _RegisterFormState extends State<RegisterForm> {
             decoration: InputDecoration(
               labelText: context.tr('confirmPassword'),
               hintText: context.tr('confirmYourPassword'),
-              prefixIcon: const FaIcon(FontAwesomeIcons.lock),
+              prefixIcon: Icon(
+                FontAwesomeIcons.lock,
+                size: 20,
+              ),
               suffixIcon: IconButton(
-                icon: FaIcon(_obscureConfirmPassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash),
+                icon: Icon(
+                  _obscureConfirmPassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
+                  size: 20,
+                ),
                 onPressed: () {
                   setState(() {
                     _obscureConfirmPassword = !_obscureConfirmPassword;
@@ -145,6 +175,10 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16.0,
               ),
             ),
             validator: (value) {
