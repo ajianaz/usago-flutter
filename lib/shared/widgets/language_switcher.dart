@@ -49,7 +49,6 @@ class LanguageSwitcher extends StatelessWidget {
           );
         }).toList();
       },
-      child: const Icon(Icons.language, size: 20),
     );
   }
 
@@ -59,12 +58,12 @@ class LanguageSwitcher extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(context.t.commonSave),
+          title: Text(AppLocalizationsExtension(context).t.commonSave),
           content: Text('Change language to ${getIt<LocaleService>().getLocaleDisplayName(locale)}?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(context.t.commonCancel),
+              child: Text(AppLocalizationsExtension(context).t.commonCancel),
             ),
             TextButton(
               onPressed: () {
@@ -73,7 +72,7 @@ class LanguageSwitcher extends StatelessWidget {
                 getIt<LocaleService>().changeLocale(locale);
                 _showLanguageChangedSnackBar(context, locale);
               },
-              child: Text(context.t.commonOk),
+              child: Text(AppLocalizationsExtension(context).t.commonOk),
             ),
           ],
         );
