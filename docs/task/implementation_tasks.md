@@ -8,12 +8,12 @@
 **Estimated Time:** 4 hours
 
 **Subtasks:**
-- [ ] Update login endpoint to `/sign-in/email`
-- [ ] Update register endpoint to `/sign-up/email`
-- [ ] Add token extraction from `set-auth-token` header
-- [ ] Update error handling for Better Auth format
-- [ ] Add logout endpoint to `/sign-out`
-- [ ] Add refresh token endpoint to `/refresh-token`
+- [x] Update login endpoint to `/sign-in/email`
+- [x] Update register endpoint to `/sign-up/email`
+- [x] Add token extraction from `set-auth-token` header
+- [x] Update error handling for Better Auth format
+- [x] Add logout endpoint to `/sign-out`
+- [x] Add refresh token endpoint to `/refresh-token`
 
 **Implementation Details:**
 ```dart
@@ -40,10 +40,10 @@ catch (e) {
 **Estimated Time:** 2 hours
 
 **Subtasks:**
-- [ ] Add Bearer token storage method
-- [ ] Update token retrieval for Bearer format
-- [ ] Add session data storage
-- [ ] Update token clearing logic
+- [x] Add Bearer token storage method
+- [x] Update token retrieval for Bearer format
+- [x] Add session data storage
+- [x] Update token clearing logic
 
 ### Task 1.3: Update Dio Client Interceptor
 **File:** `lib/core/network/dio_client.dart`
@@ -51,10 +51,10 @@ catch (e) {
 **Estimated Time:** 2 hours
 
 **Subtasks:**
-- [ ] Update AuthInterceptor for Bearer tokens
-- [ ] Add token refresh logic
-- [ ] Update error handling for 401 responses
-- [ ] Add retry logic for token expiration
+- [x] Update AuthInterceptor for Bearer tokens
+- [x] Add token refresh logic
+- [x] Update error handling for 401 responses
+- [x] Add retry logic for token expiration
 
 ## 🎯 Phase 2: Repository & Use Cases (Days 4-6)
 
@@ -64,11 +64,11 @@ catch (e) {
 **Estimated Time:** 3 hours
 
 **Subtasks:**
-- [ ] Update login method for Better Auth response
-- [ ] Update register method for Better Auth response
-- [ ] Add session management
-- [ ] Update error handling with Better Auth errors
-- [ ] Add token refresh integration
+- [x] Update login method for Better Auth response
+- [x] Update register method for Better Auth response
+- [x] Add session management
+- [x] Update error handling with Better Auth errors
+- [x] Add token refresh integration
 
 ### Task 2.2: Update Login Use Case
 **File:** `lib/features/auth/domain/usecases/login_usecase.dart`
@@ -76,9 +76,9 @@ catch (e) {
 **Estimated Time:** 1 hour
 
 **Subtasks:**
-- [ ] Update validation for Better Auth requirements
-- [ ] Add Better Auth specific business rules
-- [ ] Update error handling
+- [x] Update validation for Better Auth requirements
+- [x] Add Better Auth specific business rules
+- [x] Update error handling
 
 ### Task 2.3: Update Register Use Case
 **File:** `lib/features/auth/domain/usecases/register_usecase.dart`
@@ -86,9 +86,9 @@ catch (e) {
 **Estimated Time:** 1 hour
 
 **Subtasks:**
-- [ ] Update validation for Better Auth requirements
-- [ ] Add email verification handling
-- [ ] Update error handling
+- [x] Update validation for Better Auth requirements
+- [x] Add email verification handling
+- [x] Update error handling
 
 ### Task 2.4: Update Other Use Cases
 **Files:** All use case files
@@ -96,10 +96,10 @@ catch (e) {
 **Estimated Time:** 2 hours
 
 **Subtasks:**
-- [ ] Update forgot password use case
-- [ ] Update reset password use case
-- [ ] Update email verification use case
-- [ ] Update profile management use cases
+- [x] Update forgot password use case
+- [x] Update reset password use case
+- [x] Update email verification use case
+- [x] Update profile management use cases
 
 ## 🎯 Phase 3: BLoC & State Management (Days 7-9)
 
@@ -109,10 +109,10 @@ catch (e) {
 **Estimated Time:** 3 hours
 
 **Subtasks:**
-- [ ] Update event handlers for Better Auth responses
-- [ ] Add token refresh event handling
-- [ ] Update error state management
-- [ ] Add session timeout handling
+- [x] Update event handlers for Better Auth responses
+- [x] Add token refresh event handling
+- [x] Update error state management
+- [x] Add session timeout handling
 
 ### Task 3.2: Update Auth Events
 **File:** `lib/features/auth/presentation/bloc/auth_event.dart`
@@ -120,9 +120,9 @@ catch (e) {
 **Estimated Time:** 1 hour
 
 **Subtasks:**
-- [ ] Add token refresh event
-- [ ] Add session timeout event
-- [ ] Update existing events for Better Auth
+- [x] Add token refresh event
+- [x] Add session timeout event
+- [x] Update existing events for Better Auth
 
 ### Task 3.3: Update Auth States
 **File:** `lib/features/auth/presentation/bloc/auth_state.dart`
@@ -130,9 +130,9 @@ catch (e) {
 **Estimated Time:** 1 hour
 
 **Subtasks:**
-- [ ] Add token refresh state
-- [ ] Add session timeout state
-- [ ] Update existing states for Better Auth
+- [x] Add token refresh state
+- [x] Add session timeout state
+- [x] Update existing states for Better Auth
 
 ## 🎯 Phase 4: UI Components (Days 10-12)
 
@@ -142,10 +142,10 @@ catch (e) {
 **Estimated Time:** 2 hours
 
 **Subtasks:**
-- [ ] Update validation messages for Better Auth
-- [ ] Add loading states for Better Auth operations
-- [ ] Update error display for Better Auth format
-- [ ] Add forgot password navigation
+- [x] Update validation messages for Better Auth
+- [x] Add loading states for Better Auth operations
+- [x] Update error display for Better Auth format
+- [x] Add forgot password navigation
 
 ### Task 4.2: Create Register Form
 **File:** `lib/features/auth/presentation/widgets/register_form.dart`
@@ -153,10 +153,10 @@ catch (e) {
 **Estimated Time:** 3 hours
 
 **Subtasks:**
-- [ ] Create registration form UI
-- [ ] Add validation for Better Auth requirements
-- [ ] Add email verification handling
-- [ ] Add loading states
+- [x] Create registration form UI
+- [x] Add validation for Better Auth requirements
+- [x] Add email verification handling
+- [x] Add loading states
 
 ### Task 4.3: Create Register Page
 **File:** `lib/features/auth/presentation/pages/register_page.dart`
@@ -164,10 +164,10 @@ catch (e) {
 **Estimated Time:** 2 hours
 
 **Subtasks:**
-- [ ] Create registration page
-- [ ] Add navigation to login
-- [ ] Add success/error handling
-- [ ] Add email verification flow
+- [x] Create registration page
+- [x] Add navigation to login
+- [x] Add success/error handling
+- [x] Add email verification flow
 
 ### Task 4.4: Update Login Page
 **File:** `lib/features/auth/presentation/pages/login_page.dart`
@@ -175,9 +175,9 @@ catch (e) {
 **Estimated Time:** 1 hour
 
 **Subtasks:**
-- [ ] Add navigation to register
-- [ ] Update error handling for Better Auth
-- [ ] Add loading states
+- [x] Add navigation to register
+- [x] Update error handling for Better Auth
+- [x] Add loading states
 
 ## 🎯 Phase 5: Advanced Features (Days 13-15)
 
@@ -191,6 +191,7 @@ catch (e) {
 - [ ] Create email verification form
 - [ ] Add verification BLoC events
 - [ ] Add verification states
+- [ ] **SKIPPED** - Backend logic already complete, UI deferred to future iteration
 
 ### Task 5.2: Password Reset Flow
 **Files:** New files needed
@@ -202,6 +203,7 @@ catch (e) {
 - [ ] Create reset password page
 - [ ] Add password reset forms
 - [ ] Add reset BLoC events
+- [ ] **SKIPPED** - Backend logic already complete, UI deferred to future iteration
 
 ### Task 5.3: Profile Management
 **Files:** New files needed
@@ -213,6 +215,7 @@ catch (e) {
 - [ ] Create profile form
 - [ ] Add profile update functionality
 - [ ] Add profile picture upload
+- [ ] **SKIPPED** - Backend logic already complete, UI deferred to future iteration
 
 ## 🎯 Phase 6: Testing & Documentation (Days 16-18)
 
@@ -312,22 +315,22 @@ catch (e) {
 ## 🎯 Success Criteria
 
 ### Technical Success
-- [ ] All API endpoints working with Better Auth
-- [ ] Token management functioning correctly
-- [ ] Error handling covering all scenarios
+- [x] All API endpoints working with Better Auth
+- [x] Token management functioning correctly
+- [x] Error handling covering all scenarios
 - [ ] Test coverage > 80%
 
 ### User Experience Success
-- [ ] Login flow working smoothly
-- [ ] Registration flow complete
-- [ ] Error messages clear and helpful
-- [ ] Loading states appropriate
+- [x] Login flow working smoothly
+- [x] Registration flow complete
+- [x] Error messages clear and helpful
+- [x] Loading states appropriate
 
 ### Integration Success
-- [ ] Backend integration complete
-- [ ] Session management working
-- [ ] Token refresh functioning
-- [ ] Security measures in place
+- [x] Backend integration complete
+- [x] Session management working
+- [x] Token refresh functioning
+- [x] Security measures in place
 
 ---
 
