@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/di/injection_container.dart';
 import '../../core/services/locale_service.dart';
 import '../../core/extensions/context_extension.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Language switcher widget
 /// Allows users to switch between supported languages
@@ -15,7 +16,7 @@ class LanguageSwitcher extends StatelessWidget {
     final currentLocale = Localizations.localeOf(context);
 
     return PopupMenuButton<Locale>(
-      icon: const Icon(Icons.language, size: 20),
+      icon: const FaIcon(FontAwesomeIcons.language, size: 20),
       tooltip: 'Change Language',
       onSelected: (Locale locale) {
         _changeLanguage(context, locale);

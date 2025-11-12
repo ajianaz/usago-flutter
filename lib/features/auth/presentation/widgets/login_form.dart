@@ -6,7 +6,8 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import '../../../../core/extensions/string_extension.dart';
-import '../../../../l10n/app_localizations.g.dart';
+import '../../../../core/extensions/context_extension.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Login form widget
 /// Handles user input for login
@@ -61,19 +62,19 @@ class _LoginFormState extends State<LoginForm> {
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
-              labelText: context.t.authEmail,
-              hintText: 'Enter your email',
-              prefixIcon: const Icon(Icons.email_outlined),
+              labelText: context.tr('authEmail'),
+              hintText: context.tr('enterYourEmail'),
+              prefixIcon: const FaIcon(FontAwesomeIcons.envelope),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.t.validationRequired;
+                return context.tr('validationRequired');
               }
               if (!value.isValidEmail) {
-                return context.t.validationEmailInvalid;
+                return context.tr('validationEmailInvalid');
               }
               return null;
             },
@@ -86,11 +87,11 @@ class _LoginFormState extends State<LoginForm> {
             controller: _passwordController,
             obscureText: _obscurePassword,
             decoration: InputDecoration(
-              labelText: context.t.authPassword,
-              hintText: 'Enter your password',
-              prefixIcon: const Icon(Icons.lock_outline),
+              labelText: context.tr('authPassword'),
+              hintText: context.tr('enterYourPassword'),
+              prefixIcon: const FaIcon(FontAwesomeIcons.lock),
               suffixIcon: IconButton(
-                icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+                icon: FaIcon(_obscurePassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash),
                 onPressed: _togglePasswordVisibility,
               ),
               border: OutlineInputBorder(
@@ -99,10 +100,10 @@ class _LoginFormState extends State<LoginForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.t.validationRequired;
+                return context.tr('validationRequired');
               }
               if (value.length < 6) {
-                return context.t.validationPasswordTooShort;
+                return context.tr('validationPasswordTooShort');
               }
               return null;
             },
@@ -114,7 +115,7 @@ class _LoginFormState extends State<LoginForm> {
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
               return CustomButton(
-                text: context.t.authLogin,
+                text: context.tr('authLogin'),
                 isLoading: state is AuthLoading,
                 onPressed: _submitForm,
               );
@@ -128,7 +129,7 @@ class _LoginFormState extends State<LoginForm> {
             onPressed: () {
               // TODO: Navigate to forgot password
             },
-            child: Text(context.t.authForgotPassword),
+            child: Text(context.tr('authForgotPassword')),
           ),
         ],
       ),

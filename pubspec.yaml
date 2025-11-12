@@ -39,6 +39,9 @@ dependencies:
   slang: ^4.10.0
   slang_flutter: ^4.10.0
 
+  # Icons
+  font_awesome_flutter: ^10.9.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -6,7 +6,8 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import '../../../../core/extensions/string_extension.dart';
-import '../../../../l10n/app_localizations.g.dart';
+import '../../../../core/extensions/context_extension.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({Key? key}) : super(key: key);
@@ -54,16 +55,16 @@ class _RegisterFormState extends State<RegisterForm> {
           TextFormField(
             controller: _nameController,
             decoration: InputDecoration(
-              labelText: context.t.name,
-              hintText: context.t.enterYourName,
-              prefixIcon: const Icon(Icons.person),
+              labelText: context.tr('name'),
+              hintText: context.tr('enterYourName'),
+              prefixIcon: const FaIcon(FontAwesomeIcons.user),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.t.validationRequired;
+                return context.tr('validationRequired');
               }
               return null;
             },
@@ -74,9 +75,9 @@ class _RegisterFormState extends State<RegisterForm> {
           TextFormField(
             controller: _emailController,
             decoration: InputDecoration(
-              labelText: context.t.authEmail,
-              hintText: context.t.enterYourEmail,
-              prefixIcon: const Icon(Icons.email),
+              labelText: context.tr('authEmail'),
+              hintText: context.tr('enterYourEmail'),
+              prefixIcon: const FaIcon(FontAwesomeIcons.envelope),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
@@ -84,10 +85,10 @@ class _RegisterFormState extends State<RegisterForm> {
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.t.validationRequired;
+                return context.tr('validationRequired');
               }
               if (!value.isValidEmail) {
-                return context.t.validationEmailInvalid;
+                return context.tr('validationEmailInvalid');
               }
               return null;
             },
@@ -99,11 +100,11 @@ class _RegisterFormState extends State<RegisterForm> {
             controller: _passwordController,
             obscureText: _obscurePassword,
             decoration: InputDecoration(
-              labelText: context.t.authPassword,
-              hintText: context.t.enterYourPassword,
-              prefixIcon: const Icon(Icons.lock),
+              labelText: context.tr('authPassword'),
+              hintText: context.tr('enterYourPassword'),
+              prefixIcon: const FaIcon(FontAwesomeIcons.lock),
               suffixIcon: IconButton(
-                icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+                icon: FaIcon(_obscurePassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash),
                 onPressed: () {
                   setState(() {
                     _obscurePassword = !_obscurePassword;
@@ -116,10 +117,10 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.t.validationRequired;
+                return context.tr('validationRequired');
               }
               if (value.length < 6) {
-                return context.t.validationPasswordTooShort;
+                return context.tr('validationPasswordTooShort');
               }
               return null;
             },
@@ -131,11 +132,11 @@ class _RegisterFormState extends State<RegisterForm> {
             controller: _confirmPasswordController,
             obscureText: _obscureConfirmPassword,
             decoration: InputDecoration(
-              labelText: context.t.confirmPassword,
-              hintText: context.t.confirmYourPassword,
-              prefixIcon: const Icon(Icons.lock),
+              labelText: context.tr('confirmPassword'),
+              hintText: context.tr('confirmYourPassword'),
+              prefixIcon: const FaIcon(FontAwesomeIcons.lock),
               suffixIcon: IconButton(
-                icon: Icon(_obscureConfirmPassword ? Icons.visibility : Icons.visibility_off),
+                icon: FaIcon(_obscureConfirmPassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash),
                 onPressed: () {
                   setState(() {
                     _obscureConfirmPassword = !_obscureConfirmPassword;
@@ -148,10 +149,10 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.t.validationRequired;
+                return context.tr('validationRequired');
               }
               if (value != _passwordController.text) {
-                return context.t.passwordsDoNotMatch;
+                return context.tr('passwordsDoNotMatch');
               }
               return null;
             },
@@ -162,7 +163,7 @@ class _RegisterFormState extends State<RegisterForm> {
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
               return CustomButton(
-                text: context.t.authRegister,
+                text: context.tr('authRegister'),
                 isLoading: state is AuthLoading,
                 onPressed: _submitForm,
               );
