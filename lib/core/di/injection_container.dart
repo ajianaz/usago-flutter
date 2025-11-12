@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../network/dio_client.dart';
 import '../utils/logger.dart';
 import '../errors/error_handler.dart';
+import '../services/locale_service.dart';
 import '../../features/auth/di/auth_injection.dart';
 // import '../../features/profile/di/profile_injection.dart';
 // import '../../features/payment/di/payment_injection.dart';
@@ -36,6 +37,12 @@ Future<void> _setupCoreServices() async {
 
   // Register Error Handler
   getIt.registerSingleton(ErrorHandler());
+
+  // Register Locale Service
+  getIt.registerSingleton(LocaleService(
+    prefs: sharedPreferences,
+    logger: getIt(),
+  ));
 }
 
 /// Reset all dependencies

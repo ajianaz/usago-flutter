@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../shared/themes/app_spacing.dart';
+import '../../../../shared/widgets/custom_button.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
+import '../../../../core/extensions/string_extension.dart';
+import '../../../../l10n/app_localizations.g.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({Key? key}) : super(key: key);
@@ -29,7 +33,7 @@ class _RegisterFormState extends State<RegisterForm> {
     super.dispose();
   }
 
-  void _register() {
+  void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AuthBloc>().add(
         RegisterEvent(
@@ -49,45 +53,55 @@ class _RegisterFormState extends State<RegisterForm> {
         children: [
           TextFormField(
             controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: 'Name',
-              prefixIcon: Icon(Icons.person),
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: context.t.name,
+              hintText: context.t.enterYourName,
+              prefixIcon: const Icon(Icons.person),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your name';
+                return context.t.validationRequired;
               }
               return null;
             },
           ),
-          const SizedBox(height: 16),
+
+          SizedBox(height: AppSpacing.md),
+
           TextFormField(
             controller: _emailController,
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              prefixIcon: Icon(Icons.email),
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: context.t.authEmail,
+              hintText: context.t.enterYourEmail,
+              prefixIcon: const Icon(Icons.email),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
             ),
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your email';
+                return context.t.validationRequired;
               }
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                return 'Please enter a valid email';
+              if (!value.isValidEmail) {
+                return context.t.validationEmailInvalid;
               }
               return null;
             },
           ),
-          const SizedBox(height: 16),
+
+          SizedBox(height: AppSpacing.md),
+
           TextFormField(
             controller: _passwordController,
             obscureText: _obscurePassword,
             decoration: InputDecoration(
-              labelText: 'Password',
+              labelText: context.t.authPassword,
+              hintText: context.t.enterYourPassword,
               prefixIcon: const Icon(Icons.lock),
-              border: const OutlineInputBorder(),
               suffixIcon: IconButton(
                 icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
                 onPressed: () {
@@ -96,25 +110,30 @@ class _RegisterFormState extends State<RegisterForm> {
                   });
                 },
               ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your password';
+                return context.t.validationRequired;
               }
               if (value.length < 6) {
-                return 'Password must be at least 6 characters';
+                return context.t.validationPasswordTooShort;
               }
               return null;
             },
           ),
-          const SizedBox(height: 16),
+
+          SizedBox(height: AppSpacing.md),
+
           TextFormField(
             controller: _confirmPasswordController,
             obscureText: _obscureConfirmPassword,
             decoration: InputDecoration(
-              labelText: 'Confirm Password',
+              labelText: context.t.confirmPassword,
+              hintText: context.t.confirmYourPassword,
               prefixIcon: const Icon(Icons.lock),
-              border: const OutlineInputBorder(),
               suffixIcon: IconButton(
                 icon: Icon(_obscureConfirmPassword ? Icons.visibility : Icons.visibility_off),
                 onPressed: () {
@@ -123,35 +142,31 @@ class _RegisterFormState extends State<RegisterForm> {
                   });
                 },
               ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please confirm your password';
+                return context.t.validationRequired;
               }
               if (value != _passwordController.text) {
-                return 'Passwords do not match';
+                return context.t.passwordsDoNotMatch;
               }
               return null;
             },
           ),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: _register,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text(
-                'Register',
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
+
+          SizedBox(height: AppSpacing.lg),
+
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              return CustomButton(
+                text: context.t.authRegister,
+                isLoading: state is AuthLoading,
+                onPressed: _submitForm,
+              );
+            },
           ),
         ],
       ),

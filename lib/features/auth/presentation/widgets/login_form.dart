@@ -6,6 +6,7 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import '../../../../core/extensions/string_extension.dart';
+import '../../../../l10n/app_localizations.g.dart';
 
 /// Login form widget
 /// Handles user input for login
@@ -60,7 +61,7 @@ class _LoginFormState extends State<LoginForm> {
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
-              labelText: 'Email',
+              labelText: context.t.authEmail,
               hintText: 'Enter your email',
               prefixIcon: const Icon(Icons.email_outlined),
               border: OutlineInputBorder(
@@ -69,10 +70,10 @@ class _LoginFormState extends State<LoginForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your email';
+                return context.t.validationRequired;
               }
               if (!value.isValidEmail) {
-                return 'Please enter a valid email';
+                return context.t.validationEmailInvalid;
               }
               return null;
             },
@@ -85,7 +86,7 @@ class _LoginFormState extends State<LoginForm> {
             controller: _passwordController,
             obscureText: _obscurePassword,
             decoration: InputDecoration(
-              labelText: 'Password',
+              labelText: context.t.authPassword,
               hintText: 'Enter your password',
               prefixIcon: const Icon(Icons.lock_outline),
               suffixIcon: IconButton(
@@ -98,10 +99,10 @@ class _LoginFormState extends State<LoginForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your password';
+                return context.t.validationRequired;
               }
               if (value.length < 6) {
-                return 'Password must be at least 6 characters';
+                return context.t.validationPasswordTooShort;
               }
               return null;
             },
@@ -113,7 +114,7 @@ class _LoginFormState extends State<LoginForm> {
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
               return CustomButton(
-                text: 'Login',
+                text: context.t.authLogin,
                 isLoading: state is AuthLoading,
                 onPressed: _submitForm,
               );
@@ -127,7 +128,7 @@ class _LoginFormState extends State<LoginForm> {
             onPressed: () {
               // TODO: Navigate to forgot password
             },
-            child: const Text('Forgot Password?'),
+            child: Text(context.t.authForgotPassword),
           ),
         ],
       ),
