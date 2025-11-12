@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../l10n/app_localizations.g.dart';
 
 /// Extension methods on BuildContext
 extension ContextExtension on BuildContext {
@@ -26,6 +27,9 @@ extension ContextExtension on BuildContext {
 
   /// Get color scheme
   ColorScheme get colorScheme => Theme.of(this).colorScheme;
+
+  /// Get localizations
+  AppLocalizations get l10n => AppLocalizations.of(this);
 
   /// Show snackbar
   void showSnackBar(

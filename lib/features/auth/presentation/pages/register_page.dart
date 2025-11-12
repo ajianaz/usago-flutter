@@ -4,8 +4,9 @@ import 'package:auto_route/auto_route.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/register_form.dart';
-import '../../../../core/extensions/context_extension.dart';
 import '../../../../app/router.dart';
+import '../../../../l10n/app_localizations.g.dart';
+import '../../../../core/extensions/context_extension.dart';
 
 /// Register page
 /// Handles user registration
@@ -17,7 +18,7 @@ class RegisterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register'),
+        title: Text(AppLocalizationsExtension(context).t.authRegister),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -48,12 +49,12 @@ class RegisterPage extends StatelessWidget {
                 children: [
                   const SizedBox(height: 60),
                   Text(
-                    'Create Account',
+                    AppLocalizationsExtension(context).t.authCreateAccount,
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Sign up to get started',
+                    AppLocalizationsExtension(context).t.authSignUpToContinue,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 40),
@@ -62,12 +63,12 @@ class RegisterPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Already have an account?'),
+                      Text(AppLocalizationsExtension(context).t.authAlreadyHaveAccount),
                       TextButton(
                         onPressed: () {
                           context.router.pushNamed('/login');
                         },
-                        child: const Text('Login'),
+                        child: Text(AppLocalizationsExtension(context).t.authLogin),
                       ),
                     ],
                   ),

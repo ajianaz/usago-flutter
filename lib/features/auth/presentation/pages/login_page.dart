@@ -4,8 +4,10 @@ import 'package:auto_route/auto_route.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/login_form.dart';
-import '../../../../core/extensions/context_extension.dart';
 import '../../../../app/router.dart';
+import '../../../../l10n/app_localizations.g.dart';
+import '../../../../shared/widgets/language_switcher.dart';
+import '../../../../core/extensions/context_extension.dart';
 
 /// Login page
 /// Handles user authentication
@@ -17,10 +19,16 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: Text(AppLocalizationsExtension(context).t.authLogin),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: const LanguageSwitcher(),
+          ),
+        ],
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -48,12 +56,12 @@ class LoginPage extends StatelessWidget {
                 children: [
                   const SizedBox(height: 60),
                   Text(
-                    'Welcome Back',
+                    AppLocalizationsExtension(context).t.authWelcomeBack,
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Sign in to continue',
+                    AppLocalizationsExtension(context).t.authSignInToContinue,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 40),
@@ -62,12 +70,12 @@ class LoginPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Don\'t have an account?'),
+                      Text(AppLocalizationsExtension(context).t.authDontHaveAccount),
                       TextButton(
                         onPressed: () {
                           context.router.pushNamed('/register');
                         },
-                        child: const Text('Register'),
+                        child: Text(AppLocalizationsExtension(context).t.authRegister),
                       ),
                     ],
                   ),
