@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../di/injection_container.dart';
+import '../services/localization_service.dart';
 import '../../l10n/app_localizations.g.dart';
 
 /// Extension methods on BuildContext
@@ -30,6 +32,12 @@ extension ContextExtension on BuildContext {
 
   /// Get localizations
   AppLocalizations get l10n => AppLocalizations.of(this);
+
+  /// Get localization service
+  LocalizationService get l10nService => getIt<LocalizationService>();
+
+  /// Get localized string by key
+  String tr(String key) => l10nService.getString(key);
 
   /// Show snackbar
   void showSnackBar(

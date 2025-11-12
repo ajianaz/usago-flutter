@@ -5,7 +5,6 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/register_form.dart';
 import '../../../../app/router.dart';
-import '../../../../l10n/app_localizations.g.dart';
 import '../../../../core/extensions/context_extension.dart';
 
 /// Register page
@@ -18,7 +17,7 @@ class RegisterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizationsExtension(context).t.authRegister),
+        title: Text(context.tr('authRegister')),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -49,12 +48,12 @@ class RegisterPage extends StatelessWidget {
                 children: [
                   const SizedBox(height: 60),
                   Text(
-                    AppLocalizationsExtension(context).t.authCreateAccount,
+                    context.tr('authCreateAccount'),
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    AppLocalizationsExtension(context).t.authSignUpToContinue,
+                    context.tr('authSignUpToContinue'),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 40),
@@ -63,12 +62,12 @@ class RegisterPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(AppLocalizationsExtension(context).t.authAlreadyHaveAccount),
+                      Text(context.tr('authAlreadyHaveAccount')),
                       TextButton(
                         onPressed: () {
                           context.router.pushNamed('/login');
                         },
-                        child: Text(AppLocalizationsExtension(context).t.authLogin),
+                        child: Text(context.tr('authLogin')),
                       ),
                     ],
                   ),

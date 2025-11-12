@@ -5,7 +5,6 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/login_form.dart';
 import '../../../../app/router.dart';
-import '../../../../l10n/app_localizations.g.dart';
 import '../../../../shared/widgets/language_switcher.dart';
 import '../../../../core/extensions/context_extension.dart';
 
@@ -19,7 +18,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizationsExtension(context).t.authLogin),
+        title: Text(context.tr('authLogin')),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -56,12 +55,12 @@ class LoginPage extends StatelessWidget {
                 children: [
                   const SizedBox(height: 60),
                   Text(
-                    AppLocalizationsExtension(context).t.authWelcomeBack,
+                    context.tr('authWelcomeBack'),
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    AppLocalizationsExtension(context).t.authSignInToContinue,
+                    context.tr('authSignInToContinue'),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 40),
@@ -70,12 +69,12 @@ class LoginPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(AppLocalizationsExtension(context).t.authDontHaveAccount),
+                      Text(context.tr('authDontHaveAccount')),
                       TextButton(
                         onPressed: () {
                           context.router.pushNamed('/register');
                         },
-                        child: Text(AppLocalizationsExtension(context).t.authRegister),
+                        child: Text(context.tr('authRegister')),
                       ),
                     ],
                   ),

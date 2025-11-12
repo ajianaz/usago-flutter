@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/di/injection_container.dart';
 import '../../core/services/locale_service.dart';
-import '../../l10n/app_localizations.g.dart';
+import '../../core/extensions/context_extension.dart';
 
 /// Language switcher widget
 /// Allows users to switch between supported languages
@@ -58,12 +58,12 @@ class LanguageSwitcher extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizationsExtension(context).t.commonSave),
+          title: Text(context.tr('commonSave')),
           content: Text('Change language to ${getIt<LocaleService>().getLocaleDisplayName(locale)}?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizationsExtension(context).t.commonCancel),
+              child: Text(context.tr('commonCancel')),
             ),
             TextButton(
               onPressed: () {
@@ -72,7 +72,7 @@ class LanguageSwitcher extends StatelessWidget {
                 getIt<LocaleService>().changeLocale(locale);
                 _showLanguageChangedSnackBar(context, locale);
               },
-              child: Text(AppLocalizationsExtension(context).t.commonOk),
+              child: Text(context.tr('commonOk')),
             ),
           ],
         );
