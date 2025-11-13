@@ -55,8 +55,8 @@ class _RegisterFormState extends State<RegisterForm> {
           TextFormField(
             controller: _nameController,
             decoration: InputDecoration(
-              labelText: context.tr('name'),
-              hintText: context.tr('enterYourName'),
+              labelText: context.t.name,
+              hintText: context.t.enterYourName,
               prefixIcon: Icon(
                 FontAwesomeIcons.user,
                 size: 20,
@@ -71,7 +71,7 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.tr('validationRequired');
+                return context.t.validationRequired;
               }
               return null;
             },
@@ -82,8 +82,8 @@ class _RegisterFormState extends State<RegisterForm> {
           TextFormField(
             controller: _emailController,
             decoration: InputDecoration(
-              labelText: context.tr('authEmail'),
-              hintText: context.tr('enterYourEmail'),
+              labelText: context.t.authEmail,
+              hintText: context.t.enterYourEmail,
               prefixIcon: Icon(
                 FontAwesomeIcons.envelope,
                 size: 20,
@@ -99,10 +99,10 @@ class _RegisterFormState extends State<RegisterForm> {
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.tr('validationRequired');
+                return context.t.validationRequired;
               }
               if (!value.isValidEmail) {
-                return context.tr('validationEmailInvalid');
+                return context.t.validationEmailInvalid;
               }
               return null;
             },
@@ -114,8 +114,8 @@ class _RegisterFormState extends State<RegisterForm> {
             controller: _passwordController,
             obscureText: _obscurePassword,
             decoration: InputDecoration(
-              labelText: context.tr('authPassword'),
-              hintText: context.tr('enterYourPassword'),
+              labelText: context.t.authPassword,
+              hintText: context.t.enterYourPassword,
               prefixIcon: Icon(
                 FontAwesomeIcons.lock,
                 size: 20,
@@ -141,10 +141,10 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.tr('validationRequired');
+                return context.t.validationRequired;
               }
               if (value.length < 6) {
-                return context.tr('validationPasswordTooShort');
+                return context.t.validationPasswordTooShort;
               }
               return null;
             },
@@ -156,8 +156,8 @@ class _RegisterFormState extends State<RegisterForm> {
             controller: _confirmPasswordController,
             obscureText: _obscureConfirmPassword,
             decoration: InputDecoration(
-              labelText: context.tr('confirmPassword'),
-              hintText: context.tr('confirmYourPassword'),
+              labelText: context.t.confirmPassword,
+              hintText: context.t.confirmYourPassword,
               prefixIcon: Icon(
                 FontAwesomeIcons.lock,
                 size: 20,
@@ -183,10 +183,10 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.tr('validationRequired');
+                return context.t.validationRequired;
               }
               if (value != _passwordController.text) {
-                return context.tr('passwordsDoNotMatch');
+                return context.t.passwordsDoNotMatch;
               }
               return null;
             },
@@ -197,7 +197,7 @@ class _RegisterFormState extends State<RegisterForm> {
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
               return CustomButton(
-                text: context.tr('authRegister'),
+                text: context.t.authRegister,
                 isLoading: state is AuthLoading,
                 onPressed: _submitForm,
               );

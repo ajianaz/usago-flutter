@@ -19,7 +19,7 @@ class RegisterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.tr('authRegister')),
+        title: Text(context.t.authRegister),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -60,12 +60,12 @@ class RegisterPage extends StatelessWidget {
                 children: [
                   const SizedBox(height: 60),
                   Text(
-                    context.tr('authCreateAccount'),
+                    context.t.authCreateAccount,
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    context.tr('authSignUpToContinue'),
+                    context.t.authSignUpToContinue,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 40),
@@ -74,12 +74,12 @@ class RegisterPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(context.tr('authAlreadyHaveAccount')),
+                      Text(context.t.authAlreadyHaveAccount),
                       TextButton(
                         onPressed: () {
                           context.router.pushNamed('/login');
                         },
-                        child: Text(context.tr('authLogin')),
+                        child: Text(context.t.authLogin),
                       ),
                     ],
                   ),

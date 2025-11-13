@@ -4,7 +4,7 @@ class AppConstants {
   static const String appVersion = '1.0.0';
 
   // API
-  static const String apiBaseUrl = 'http://localhost:3000';
+  static const String apiBaseUrl = 'http://192.168.45.66:3000';
   static const Duration apiTimeout = Duration(seconds: 30);
 
   // Better Auth Endpoints

@@ -19,7 +19,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.tr('authLogin')),
+        title: Text(context.t.authLogin),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -60,12 +60,12 @@ class LoginPage extends StatelessWidget {
                 children: [
                   const SizedBox(height: 60),
                   Text(
-                    context.tr('authWelcomeBack'),
+                    context.t.authWelcomeBack,
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    context.tr('authSignInToContinue'),
+                    context.t.authSignInToContinue,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 40),
@@ -74,12 +74,12 @@ class LoginPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(context.tr('authDontHaveAccount')),
+                      Text(context.t.authDontHaveAccount),
                       TextButton(
                         onPressed: () {
                           context.router.pushNamed('/register');
                         },
-                        child: Text(context.tr('authRegister')),
+                        child: Text(context.t.authRegister),
                       ),
                     ],
                   ),

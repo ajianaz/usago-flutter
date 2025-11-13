@@ -62,8 +62,8 @@ class _LoginFormState extends State<LoginForm> {
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
-              labelText: context.tr('authEmail'),
-              hintText: context.tr('enterYourEmail'),
+              labelText: context.t.authEmail,
+              hintText: context.t.enterYourEmail,
               prefixIcon: Icon(
                 FontAwesomeIcons.envelope,
                 size: 20,
@@ -78,10 +78,10 @@ class _LoginFormState extends State<LoginForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.tr('validationRequired');
+                return context.t.validationRequired;
               }
               if (!value.isValidEmail) {
-                return context.tr('validationEmailInvalid');
+                return context.t.validationEmailInvalid;
               }
               return null;
             },
@@ -94,8 +94,8 @@ class _LoginFormState extends State<LoginForm> {
             controller: _passwordController,
             obscureText: _obscurePassword,
             decoration: InputDecoration(
-              labelText: context.tr('authPassword'),
-              hintText: context.tr('enterYourPassword'),
+              labelText: context.t.authPassword,
+              hintText: context.t.enterYourPassword,
               prefixIcon: Icon(
                 FontAwesomeIcons.lock,
                 size: 20,
@@ -117,10 +117,10 @@ class _LoginFormState extends State<LoginForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.tr('validationRequired');
+                return context.t.validationRequired;
               }
               if (value.length < 6) {
-                return context.tr('validationPasswordTooShort');
+                return context.t.validationPasswordTooShort;
               }
               return null;
             },
@@ -132,7 +132,7 @@ class _LoginFormState extends State<LoginForm> {
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
               return CustomButton(
-                text: context.tr('authLogin'),
+                text: context.t.authLogin,
                 isLoading: state is AuthLoading,
                 onPressed: _submitForm,
               );
@@ -146,7 +146,7 @@ class _LoginFormState extends State<LoginForm> {
             onPressed: () {
               // TODO: Navigate to forgot password
             },
-            child: Text(context.tr('authForgotPassword')),
+            child: Text(context.t.authForgotPassword),
           ),
         ],
       ),
