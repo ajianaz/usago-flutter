@@ -1,44 +1,48 @@
+import 'api_constants.dart';
+import 'auth_endpoints.dart';
+import 'storage_constants.dart';
+
 class AppConstants {
-  // App
+  // App Information
   static const String appName = 'Usago';
   static const String appVersion = '1.0.0';
 
-  // API
-  static const String apiBaseUrl = 'http://192.168.45.66:3000';
-  static const Duration apiTimeout = Duration(seconds: 30);
+  // API Configuration (delegated to ApiConstants)
+  static String get apiBaseUrl => ApiConstants.apiBaseUrl;
+  static Duration get apiTimeout => ApiConstants.apiTimeout;
 
-  // Better Auth Endpoints
-  static const String signInEndpoint = '/api/auth/sign-in/email';
-  static const String signUpEndpoint = '/api/auth/sign-up/email';
-  static const String signOutEndpoint = '/api/auth/sign-out';
-  static const String refreshTokenEndpoint = '/api/auth/refresh-token';
-  static const String forgotPasswordEndpoint = '/api/auth/forgot-password';
-  static const String resetPasswordEndpoint = '/api/auth/reset-password';
-  static const String verifyEmailEndpoint = '/api/auth/verify-email';
-  static const String resendVerificationEmailEndpoint = '/api/auth/resend-verification';
-  static const String changePasswordEndpoint = '/api/auth/change-password';
-  static const String updateProfileEndpoint = '/api/auth/profile';
-  static const String deleteAccountEndpoint = '/api/auth/account';
-
-  // Storage Keys
-  static const String authTokenKey = 'auth_token';
-  static const String bearerTokenKey = 'bearer_token';
-  static const String userDataKey = 'user_data';
-  static const String onboardingCompletedKey = 'onboarding_completed';
-
-  // UI
+  // UI Constants
   static const double defaultPadding = 16.0;
   static const double defaultBorderRadius = 8.0;
   static const Duration defaultAnimationDuration = Duration(milliseconds: 300);
 
-  // Validation
+  // Validation Constants
   static const int minPasswordLength = 6;
   static const int maxPasswordLength = 50;
   static const int maxUsernameLength = 30;
 
-  // Pagination
+  // Pagination Constants
   static const int defaultPageSize = 20;
 
-  // Cache
+  // Cache Constants
   static const Duration cacheExpiration = Duration(hours: 24);
+
+  // Storage Keys (delegated to StorageConstants)
+  static String get authTokenKey => StorageConstants.authTokenKey;
+  static String get bearerTokenKey => StorageConstants.bearerTokenKey;
+  static String get userDataKey => StorageConstants.userDataKey;
+  static String get onboardingCompletedKey => StorageConstants.onboardingCompletedKey;
+
+  // Auth Endpoints (delegated to AuthEndpoints)
+  static String get signInEndpoint => AuthEndpoints.signIn;
+  static String get signUpEndpoint => AuthEndpoints.signUp;
+  static String get signOutEndpoint => AuthEndpoints.signOut;
+  static String get refreshTokenEndpoint => AuthEndpoints.refreshToken;
+  static String get forgotPasswordEndpoint => AuthEndpoints.forgotPassword;
+  static String get resetPasswordEndpoint => AuthEndpoints.resetPassword;
+  static String get verifyEmailEndpoint => AuthEndpoints.verifyEmail;
+  static String get resendVerificationEmailEndpoint => AuthEndpoints.resendVerificationEmail;
+  static String get changePasswordEndpoint => AuthEndpoints.changePassword;
+  static String get updateProfileEndpoint => AuthEndpoints.updateProfile;
+  static String get deleteAccountEndpoint => AuthEndpoints.deleteAccount;
 }
