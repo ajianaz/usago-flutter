@@ -7,7 +7,7 @@ import '../core/services/locale_service.dart';
 import '../core/helpers/instant_theme_helper.dart';
 import '../core/helpers/instant_locale_helper.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
-import '../l10n/app_localizations.g.dart';
+import '../i18n/app_localizations.g.dart';
 import 'router.dart';
 
 class MyApp extends StatelessWidget {

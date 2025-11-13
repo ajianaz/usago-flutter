@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../domain/entities/menu_item.dart';
@@ -67,8 +68,8 @@ class FeatureGrid extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.category_outlined,
+          FaIcon(
+            FontAwesomeIcons.layerGroup,
             size: 64,
             color: Colors.grey[400],
           ),

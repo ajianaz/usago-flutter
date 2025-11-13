@@ -811,6 +811,7 @@ class _LoginFormState extends State<LoginForm> {
    flutter clean
    flutter packages get
    flutter packages pub run slang_build_runner --delete-conflicting-outputs
+   dart run build_runner build --delete-conflicting-outputs
    ```
 
 2. **Missing Translations**

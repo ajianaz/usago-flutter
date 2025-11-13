@@ -133,6 +133,9 @@ class AppTheme {
         titleTextStyle: AppTextStyles.headline4?.copyWith(
           color: const Color(0xFFFFFFFF),
         ),
+        iconTheme: const IconThemeData(
+          color: Color(0xFFFFFFFF),
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -191,6 +194,8 @@ class AppTheme {
         hintStyle: AppTextStyles.inputHint?.copyWith(
           color: const Color(0xFF666666),
         ),
+        prefixIconColor: const Color(0xFFAAAAAA),
+        suffixIconColor: const Color(0xFFAAAAAA),
         contentPadding: AppSpacing.paddingAllMd,
       ),
       cardTheme: CardTheme(
@@ -236,6 +241,26 @@ class AppTheme {
         color: AppColors.primary,
       ),
       scaffoldBackgroundColor: const Color(0xFF121212),
+      iconTheme: const IconThemeData(
+        color: Color(0xFFFFFFFF),
+      ),
+      textTheme: TextTheme(
+        displayLarge: AppTextStyles.headline1?.copyWith(color: const Color(0xFFFFFFFF)),
+        displayMedium: AppTextStyles.headline2?.copyWith(color: const Color(0xFFFFFFFF)),
+        displaySmall: AppTextStyles.headline3?.copyWith(color: const Color(0xFFFFFFFF)),
+        headlineLarge: AppTextStyles.headline4?.copyWith(color: const Color(0xFFFFFFFF)),
+        headlineMedium: AppTextStyles.headline5?.copyWith(color: const Color(0xFFFFFFFF)),
+        headlineSmall: AppTextStyles.headline6?.copyWith(color: const Color(0xFFFFFFFF)),
+        titleLarge: AppTextStyles.headline6?.copyWith(color: const Color(0xFFFFFFFF)),
+        titleMedium: AppTextStyles.bodyLarge?.copyWith(color: const Color(0xFFFFFFFF)),
+        titleSmall: AppTextStyles.bodyMedium?.copyWith(color: const Color(0xFFFFFFFF)),
+        bodyLarge: AppTextStyles.bodyLarge?.copyWith(color: const Color(0xFFFFFFFF)),
+        bodyMedium: AppTextStyles.bodyMedium?.copyWith(color: const Color(0xFFE0E0E0)),
+        bodySmall: AppTextStyles.bodySmall?.copyWith(color: const Color(0xFFE0E0E0)),
+        labelLarge: AppTextStyles.buttonLarge?.copyWith(color: const Color(0xFFFFFFFF)),
+        labelMedium: AppTextStyles.buttonMedium?.copyWith(color: const Color(0xFFFFFFFF)),
+        labelSmall: AppTextStyles.buttonSmall?.copyWith(color: const Color(0xFFFFFFFF)),
+      ),
     );
   }
 }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/di/injection_container.dart';
+import '../../../../i18n/app_localizations.g.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
-import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
@@ -14,6 +15,10 @@ import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
 import '../widgets/user_header.dart';
 import '../widgets/feature_grid.dart';
+import '../../../../core/extensions/context_extension.dart';
+import '../../../../shared/widgets/language_switcher.dart';
+import '../../../../shared/widgets/theme_switcher.dart';
+import '../../../../app/router.dart';
 
 /// Home page
 /// Main dashboard after user login
@@ -55,138 +60,117 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Usago',
-          style: AppTextStyles.headline5.copyWith(
-            color: AppColors.textPrimary,
-          ),
+          AppLocalizationsExtension(context).t.authLogin,
+          style: Theme.of(context).textTheme.headlineMedium,
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: const ThemeSwitcher(),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: const LanguageSwitcher(),
+          ),
           IconButton(
-            icon: Icon(
-              Icons.logout,
+            icon: FaIcon(
+              FontAwesomeIcons.rightFromBracket,
               color: AppColors.textPrimary,
             ),
             onPressed: () {
-              // TODO: Implement logout
               context.read<AuthBloc>().add(const LogoutEvent());
             },
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          context.read<HomeBloc>().add(const RefreshHomeData());
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, authState) {
+          if (authState is AuthFailure) {
+            context.showErrorSnackBar(authState.message);
+          }
         },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: AppSpacing.paddingScreen,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // User Header Section
-              BlocBuilder<AuthBloc, AuthState>(
-                builder: (context, authState) {
-                  return BlocBuilder<HomeBloc, HomeState>(
-                    builder: (context, homeState) {
-                      return UserHeader(
-                        user: authState is AuthSuccess ? authState.user : null,
-                        userDashboard: homeState is HomeLoaded ? homeState.userDashboard : null,
-                        onProfileTap: () {
-                          // TODO: Navigate to profile
-                        },
-                        onNotificationTap: () {
-                          // TODO: Navigate to notifications
+        child: BlocListener<HomeBloc, HomeState>(
+          listener: (context, homeState) {
+            if (homeState is HomeFailure) {
+              context.showErrorSnackBar(homeState.message);
+            }
+          },
+          child: RefreshIndicator(
+            onRefresh: () async {
+              context.read<HomeBloc>().add(const RefreshHomeData());
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  // User Header Section
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, authState) {
+                      return BlocBuilder<HomeBloc, HomeState>(
+                        builder: (context, homeState) {
+                          return UserHeader(
+                            user: authState is AuthSuccess ? authState.user : null,
+                            userDashboard: homeState is HomeLoaded ? homeState.userDashboard : null,
+                            onProfileTap: () {
+                              context.router.pushNamed('/profile');
+                            },
+                            onNotificationTap: () {
+                              context.router.pushNamed('/notifications');
+                            },
+                          );
                         },
                       );
                     },
-                  );
-                },
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Welcome Section
+                  Text(
+                    AppLocalizationsExtension(context).t.authWelcomeBack,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  Text(
+                    AppLocalizationsExtension(context).t.authSignInToContinue,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Menu Grid Section
+                  BlocBuilder<HomeBloc, HomeState>(
+                    builder: (context, homeState) {
+                      if (homeState is HomeLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      if (homeState is HomeLoaded) {
+                        return FeatureGrid(
+                          menuItems: homeState.filteredMenuItems,
+                          onMenuTap: (menuItem) {
+                            context.read<HomeBloc>().add(NavigateToMenu(menuItem));
+                            context.router.pushNamed(menuItem.route);
+                          },
+                        );
+                      }
+
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
               ),
-
-              AppSpacing.verticalGapLg,
-
-              // Welcome Section
-              Text(
-                'Apa yang ingin Anda lakukan hari ini? 🎯',
-                style: AppTextStyles.headline4.copyWith(
-                  color: AppColors.textPrimary,
-                ),
-              ),
-
-              AppSpacing.verticalGapSm,
-
-              Text(
-                'Pilih fitur yang tersedia di bawah ini',
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-
-              AppSpacing.verticalGapLg,
-
-              // Menu Grid Section
-              BlocBuilder<HomeBloc, HomeState>(
-                builder: (context, homeState) {
-                  if (homeState is HomeLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-
-                  if (homeState is HomeLoaded) {
-                    return FeatureGrid(
-                      menuItems: homeState.filteredMenuItems,
-                      onMenuTap: (menuItem) {
-                        context.read<HomeBloc>().add(NavigateToMenu(menuItem));
-                        // TODO: Navigate to menu route
-                        // context.router.pushNamed(menuItem.route);
-                      },
-                    );
-                  }
-
-                  if (homeState is HomeFailure) {
-                    return Center(
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.error_outline,
-                            size: 64,
-                            color: AppColors.error,
-                          ),
-                          AppSpacing.verticalGapMd,
-                          Text(
-                            'Terjadi kesalahan',
-                            style: AppTextStyles.headline6.copyWith(
-                              color: AppColors.error,
-                            ),
-                          ),
-                          AppSpacing.verticalGapSm,
-                          Text(
-                            homeState.message,
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          AppSpacing.verticalGapMd,
-                          ElevatedButton(
-                            onPressed: () {
-                              context.read<HomeBloc>().add(const LoadHomeData());
-                            },
-                            child: const Text('Coba Lagi'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return const SizedBox.shrink();
-                },
-              ),
-            ],
+            ),
           ),
         ),
       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../l10n/app_localizations.g.dart';
+import '../../i18n/app_localizations.g.dart';
 
 /// Extension methods on BuildContext
 extension ContextExtension on BuildContext {

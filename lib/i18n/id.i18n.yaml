@@ -64,3 +64,20 @@ common:
   loading: Memuat...
   retry: Coba Lagi
   close: Tutup
+
+# Home
+home:
+  welcome_message: Apa yang ingin Anda lakukan hari ini? 🎯
+  select_feature: Pilih fitur yang tersedia di bawah ini
+  error_occurred: Terjadi kesalahan
+  no_menu_in_category: Tidak ada menu dalam kategori {category}
+  no_menu_available: Tidak ada menu tersedia
+  contact_admin: Hubungi administrator untuk mengakses fitur ini
+  you_have_pending_items: Anda memiliki {count} item yang perlu ditangani
+  welcome_back: Selamat Datang! 👋
+  management: Manajemen
+  operations: Operasional
+  reports: Laporan
+  settings: Pengaturan
+  all_menu: Semua Menu
+  logout: Keluar

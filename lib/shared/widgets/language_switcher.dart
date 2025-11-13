@@ -47,7 +47,7 @@ class _LanguageSwitcherState extends State<LanguageSwitcher> {
                     if (isSelected)
                       const Padding(
                         padding: EdgeInsets.only(right: 8.0),
-                        child: Icon(Icons.check, color: Colors.blue, size: 16),
+                        child: FaIcon(FontAwesomeIcons.check, color: Colors.blue, size: 16),
                       )
                     else
                       const SizedBox(width: 24),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
@@ -122,8 +123,8 @@ class UserHeader extends StatelessWidget {
                       AppSpacing.verticalGapXs,
                       Row(
                         children: [
-                          Icon(
-                            Icons.store,
+                          FaIcon(
+                            FontAwesomeIcons.store,
                             size: 16,
                             color: AppColors.onPrimary.withOpacity(0.8),
                           ),
@@ -152,8 +153,8 @@ class UserHeader extends StatelessWidget {
                     ),
                     child: Stack(
                       children: [
-                        Icon(
-                          Icons.notifications,
+                        FaIcon(
+                          FontAwesomeIcons.bell,
                           color: AppColors.onPrimary,
                           size: 24,
                         ),
@@ -201,8 +202,8 @@ class UserHeader extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.warning,
+                  FaIcon(
+                    FontAwesomeIcons.triangleExclamation,
                     color: AppColors.warning,
                     size: 20,
                   ),

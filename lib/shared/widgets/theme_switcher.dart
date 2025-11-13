@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/helpers/instant_theme_helper.dart';
 
 /// Theme switcher widget with no delay
@@ -25,8 +26,8 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> {
       valueListenable: _themeHelper.themeNotifier,
       builder: (context, themeMode, child) {
         return PopupMenuButton<ThemeMode>(
-          icon: Icon(
-            Icons.brightness_6,
+          icon: FaIcon(
+            FontAwesomeIcons.circleHalfStroke,
             color: Theme.of(context).iconTheme.color,
           ),
           tooltip: 'Change theme',
@@ -39,12 +40,12 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> {
                 value: ThemeMode.light,
                 child: Row(
                   children: [
-                    Icon(Icons.light_mode, size: 20),
+                    FaIcon(FontAwesomeIcons.sun, size: 20),
                     const SizedBox(width: 8),
                     Text('Light'),
                     if (themeMode == ThemeMode.light) ...[
                       const Spacer(),
-                      Icon(Icons.check, color: Colors.blue, size: 16),
+                      FaIcon(FontAwesomeIcons.check, color: Colors.blue, size: 16),
                     ],
                   ],
                 ),
@@ -53,12 +54,12 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> {
                 value: ThemeMode.dark,
                 child: Row(
                   children: [
-                    Icon(Icons.dark_mode, size: 20),
+                    FaIcon(FontAwesomeIcons.moon, size: 20),
                     const SizedBox(width: 8),
                     Text('Dark'),
                     if (themeMode == ThemeMode.dark) ...[
                       const Spacer(),
-                      Icon(Icons.check, color: Colors.blue, size: 16),
+                      FaIcon(FontAwesomeIcons.check, color: Colors.blue, size: 16),
                     ],
                   ],
                 ),
@@ -67,12 +68,12 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> {
                 value: ThemeMode.system,
                 child: Row(
                   children: [
-                    Icon(Icons.settings_brightness, size: 20),
+                    FaIcon(FontAwesomeIcons.desktop, size: 20),
                     const SizedBox(width: 8),
                     Text('System'),
                     if (themeMode == ThemeMode.system) ...[
                       const Spacer(),
-                      Icon(Icons.check, color: Colors.blue, size: 16),
+                      FaIcon(FontAwesomeIcons.check, color: Colors.blue, size: 16),
                     ],
                   ],
                 ),

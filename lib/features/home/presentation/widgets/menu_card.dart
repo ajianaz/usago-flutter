@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
@@ -99,102 +100,102 @@ class MenuCard extends StatelessWidget {
   }
 
   IconData _getIconData(String iconName) {
-    // Map icon name to IconData
+    // Map icon name to FontAwesome IconData
     switch (iconName.toLowerCase()) {
       case 'dashboard':
-        return Icons.dashboard;
+        return FontAwesomeIcons.gaugeHigh;
       case 'people':
-        return Icons.people;
+        return FontAwesomeIcons.users;
       case 'inventory':
-        return Icons.inventory;
+        return FontAwesomeIcons.boxesStacked;
       case 'analytics':
-        return Icons.analytics;
+        return FontAwesomeIcons.chartSimple;
       case 'settings':
-        return Icons.settings;
+        return FontAwesomeIcons.gear;
       case 'reports':
-        return Icons.assessment;
+        return FontAwesomeIcons.fileLines;
       case 'orders':
-        return Icons.shopping_cart;
+        return FontAwesomeIcons.cartShopping;
       case 'products':
-        return Icons.category;
+        return FontAwesomeIcons.box;
       case 'customers':
-        return Icons.person;
+        return FontAwesomeIcons.user;
       case 'finance':
-        return Icons.account_balance;
+        return FontAwesomeIcons.moneyBillWave;
       case 'notifications':
-        return Icons.notifications;
+        return FontAwesomeIcons.bell;
       case 'calendar':
-        return Icons.calendar_today;
+        return FontAwesomeIcons.calendar;
       case 'document':
-        return Icons.description;
+        return FontAwesomeIcons.file;
       case 'help':
-        return Icons.help;
+        return FontAwesomeIcons.circleQuestion;
       case 'security':
-        return Icons.security;
+        return FontAwesomeIcons.shieldHalved;
       case 'branch':
-        return Icons.store;
+        return FontAwesomeIcons.store;
       case 'brand':
-        return Icons.business;
+        return FontAwesomeIcons.building;
       case 'wallet':
-        return Icons.account_balance_wallet;
+        return FontAwesomeIcons.wallet;
       case 'payment':
-        return Icons.payment;
+        return FontAwesomeIcons.creditCard;
       case 'history':
-        return Icons.history;
+        return FontAwesomeIcons.clockRotateLeft;
       case 'search':
-        return Icons.search;
+        return FontAwesomeIcons.magnifyingGlass;
       case 'filter':
-        return Icons.filter_list;
+        return FontAwesomeIcons.filter;
       case 'add':
-        return Icons.add_circle;
+        return FontAwesomeIcons.circlePlus;
       case 'edit':
-        return Icons.edit;
+        return FontAwesomeIcons.penToSquare;
       case 'delete':
-        return Icons.delete;
+        return FontAwesomeIcons.trash;
       case 'download':
-        return Icons.download;
+        return FontAwesomeIcons.download;
       case 'upload':
-        return Icons.upload;
+        return FontAwesomeIcons.upload;
       case 'print':
-        return Icons.print;
+        return FontAwesomeIcons.print;
       case 'share':
-        return Icons.share;
+        return FontAwesomeIcons.share;
       case 'favorite':
-        return Icons.favorite;
+        return FontAwesomeIcons.heart;
       case 'star':
-        return Icons.star;
+        return FontAwesomeIcons.star;
       case 'home':
-        return Icons.home;
+        return FontAwesomeIcons.house;
       case 'logout':
-        return Icons.logout;
+        return FontAwesomeIcons.rightFromBracket;
       case 'login':
-        return Icons.login;
+        return FontAwesomeIcons.rightToBracket;
       case 'menu':
-        return Icons.menu;
+        return FontAwesomeIcons.bars;
       case 'close':
-        return Icons.close;
+        return FontAwesomeIcons.xmark;
       case 'check':
-        return Icons.check;
+        return FontAwesomeIcons.check;
       case 'warning':
-        return Icons.warning;
+        return FontAwesomeIcons.triangleExclamation;
       case 'error':
-        return Icons.error;
+        return FontAwesomeIcons.circleXmark;
       case 'info':
-        return Icons.info;
+        return FontAwesomeIcons.circleInfo;
       case 'success':
-        return Icons.check_circle;
+        return FontAwesomeIcons.circleCheck;
       case 'pending':
-        return Icons.pending;
+        return FontAwesomeIcons.hourglassHalf;
       case 'completed':
-        return Icons.task_alt;
+        return FontAwesomeIcons.circleCheck;
       case 'cancelled':
-        return Icons.cancel;
+        return FontAwesomeIcons.ban;
       case 'active':
-        return Icons.check_circle;
+        return FontAwesomeIcons.circleCheck;
       case 'inactive':
-        return Icons.cancel;
+        return FontAwesomeIcons.circlePause;
       default:
-        return Icons.apps;
+        return FontAwesomeIcons.cube;
     }
   }
 }
