@@ -1,18 +1,20 @@
+import '../config/app_config.dart';
+
 class ApiConstants {
-  // Base Configuration
-  static const String apiBaseUrl = 'http://127.0.0.1:3000';
-  static const Duration apiTimeout = Duration(seconds: 30);
-  static const String apiVersion = 'v1';
+  // Base Configuration (delegated to AppConfig)
+  static String get apiBaseUrl => AppConfig.apiBaseUrl;
+  static Duration get apiTimeout => AppConfig.apiTimeout;
+  static String get apiVersion => AppConfig.apiVersion;
 
-  // Headers
-  static const String contentTypeHeader = 'application/json';
-  static const String acceptHeader = 'application/json';
-  static const String bearerTokenHeader = 'Authorization';
+  // Headers (delegated to AppConfig)
+  static String get contentTypeHeader => AppConfig.contentTypeHeader;
+  static String get acceptHeader => AppConfig.acceptHeader;
+  static String get bearerTokenHeader => AppConfig.bearerTokenHeader;
 
-  // Response Codes
-  static const int successCode = 200;
-  static const int unauthorizedCode = 401;
-  static const int forbiddenCode = 403;
-  static const int notFoundCode = 404;
-  static const int serverErrorCode = 500;
+  // Response Codes (delegated to AppConfig)
+  static int get successCode => AppConfig.successCode;
+  static int get unauthorizedCode => AppConfig.unauthorizedCode;
+  static int get forbiddenCode => AppConfig.forbiddenCode;
+  static int get notFoundCode => AppConfig.notFoundCode;
+  static int get serverErrorCode => AppConfig.serverErrorCode;
 }
