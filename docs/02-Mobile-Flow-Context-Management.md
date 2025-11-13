@@ -23,7 +23,7 @@
 
 ## 🎯 **Purpose**
 
-Dokumen ini mendefinisikan alur flow mobile aplikasi Usago setelah user register dan login, serta manajemen konteks (brand, branch, user role) yang diperlukan untuk mendukung arsitektur Single Brand Multi-Branch.
+Dokumen ini mendefinisikan alur flow mobile aplikasi Usago setelah user register dan login, serta manajemen konteks (brand, branch, user role) yang diperlukan untuk mendukung arsitektur Single Brand Multi-Branch dengan **prioritas utama pada Brand & Branch management**.
 
 ---
 
@@ -678,11 +678,49 @@ class ContextBloc extends Bloc<ContextEvent, ContextState> {
 
 ## 📝 **Notes**
 
+## 🎯 **Updated Priority Implementation (Brand & Branch Focus)**
+
+### **Phase 1: Brand Management (Priority #1) 🏢**
+- **Brand Creation**: Setup new brand dengan automatic main branch creation
+- **Brand Selection**: Multi-brand user support dengan fast switching
+- **Brand Ownership**: Complete ownership transfer dan invitation system
+- **Brand Switching**: Context switching antar brands < 1 second
+
+### **Phase 2: Branch Management (Priority #2) 🏪**
+- **Branch Creation**: Multi-branch setup dengan hierarchy management
+- **Branch Selection**: Quick switching antar branches dalam brand
+- **Branch User Roles**: Role-based access control dengan permissions
+- **Branch Operations**: Daily business operations per branch
+
+### **Phase 3: Wallet Preparation (Priority #3) 💳**
+- **Wallet Infrastructure**: Multi-wallet setup untuk Indonesian SMEs
+- **Basic Transactions**: Simple inflow/outflow operations
+- **Integration Ready**: Prepare untuk advanced features
+
+### **Updated Implementation Flow**
+```mermaid
+graph TD
+    A[User Login] --> B{Has Brands?}
+    B -->|No| C[Create Brand + Main Branch]
+    B -->|Yes| D[Brand Selection]
+    C --> E[Brand Dashboard]
+    D --> E
+    E --> F{Has Multiple Branches?}
+    F -->|No| G[Single Branch Dashboard]
+    F -->|Yes| H[Branch Selection]
+    G --> I[Brand Operations]
+    H --> I
+    I --> J[Branch Operations]
+    J --> K[Wallet Preparation]
+```
+
 ### **Current Status (November 13, 2025)**
 - ✅ **Flow Defined**: Complete user journey flow telah didefinisikan
 - ✅ **Context Architecture**: UserContext dan ContextManager telah dirancang
 - ✅ **Security Flow**: Secure API client dengan context headers telah dirancang
 - ✅ **UI Components**: Brand dan branch selector widgets telah dirancang
+- ✅ **Brand & Branch Priority**: Implementation focus telah didefinisikan
+- ✅ **Wallet Preparation**: Infrastructure setup untuk wallet telah dirancang
 - 🔄 **Implementation**: Perlu implementasi di codebase mobile
 - 🔄 **Integration**: Perlu integrasi dengan existing auth system
 
