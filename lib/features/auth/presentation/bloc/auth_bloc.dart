@@ -5,6 +5,12 @@ import '../../domain/usecases/register_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/usecases/check_auth_usecase.dart';
 import '../../domain/usecases/update_profile_usecase.dart';
+import '../../domain/usecases/change_password_usecase.dart';
+import '../../domain/usecases/forgot_password_usecase.dart';
+import '../../domain/usecases/reset_password_usecase.dart';
+import '../../domain/usecases/verify_email_usecase.dart';
+import '../../domain/usecases/resend_verification_email_usecase.dart';
+import '../../domain/usecases/delete_account_usecase.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -15,16 +21,37 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUsecase _registerUsecase;
   final LogoutUsecase _logoutUsecase;
   final CheckAuthUsecase _checkAuthUsecase;
+  final UpdateProfileUsecase _updateProfileUsecase;
+  final ChangePasswordUsecase _changePasswordUsecase;
+  final ForgotPasswordUsecase _forgotPasswordUsecase;
+  final ResetPasswordUsecase _resetPasswordUsecase;
+  final VerifyEmailUsecase _verifyEmailUsecase;
+  final ResendVerificationEmailUsecase _resendVerificationEmailUsecase;
+  final DeleteAccountUsecase _deleteAccountUsecase;
 
   AuthBloc({
     required LoginUsecase loginUsecase,
     required RegisterUsecase registerUsecase,
     required LogoutUsecase logoutUsecase,
     required CheckAuthUsecase checkAuthUsecase,
+    required UpdateProfileUsecase updateProfileUsecase,
+    required ChangePasswordUsecase changePasswordUsecase,
+    required ForgotPasswordUsecase forgotPasswordUsecase,
+    required ResetPasswordUsecase resetPasswordUsecase,
+    required VerifyEmailUsecase verifyEmailUsecase,
+    required ResendVerificationEmailUsecase resendVerificationEmailUsecase,
+    required DeleteAccountUsecase deleteAccountUsecase,
   }) : _loginUsecase = loginUsecase,
         _registerUsecase = registerUsecase,
         _logoutUsecase = logoutUsecase,
         _checkAuthUsecase = checkAuthUsecase,
+        _updateProfileUsecase = updateProfileUsecase,
+        _changePasswordUsecase = changePasswordUsecase,
+        _forgotPasswordUsecase = forgotPasswordUsecase,
+        _resetPasswordUsecase = resetPasswordUsecase,
+        _verifyEmailUsecase = verifyEmailUsecase,
+        _resendVerificationEmailUsecase = resendVerificationEmailUsecase,
+        _deleteAccountUsecase = deleteAccountUsecase,
         super(const AuthInitial()) {
     // Register event handlers
     on<LoginEvent>(_onLoginEvent);
@@ -32,15 +59,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogoutEvent>(_onLogoutEvent);
     on<CheckAuthStatusEvent>(_onCheckAuthStatusEvent);
     on<UpdateProfileEvent>(_onUpdateProfileEvent);
+    on<ChangePasswordEvent>(_onChangePasswordEvent);
+    on<ForgotPasswordEvent>(_onForgotPasswordEvent);
+    on<ResetPasswordEvent>(_onResetPasswordEvent);
+    on<VerifyEmailEvent>(_onVerifyEmailEvent);
+    on<ResendVerificationEmailEvent>(_onResendVerificationEmailEvent);
+    on<DeleteAccountEvent>(_onDeleteAccountEvent);
   }
 
   // Check auth status on initialization
   @override
-  void onTransition(Transition<AuthState> transition) {
+  void onTransition(Transition<AuthEvent, AuthState> transition) {
     // Check auth status when BLoC is first created
-    if (transition.from == const AuthInitial() && transition.to is! AuthLoading) {
+    if (transition.currentState == const AuthInitial() && transition.nextState is! AuthLoading) {
       add(CheckAuthStatusEvent());
     }
+    super.onTransition(transition);
   }
 
   Future<void> _onLoginEvent(LoginEvent event, Emitter<AuthState> emit) async {
@@ -111,6 +145,90 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(result.fold(
       (failure) => AuthFailure(message: failure.message),
       (user) => ProfileUpdateSuccess(user: user),
+    ));
+  }
+
+  Future<void> _onChangePasswordEvent(ChangePasswordEvent event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+
+    final result = await _changePasswordUsecase(
+      ChangePasswordParams(
+        currentPassword: event.currentPassword,
+        newPassword: event.newPassword,
+      ),
+    );
+
+    emit(result.fold(
+      (failure) => AuthFailure(message: failure.message),
+      (_) => AuthSuccess(user: User.empty()),
+    ));
+  }
+
+  Future<void> _onForgotPasswordEvent(ForgotPasswordEvent event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+
+    final result = await _forgotPasswordUsecase(
+      ForgotPasswordParams(email: event.email),
+    );
+
+    emit(result.fold(
+      (failure) => AuthFailure(message: failure.message),
+      (_) => PasswordResetEmailSent(email: event.email),
+    ));
+  }
+
+  Future<void> _onResetPasswordEvent(ResetPasswordEvent event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+
+    final result = await _resetPasswordUsecase(
+      ResetPasswordParams(
+        token: event.token,
+        newPassword: event.newPassword,
+      ),
+    );
+
+    emit(result.fold(
+      (failure) => AuthFailure(message: failure.message),
+      (_) => const PasswordResetSuccess(),
+    ));
+  }
+
+  Future<void> _onVerifyEmailEvent(VerifyEmailEvent event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+
+    final result = await _verifyEmailUsecase(
+      VerifyEmailParams(token: event.token),
+    );
+
+    emit(result.fold(
+      (failure) => AuthFailure(message: failure.message),
+      (_) => const EmailVerificationSuccess(),
+    ));
+  }
+
+  Future<void> _onResendVerificationEmailEvent(ResendVerificationEmailEvent event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+
+    final result = await _resendVerificationEmailUsecase(
+      const ResendVerificationEmailParams(),
+    );
+
+    emit(result.fold(
+      (failure) => AuthFailure(message: failure.message),
+      (_) => AuthSuccess(user: User.empty()),
+    ));
+  }
+
+  Future<void> _onDeleteAccountEvent(DeleteAccountEvent event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+
+    final result = await _deleteAccountUsecase(
+      const DeleteAccountParams(),
+    );
+
+    emit(result.fold(
+      (failure) => AuthFailure(message: failure.message),
+      (_) => const AuthLoggedOut(),
     ));
   }
 }
