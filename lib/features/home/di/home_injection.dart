@@ -10,53 +10,50 @@ import '../domain/usecases/get_menu_items_usecase.dart';
 import '../domain/usecases/get_user_dashboard_usecase.dart';
 import '../presentation/bloc/home_bloc.dart';
 
-/// Setup home feature dependencies using standardized patterns
+/// Setup home feature dependencies using simplified patterns
 Future<void> setupHomeDependencies(GetIt getIt) async {
   // Get existing instances from core
-  final dioClient = getIt<DioClient>();
-  final logger = getIt<AppLogger>();
+  final dioClient = DIServiceLocator.get<DioClient>();
+  final logger = DIServiceLocator.get<AppLogger>();
 
   // Register data source with lazy singleton lifecycle
-  getIt.registerWithMetadata<HomeRemoteDataSource>(
+  DIServiceLocator.registerLazySingleton<HomeRemoteDataSource>(
     () => HomeRemoteDataSourceImpl(
       dioClient: dioClient,
       logger: logger,
     ),
-    lifecycle: DILifecycle.lazySingleton,
-    category: DICategory.datasource,
     name: DINaming.dataSource('Home'),
     description: 'Home remote data source for API communication',
   );
 
   // Register repository with lazy singleton lifecycle
-  getIt.registerWithMetadata<HomeRepository>(
+  DIServiceLocator.registerLazySingleton<HomeRepository>(
     () => HomeRepositoryImpl(
-      remoteDataSource: getIt(),
+      remoteDataSource: DIServiceLocator.get<HomeRemoteDataSource>(),
     ),
-    lifecycle: DILifecycle.lazySingleton,
-    category: DICategory.repository,
     name: DINaming.repository('Home'),
     description: 'Home repository for business logic coordination',
   );
 
-  // Register use cases with lazy singleton lifecycle
-  DICommonPatterns.registerUseCases(
-    getIt,
-    {
-      DINaming.useCase('GetMenuItems', 'Home'): () => GetMenuItemsUseCase(getIt()),
-      DINaming.useCase('GetUserDashboard', 'Home'): () => GetUserDashboardUseCase(getIt()),
-    },
-    lifecycle: DILifecycle.lazySingleton,
+  // Register use cases individually with lazy singleton lifecycle
+  DIServiceLocator.registerLazySingleton<GetMenuItemsUseCase>(
+    () => GetMenuItemsUseCase(DIServiceLocator.get<HomeRepository>()),
+    name: DINaming.useCase('GetMenuItems', 'Home'),
+    description: 'Get menu items use case',
+  );
+
+  DIServiceLocator.registerLazySingleton<GetUserDashboardUseCase>(
+    () => GetUserDashboardUseCase(DIServiceLocator.get<HomeRepository>()),
+    name: DINaming.useCase('GetUserDashboard', 'Home'),
+    description: 'Get user dashboard use case',
   );
 
   // Register BLoC with factory lifecycle (new instance each time)
-  getIt.registerWithMetadata<HomeBloc>(
+  DIServiceLocator.registerFactory<HomeBloc>(
     () => HomeBloc(
-      getMenuItemsUseCase: getIt(),
-      getUserDashboardUseCase: getIt(),
+      getMenuItemsUseCase: DIServiceLocator.get<GetMenuItemsUseCase>(),
+      getUserDashboardUseCase: DIServiceLocator.get<GetUserDashboardUseCase>(),
     ),
-    lifecycle: DILifecycle.factory,
-    category: DICategory.bloc,
     name: DINaming.bloc('Home'),
     description: 'Home BLoC for home screen state management',
   );

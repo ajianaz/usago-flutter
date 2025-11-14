@@ -1,16 +1,18 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'di_patterns.dart';
 import '../network/dio_client.dart';
 import '../utils/logger.dart';
 import '../errors/error_handler.dart';
 import '../services/locale_service.dart';
+import '../services/secure_storage_service.dart';
 import '../../features/auth/di/auth_injection.dart';
 import '../../features/home/di/home_injection.dart';
 // import '../../features/profile/di/profile_injection.dart';
 // import '../../features/payment/di/payment_injection.dart';
 
-final getIt = GetIt.instance;
+final GetIt getIt = GetIt.instance;
 
 /// Setup all dependencies using standardized patterns
 /// Call this in main() before runApp()
@@ -33,26 +35,56 @@ Future<void> setupDependencies() async {
 Future<void> _setupCoreServices() async {
   // Register shared preferences
   final sharedPreferences = await SharedPreferences.getInstance();
-  getIt.registerWithMetadata<SharedPreferences>(
-    () => sharedPreferences,
-    lifecycle: DILifecycle.singleton,
-    category: DICategory.core,
+  DIServiceLocator.registerSingleton<SharedPreferences>(
+    sharedPreferences,
     name: 'SharedPreferences',
     description: 'Shared preferences for local storage',
   );
 
-  // Register core services using the common pattern
-  DICommonPatterns.registerCoreServices(
-    getIt,
-    {
-      'DioClient': () => DioClient(),
-      'AppLogger': () => AppLogger(),
-      'ErrorHandler': () => ErrorHandler(),
-      'LocaleService': () => LocaleService(
-        prefs: getIt(),
-        logger: getIt(),
-      ),
-    },
+  // Register secure storage
+  const secureStorage = FlutterSecureStorage();
+  DIServiceLocator.registerSingleton<FlutterSecureStorage>(
+    secureStorage,
+    name: 'FlutterSecureStorage',
+    description: 'Secure storage for sensitive data',
+  );
+
+  // Register core services directly
+  DIServiceLocator.registerSingleton<DioClient>(
+    DioClient(),
+    name: 'DioClient',
+    description: 'HTTP client for API communication',
+  );
+
+  DIServiceLocator.registerSingleton<AppLogger>(
+    AppLogger(),
+    name: 'AppLogger',
+    description: 'Application logger',
+  );
+
+  DIServiceLocator.registerSingleton<ErrorHandler>(
+    ErrorHandler(),
+    name: 'ErrorHandler',
+    description: 'Global error handler',
+  );
+
+  DIServiceLocator.registerLazySingleton<LocaleService>(
+    () => LocaleService(
+      prefs: DIServiceLocator.get<SharedPreferences>(),
+      logger: DIServiceLocator.get<AppLogger>(),
+    ),
+    name: 'LocaleService',
+    description: 'Locale management service',
+  );
+
+  DIServiceLocator.registerLazySingleton<SecureStorageService>(
+    () => SecureStorageService(
+      secureStorage: DIServiceLocator.get<FlutterSecureStorage>(),
+      prefs: DIServiceLocator.get<SharedPreferences>(),
+      logger: DIServiceLocator.get<AppLogger>(),
+    ),
+    name: 'SecureStorageService',
+    description: 'Secure storage service wrapper',
   );
 }
 

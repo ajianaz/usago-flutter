@@ -21,85 +21,77 @@ import '../presentation/bloc/auth_bloc.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/errors/error_handler.dart';
+import '../../../../core/services/secure_storage_service.dart';
 
-/// Register auth feature dependencies using standardized patterns
+/// Register auth feature dependencies using simplified patterns
 void setupAuthDependencies(GetIt getIt) {
   // Get existing instances from core
-  final dioClient = getIt<DioClient>();
-  final logger = getIt<AppLogger>();
-  final errorHandler = getIt<ErrorHandler>();
+  final dioClient = DIServiceLocator.get<DioClient>();
+  final logger = DIServiceLocator.get<AppLogger>();
+  final errorHandler = DIServiceLocator.get<ErrorHandler>();
+  final secureStorage = DIServiceLocator.get<SecureStorageService>();
 
   // Register data sources with lazy singleton lifecycle
-  getIt.registerWithMetadata<AuthLocalDatasource>(
-    () => AuthLocalDatasourceImpl(logger: logger, prefs: getIt()),
-    lifecycle: DILifecycle.lazySingleton,
-    category: DICategory.datasource,
+  DIServiceLocator.registerLazySingleton<AuthLocalDatasource>(
+    () => AuthLocalDatasourceImpl(logger: logger, secureStorage: secureStorage),
     name: DINaming.dataSource('Auth'),
     description: 'Auth local data source for caching and storage',
   );
 
-  getIt.registerWithMetadata<AuthRemoteDatasource>(
+  DIServiceLocator.registerLazySingleton<AuthRemoteDatasource>(
     () => AuthRemoteDatasourceImpl(
       dioClient: dioClient,
       logger: logger,
-      localDatasource: getIt(),
+      localDatasource: DIServiceLocator.get<AuthLocalDatasource>(),
     ),
-    lifecycle: DILifecycle.lazySingleton,
-    category: DICategory.datasource,
     name: DINaming.dataSource('AuthRemote'),
     description: 'Auth remote data source for API communication',
   );
 
   // Register repository with lazy singleton lifecycle
-  getIt.registerWithMetadata<AuthRepository>(
+  DIServiceLocator.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
-      remoteDatasource: getIt(),
-      localDatasource: getIt(),
+      remoteDatasource: DIServiceLocator.get<AuthRemoteDatasource>(),
+      localDatasource: DIServiceLocator.get<AuthLocalDatasource>(),
       errorHandler: errorHandler,
       logger: logger,
     ),
-    lifecycle: DILifecycle.lazySingleton,
-    category: DICategory.repository,
     name: DINaming.repository('Auth'),
     description: 'Auth repository for business logic coordination',
   );
 
-  // Register use cases with lazy singleton lifecycle
-  DICommonPatterns.registerUseCases(
-    getIt,
-    {
-      DINaming.useCase('Login', 'Auth'): () => LoginUsecase(repository: getIt()),
-      DINaming.useCase('Register', 'Auth'): () => RegisterUsecase(repository: getIt()),
-      DINaming.useCase('Logout', 'Auth'): () => LogoutUsecase(repository: getIt()),
-      DINaming.useCase('CheckAuth', 'Auth'): () => CheckAuthUsecase(repository: getIt()),
-      DINaming.useCase('UpdateProfile', 'Auth'): () => UpdateProfileUsecase(repository: getIt()),
-      DINaming.useCase('ChangePassword', 'Auth'): () => ChangePasswordUsecase(repository: getIt()),
-      DINaming.useCase('ForgotPassword', 'Auth'): () => ForgotPasswordUsecase(repository: getIt()),
-      DINaming.useCase('ResetPassword', 'Auth'): () => ResetPasswordUsecase(repository: getIt()),
-      DINaming.useCase('VerifyEmail', 'Auth'): () => VerifyEmailUsecase(repository: getIt()),
-      DINaming.useCase('ResendVerificationEmail', 'Auth'): () => ResendVerificationEmailUsecase(repository: getIt()),
-      DINaming.useCase('DeleteAccount', 'Auth'): () => DeleteAccountUsecase(repository: getIt()),
-    },
-    lifecycle: DILifecycle.lazySingleton,
+  // Register use cases individually with lazy singleton lifecycle
+  DIServiceLocator.registerLazySingleton<LoginUsecase>(
+    () => LoginUsecase(repository: DIServiceLocator.get<AuthRepository>()),
+    name: DINaming.useCase('Login', 'Auth'),
+    description: 'Login use case for authentication',
   );
 
-  // Register BLoC with factory lifecycle (new instance each time)
-  getIt.registerWithMetadata<AuthBloc>(
+  DIServiceLocator.registerLazySingleton<RegisterUsecase>(
+    () => RegisterUsecase(repository: DIServiceLocator.get<AuthRepository>()),
+    name: DINaming.useCase('Register', 'Auth'),
+    description: 'Register use case for authentication',
+  );
+
+  DIServiceLocator.registerLazySingleton<LogoutUsecase>(
+    () => LogoutUsecase(repository: DIServiceLocator.get<AuthRepository>()),
+    name: DINaming.useCase('Logout', 'Auth'),
+    description: 'Logout use case for authentication',
+  );
+
+  DIServiceLocator.registerLazySingleton<CheckAuthUsecase>(
+    () => CheckAuthUsecase(repository: DIServiceLocator.get<AuthRepository>()),
+    name: DINaming.useCase('CheckAuth', 'Auth'),
+    description: 'Check authentication status use case',
+  );
+
+  DIServiceLocator.registerFactory<AuthBloc>(
     () => AuthBloc(
-      loginUsecase: getIt(),
-      registerUsecase: getIt(),
-      logoutUsecase: getIt(),
-      checkAuthUsecase: getIt(),
-      updateProfileUsecase: getIt(),
-      changePasswordUsecase: getIt(),
-      forgotPasswordUsecase: getIt(),
-      resetPasswordUsecase: getIt(),
-      verifyEmailUsecase: getIt(),
-      resendVerificationEmailUsecase: getIt(),
-      deleteAccountUsecase: getIt(),
+      loginUsecase: DIServiceLocator.get<LoginUsecase>(),
+      registerUsecase: DIServiceLocator.get<RegisterUsecase>(),
+      logoutUsecase: DIServiceLocator.get<LogoutUsecase>(),
+      checkAuthUsecase: DIServiceLocator.get<CheckAuthUsecase>(),
     ),
-    lifecycle: DILifecycle.factory,
-    category: DICategory.bloc,
     name: DINaming.bloc('Auth'),
     description: 'Auth BLoC for authentication state management',
   );
