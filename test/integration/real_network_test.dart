@@ -8,9 +8,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:usago/core/constants/app_constants.dart';
 import 'package:usago/core/network/dio_client.dart';
+import 'package:usago/core/services/secure_storage_service.dart';
 import 'package:usago/features/auth/data/datasources/auth_local_datasource_impl.dart';
 import 'package:usago/features/auth/data/datasources/auth_remote_datasource_impl.dart';
 import 'package:usago/features/auth/data/models/user_model.dart';
@@ -52,9 +54,16 @@ void main() {
       // Setup real DioClient for network tests
       dioClient = DioClient();
 
+      // Create secure storage service for testing
+      final secureStorage = SecureStorageService(
+        secureStorage: FlutterSecureStorage(),
+        prefs: prefs,
+        logger: AppLogger(),
+      );
+
       // Setup datasources
       localDatasource = AuthLocalDatasourceImpl(
-        prefs: prefs,
+        secureStorage: secureStorage,
         logger: AppLogger(),
       );
 

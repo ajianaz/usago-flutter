@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:usago/core/constants/app_constants.dart';
 import 'package:usago/core/utils/logger.dart';
+import 'package:usago/core/services/secure_storage_service.dart';
 import 'package:usago/features/auth/data/datasources/auth_local_datasource_impl.dart';
 import 'package:usago/features/auth/data/models/user_model.dart';
 
@@ -22,8 +24,15 @@ void main() {
       prefs = await SharedPreferences.getInstance();
       logger = AppLogger();
 
-      datasource = AuthLocalDatasourceImpl(
+      // Create secure storage service for testing
+      final secureStorage = SecureStorageService(
+        secureStorage: FlutterSecureStorage(),
         prefs: prefs,
+        logger: logger,
+      );
+
+      datasource = AuthLocalDatasourceImpl(
+        secureStorage: secureStorage,
         logger: logger,
       );
     });

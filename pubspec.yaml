@@ -21,12 +21,13 @@ dependencies:
 
   # Dependency Injection
   get_it: ^8.3.0
-  injectable: ^2.3.0
+  injectable: ^2.5.1
 
   # Network
   dio: ^5.0.0
 
   # Storage
+  flutter_secure_storage: ^9.0.0
   shared_preferences: ^2.0.0
   hive: ^2.2.0
   hive_flutter: ^1.1.0
