@@ -13,11 +13,24 @@ extension ContextExtension on BuildContext {
   /// Get screen height
   double get screenHeight => MediaQuery.of(this).size.height;
 
-  /// Check if device is tablet
-  bool get isTablet => screenWidth >= 600;
-
-  /// Check if device is mobile
+  /// Check if device is mobile (phone)
+  /// Range: < 600dp
   bool get isMobile => screenWidth < 600;
+
+  /// Check if device is tablet
+  /// Range: 600dp - 1200dp
+  bool get isTablet => screenWidth >= 600 && screenWidth < 1200;
+
+  /// Check if device is desktop
+  /// Range: ≥ 1200dp
+  bool get isDesktop => screenWidth >= 1200;
+
+  /// Get device type as string
+  String get deviceType {
+    if (isDesktop) return 'desktop';
+    if (isTablet) return 'tablet';
+    return 'mobile';
+  }
 
   /// Get theme
   ThemeData get theme => Theme.of(this);
