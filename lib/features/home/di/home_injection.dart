@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import '../../../../core/di/injection_container.dart';
+import '../../../../core/di/di_patterns.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
 import '../data/datasources/home_remote_datasource.dart';
@@ -10,37 +10,54 @@ import '../domain/usecases/get_menu_items_usecase.dart';
 import '../domain/usecases/get_user_dashboard_usecase.dart';
 import '../presentation/bloc/home_bloc.dart';
 
-/// Setup home feature dependencies
+/// Setup home feature dependencies using standardized patterns
 Future<void> setupHomeDependencies(GetIt getIt) async {
-  // Data sources
-  getIt.registerLazySingleton<HomeRemoteDataSource>(
+  // Get existing instances from core
+  final dioClient = getIt<DioClient>();
+  final logger = getIt<AppLogger>();
+
+  // Register data source with lazy singleton lifecycle
+  getIt.registerWithMetadata<HomeRemoteDataSource>(
     () => HomeRemoteDataSourceImpl(
-      dioClient: getIt(),
-      logger: getIt(),
+      dioClient: dioClient,
+      logger: logger,
     ),
+    lifecycle: DILifecycle.lazySingleton,
+    category: DICategory.datasource,
+    name: DINaming.dataSource('Home'),
+    description: 'Home remote data source for API communication',
   );
 
-  // Repository
-  getIt.registerLazySingleton<HomeRepository>(
+  // Register repository with lazy singleton lifecycle
+  getIt.registerWithMetadata<HomeRepository>(
     () => HomeRepositoryImpl(
       remoteDataSource: getIt(),
     ),
+    lifecycle: DILifecycle.lazySingleton,
+    category: DICategory.repository,
+    name: DINaming.repository('Home'),
+    description: 'Home repository for business logic coordination',
   );
 
-  // Use cases
-  getIt.registerLazySingleton<GetMenuItemsUseCase>(
-    () => GetMenuItemsUseCase(getIt()),
+  // Register use cases with lazy singleton lifecycle
+  DICommonPatterns.registerUseCases(
+    getIt,
+    {
+      DINaming.useCase('GetMenuItems', 'Home'): () => GetMenuItemsUseCase(getIt()),
+      DINaming.useCase('GetUserDashboard', 'Home'): () => GetUserDashboardUseCase(getIt()),
+    },
+    lifecycle: DILifecycle.lazySingleton,
   );
 
-  getIt.registerLazySingleton<GetUserDashboardUseCase>(
-    () => GetUserDashboardUseCase(getIt()),
-  );
-
-  // BLoC
-  getIt.registerFactory<HomeBloc>(
+  // Register BLoC with factory lifecycle (new instance each time)
+  getIt.registerWithMetadata<HomeBloc>(
     () => HomeBloc(
       getMenuItemsUseCase: getIt(),
       getUserDashboardUseCase: getIt(),
     ),
+    lifecycle: DILifecycle.factory,
+    category: DICategory.bloc,
+    name: DINaming.bloc('Home'),
+    description: 'Home BLoC for home screen state management',
   );
 }
