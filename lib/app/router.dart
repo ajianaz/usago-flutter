@@ -6,6 +6,7 @@ import '../features/auth/presentation/pages/responsive_login_page.dart';
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/auth/presentation/pages/register_page.dart';
 import '../features/auth/presentation/pages/forgot_password_page.dart';
+import '../features/auth/presentation/pages/profile_page.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/auth/presentation/bloc/auth_state.dart';
 import '../features/home/presentation/pages/home_page.dart';
@@ -34,6 +35,12 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       page: ForgotPasswordRoute.page,
       path: '/forgot-password',
+    ),
+    // Profile route - protected route
+    AutoRoute(
+      page: ProfileRoute.page,
+      path: '/profile',
+      guards: [AuthGuard()],
     ),
     // Home route - protected route
     AutoRoute(
