@@ -20,8 +20,13 @@ void main() {
     late MockErrorHandler mockErrorHandler;
     late MockAppLogger mockLogger;
 
-    setUp(() {
+    setUpAll(() {
       TestHelpers.setUpMocktailFallbacks();
+      // Register fallback values for mocktail
+      registerFallbackValue(AuthFixtures.testUserModel);
+    });
+
+    setUp(() {
 
       mockRemoteDatasource = MockAuthRemoteDatasource();
       mockLocalDatasource = MockAuthLocalDatasource();
@@ -47,9 +52,10 @@ void main() {
         when(() => mockLocalDatasource.saveUser(any())).thenAnswer((_) async {});
         when(() => mockLocalDatasource.saveLastLoginTime(any())).thenAnswer((_) async {});
 
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((invocation) async {
-          final function = invocation.positionalArguments[0] as Future<Either<Failure, User>> Function();
-          return await function();
+        when(() => mockErrorHandler.safeExecute<User>(any())).thenAnswer((invocation) async {
+          final function = invocation.positionalArguments[0] as Future<User> Function();
+          final result = await function();
+          return Right<Failure, User>(result);
         });
 
         // Act
@@ -81,7 +87,7 @@ void main() {
       test('should return Failure when login fails', () async {
         // Arrange
         final failure = ServerFailure(message: 'Invalid credentials');
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((_) async => Left(failure));
+        when(() => mockErrorHandler.safeExecute<User>(any())).thenAnswer((_) async => Left<Failure, User>(failure));
 
         // Act
         final result = await repository.login(
@@ -112,9 +118,10 @@ void main() {
         when(() => mockLocalDatasource.saveUser(any())).thenAnswer((_) async {});
         when(() => mockLocalDatasource.saveLastLoginTime(any())).thenAnswer((_) async {});
 
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((invocation) async {
-          final function = invocation.positionalArguments[0] as Future<Either<Failure, User>> Function();
-          return await function();
+        when(() => mockErrorHandler.safeExecute<User>(any())).thenAnswer((invocation) async {
+          final function = invocation.positionalArguments[0] as Future<User> Function();
+          final result = await function();
+          return Right<Failure, User>(result);
         });
 
         // Act
@@ -149,7 +156,7 @@ void main() {
       test('should return Failure when registration fails', () async {
         // Arrange
         final failure = ValidationFailure(message: 'Email already exists');
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((_) async => Left(failure));
+        when(() => mockErrorHandler.safeExecute<User>(any())).thenAnswer((_) async => Left<Failure, User>(failure));
 
         // Act
         final result = await repository.register(
@@ -175,9 +182,10 @@ void main() {
         when(() => mockRemoteDatasource.logout()).thenAnswer((_) async {});
         when(() => mockLocalDatasource.clearAllAuthData()).thenAnswer((_) async {});
 
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((invocation) async {
-          final function = invocation.positionalArguments[0] as Future<Either<Failure, void>> Function();
-          return await function();
+        when(() => mockErrorHandler.safeExecute<void>(any())).thenAnswer((invocation) async {
+          final function = invocation.positionalArguments[0] as Future<void> Function();
+          await function();
+          return const Right<Failure, void>(null);
         });
 
         // Act
@@ -187,7 +195,7 @@ void main() {
         expect(result.isRight(), isTrue);
         result.fold(
           (failure) => fail('Expected success but got failure: ${failure.message}'),
-          (value) => expect(value, isNull),
+          (_) => {}, // void value, just verify it's Right
         );
 
         verify(() => mockRemoteDatasource.logout()).called(1);
@@ -198,7 +206,7 @@ void main() {
       test('should return Failure when logout fails', () async {
         // Arrange
         final failure = NetworkFailure(message: 'Network error');
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((_) async => Left(failure));
+        when(() => mockErrorHandler.safeExecute<void>(any())).thenAnswer((_) async => Left<Failure, void>(failure));
 
         // Act
         final result = await repository.logout();
@@ -220,9 +228,10 @@ void main() {
         when(() => mockLocalDatasource.getUser()).thenAnswer((_) async => AuthFixtures.testUserModel);
         when(() => mockLocalDatasource.getToken()).thenAnswer((_) async => AuthFixtures.testToken);
 
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((invocation) async {
-          final function = invocation.positionalArguments[0] as Future<Either<Failure, User?>> Function();
-          return await function();
+        when(() => mockErrorHandler.safeExecute<User?>(any())).thenAnswer((invocation) async {
+          final function = invocation.positionalArguments[0] as Future<User?> Function();
+          final result = await function();
+          return Right<Failure, User?>(result);
         });
 
         // Act
@@ -249,9 +258,10 @@ void main() {
         when(() => mockLocalDatasource.getUser()).thenAnswer((_) async => null);
         when(() => mockLocalDatasource.getToken()).thenAnswer((_) async => null);
 
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((invocation) async {
-          final function = invocation.positionalArguments[0] as Future<Either<Failure, User?>> Function();
-          return await function();
+        when(() => mockErrorHandler.safeExecute<User?>(any())).thenAnswer((invocation) async {
+          final function = invocation.positionalArguments[0] as Future<User?> Function();
+          final result = await function();
+          return Right<Failure, User?>(result);
         });
 
         // Act
@@ -272,7 +282,7 @@ void main() {
       test('should return Failure when check auth status fails', () async {
         // Arrange
         final failure = CacheFailure(message: 'Cache error');
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((_) async => Left(failure));
+        when(() => mockErrorHandler.safeExecute<User?>(any())).thenAnswer((_) async => Left<Failure, User?>(failure));
 
         // Act
         final result = await repository.checkAuthStatus();
@@ -294,9 +304,10 @@ void main() {
         when(() => mockRemoteDatasource.refreshToken()).thenAnswer((_) async => AuthFixtures.testUserModel);
         when(() => mockLocalDatasource.saveUser(any())).thenAnswer((_) async {});
 
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((invocation) async {
-          final function = invocation.positionalArguments[0] as Future<Either<Failure, User>> Function();
-          return await function();
+        when(() => mockErrorHandler.safeExecute<User>(any())).thenAnswer((invocation) async {
+          final function = invocation.positionalArguments[0] as Future<User> Function();
+          final result = await function();
+          return Right<Failure, User>(result);
         });
 
         // Act
@@ -320,7 +331,7 @@ void main() {
       test('should return Failure when token refresh fails', () async {
         // Arrange
         final failure = ServerFailure(message: 'Invalid token');
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((_) async => Left(failure));
+        when(() => mockErrorHandler.safeExecute<User>(any())).thenAnswer((_) async => Left<Failure, User>(failure));
 
         // Act
         final result = await repository.refreshToken();
@@ -341,9 +352,10 @@ void main() {
         // Arrange
         when(() => mockRemoteDatasource.forgotPassword(any())).thenAnswer((_) async {});
 
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((invocation) async {
-          final function = invocation.positionalArguments[0] as Future<Either<Failure, void>> Function();
-          return await function();
+        when(() => mockErrorHandler.safeExecute<void>(any())).thenAnswer((invocation) async {
+          final function = invocation.positionalArguments[0] as Future<void> Function();
+          await function();
+          return const Right<Failure, void>(null);
         });
 
         // Act
@@ -353,7 +365,7 @@ void main() {
         expect(result.isRight(), isTrue);
         result.fold(
           (failure) => fail('Expected success but got failure: ${failure.message}'),
-          (value) => expect(value, isNull),
+          (_) => {}, // void value, just verify it's Right
         );
 
         verify(() => mockRemoteDatasource.forgotPassword(AuthFixtures.testUserEmail)).called(1);
@@ -363,7 +375,7 @@ void main() {
       test('should return Failure when forgot password fails', () async {
         // Arrange
         final failure = NetworkFailure(message: 'Network error');
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((_) async => Left(failure));
+        when(() => mockErrorHandler.safeExecute<void>(any())).thenAnswer((_) async => Left<Failure, void>(failure));
 
         // Act
         final result = await repository.forgotPassword(AuthFixtures.testUserEmail);
@@ -387,9 +399,10 @@ void main() {
           newPassword: any(named: 'newPassword'),
         )).thenAnswer((_) async {});
 
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((invocation) async {
-          final function = invocation.positionalArguments[0] as Future<Either<Failure, void>> Function();
-          return await function();
+        when(() => mockErrorHandler.safeExecute<void>(any())).thenAnswer((invocation) async {
+          final function = invocation.positionalArguments[0] as Future<void> Function();
+          await function();
+          return const Right<Failure, void>(null);
         });
 
         // Act
@@ -402,7 +415,7 @@ void main() {
         expect(result.isRight(), isTrue);
         result.fold(
           (failure) => fail('Expected success but got failure: ${failure.message}'),
-          (value) => expect(value, isNull),
+          (_) => {}, // void value, just verify it's Right
         );
 
         verify(() => mockRemoteDatasource.resetPassword(
@@ -416,7 +429,7 @@ void main() {
       test('should return Failure when reset password fails', () async {
         // Arrange
         final failure = ValidationFailure(message: 'Invalid token');
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((_) async => Left(failure));
+        when(() => mockErrorHandler.safeExecute<void>(any())).thenAnswer((_) async => Left<Failure, void>(failure));
 
         // Act
         final result = await repository.resetPassword(
@@ -443,9 +456,10 @@ void main() {
           newPassword: any(named: 'newPassword'),
         )).thenAnswer((_) async {});
 
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((invocation) async {
-          final function = invocation.positionalArguments[0] as Future<Either<Failure, void>> Function();
-          return await function();
+        when(() => mockErrorHandler.safeExecute<void>(any())).thenAnswer((invocation) async {
+          final function = invocation.positionalArguments[0] as Future<void> Function();
+          await function();
+          return const Right<Failure, void>(null);
         });
 
         // Act
@@ -458,7 +472,7 @@ void main() {
         expect(result.isRight(), isTrue);
         result.fold(
           (failure) => fail('Expected success but got failure: ${failure.message}'),
-          (value) => expect(value, isNull),
+          (_) => {}, // void value, just verify it's Right
         );
 
         verify(() => mockRemoteDatasource.changePassword(
@@ -472,7 +486,7 @@ void main() {
       test('should return Failure when change password fails', () async {
         // Arrange
         final failure = ValidationFailure(message: 'Invalid current password');
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((_) async => Left(failure));
+        when(() => mockErrorHandler.safeExecute<void>(any())).thenAnswer((_) async => Left<Failure, void>(failure));
 
         // Act
         final result = await repository.changePassword(
@@ -501,9 +515,10 @@ void main() {
 
         when(() => mockLocalDatasource.saveUser(any())).thenAnswer((_) async {});
 
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((invocation) async {
-          final function = invocation.positionalArguments[0] as Future<Either<Failure, User>> Function();
-          return await function();
+        when(() => mockErrorHandler.safeExecute<User>(any())).thenAnswer((invocation) async {
+          final function = invocation.positionalArguments[0] as Future<User> Function();
+          final result = await function();
+          return Right<Failure, User>(result);
         });
 
         // Act
@@ -534,7 +549,7 @@ void main() {
       test('should return Failure when profile update fails', () async {
         // Arrange
         final failure = ServerFailure(message: 'Update failed');
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((_) async => Left(failure));
+        when(() => mockErrorHandler.safeExecute<User>(any())).thenAnswer((_) async => Left<Failure, User>(failure));
 
         // Act
         final result = await repository.updateProfile(
@@ -560,9 +575,10 @@ void main() {
         when(() => mockLocalDatasource.getUser()).thenAnswer((_) async => AuthFixtures.testUserModel);
         when(() => mockLocalDatasource.saveUser(any())).thenAnswer((_) async {});
 
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((invocation) async {
-          final function = invocation.positionalArguments[0] as Future<Either<Failure, void>> Function();
-          return await function();
+        when(() => mockErrorHandler.safeExecute<void>(any())).thenAnswer((invocation) async {
+          final function = invocation.positionalArguments[0] as Future<void> Function();
+          await function();
+          return const Right<Failure, void>(null);
         });
 
         // Act
@@ -572,7 +588,7 @@ void main() {
         expect(result.isRight(), isTrue);
         result.fold(
           (failure) => fail('Expected success but got failure: ${failure.message}'),
-          (value) => expect(value, isNull),
+          (_) => {}, // void value, just verify it's Right
         );
 
         verify(() => mockRemoteDatasource.verifyEmail(AuthFixtures.testVerificationToken)).called(1);
@@ -584,7 +600,7 @@ void main() {
       test('should return Failure when email verification fails', () async {
         // Arrange
         final failure = ValidationFailure(message: 'Invalid token');
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((_) async => Left(failure));
+        when(() => mockErrorHandler.safeExecute<void>(any())).thenAnswer((_) async => Left<Failure, void>(failure));
 
         // Act
         final result = await repository.verifyEmail(AuthFixtures.testVerificationToken);
@@ -605,9 +621,10 @@ void main() {
         // Arrange
         when(() => mockRemoteDatasource.resendVerificationEmail()).thenAnswer((_) async {});
 
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((invocation) async {
-          final function = invocation.positionalArguments[0] as Future<Either<Failure, void>> Function();
-          return await function();
+        when(() => mockErrorHandler.safeExecute<void>(any())).thenAnswer((invocation) async {
+          final function = invocation.positionalArguments[0] as Future<void> Function();
+          await function();
+          return const Right<Failure, void>(null);
         });
 
         // Act
@@ -617,7 +634,7 @@ void main() {
         expect(result.isRight(), isTrue);
         result.fold(
           (failure) => fail('Expected success but got failure: ${failure.message}'),
-          (value) => expect(value, isNull),
+          (_) => {}, // void value, just verify it's Right
         );
 
         verify(() => mockRemoteDatasource.resendVerificationEmail()).called(1);
@@ -627,7 +644,7 @@ void main() {
       test('should return Failure when resend verification fails', () async {
         // Arrange
         final failure = NetworkFailure(message: 'Network error');
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((_) async => Left(failure));
+        when(() => mockErrorHandler.safeExecute<void>(any())).thenAnswer((_) async => Left<Failure, void>(failure));
 
         // Act
         final result = await repository.resendVerificationEmail();
@@ -649,9 +666,10 @@ void main() {
         when(() => mockRemoteDatasource.deleteAccount()).thenAnswer((_) async {});
         when(() => mockLocalDatasource.clearAllAuthData()).thenAnswer((_) async {});
 
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((invocation) async {
-          final function = invocation.positionalArguments[0] as Future<Either<Failure, void>> Function();
-          return await function();
+        when(() => mockErrorHandler.safeExecute<void>(any())).thenAnswer((invocation) async {
+          final function = invocation.positionalArguments[0] as Future<void> Function();
+          await function();
+          return const Right<Failure, void>(null);
         });
 
         // Act
@@ -661,7 +679,7 @@ void main() {
         expect(result.isRight(), isTrue);
         result.fold(
           (failure) => fail('Expected success but got failure: ${failure.message}'),
-          (value) => expect(value, isNull),
+          (_) => {}, // void value, just verify it's Right
         );
 
         verify(() => mockRemoteDatasource.deleteAccount()).called(1);
@@ -672,7 +690,7 @@ void main() {
       test('should return Failure when account deletion fails', () async {
         // Arrange
         final failure = ServerFailure(message: 'Deletion failed');
-        when(() => mockErrorHandler.safeExecute(any())).thenAnswer((_) async => Left(failure));
+        when(() => mockErrorHandler.safeExecute<void>(any())).thenAnswer((_) async => Left<Failure, void>(failure));
 
         // Act
         final result = await repository.deleteAccount();
