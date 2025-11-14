@@ -11,7 +11,7 @@ import '../../../../core/extensions/context_extension.dart';
 
 /// Login page
 /// Handles user authentication
-@RoutePage()
+// @RoutePage()
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
 

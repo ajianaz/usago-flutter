@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../i18n/app_localizations.g.dart';
+import '../../shared/widgets/responsive_builder.dart';
 
 /// Extension methods on BuildContext
 extension ContextExtension on BuildContext {
@@ -114,4 +115,66 @@ extension ContextExtension on BuildContext {
   void popUntilNamed(String routeName) {
     Navigator.of(this).popUntil(ModalRoute.withName(routeName));
   }
+
+
+  /// Responsive layout builder helper
+  Widget responsiveLayout({
+    required Widget mobile,
+    Widget? tablet,
+    Widget? desktop,
+  }) {
+    return ResponsiveBuilder(
+      builder: (context, deviceType) {
+        switch (deviceType) {
+          case DeviceType.desktop:
+            return desktop ?? tablet ?? mobile;
+          case DeviceType.tablet:
+            return tablet ?? mobile;
+          case DeviceType.mobile:
+            return mobile;
+        }
+      },
+    );
+  }
+
+  /// Get responsive value based on device type
+  T responsiveValue<T>({
+    required T mobile,
+    T? tablet,
+    T? desktop,
+  }) {
+    if (isDesktop) return desktop ?? tablet ?? mobile;
+    if (isTablet) return tablet ?? mobile;
+    return mobile;
+  }
+
+  // Tambahkan di context_extension.dart
+/// Get responsive padding
+EdgeInsets get responsivePadding {
+  if (isDesktop) return const EdgeInsets.all(32.0);
+  if (isTablet) return const EdgeInsets.all(24.0);
+  return const EdgeInsets.all(16.0);
+}
+
+/// Get responsive margin
+EdgeInsets get responsiveMargin {
+  if (isDesktop) return const EdgeInsets.all(24.0);
+  if (isTablet) return const EdgeInsets.all(16.0);
+  return const EdgeInsets.all(12.0);
+}
+
+/// Get responsive spacing
+double get responsiveSpacing {
+  if (isDesktop) return 24.0;
+  if (isTablet) return 16.0;
+  return 12.0;
+}
+
+/// Get responsive font size
+double responsiveFontSize(double baseSize) {
+  if (isDesktop) return baseSize * 1.2;
+  if (isTablet) return baseSize * 1.1;
+  return baseSize;
+}
+
 }
