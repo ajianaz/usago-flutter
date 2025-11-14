@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:auto_route/auto_route.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../bloc/auth_bloc.dart';
@@ -144,7 +145,7 @@ class _LoginFormState extends State<LoginForm> {
           // Forgot password link
           TextButton(
             onPressed: () {
-              // TODO: Navigate to forgot password
+              context.router.pushNamed('/forgot-password');
             },
             child: Text(context.t.authForgotPassword),
           ),

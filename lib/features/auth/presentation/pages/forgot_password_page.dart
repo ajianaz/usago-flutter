@@ -1,4 +1,4 @@
-// File: apps/mobile/lib/features/auth/presentation/pages/register_page.dart
+// File: apps/mobile/lib/features/auth/presentation/pages/forgot_password_page.dart
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,13 +10,13 @@ import '../../../../shared/widgets/language_switcher.dart';
 import '../../../../shared/widgets/theme_switcher.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
-import '../widgets/register_form.dart';
+import '../widgets/forgot_password_form.dart';
 
-/// Responsive Register Page
-/// Handles user registration with responsive design
+/// Responsive Forgot Password Page
+/// Handles password reset with responsive design
 @RoutePage()
-class ResponsiveRegisterPage extends StatelessWidget {
-  const ResponsiveRegisterPage({Key? key}) : super(key: key);
+class ForgotPasswordPage extends StatelessWidget {
+  const ForgotPasswordPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class ResponsiveRegisterPage extends StatelessWidget {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: Text(context.t.authRegister),
+      title: Text(context.t.authForgotPassword),
       centerTitle: true,
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -53,8 +53,12 @@ class ResponsiveRegisterPage extends StatelessWidget {
   }
 
   void _handleAuthStates(BuildContext context, AuthState state) {
-    if (state is AuthSuccess) {
-      context.router.replace(const HomeRoute());
+    if (state is PasswordResetEmailSent) {
+      context.showSuccessSnackBar('Password reset email sent to ${state.email}');
+      // Navigate back to login after successful email sent
+      Future.delayed(const Duration(seconds: 2), () {
+        context.router.maybePop();
+      });
     } else if (state is AuthFailure) {
       context.showErrorSnackBar(state.message);
     }
@@ -78,7 +82,7 @@ class ResponsiveRegisterPage extends StatelessWidget {
   Widget _buildDesktopLayout(BuildContext context, AuthBloc authBloc) {
     return Row(
       children: [
-        // Left side - Register Form
+        // Left side - Forgot Password Form
         Expanded(
           flex: 1,
           child: Padding(
@@ -87,9 +91,9 @@ class ResponsiveRegisterPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const RegisterForm(),
+                const ForgotPasswordForm(),
                 const SizedBox(height: 24),
-                _buildLoginLink(context),
+                _buildBackToLoginLink(context),
               ],
             ),
           ),
@@ -126,9 +130,9 @@ class ResponsiveRegisterPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const RegisterForm(),
+                const ForgotPasswordForm(),
                 const SizedBox(height: 24),
-                _buildLoginLink(context),
+                _buildBackToLoginLink(context),
               ],
             ),
           ),
@@ -152,16 +156,12 @@ class ResponsiveRegisterPage extends StatelessWidget {
           const SizedBox(height: 60),
           _buildWelcomeSection(context),
           const SizedBox(height: 40),
-          const RegisterForm(),
+          const ForgotPasswordForm(),
           const SizedBox(height: 24),
-          _buildLoginLink(context),
+          _buildBackToLoginLink(context),
         ],
       ),
     );
-  }
-
-  Widget _buildRegisterForm(BuildContext context, AuthBloc authBloc) {
-    return const RegisterForm();
   }
 
   Widget _buildWelcomeSection(BuildContext context) {
@@ -169,7 +169,7 @@ class ResponsiveRegisterPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(
-          FontAwesomeIcons.userPlus,
+          FontAwesomeIcons.key,
           size: context.responsiveValue(
             mobile: 48.0,
             tablet: 64.0,
@@ -179,7 +179,7 @@ class ResponsiveRegisterPage extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Text(
-          context.t.authCreateAccount,
+          'Forgot Password?',
           style: context.textTheme.headlineMedium?.copyWith(
             fontSize: context.responsiveFontSize(24),
             fontWeight: FontWeight.bold,
@@ -188,7 +188,7 @@ class ResponsiveRegisterPage extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          context.t.authSignUpToContinue,
+          'Enter your email address and we\'ll send you a link to reset your password',
           style: context.textTheme.bodyMedium?.copyWith(
             fontSize: context.responsiveFontSize(16),
           ),
@@ -198,29 +198,18 @@ class ResponsiveRegisterPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLoginLink(BuildContext context) {
+  Widget _buildBackToLoginLink(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(context.t.authAlreadyHaveAccount),
+        Text('Remember your password?'),
         TextButton(
           onPressed: () {
-            context.router.pushNamed('/login');
+            context.router.maybePop();
           },
           child: Text(context.t.authLogin),
         ),
       ],
     );
-  }
-}
-
-/// Legacy RegisterPage for backward compatibility
-@RoutePage()
-class RegisterPage extends StatelessWidget {
-  const RegisterPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const ResponsiveRegisterPage();
   }
 }
