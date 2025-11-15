@@ -1,12 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'env_config.dart';
+import '../constants/timeout_constants.dart';
+import '../constants/api_status_codes.dart';
+import '../constants/performance_constants.dart';
+import '../constants/security_constants.dart';
 
 class AppConfig {
   // API Configuration
   static String get apiBaseUrl => EnvConfig.get('API_BASE_URL');
-  static Duration get apiTimeout => Duration(
-    milliseconds: EnvConfig.getInt('API_TIMEOUT', defaultValue: 30000)
-  );
+  static Duration get apiTimeout => TimeoutConstants.network;
   static String get apiVersion => EnvConfig.get('API_VERSION', defaultValue: 'v1');
 
   // Headers
@@ -15,11 +17,11 @@ class AppConfig {
   static String get bearerTokenHeader => EnvConfig.get('BEARER_TOKEN_HEADER', defaultValue: 'Authorization');
 
   // Response Codes
-  static int get successCode => EnvConfig.getInt('SUCCESS_CODE', defaultValue: 200);
-  static int get unauthorizedCode => EnvConfig.getInt('UNAUTHORIZED_CODE', defaultValue: 401);
-  static int get forbiddenCode => EnvConfig.getInt('FORBIDDEN_CODE', defaultValue: 403);
-  static int get notFoundCode => EnvConfig.getInt('NOT_FOUND_CODE', defaultValue: 404);
-  static int get serverErrorCode => EnvConfig.getInt('SERVER_ERROR_CODE', defaultValue: 500);
+  static int get successCode => ApiStatusCode.ok.code;
+  static int get unauthorizedCode => ApiStatusCode.unauthorized.code;
+  static int get forbiddenCode => ApiStatusCode.forbidden.code;
+  static int get notFoundCode => ApiStatusCode.notFound.code;
+  static int get serverErrorCode => ApiStatusCode.internalServerError.code;
 
   // Feature Flags
   static bool get enableLogging => EnvConfig.getBool('ENABLE_LOGGING', defaultValue: kDebugMode);
@@ -35,38 +37,24 @@ class AppConfig {
   static bool get enablePerformanceExport => EnvConfig.getBool('ENABLE_PERFORMANCE_EXPORT', defaultValue: kDebugMode);
 
   // Memory Configuration
-  static double get memoryWarningThreshold => EnvConfig.getDouble('MEMORY_WARNING_THRESHOLD', defaultValue: 70.0);
-  static double get memoryCriticalThreshold => EnvConfig.getDouble('MEMORY_CRITICAL_THRESHOLD', defaultValue: 85.0);
-  static int get maxMetricsHistory => EnvConfig.getInt('MAX_METRICS_HISTORY', defaultValue: 1000);
-  static Duration get memoryMonitoringInterval => Duration(
-    seconds: EnvConfig.getInt('MEMORY_MONITORING_INTERVAL_SECONDS', defaultValue: 30)
-  );
+  static double get memoryWarningThreshold => PerformanceConstants.memoryWarningThreshold * 100;
+  static double get memoryCriticalThreshold => PerformanceConstants.memoryCriticalThreshold * 100;
+  static int get maxMetricsHistory => PerformanceConstants.maxMetricsHistoryLength;
+  static Duration get memoryMonitoringInterval => PerformanceConstants.memoryMonitoringInterval;
 
   // BLoC Performance Configuration
-  static Duration get slowBlocEventWarning => Duration(
-    milliseconds: EnvConfig.getInt('SLOW_BLOC_EVENT_WARNING_MS', defaultValue: 100)
-  );
-  static Duration get slowBlocEventCritical => Duration(
-    milliseconds: EnvConfig.getInt('SLOW_BLOC_EVENT_CRITICAL_MS', defaultValue: 500)
-  );
+  static Duration get slowBlocEventWarning => TimeoutConstants.blocWarning;
+  static Duration get slowBlocEventCritical => TimeoutConstants.blocCritical;
   static int get maxActiveBlocs => EnvConfig.getInt('MAX_ACTIVE_BLOCS', defaultValue: 20);
   static Duration get blocCleanupInterval => Duration(
     minutes: EnvConfig.getInt('BLOC_CLEANUP_INTERVAL_MINUTES', defaultValue: 5)
   );
 
   // Performance Tracking Configuration
-  static Duration get performanceMonitoringInterval => Duration(
-    seconds: EnvConfig.getInt('PERFORMANCE_MONITORING_INTERVAL_SECONDS', defaultValue: 60)
-  );
-  static Duration get performanceCleanupInterval => Duration(
-    minutes: EnvConfig.getInt('PERFORMANCE_CLEANUP_INTERVAL_MINUTES', defaultValue: 10)
-  );
-  static Duration get slowOperationWarning => Duration(
-    milliseconds: EnvConfig.getInt('SLOW_OPERATION_WARNING_MS', defaultValue: 500)
-  );
-  static Duration get slowOperationCritical => Duration(
-    seconds: EnvConfig.getInt('SLOW_OPERATION_CRITICAL_SECONDS', defaultValue: 2)
-  );
+  static Duration get performanceMonitoringInterval => PerformanceConstants.performanceMonitoringInterval;
+  static Duration get performanceCleanupInterval => Duration(minutes: 10);
+  static Duration get slowOperationWarning => TimeoutConstants.blocCritical;
+  static Duration get slowOperationCritical => TimeoutConstants.critical;
 
   // Performance Reporting Configuration
   static Duration get performanceReportingInterval => Duration(
@@ -82,17 +70,13 @@ class AppConfig {
   static bool get enableEnhancedSecurity => EnvConfig.getBool('ENABLE_ENHANCED_SECURITY', defaultValue: true);
   static bool get enableHardwareSecurity => EnvConfig.getBool('ENABLE_HARDWARE_SECURITY', defaultValue: true);
   static bool get enableEncryptionKeyRotation => EnvConfig.getBool('ENABLE_ENCRYPTION_KEY_ROTATION', defaultValue: false);
-  static Duration get encryptionKeyRotationInterval => Duration(
-    days: EnvConfig.getInt('ENCRYPTION_KEY_ROTATION_INTERVAL_DAYS', defaultValue: 30)
-  );
+  static Duration get encryptionKeyRotationInterval => SecurityConstants.keyRotationInterval;
   static String get encryptionAlgorithm => EnvConfig.get('ENCRYPTION_ALGORITHM', defaultValue: 'AES-256-GCM');
   static String get keyCipherAlgorithm => EnvConfig.get('KEY_CIPHER_ALGORITHM', defaultValue: 'RSA_ECB_OAEPwithSHA_256andMGF1Padding');
   static String get storageCipherAlgorithm => EnvConfig.get('STORAGE_CIPHER_ALGORITHM', defaultValue: 'AES_GCM_NoPadding');
   static bool get enableDataIntegrityCheck => EnvConfig.getBool('ENABLE_DATA_INTEGRITY_CHECK', defaultValue: true);
-  static int get maxFailedAccessAttempts => EnvConfig.getInt('MAX_FAILED_ACCESS_ATTEMPTS', defaultValue: 5);
-  static Duration get lockoutDuration => Duration(
-    minutes: EnvConfig.getInt('LOCKOUT_DURATION_MINUTES', defaultValue: 15)
-  );
+  static int get maxFailedAccessAttempts => SecurityConstants.maxFailedAttempts;
+  static Duration get lockoutDuration => SecurityConstants.lockoutDuration;
 
   // External Services
   static String get sentryDsn => EnvConfig.get('SENTRY_DSN');

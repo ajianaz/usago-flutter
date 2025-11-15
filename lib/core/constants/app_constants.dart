@@ -1,6 +1,10 @@
 import 'api_constants.dart';
 import 'auth_endpoints.dart';
 import 'storage_constants.dart';
+import 'ui_constants.dart';
+import 'animation_constants.dart';
+import 'validation_constants.dart';
+import 'performance_constants.dart';
 
 class AppConstants {
   // App Information
@@ -12,20 +16,20 @@ class AppConstants {
   static Duration get apiTimeout => ApiConstants.apiTimeout;
 
   // UI Constants
-  static const double defaultPadding = 16.0;
-  static const double defaultBorderRadius = 8.0;
-  static const Duration defaultAnimationDuration = Duration(milliseconds: 300);
+  static double get defaultPadding => UIConstants.paddingDefault;
+  static double get defaultBorderRadius => UIConstants.borderRadiusDefault;
+  static Duration get defaultAnimationDuration => AnimationConstants.defaultDuration;
 
   // Validation Constants
-  static const int minPasswordLength = 6;
-  static const int maxPasswordLength = 50;
-  static const int maxUsernameLength = 30;
+  static int get minPasswordLength => ValidationConstants.passwordMinLength;
+  static int get maxPasswordLength => ValidationConstants.passwordMaxLength;
+  static int get maxUsernameLength => ValidationConstants.usernameMaxLength;
 
   // Pagination Constants
-  static const int defaultPageSize = 20;
+  static int get defaultPageSize => PerformanceConstants.defaultPageSize;
 
   // Cache Constants
-  static const Duration cacheExpiration = Duration(hours: 24);
+  static Duration get cacheExpiration => PerformanceConstants.defaultCacheExpiry;
 
   // Storage Keys (delegated to StorageConstants)
   static String get authTokenKey => StorageConstants.authTokenKey;

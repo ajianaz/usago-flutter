@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../utils/animation_utils.dart';
+import '../../core/constants/animation_constants.dart';
 
 /// Theme untuk animation yang konsisten di seluruh aplikasi
 class AnimationTheme {
@@ -17,21 +18,21 @@ class AnimationTheme {
   static const Curve bounceOutCurve = AnimationUtils.curveBounceOut;
 
   // Loading Animation Durations
-  static const Duration loadingSpinnerDuration = Duration(milliseconds: 1000);
-  static const Duration skeletonShimmerDuration = Duration(milliseconds: 1500);
-  static const Duration pulseDuration = Duration(milliseconds: 800);
-  static const Duration shakeDuration = Duration(milliseconds: 500);
+  static Duration get loadingSpinnerDuration => AnimationConstants.loadingSpinnerDuration;
+  static Duration get skeletonShimmerDuration => AnimationConstants.skeletonLoadingDuration;
+  static Duration get pulseDuration => AnimationConstants.successDuration;
+  static Duration get shakeDuration => AnimationConstants.mediumDuration;
 
   // Page Transition Durations
-  static const Duration pageTransitionDuration = Duration(milliseconds: 300);
-  static const Duration heroAnimationDuration = Duration(milliseconds: 600);
-  static const Duration sharedElementDuration = Duration(milliseconds: 400);
+  static Duration get pageTransitionDuration => AnimationConstants.pageTransitionDuration;
+  static Duration get heroAnimationDuration => AnimationConstants.slowDuration;
+  static Duration get sharedElementDuration => AnimationConstants.mediumDuration;
 
   // Micro-interaction Durations
-  static const Duration buttonPressDuration = Duration(milliseconds: 150);
-  static const Duration inputFocusDuration = Duration(milliseconds: 200);
-  static const Duration gestureFeedbackDuration = Duration(milliseconds: 100);
-  static const Duration successAnimationDuration = Duration(milliseconds: 800);
+  static Duration get buttonPressDuration => AnimationConstants.buttonDuration;
+  static Duration get inputFocusDuration => AnimationConstants.inputDuration;
+  static Duration get gestureFeedbackDuration => AnimationConstants.fastDuration;
+  static Duration get successAnimationDuration => AnimationConstants.successDuration;
 
   // Loading Animation Curves
   static const Curve loadingCurve = Curves.linear;
@@ -51,7 +52,7 @@ class AnimationTheme {
   static const Curve successAnimationCurve = Curves.elasticOut;
 
   // Loading Animation Themes
-  static LoadingAnimationTheme get loadingAnimationTheme => const LoadingAnimationTheme(
+  static LoadingAnimationTheme get loadingAnimationTheme => LoadingAnimationTheme(
     spinnerDuration: loadingSpinnerDuration,
     spinnerCurve: loadingCurve,
     skeletonDuration: skeletonShimmerDuration,
@@ -63,7 +64,7 @@ class AnimationTheme {
   );
 
   // Page Transition Theme
-  static PageTransitionTheme get pageTransitionTheme => const PageTransitionTheme(
+  static PageTransitionTheme get pageTransitionTheme => PageTransitionTheme(
     duration: pageTransitionDuration,
     curve: pageTransitionCurve,
     heroDuration: heroAnimationDuration,
@@ -73,7 +74,7 @@ class AnimationTheme {
   );
 
   // Micro-interaction Theme
-  static MicroInteractionTheme get microInteractionTheme => const MicroInteractionTheme(
+  static MicroInteractionTheme get microInteractionTheme => MicroInteractionTheme(
     buttonPressDuration: buttonPressDuration,
     buttonPressCurve: buttonPressCurve,
     inputFocusDuration: inputFocusDuration,
@@ -170,63 +171,63 @@ class ShakeCurve extends Curve {
 /// Animation Presets untuk penggunaan umum
 class AnimationPresets {
   // Loading Presets
-  static const AnimationPreset loadingSpinner = AnimationPreset(
+  static AnimationPreset get loadingSpinner => AnimationPreset(
     duration: AnimationTheme.loadingSpinnerDuration,
     curve: AnimationTheme.loadingCurve,
     reverseCurve: AnimationTheme.loadingCurve,
   );
 
-  static const AnimationPreset skeletonShimmer = AnimationPreset(
+  static AnimationPreset get skeletonShimmer => AnimationPreset(
     duration: AnimationTheme.skeletonShimmerDuration,
     curve: AnimationTheme.skeletonCurve,
     reverseCurve: AnimationTheme.skeletonCurve,
   );
 
-  static const AnimationPreset pulse = AnimationPreset(
+  static AnimationPreset get pulse => AnimationPreset(
     duration: AnimationTheme.pulseDuration,
     curve: AnimationTheme.pulseCurve,
     reverseCurve: AnimationTheme.pulseCurve,
   );
 
-  static const AnimationPreset shake = AnimationPreset(
+  static AnimationPreset get shake => AnimationPreset(
     duration: AnimationTheme.shakeDuration,
     curve: AnimationTheme.shakeCurve,
     reverseCurve: AnimationTheme.shakeCurve,
   );
 
   // Page Transition Presets
-  static const AnimationPreset pageTransition = AnimationPreset(
+  static AnimationPreset get pageTransition => AnimationPreset(
     duration: AnimationTheme.pageTransitionDuration,
     curve: AnimationTheme.pageTransitionCurve,
     reverseCurve: AnimationTheme.pageTransitionCurve,
   );
 
-  static const AnimationPreset heroAnimation = AnimationPreset(
+  static AnimationPreset get heroAnimation => AnimationPreset(
     duration: AnimationTheme.heroAnimationDuration,
     curve: AnimationTheme.heroAnimationCurve,
     reverseCurve: AnimationTheme.heroAnimationCurve,
   );
 
   // Micro-interaction Presets
-  static const AnimationPreset buttonPress = AnimationPreset(
+  static AnimationPreset get buttonPress => AnimationPreset(
     duration: AnimationTheme.buttonPressDuration,
     curve: AnimationTheme.buttonPressCurve,
     reverseCurve: AnimationTheme.buttonPressCurve,
   );
 
-  static const AnimationPreset inputFocus = AnimationPreset(
+  static AnimationPreset get inputFocus => AnimationPreset(
     duration: AnimationTheme.inputFocusDuration,
     curve: AnimationTheme.inputFocusCurve,
     reverseCurve: AnimationTheme.inputFocusCurve,
   );
 
-  static const AnimationPreset gestureFeedback = AnimationPreset(
+  static AnimationPreset get gestureFeedback => AnimationPreset(
     duration: AnimationTheme.gestureFeedbackDuration,
     curve: AnimationTheme.gestureFeedbackCurve,
     reverseCurve: AnimationTheme.gestureFeedbackCurve,
   );
 
-  static const AnimationPreset successAnimation = AnimationPreset(
+  static AnimationPreset get successAnimation => AnimationPreset(
     duration: AnimationTheme.successAnimationDuration,
     curve: AnimationTheme.successAnimationCurve,
     reverseCurve: AnimationTheme.successAnimationCurve,

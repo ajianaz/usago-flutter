@@ -1,153 +1,181 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import '../../core/constants/ui_constants.dart';
 
 class AppTextStyles {
+  // Font Size Constants
+  static const double fontSizeHeadline1 = 32.0;
+  static const double fontSizeHeadline2 = 28.0;
+  static const double fontSizeHeadline3 = 24.0;
+  static const double fontSizeHeadline4 = 20.0;
+  static const double fontSizeHeadline5 = 18.0;
+  static const double fontSizeHeadline6 = 16.0;
+  static const double fontSizeBodyLarge = 16.0;
+  static const double fontSizeBodyMedium = 14.0;
+  static const double fontSizeBodySmall = 12.0;
+  static const double fontSizeButtonLarge = 16.0;
+  static const double fontSizeButtonMedium = 14.0;
+  static const double fontSizeButtonSmall = 12.0;
+  static const double fontSizeCaption = 12.0;
+  static const double fontSizeOverline = 10.0;
+  static const double fontSizeInputLabel = 14.0;
+  static const double fontSizeInputText = 16.0;
+  static const double fontSizeInputHint = 14.0;
+  static const double fontSizeLink = 14.0;
+  static const double fontSizeError = 14.0;
+  static const double fontSizeSuccess = 14.0;
+
+  // Line Height Constants
+  static const double lineHeightTight = 1.2;
+  static const double lineHeightNormal = 1.5;
+  static const double lineHeightLoose = 1.4;
+
   // Headline Styles
-  static const TextStyle headline1 = TextStyle(
-    fontSize: 32,
+  static TextStyle get headline1 => TextStyle(
+    fontSize: fontSizeHeadline1,
     fontWeight: FontWeight.bold,
     color: AppColors.textPrimary,
-    height: 1.2,
+    height: lineHeightTight,
   );
 
-  static const TextStyle headline2 = TextStyle(
-    fontSize: 28,
+  static TextStyle get headline2 => TextStyle(
+    fontSize: fontSizeHeadline2,
     fontWeight: FontWeight.bold,
     color: AppColors.textPrimary,
-    height: 1.2,
+    height: lineHeightTight,
   );
 
-  static const TextStyle headline3 = TextStyle(
-    fontSize: 24,
+  static TextStyle get headline3 => TextStyle(
+    fontSize: fontSizeHeadline3,
     fontWeight: FontWeight.bold,
     color: AppColors.textPrimary,
-    height: 1.2,
+    height: lineHeightTight,
   );
 
-  static const TextStyle headline4 = TextStyle(
-    fontSize: 20,
+  static TextStyle get headline4 => TextStyle(
+    fontSize: fontSizeHeadline4,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
-    height: 1.2,
+    height: lineHeightTight,
   );
 
-  static const TextStyle headline5 = TextStyle(
-    fontSize: 18,
+  static TextStyle get headline5 => TextStyle(
+    fontSize: fontSizeHeadline5,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
-    height: 1.2,
+    height: lineHeightTight,
   );
 
-  static const TextStyle headline6 = TextStyle(
-    fontSize: 16,
+  static TextStyle get headline6 => TextStyle(
+    fontSize: fontSizeHeadline6,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
-    height: 1.2,
+    height: lineHeightTight,
   );
 
   // Body Text Styles
-  static const TextStyle bodyLarge = TextStyle(
-    fontSize: 16,
+  static TextStyle get bodyLarge => TextStyle(
+    fontSize: fontSizeBodyLarge,
     fontWeight: FontWeight.normal,
     color: AppColors.textPrimary,
-    height: 1.5,
+    height: lineHeightNormal,
   );
 
-  static const TextStyle bodyMedium = TextStyle(
-    fontSize: 14,
+  static TextStyle get bodyMedium => TextStyle(
+    fontSize: fontSizeBodyMedium,
     fontWeight: FontWeight.normal,
     color: AppColors.textPrimary,
-    height: 1.5,
+    height: lineHeightNormal,
   );
 
-  static const TextStyle bodySmall = TextStyle(
-    fontSize: 12,
+  static TextStyle get bodySmall => TextStyle(
+    fontSize: fontSizeBodySmall,
     fontWeight: FontWeight.normal,
     color: AppColors.textPrimary,
-    height: 1.5,
+    height: lineHeightNormal,
   );
 
   // Button Text Styles
-  static const TextStyle buttonLarge = TextStyle(
-    fontSize: 16,
+  static TextStyle get buttonLarge => TextStyle(
+    fontSize: fontSizeButtonLarge,
     fontWeight: FontWeight.w600,
     color: AppColors.onPrimary,
-    height: 1.2,
+    height: lineHeightTight,
   );
 
-  static const TextStyle buttonMedium = TextStyle(
-    fontSize: 14,
+  static TextStyle get buttonMedium => TextStyle(
+    fontSize: fontSizeButtonMedium,
     fontWeight: FontWeight.w600,
     color: AppColors.onPrimary,
-    height: 1.2,
+    height: lineHeightTight,
   );
 
-  static const TextStyle buttonSmall = TextStyle(
-    fontSize: 12,
+  static TextStyle get buttonSmall => TextStyle(
+    fontSize: fontSizeButtonSmall,
     fontWeight: FontWeight.w600,
     color: AppColors.onPrimary,
-    height: 1.2,
+    height: lineHeightTight,
   );
 
   // Caption Styles
-  static const TextStyle caption = TextStyle(
-    fontSize: 12,
+  static TextStyle get caption => TextStyle(
+    fontSize: fontSizeCaption,
     fontWeight: FontWeight.normal,
     color: AppColors.textSecondary,
-    height: 1.4,
+    height: lineHeightLoose,
   );
 
-  static const TextStyle overline = TextStyle(
-    fontSize: 10,
+  static TextStyle get overline => TextStyle(
+    fontSize: fontSizeOverline,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
-    height: 1.4,
+    height: lineHeightLoose,
   );
 
   // Input Field Styles
-  static const TextStyle inputLabel = TextStyle(
-    fontSize: 14,
+  static TextStyle get inputLabel => TextStyle(
+    fontSize: fontSizeInputLabel,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
-    height: 1.2,
+    height: lineHeightTight,
   );
 
-  static const TextStyle inputText = TextStyle(
-    fontSize: 16,
+  static TextStyle get inputText => TextStyle(
+    fontSize: fontSizeInputText,
     fontWeight: FontWeight.normal,
     color: AppColors.textPrimary,
-    height: 1.2,
+    height: lineHeightTight,
   );
 
-  static const TextStyle inputHint = TextStyle(
-    fontSize: 14,
+  static TextStyle get inputHint => TextStyle(
+    fontSize: fontSizeInputHint,
     fontWeight: FontWeight.normal,
     color: AppColors.textDisabled,
-    height: 1.2,
+    height: lineHeightTight,
   );
 
   // Link Styles
-  static const TextStyle link = TextStyle(
-    fontSize: 14,
+  static TextStyle get link => TextStyle(
+    fontSize: fontSizeLink,
     fontWeight: FontWeight.w600,
     color: AppColors.primary,
-    height: 1.2,
+    height: lineHeightTight,
     decoration: TextDecoration.underline,
   );
 
   // Error Styles
-  static const TextStyle error = TextStyle(
-    fontSize: 14,
+  static TextStyle get error => TextStyle(
+    fontSize: fontSizeError,
     fontWeight: FontWeight.normal,
     color: AppColors.error,
-    height: 1.4,
+    height: lineHeightLoose,
   );
 
   // Success Styles
-  static const TextStyle success = TextStyle(
-    fontSize: 14,
+  static TextStyle get success => TextStyle(
+    fontSize: fontSizeSuccess,
     fontWeight: FontWeight.normal,
     color: AppColors.success,
-    height: 1.4,
+    height: lineHeightLoose,
   );
 }
