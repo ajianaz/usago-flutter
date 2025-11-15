@@ -37,6 +37,8 @@ dependencies:
   fpdart: ^1.2.0
   flutter_dotenv: ^5.1.0
   uuid: ^4.5.1
+  crypto: ^3.0.3
+  encrypt: ^5.0.1
 
   # Internationalization
   slang: ^4.10.0

@@ -78,6 +78,22 @@ class AppConfig {
   static String get encryptionKey => EnvConfig.get('ENCRYPTION_KEY');
   static String get jwtSecret => EnvConfig.get('JWT_SECRET');
 
+  // Enhanced Security Configuration
+  static bool get enableEnhancedSecurity => EnvConfig.getBool('ENABLE_ENHANCED_SECURITY', defaultValue: true);
+  static bool get enableHardwareSecurity => EnvConfig.getBool('ENABLE_HARDWARE_SECURITY', defaultValue: true);
+  static bool get enableEncryptionKeyRotation => EnvConfig.getBool('ENABLE_ENCRYPTION_KEY_ROTATION', defaultValue: false);
+  static Duration get encryptionKeyRotationInterval => Duration(
+    days: EnvConfig.getInt('ENCRYPTION_KEY_ROTATION_INTERVAL_DAYS', defaultValue: 30)
+  );
+  static String get encryptionAlgorithm => EnvConfig.get('ENCRYPTION_ALGORITHM', defaultValue: 'AES-256-GCM');
+  static String get keyCipherAlgorithm => EnvConfig.get('KEY_CIPHER_ALGORITHM', defaultValue: 'RSA_ECB_OAEPwithSHA_256andMGF1Padding');
+  static String get storageCipherAlgorithm => EnvConfig.get('STORAGE_CIPHER_ALGORITHM', defaultValue: 'AES_GCM_NoPadding');
+  static bool get enableDataIntegrityCheck => EnvConfig.getBool('ENABLE_DATA_INTEGRITY_CHECK', defaultValue: true);
+  static int get maxFailedAccessAttempts => EnvConfig.getInt('MAX_FAILED_ACCESS_ATTEMPTS', defaultValue: 5);
+  static Duration get lockoutDuration => Duration(
+    minutes: EnvConfig.getInt('LOCKOUT_DURATION_MINUTES', defaultValue: 15)
+  );
+
   // External Services
   static String get sentryDsn => EnvConfig.get('SENTRY_DSN');
   static String get firebaseApiKey => EnvConfig.get('FIREBASE_API_KEY');
@@ -102,6 +118,9 @@ class AppConfig {
       'BEARER_TOKEN_HEADER',
       'ENCRYPTION_KEY',
       'JWT_SECRET',
+      'ENCRYPTION_ALGORITHM',
+      'KEY_CIPHER_ALGORITHM',
+      'STORAGE_CIPHER_ALGORITHM',
     ]);
   }
 

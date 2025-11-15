@@ -2,13 +2,19 @@ import 'package:dio/dio.dart';
 import '../constants/app_constants.dart';
 import '../utils/logger.dart';
 import '../errors/exceptions.dart';
+import '../services/enhanced_secure_storage_service.dart';
 import 'auth_interceptor.dart';
 
 class DioClient {
   late Dio _dio;
   final AppLogger _logger;
+  final EnhancedSecureStorageService _secureStorage;
 
-  DioClient({AppLogger? logger}) : _logger = logger ?? AppLogger() {
+  DioClient({
+    AppLogger? logger,
+    required EnhancedSecureStorageService secureStorage,
+  })  : _logger = logger ?? AppLogger(),
+        _secureStorage = secureStorage {
     // Log the base URL for debugging
     _logger.info('Initializing DioClient with base URL: ${AppConstants.apiBaseUrl}');
 
@@ -24,7 +30,10 @@ class DioClient {
 
     // Add interceptors
     _dio.interceptors.add(LogInterceptor(logger: _logger));
-    _dio.interceptors.add(AuthInterceptor(logger: _logger));
+    _dio.interceptors.add(AuthInterceptor(
+      logger: _logger,
+      secureStorage: _secureStorage,
+    ));
 
     _logger.info('DioClient initialized successfully');
   }

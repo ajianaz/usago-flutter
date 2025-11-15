@@ -1,23 +1,27 @@
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_constants.dart';
 import '../utils/logger.dart';
 import '../errors/exceptions.dart';
+import '../services/enhanced_secure_storage_service.dart';
 
 /// Authentication interceptor for handling auth tokens and token refresh
 /// Enhanced with specific error handling for better error reporting
 class AuthInterceptor extends Interceptor {
   final AppLogger _logger;
+  final EnhancedSecureStorageService _secureStorage;
   bool _isRefreshing = false;
 
-  AuthInterceptor({required AppLogger logger}) : _logger = logger;
+  AuthInterceptor({
+    required AppLogger logger,
+    required EnhancedSecureStorageService secureStorage,
+  })  : _logger = logger,
+        _secureStorage = secureStorage;
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     // Add auth token if available
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString(AppConstants.bearerTokenKey);
+      final token = await _secureStorage.getToken();
 
       if (token != null) {
         options.headers['Authorization'] = 'Bearer $token';
@@ -93,8 +97,7 @@ class AuthInterceptor extends Interceptor {
   /// Save token to secure storage
   Future<void> _saveTokenToStorage(String token) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(AppConstants.bearerTokenKey, token);
+      await _secureStorage.saveToken(token);
     } catch (e) {
       _logger.error('Failed to save token to storage', e);
     }
@@ -106,6 +109,13 @@ class AuthInterceptor extends Interceptor {
       _logger.info('Attempting to refresh token');
       _logger.info('Using base URL: ${AppConstants.apiBaseUrl}');
       _logger.info('Using refresh endpoint: ${AppConstants.refreshTokenEndpoint}');
+
+      // Get refresh token from secure storage
+      final refreshToken = await _secureStorage.getRefreshToken();
+      if (refreshToken == null) {
+        _logger.warning('No refresh token available for token refresh');
+        return null;
+      }
 
       // Create a new Dio instance to avoid infinite loop
       final dio = Dio(BaseOptions(
@@ -123,6 +133,9 @@ class AuthInterceptor extends Interceptor {
 
       final response = await dio.post(
         AppConstants.refreshTokenEndpoint,
+        data: {
+          'refreshToken': refreshToken,
+        },
         options: Options(
           headers: {
             'Content-Type': 'application/json',
@@ -138,6 +151,16 @@ class AuthInterceptor extends Interceptor {
       if (newToken != null && newToken.isNotEmpty) {
         _logger.info('New token received successfully');
         return newToken.first;
+      }
+
+      // Also check response body for token
+      if (response.data is Map<String, dynamic>) {
+        final responseData = response.data as Map<String, dynamic>;
+        final tokenFromBody = responseData['token'] ?? responseData['accessToken'];
+        if (tokenFromBody != null) {
+          _logger.info('New token received from response body');
+          return tokenFromBody.toString();
+        }
       }
 
       _logger.warning('No new token received in refresh response');

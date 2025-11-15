@@ -7,6 +7,7 @@ import '../utils/logger.dart';
 import '../errors/error_handler.dart';
 import '../services/locale_service.dart';
 import '../services/secure_storage_service.dart';
+import '../services/enhanced_secure_storage_service.dart';
 import '../services/performance_service.dart';
 import '../performance/performance_tracker.dart';
 import '../performance/memory_manager.dart';
@@ -56,9 +57,23 @@ Future<void> _setupCoreServices() async {
     description: 'Secure storage for sensitive data',
   );
 
+  // Register enhanced secure storage service
+  DIServiceLocator.registerLazySingleton<EnhancedSecureStorageService>(
+    () => EnhancedSecureStorageService(
+      secureStorage: DIServiceLocator.get<FlutterSecureStorage>(),
+      prefs: DIServiceLocator.get<SharedPreferences>(),
+      logger: DIServiceLocator.get<AppLogger>(),
+    ),
+    name: 'EnhancedSecureStorageService',
+    description: 'Enhanced secure storage service with encryption',
+  );
+
   // Register core services directly
   DIServiceLocator.registerSingleton<DioClient>(
-    DioClient(),
+    DioClient(
+      logger: DIServiceLocator.get<AppLogger>(),
+      secureStorage: DIServiceLocator.get<EnhancedSecureStorageService>(),
+    ),
     name: 'DioClient',
     description: 'HTTP client for API communication',
   );
