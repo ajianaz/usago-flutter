@@ -36,52 +36,26 @@ class AuthRepositoryImpl implements AuthRepository {
       _logger.info('Login attempt for email: $email');
 
       // Call remote datasource
-      final userModel = await _remoteDatasource.login(
+      final result = await _remoteDatasource.login(
         email: email,
         password: password,
       );
 
-      // Cache user locally
-      await _localDatasource.saveUser(userModel);
-      await _localDatasource.saveLastLoginTime(DateTime.now());
+      return result.fold(
+        (failure) {
+          _logger.error('Login failed with failure', failure);
+          return Left(failure);
+        },
+        (userModel) async {
+          // Cache user locally
+          await _localDatasource.saveUser(userModel);
+          await _localDatasource.saveLastLoginTime(DateTime.now());
 
-      _logger.info('Login successful for user: ${userModel.id}');
+          _logger.info('Login successful for user: ${userModel.id}');
 
-      return Right(userModel.toEntity());
-    } on AuthException catch (e) {
-      _logger.error('Login failed with auth exception', e);
-      return Left(AuthFailure(
-        message: e.message,
-        type: e.type,
-        code: e.code,
-        originalError: e.originalError,
-      ));
-    } on NetworkException catch (e) {
-      _logger.error('Login failed with network exception', e);
-      return Left(NetworkFailure(
-        message: e.message,
-        code: e.code,
-        statusCode: e.statusCode,
-        endpoint: e.endpoint,
-        originalError: e.originalError,
-      ));
-    } on ValidationException catch (e) {
-      _logger.error('Login failed with validation exception', e);
-      return Left(ValidationFailure(
-        message: e.message,
-        fieldErrors: e.fieldErrors,
-        code: e.code,
-        originalError: e.originalError,
-      ));
-    } on ServerException catch (e) {
-      _logger.error('Login failed with server exception', e);
-      return Left(ServerFailure(
-        message: e.message,
-        code: e.code,
-        statusCode: e.statusCode,
-        endpoint: e.endpoint,
-        originalError: e.originalError,
-      ));
+          return Right(userModel.toEntity());
+        },
+      );
     } catch (e) {
       _logger.error('Login failed with unknown exception', e);
       return Left(UnknownFailure(
@@ -101,53 +75,27 @@ class AuthRepositoryImpl implements AuthRepository {
       _logger.info('Registration attempt for email: $email');
 
       // Call remote datasource
-      final userModel = await _remoteDatasource.register(
+      final result = await _remoteDatasource.register(
         email: email,
         password: password,
         name: name,
       );
 
-      // Cache user locally
-      await _localDatasource.saveUser(userModel);
-      await _localDatasource.saveLastLoginTime(DateTime.now());
+      return result.fold(
+        (failure) {
+          _logger.error('Registration failed with failure', failure);
+          return Left(failure);
+        },
+        (userModel) async {
+          // Cache user locally
+          await _localDatasource.saveUser(userModel);
+          await _localDatasource.saveLastLoginTime(DateTime.now());
 
-      _logger.info('Registration successful for user: ${userModel.id}');
+          _logger.info('Registration successful for user: ${userModel.id}');
 
-      return Right(userModel.toEntity());
-    } on AuthException catch (e) {
-      _logger.error('Registration failed with auth exception', e);
-      return Left(AuthFailure(
-        message: e.message,
-        type: e.type,
-        code: e.code,
-        originalError: e.originalError,
-      ));
-    } on NetworkException catch (e) {
-      _logger.error('Registration failed with network exception', e);
-      return Left(NetworkFailure(
-        message: e.message,
-        code: e.code,
-        statusCode: e.statusCode,
-        endpoint: e.endpoint,
-        originalError: e.originalError,
-      ));
-    } on ValidationException catch (e) {
-      _logger.error('Registration failed with validation exception', e);
-      return Left(ValidationFailure(
-        message: e.message,
-        fieldErrors: e.fieldErrors,
-        code: e.code,
-        originalError: e.originalError,
-      ));
-    } on ServerException catch (e) {
-      _logger.error('Registration failed with server exception', e);
-      return Left(ServerFailure(
-        message: e.message,
-        code: e.code,
-        statusCode: e.statusCode,
-        endpoint: e.endpoint,
-        originalError: e.originalError,
-      ));
+          return Right(userModel.toEntity());
+        },
+      );
     } catch (e) {
       _logger.error('Registration failed with unknown exception', e);
       return Left(UnknownFailure(
@@ -163,39 +111,21 @@ class AuthRepositoryImpl implements AuthRepository {
       _logger.info('Logout attempt');
 
       // Call remote datasource
-      await _remoteDatasource.logout();
+      final result = await _remoteDatasource.logout();
 
-      // Clear local cache
-      await _localDatasource.clearAllAuthData();
+      return result.fold(
+        (failure) {
+          _logger.error('Logout failed with failure', failure);
+          return Left(failure);
+        },
+        (_) async {
+          // Clear local cache
+          await _localDatasource.clearAllAuthData();
 
-      _logger.info('Logout successful');
-      return const Right(null);
-    } on AuthException catch (e) {
-      _logger.error('Logout failed with auth exception', e);
-      return Left(AuthFailure(
-        message: e.message,
-        type: e.type,
-        code: e.code,
-        originalError: e.originalError,
-      ));
-    } on NetworkException catch (e) {
-      _logger.error('Logout failed with network exception', e);
-      return Left(NetworkFailure(
-        message: e.message,
-        code: e.code,
-        statusCode: e.statusCode,
-        endpoint: e.endpoint,
-        originalError: e.originalError,
-      ));
-    } on ServerException catch (e) {
-      _logger.error('Logout failed with server exception', e);
-      return Left(ServerFailure(
-        message: e.message,
-        code: e.code,
-        statusCode: e.statusCode,
-        endpoint: e.endpoint,
-        originalError: e.originalError,
-      ));
+          _logger.info('Logout successful');
+          return const Right(null);
+        },
+      );
     } catch (e) {
       _logger.error('Logout failed with unknown exception', e);
       return Left(UnknownFailure(
@@ -245,40 +175,22 @@ class AuthRepositoryImpl implements AuthRepository {
       _logger.info('Token refresh attempt');
 
       // Call remote datasource
-      final userModel = await _remoteDatasource.refreshToken();
+      final result = await _remoteDatasource.refreshToken();
 
-      // Update local cache
-      await _localDatasource.saveUser(userModel);
+      return result.fold(
+        (failure) {
+          _logger.error('Token refresh failed with failure', failure);
+          return Left(failure);
+        },
+        (userModel) async {
+          // Update local cache
+          await _localDatasource.saveUser(userModel);
 
-      _logger.info('Token refresh successful for user: ${userModel.id}');
+          _logger.info('Token refresh successful for user: ${userModel.id}');
 
-      return Right(userModel.toEntity());
-    } on AuthException catch (e) {
-      _logger.error('Token refresh failed with auth exception', e);
-      return Left(AuthFailure(
-        message: e.message,
-        type: e.type,
-        code: e.code,
-        originalError: e.originalError,
-      ));
-    } on NetworkException catch (e) {
-      _logger.error('Token refresh failed with network exception', e);
-      return Left(NetworkFailure(
-        message: e.message,
-        code: e.code,
-        statusCode: e.statusCode,
-        endpoint: e.endpoint,
-        originalError: e.originalError,
-      ));
-    } on ServerException catch (e) {
-      _logger.error('Token refresh failed with server exception', e);
-      return Left(ServerFailure(
-        message: e.message,
-        code: e.code,
-        statusCode: e.statusCode,
-        endpoint: e.endpoint,
-        originalError: e.originalError,
-      ));
+          return Right(userModel.toEntity());
+        },
+      );
     } catch (e) {
       _logger.error('Token refresh failed with unknown exception', e);
       return Left(UnknownFailure(
@@ -341,22 +253,36 @@ class AuthRepositoryImpl implements AuthRepository {
     String? name,
     String? profilePicture,
   }) async {
-    return _errorHandler.safeExecute(() async {
+    try {
       _logger.info('Profile update attempt');
 
       // Call remote datasource
-      final userModel = await _remoteDatasource.updateProfile(
+      final result = await _remoteDatasource.updateProfile(
         name: name,
         profilePicture: profilePicture,
       );
 
-      // Update local cache
-      await _localDatasource.saveUser(userModel);
+      return result.fold(
+        (failure) {
+          _logger.error('Profile update failed with failure', failure);
+          return Left(failure);
+        },
+        (userModel) async {
+          // Update local cache
+          await _localDatasource.saveUser(userModel);
 
-      _logger.info('Profile update successful for user: ${userModel.id}');
+          _logger.info('Profile update successful for user: ${userModel.id}');
 
-      return userModel.toEntity();
-    });
+          return Right(userModel.toEntity());
+        },
+      );
+    } catch (e) {
+      _logger.error('Profile update failed with unknown exception', e);
+      return Left(UnknownFailure(
+        message: 'An unexpected error occurred during profile update',
+        originalError: e,
+      ));
+    }
   }
 
   @override

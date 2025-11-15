@@ -65,7 +65,7 @@ import '../../../../core/performance/performance_tracker.dart';
 /// - Repository: Lazy Singleton (single instance untuk consistency)
 /// - Use Cases: Lazy Singleton (reuse untuk performance)
 /// - BLoC: Factory (instance baru untuk setiap widget)
-void setupAuthDependencies(GetIt getIt) {
+Future<void> setupAuthDependencies(GetIt getIt) async {
   // Get existing instances from core dependencies
   // Ini adalah dependencies yang sudah diregister di core layer
   final dioClient = DIServiceLocator.get<DioClient>();

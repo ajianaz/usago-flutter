@@ -9,6 +9,9 @@ class DioClient {
   final AppLogger _logger;
 
   DioClient({AppLogger? logger}) : _logger = logger ?? AppLogger() {
+    // Log the base URL for debugging
+    _logger.info('Initializing DioClient with base URL: ${AppConstants.apiBaseUrl}');
+
     _dio = Dio(BaseOptions(
       baseUrl: AppConstants.apiBaseUrl,
       connectTimeout: AppConstants.apiTimeout,
@@ -22,6 +25,8 @@ class DioClient {
     // Add interceptors
     _dio.interceptors.add(LogInterceptor(logger: _logger));
     _dio.interceptors.add(AuthInterceptor(logger: _logger));
+
+    _logger.info('DioClient initialized successfully');
   }
 
   Dio get dio => _dio;
@@ -257,14 +262,20 @@ class LogInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    _logger.debug('REQUEST: ${options.method} ${options.path}');
+    final fullUrl = '${options.baseUrl}${options.path}';
+    _logger.debug('REQUEST: ${options.method} $fullUrl');
+    _logger.debug('BASE URL: ${options.baseUrl}');
+    _logger.debug('PATH: ${options.path}');
+    _logger.debug('HEADERS: ${options.headers}');
     _logger.debug('DATA: ${options.data}');
     handler.next(options);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    _logger.debug('RESPONSE: ${response.statusCode} ${response.requestOptions.path}');
+    final fullUrl = '${response.requestOptions.baseUrl}${response.requestOptions.path}';
+    _logger.debug('RESPONSE: ${response.statusCode} $fullUrl');
+    _logger.debug('HEADERS: ${response.headers}');
     _logger.debug('DATA: ${response.data}');
     handler.next(response);
   }

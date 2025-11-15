@@ -23,3 +23,13 @@ export 'micro_interactions/animated_button.dart' hide ButtonVariant, ButtonSize;
 export 'micro_interactions/interactive_input.dart';
 export 'micro_interactions/gesture_feedback.dart';
 export 'micro_interactions/success_animation.dart';
+
+// Performance monitoring exports
+export '../../core/performance/bloc_monitor.dart';
+export '../../core/performance/memory_manager.dart';
+export '../../core/performance/performance_tracker.dart';
+export '../../core/performance/performance_utils.dart';
+
+// Animation utilities exports
+export '../utils/animation_utils.dart';
+export '../utils/bloc_loading_helper.dart' hide ButtonVariant, ButtonSize;

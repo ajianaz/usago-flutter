@@ -19,17 +19,17 @@ import '../../../../core/config/app_config.dart';
 /// Authentication BLoC
 /// Handles all authentication state management
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final LoginUsecase _loginUsecase;
-  final RegisterUsecase _registerUsecase;
-  final LogoutUsecase _logoutUsecase;
-  final CheckAuthUsecase _checkAuthUsecase;
-  final UpdateProfileUsecase _updateProfileUsecase;
-  final ChangePasswordUsecase _changePasswordUsecase;
-  final ForgotPasswordUsecase _forgotPasswordUsecase;
-  final ResetPasswordUsecase _resetPasswordUsecase;
-  final VerifyEmailUsecase _verifyEmailUsecase;
-  final ResendVerificationEmailUsecase _resendVerificationEmailUsecase;
-  final DeleteAccountUsecase _deleteAccountUsecase;
+  LoginUsecase? _loginUsecase;
+  RegisterUsecase? _registerUsecase;
+  LogoutUsecase? _logoutUsecase;
+  CheckAuthUsecase? _checkAuthUsecase;
+  UpdateProfileUsecase? _updateProfileUsecase;
+  ChangePasswordUsecase? _changePasswordUsecase;
+  ForgotPasswordUsecase? _forgotPasswordUsecase;
+  ResetPasswordUsecase? _resetPasswordUsecase;
+  VerifyEmailUsecase? _verifyEmailUsecase;
+  ResendVerificationEmailUsecase? _resendVerificationEmailUsecase;
+  DeleteAccountUsecase? _deleteAccountUsecase;
 
   // Performance monitoring
   final PerformanceTracker _performanceTracker;
@@ -122,10 +122,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   @override
   Future<void> close() {
-    // Stop performance tracking
+    // Stop performance tracking and clean up resources
     if (_blocTrackingId != null && AppConfig.enablePerformanceMonitoring) {
       _performanceTracker.stopTracking(_blocTrackingId!);
     }
+
+    // Clean up event handlers to prevent memory leaks
+    _loginUsecase = null;
+    _registerUsecase = null;
+    _logoutUsecase = null;
+    _checkAuthUsecase = null;
+    _updateProfileUsecase = null;
+    _changePasswordUsecase = null;
+    _forgotPasswordUsecase = null;
+    _resetPasswordUsecase = null;
+    _verifyEmailUsecase = null;
+    _resendVerificationEmailUsecase = null;
+    _deleteAccountUsecase = null;
 
     return super.close();
   }
@@ -133,50 +146,117 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onLoginEvent(LoginEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
-    final result = await _loginUsecase(
-      LoginParams(email: event.email, password: event.password),
-    );
+    final trackingId = _performanceTracker.startTracking('login_operation', category: 'auth');
 
-    emit(result.fold(
-      (failure) => AuthFailure(message: failure.message),
-      (user) => AuthSuccess(user: user),
-    ));
+    try {
+      final result = await _loginUsecase?.call(
+        LoginParams(email: event.email, password: event.password),
+      );
+
+      emit(result?.fold(
+        (failure) {
+          _performanceTracker.stopTracking(trackingId, metadata: {
+            'success': false,
+            'error': failure.message,
+            'email': event.email,
+          });
+          return AuthFailure(message: failure.message);
+        },
+        (user) {
+          _performanceTracker.stopTracking(trackingId, metadata: {
+            'success': true,
+            'userId': user.id,
+            'email': event.email,
+          });
+          return AuthSuccess(user: user);
+        },
+      ) ?? const AuthFailure(message: 'Login service unavailable'));
+    } catch (e, stackTrace) {
+      _performanceTracker.stopTracking(trackingId, metadata: {
+        'success': false,
+        'error': e.toString(),
+        'email': event.email,
+      });
+
+      _performanceTracker.trackError(
+        'AuthBloc',
+        e.toString(),
+        stackTrace.toString(),
+      );
+
+      emit(AuthFailure(message: 'An unexpected error occurred during login'));
+    }
   }
 
   Future<void> _onRegisterEvent(RegisterEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
-    final result = await _registerUsecase(
-      RegisterParams(
-        email: event.email,
-        password: event.password,
-        name: event.name,
-      ),
-    );
+    final trackingId = _performanceTracker.startTracking('register_operation', category: 'auth');
 
-    emit(result.fold(
-      (failure) => AuthFailure(message: failure.message),
-      (user) => AuthSuccess(user: user),
-    ));
+    try {
+      final result = await _registerUsecase?.call(
+        RegisterParams(
+          email: event.email,
+          password: event.password,
+          name: event.name,
+        ),
+      );
+
+      emit(result?.fold(
+        (failure) {
+          _performanceTracker.stopTracking(trackingId, metadata: {
+            'success': false,
+            'error': failure.message,
+            'email': event.email,
+            'name': event.name,
+          });
+          return AuthFailure(message: failure.message);
+        },
+        (user) {
+          _performanceTracker.stopTracking(trackingId, metadata: {
+            'success': true,
+            'userId': user.id,
+            'email': event.email,
+            'name': event.name,
+          });
+          return AuthSuccess(user: user);
+        },
+      ) ?? const AuthFailure(message: 'Registration service unavailable'));
+    } catch (e, stackTrace) {
+      _performanceTracker.stopTracking(trackingId, metadata: {
+        'success': false,
+        'error': e.toString(),
+        'email': event.email,
+        'name': event.name,
+      });
+
+      _performanceTracker.trackError(
+        'AuthBloc',
+        e.toString(),
+        stackTrace.toString(),
+      );
+
+      emit(AuthFailure(message: 'An unexpected error occurred during registration'));
+    }
   }
 
   Future<void> _onLogoutEvent(LogoutEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
-    final result = await _logoutUsecase();
+    final result = await _logoutUsecase?.call();
 
-    emit(result.fold(
+    emit(result?.fold(
       (failure) => AuthFailure(message: failure.message),
       (_) => const AuthLoggedOut(),
-    ));
+    ) ?? const AuthFailure(message: 'Logout service unavailable'));
   }
 
   Future<void> _onCheckAuthStatusEvent(CheckAuthStatusEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
-    final result = await _checkAuthUsecase();
+    final result = await _checkAuthUsecase?.call();
 
-    emit(result.fold(
+    emit(result?.fold(
       (failure) => AuthFailure(message: failure.message),
       (user) {
         if (user != null) {
@@ -185,103 +265,103 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           return const AuthLoggedOut();
         }
       },
-    ));
+    ) ?? const AuthFailure(message: 'Auth check service unavailable'));
   }
 
   Future<void> _onUpdateProfileEvent(UpdateProfileEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
-    final result = await _updateProfileUsecase(
+    final result = await _updateProfileUsecase?.call(
       UpdateProfileParams(name: event.name, profilePicture: event.profilePicture),
     );
 
-    emit(result.fold(
+    emit(result?.fold(
       (failure) => AuthFailure(message: failure.message),
       (user) => ProfileUpdateSuccess(user: user),
-    ));
+    ) ?? const AuthFailure(message: 'Profile update service unavailable'));
   }
 
   Future<void> _onChangePasswordEvent(ChangePasswordEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
-    final result = await _changePasswordUsecase(
+    final result = await _changePasswordUsecase?.call(
       ChangePasswordParams(
         currentPassword: event.currentPassword,
         newPassword: event.newPassword,
       ),
     );
 
-    emit(result.fold(
+    emit(result?.fold(
       (failure) => AuthFailure(message: failure.message),
       (_) => AuthSuccess(user: User.empty()),
-    ));
+    ) ?? const AuthFailure(message: 'Change password service unavailable'));
   }
 
   Future<void> _onForgotPasswordEvent(ForgotPasswordEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
-    final result = await _forgotPasswordUsecase(
+    final result = await _forgotPasswordUsecase?.call(
       ForgotPasswordParams(email: event.email),
     );
 
-    emit(result.fold(
+    emit(result?.fold(
       (failure) => AuthFailure(message: failure.message),
       (_) => PasswordResetEmailSent(email: event.email),
-    ));
+    ) ?? const AuthFailure(message: 'Forgot password service unavailable'));
   }
 
   Future<void> _onResetPasswordEvent(ResetPasswordEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
-    final result = await _resetPasswordUsecase(
+    final result = await _resetPasswordUsecase?.call(
       ResetPasswordParams(
         token: event.token,
         newPassword: event.newPassword,
       ),
     );
 
-    emit(result.fold(
+    emit(result?.fold(
       (failure) => AuthFailure(message: failure.message),
       (_) => const PasswordResetSuccess(),
-    ));
+    ) ?? const AuthFailure(message: 'Reset password service unavailable'));
   }
 
   Future<void> _onVerifyEmailEvent(VerifyEmailEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
-    final result = await _verifyEmailUsecase(
+    final result = await _verifyEmailUsecase?.call(
       VerifyEmailParams(token: event.token),
     );
 
-    emit(result.fold(
+    emit(result?.fold(
       (failure) => AuthFailure(message: failure.message),
       (_) => const EmailVerificationSuccess(),
-    ));
+    ) ?? const AuthFailure(message: 'Verify email service unavailable'));
   }
 
   Future<void> _onResendVerificationEmailEvent(ResendVerificationEmailEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
-    final result = await _resendVerificationEmailUsecase(
+    final result = await _resendVerificationEmailUsecase?.call(
       const ResendVerificationEmailParams(),
     );
 
-    emit(result.fold(
+    emit(result?.fold(
       (failure) => AuthFailure(message: failure.message),
       (_) => AuthSuccess(user: User.empty()),
-    ));
+    ) ?? const AuthFailure(message: 'Resend verification email service unavailable'));
   }
 
   Future<void> _onDeleteAccountEvent(DeleteAccountEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
-    final result = await _deleteAccountUsecase(
+    final result = await _deleteAccountUsecase?.call(
       const DeleteAccountParams(),
     );
 
-    emit(result.fold(
+    emit(result?.fold(
       (failure) => AuthFailure(message: failure.message),
       (_) => const AuthLoggedOut(),
-    ));
+    ) ?? const AuthFailure(message: 'Delete account service unavailable'));
   }
 }

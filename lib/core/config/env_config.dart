@@ -47,7 +47,7 @@ class EnvConfig {
     } else if (kProfileMode) {
       return '.env.staging';
     } else {
-      return '.env';
+      return '.env.development';
     }
   }
 

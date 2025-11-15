@@ -103,6 +103,10 @@ class AuthInterceptor extends Interceptor {
   /// Refresh the authentication token
   Future<String?> _refreshToken() async {
     try {
+      _logger.info('Attempting to refresh token');
+      _logger.info('Using base URL: ${AppConstants.apiBaseUrl}');
+      _logger.info('Using refresh endpoint: ${AppConstants.refreshTokenEndpoint}');
+
       // Create a new Dio instance to avoid infinite loop
       final dio = Dio(BaseOptions(
         baseUrl: AppConstants.apiBaseUrl,
@@ -114,6 +118,9 @@ class AuthInterceptor extends Interceptor {
         },
       ));
 
+      final fullUrl = '${AppConstants.apiBaseUrl}${AppConstants.refreshTokenEndpoint}';
+      _logger.info('Full refresh token URL: $fullUrl');
+
       final response = await dio.post(
         AppConstants.refreshTokenEndpoint,
         options: Options(
@@ -124,12 +131,16 @@ class AuthInterceptor extends Interceptor {
         ),
       );
 
+      _logger.info('Token refresh response status: ${response.statusCode}');
+
       // Extract new token from response headers
       final newToken = response.headers['set-auth-token'];
       if (newToken != null && newToken.isNotEmpty) {
+        _logger.info('New token received successfully');
         return newToken.first;
       }
 
+      _logger.warning('No new token received in refresh response');
       return null;
     } on DioException catch (e) {
       // Convert DioException to specific exceptions

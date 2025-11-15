@@ -1,8 +1,6 @@
 // File: apps/mobile/lib/app/router.dart
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection_container.dart';
-import '../features/auth/presentation/pages/responsive_login_page.dart';
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/auth/presentation/pages/register_page.dart';
 import '../features/auth/presentation/pages/forgot_password_page.dart';
@@ -20,9 +18,9 @@ part 'router.gr.dart';
 class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
-    // Login route - menggunakan ResponsiveLoginPage
+    // Login route - menggunakan LoginPage
     AutoRoute(
-      page: ResponsiveLoginRoute.page, // Pastikan ini ResponsiveLoginRoute
+      page: LoginRoute.page,
       path: '/login',
       initial: true,
     ),

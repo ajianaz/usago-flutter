@@ -1,7 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:usago/core/errors/failure.dart';
+import 'package:usago/core/errors/failure.dart' as core_failure;
+import 'package:usago/core/errors/exceptions.dart';
 import 'package:usago/features/auth/domain/entities/user.dart';
 import 'package:usago/features/auth/domain/usecases/change_password_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/delete_account_usecase.dart';
@@ -136,14 +137,14 @@ void main() {
 
       test('should emit [AuthLoading, AuthFailure] when login fails', () async {
         // Arrange
-        const failure = ValidationFailure(message: 'Invalid credentials');
+        final failure = core_failure.ValidationFailure(message: 'Invalid credentials');
         when(() => mockLoginUsecase(const LoginParams(email: email, password: password)))
-            .thenAnswer((_) async => const Left(failure));
+            .thenAnswer((_) async => Left(failure));
 
         // Act
         final expected = [
           const AuthLoading(),
-          AuthFailure(message: failure.message),
+          core_failure.AuthFailure(message: failure.message, type: AuthExceptionType.invalidCredentials),
         ];
 
         // Assert
@@ -180,17 +181,17 @@ void main() {
 
       test('should emit [AuthLoading, AuthFailure] when register fails', () async {
         // Arrange
-        const failure = ValidationFailure(message: 'Email already exists');
+        final failure = core_failure.ValidationFailure(message: 'Email already exists');
         when(() => mockRegisterUsecase(const RegisterParams(
           email: email,
           password: password,
           name: name,
-        ))).thenAnswer((_) async => const Left(failure));
+        ))).thenAnswer((_) async => Left(failure));
 
         // Act
         final expected = [
           const AuthLoading(),
-          AuthFailure(message: failure.message),
+          core_failure.AuthFailure(message: failure.message, type: AuthExceptionType.forbidden),
         ];
 
         // Assert
@@ -220,14 +221,14 @@ void main() {
 
       test('should emit [AuthLoading, AuthFailure] when logout fails', () async {
         // Arrange
-        const failure = ServerFailure(message: 'Logout failed');
+        final failure = core_failure.ServerFailure(message: 'Logout failed');
         when(() => mockLogoutUsecase())
-            .thenAnswer((_) async => const Left(failure));
+            .thenAnswer((_) async => Left(failure));
 
         // Act
         final expected = [
           const AuthLoading(),
-          AuthFailure(message: failure.message),
+          core_failure.AuthFailure(message: failure.message, type: AuthExceptionType.loginRequired),
         ];
 
         // Assert
@@ -274,14 +275,14 @@ void main() {
 
       test('should emit [AuthLoading, AuthFailure] when check auth fails', () async {
         // Arrange
-        const failure = ServerFailure(message: 'Auth check failed');
+        final failure = core_failure.ServerFailure(message: 'Auth check failed');
         when(() => mockCheckAuthUsecase())
-            .thenAnswer((_) async => const Left(failure));
+            .thenAnswer((_) async => Left(failure));
 
         // Act
         final expected = [
           const AuthLoading(),
-          AuthFailure(message: failure.message),
+          core_failure.AuthFailure(message: failure.message, type: AuthExceptionType.loginRequired),
         ];
 
         // Assert
@@ -320,16 +321,16 @@ void main() {
 
       test('should emit [AuthLoading, AuthFailure] when update fails', () async {
         // Arrange
-        const failure = ValidationFailure(message: 'Update failed');
+        final failure = core_failure.ValidationFailure(message: 'Update failed');
         when(() => mockUpdateProfileUsecase(const UpdateProfileParams(
           name: newName,
           profilePicture: newProfilePicture,
-        ))).thenAnswer((_) async => const Left(failure));
+        ))).thenAnswer((_) async => Left(failure));
 
         // Act
         final expected = [
           const AuthLoading(),
-          AuthFailure(message: failure.message),
+          core_failure.AuthFailure(message: failure.message, type: AuthExceptionType.invalidCredentials),
         ];
 
         // Assert
@@ -370,16 +371,16 @@ void main() {
 
       test('should emit [AuthLoading, AuthFailure] when change fails', () async {
         // Arrange
-        const failure = ValidationFailure(message: 'Current password is incorrect');
+        final failure = core_failure.ValidationFailure(message: 'Current password is incorrect');
         when(() => mockChangePasswordUsecase(const ChangePasswordParams(
           currentPassword: currentPassword,
           newPassword: newPassword,
-        ))).thenAnswer((_) async => const Left(failure));
+        ))).thenAnswer((_) async => Left(failure));
 
         // Act
         final expected = [
           const AuthLoading(),
-          AuthFailure(message: failure.message),
+          core_failure.AuthFailure(message: failure.message, type: AuthExceptionType.invalidCredentials),
         ];
 
         // Assert
@@ -414,14 +415,14 @@ void main() {
 
       test('should emit [AuthLoading, AuthFailure] when request fails', () async {
         // Arrange
-        const failure = ValidationFailure(message: 'Email not found');
+        final failure = core_failure.ValidationFailure(message: 'Email not found');
         when(() => mockForgotPasswordUsecase(const ForgotPasswordParams(email: email)))
-            .thenAnswer((_) async => const Left(failure));
+            .thenAnswer((_) async => Left(failure));
 
         // Act
         final expected = [
           const AuthLoading(),
-          AuthFailure(message: failure.message),
+          core_failure.AuthFailure(message: failure.message, type: AuthExceptionType.invalidCredentials),
         ];
 
         // Assert
@@ -456,16 +457,16 @@ void main() {
 
       test('should emit [AuthLoading, AuthFailure] when reset fails', () async {
         // Arrange
-        const failure = ValidationFailure(message: 'Invalid token');
+        final failure = core_failure.ValidationFailure(message: 'Invalid token');
         when(() => mockResetPasswordUsecase(const ResetPasswordParams(
           token: token,
           newPassword: newPassword,
-        ))).thenAnswer((_) async => const Left(failure));
+        ))).thenAnswer((_) async => Left(failure));
 
         // Act
         final expected = [
           const AuthLoading(),
-          AuthFailure(message: failure.message),
+          core_failure.AuthFailure(message: failure.message, type: AuthExceptionType.tokenInvalid),
         ];
 
         // Assert
@@ -497,14 +498,14 @@ void main() {
 
       test('should emit [AuthLoading, AuthFailure] when verification fails', () async {
         // Arrange
-        const failure = ValidationFailure(message: 'Invalid token');
+        final failure = core_failure.ValidationFailure(message: 'Invalid token');
         when(() => mockVerifyEmailUsecase(const VerifyEmailParams(token: token)))
-            .thenAnswer((_) async => const Left(failure));
+            .thenAnswer((_) async => Left(failure));
 
         // Act
         final expected = [
           const AuthLoading(),
-          AuthFailure(message: failure.message),
+          core_failure.AuthFailure(message: failure.message, type: AuthExceptionType.tokenInvalid),
         ];
 
         // Assert
@@ -534,14 +535,14 @@ void main() {
 
       test('should emit [AuthLoading, AuthFailure] when resend fails', () async {
         // Arrange
-        const failure = ServerFailure(message: 'Failed to resend email');
+        final failure = core_failure.ServerFailure(message: 'Failed to resend email');
         when(() => mockResendVerificationEmailUsecase(const ResendVerificationEmailParams()))
-            .thenAnswer((_) async => const Left(failure));
+            .thenAnswer((_) async => Left(failure));
 
         // Act
         final expected = [
           const AuthLoading(),
-          AuthFailure(message: failure.message),
+          core_failure.AuthFailure(message: failure.message, type: AuthExceptionType.refreshTokenFailed),
         ];
 
         // Assert
@@ -571,14 +572,14 @@ void main() {
 
       test('should emit [AuthLoading, AuthFailure] when deletion fails', () async {
         // Arrange
-        const failure = ServerFailure(message: 'Failed to delete account');
+        final failure = core_failure.ServerFailure(message: 'Failed to delete account');
         when(() => mockDeleteAccountUsecase(const DeleteAccountParams()))
-            .thenAnswer((_) async => const Left(failure));
+            .thenAnswer((_) async => Left(failure));
 
         // Act
         final expected = [
           const AuthLoading(),
-          AuthFailure(message: failure.message),
+          core_failure.AuthFailure(message: failure.message, type: AuthExceptionType.refreshTokenFailed),
         ];
 
         // Assert

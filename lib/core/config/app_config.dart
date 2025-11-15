@@ -105,6 +105,35 @@ class AppConfig {
     ]);
   }
 
+  // Validate API configuration
+  static List<String> validateApiConfiguration() {
+    final issues = <String>[];
+
+    // Validate base URL format
+    final baseUrl = apiBaseUrl;
+    if (baseUrl.isEmpty) {
+      issues.add('API_BASE_URL cannot be empty');
+    } else {
+      // Check if URL has valid format
+      if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
+        issues.add('API_BASE_URL must start with http:// or https://');
+      }
+
+      // Check if URL ends with slash (should not for consistency)
+      if (baseUrl.endsWith('/')) {
+        issues.add('API_BASE_URL should not end with /');
+      }
+    }
+
+    // Validate API version
+    final version = apiVersion;
+    if (version.isEmpty) {
+      issues.add('API_VERSION cannot be empty');
+    }
+
+    return issues;
+  }
+
   // Performance validation
   static List<String> validatePerformanceVariables() {
     final issues = <String>[];
@@ -182,6 +211,15 @@ class AppConfig {
       print('Enable Analytics: $enableAnalytics');
       print('Debug Mode: $debugMode');
       print('Log Level: $logLevel');
+
+      // Print API validation results
+      final apiIssues = validateApiConfiguration();
+      if (apiIssues.isNotEmpty) {
+        print('=== API Configuration Issues ===');
+        for (final issue in apiIssues) {
+          print('WARNING: $issue');
+        }
+      }
       print('');
       print('=== Performance Config ===');
       print('Enable Performance Monitoring: $enablePerformanceMonitoring');
@@ -234,6 +272,7 @@ class AppConfig {
   static List<String> getAllConfigIssues() {
     final issues = <String>[];
     issues.addAll(validateRequiredVariables());
+    issues.addAll(validateApiConfiguration());
     issues.addAll(validatePerformanceVariables());
     return issues;
   }
