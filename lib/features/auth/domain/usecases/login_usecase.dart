@@ -20,10 +20,10 @@ class LoginParams extends Equatable {
 }
 
 /// Login use case - handles business logic for user login
-class LoginUsecase {
+class LoginUseCase {
   final AuthRepository _repository;
 
-  LoginUsecase({required AuthRepository repository}) : _repository = repository;
+  LoginUseCase({required AuthRepository repository}) : _repository = repository;
 
   /// Execute login with email and password
   ///

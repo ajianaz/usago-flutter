@@ -19,9 +19,9 @@ import '../../../../core/config/app_config.dart';
 /// Authentication BLoC
 /// Handles all authentication state management
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  LoginUsecase? _loginUsecase;
-  RegisterUsecase? _registerUsecase;
-  LogoutUsecase? _logoutUsecase;
+  LoginUseCase? _loginUsecase;
+  RegisterUseCase? _registerUsecase;
+  LogoutUseCase? _logoutUsecase;
   CheckAuthUsecase? _checkAuthUsecase;
   UpdateProfileUsecase? _updateProfileUsecase;
   ChangePasswordUsecase? _changePasswordUsecase;
@@ -36,9 +36,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   String? _blocTrackingId;
 
   AuthBloc({
-    required LoginUsecase loginUsecase,
-    required RegisterUsecase registerUsecase,
-    required LogoutUsecase logoutUsecase,
+    required LoginUseCase loginUsecase,
+    required RegisterUseCase registerUsecase,
+    required LogoutUseCase logoutUsecase,
     required CheckAuthUsecase checkAuthUsecase,
     required UpdateProfileUsecase updateProfileUsecase,
     required ChangePasswordUsecase changePasswordUsecase,

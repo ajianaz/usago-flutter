@@ -27,7 +27,10 @@ class HomeRepositoryImpl implements HomeRepository {
         },
       );
     } catch (e) {
-      return Left(CacheFailure(message: 'Failed to get menu items: ${e.toString()}'));
+      return Left(UnknownFailure(
+        message: 'Failed to get menu items: ${e.toString()}',
+        originalError: e,
+      ));
     }
   }
 
@@ -44,7 +47,10 @@ class HomeRepositoryImpl implements HomeRepository {
         },
       );
     } catch (e) {
-      return Left(CacheFailure(message: 'Failed to get user dashboard: ${e.toString()}'));
+      return Left(UnknownFailure(
+        message: 'Failed to get user dashboard: ${e.toString()}',
+        originalError: e,
+      ));
     }
   }
 
@@ -61,7 +67,10 @@ class HomeRepositoryImpl implements HomeRepository {
         },
       );
     } catch (e) {
-      return Left(CacheFailure(message: 'Failed to get menu items by category: ${e.toString()}'));
+      return Left(UnknownFailure(
+        message: 'Failed to get menu items by category: ${e.toString()}',
+        originalError: e,
+      ));
     }
   }
 
@@ -87,7 +96,10 @@ class HomeRepositoryImpl implements HomeRepository {
         },
       );
     } catch (e) {
-      return Left(CacheFailure(message: 'Failed to check menu permission: ${e.toString()}'));
+      return Left(UnknownFailure(
+        message: 'Failed to check menu permission: ${e.toString()}',
+        originalError: e,
+      ));
     }
   }
 
@@ -103,7 +115,10 @@ class HomeRepositoryImpl implements HomeRepository {
 
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure(message: 'Failed to update quick stats: ${e.toString()}'));
+      return Left(UnknownFailure(
+        message: 'Failed to update quick stats: ${e.toString()}',
+        originalError: e,
+      ));
     }
   }
 
@@ -120,7 +135,10 @@ class HomeRepositoryImpl implements HomeRepository {
         },
       );
     } catch (e) {
-      return Left(CacheFailure(message: 'Failed to get featured menu items: ${e.toString()}'));
+      return Left(UnknownFailure(
+        message: 'Failed to get featured menu items: ${e.toString()}',
+        originalError: e,
+      ));
     }
   }
 
@@ -134,7 +152,10 @@ class HomeRepositoryImpl implements HomeRepository {
         (_) => const Right(null),
       );
     } catch (e) {
-      return Left(CacheFailure(message: 'Failed to track menu usage: ${e.toString()}'));
+      return Left(UnknownFailure(
+        message: 'Failed to track menu usage: ${e.toString()}',
+        originalError: e,
+      ));
     }
   }
 }

@@ -22,10 +22,10 @@ class RegisterParams extends Equatable {
 }
 
 /// Register use case - handles business logic for user registration
-class RegisterUsecase {
+class RegisterUseCase {
   final AuthRepository _repository;
 
-  RegisterUsecase({required AuthRepository repository}) : _repository = repository;
+  RegisterUseCase({required AuthRepository repository}) : _repository = repository;
 
   /// Execute registration with email, password and name
   ///

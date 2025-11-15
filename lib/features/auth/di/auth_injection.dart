@@ -128,20 +128,20 @@ Future<void> setupAuthDependencies(GetIt getIt) async {
   // - Stateless logic, bisa di-reuse
   // - Lebih efisien daripada membuat instance baru setiap kali
   // - Membutuhkan repository dependency
-  DIServiceLocator.registerLazySingleton<LoginUsecase>(
-    () => LoginUsecase(repository: DIServiceLocator.get<AuthRepository>()),
+  DIServiceLocator.registerLazySingleton<LoginUseCase>(
+    () => LoginUseCase(repository: DIServiceLocator.get<AuthRepository>()),
     name: DINaming.useCase('Login', 'Auth'),
     description: 'Login use case for authentication',
   );
 
-  DIServiceLocator.registerLazySingleton<RegisterUsecase>(
-    () => RegisterUsecase(repository: DIServiceLocator.get<AuthRepository>()),
+  DIServiceLocator.registerLazySingleton<RegisterUseCase>(
+    () => RegisterUseCase(repository: DIServiceLocator.get<AuthRepository>()),
     name: DINaming.useCase('Register', 'Auth'),
     description: 'Register use case for authentication',
   );
 
-  DIServiceLocator.registerLazySingleton<LogoutUsecase>(
-    () => LogoutUsecase(repository: DIServiceLocator.get<AuthRepository>()),
+  DIServiceLocator.registerLazySingleton<LogoutUseCase>(
+    () => LogoutUseCase(repository: DIServiceLocator.get<AuthRepository>()),
     name: DINaming.useCase('Logout', 'Auth'),
     description: 'Logout use case for authentication',
   );
@@ -204,9 +204,9 @@ Future<void> setupAuthDependencies(GetIt getIt) async {
   // - Membutuhkan semua use cases sebagai dependencies
   DIServiceLocator.registerFactory<AuthBloc>(
     () => AuthBloc(
-      loginUsecase: DIServiceLocator.get<LoginUsecase>(),
-      registerUsecase: DIServiceLocator.get<RegisterUsecase>(),
-      logoutUsecase: DIServiceLocator.get<LogoutUsecase>(),
+      loginUsecase: DIServiceLocator.get<LoginUseCase>(),
+      registerUsecase: DIServiceLocator.get<RegisterUseCase>(),
+      logoutUsecase: DIServiceLocator.get<LogoutUseCase>(),
       checkAuthUsecase: DIServiceLocator.get<CheckAuthUsecase>(),
       updateProfileUsecase: DIServiceLocator.get<UpdateProfileUsecase>(),
       changePasswordUsecase: DIServiceLocator.get<ChangePasswordUsecase>(),

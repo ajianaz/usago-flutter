@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import '../../../../core/di/di_patterns.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/performance/performance_tracker.dart';
 import '../data/datasources/home_remote_datasource.dart';
 import '../data/datasources/home_remote_datasource_impl.dart';
 import '../domain/repositories/home_repository.dart';
@@ -53,6 +54,7 @@ Future<void> setupHomeDependencies(GetIt getIt) async {
     () => HomeBloc(
       getMenuItemsUseCase: DIServiceLocator.get<GetMenuItemsUseCase>(),
       getUserDashboardUseCase: DIServiceLocator.get<GetUserDashboardUseCase>(),
+      performanceTracker: DIServiceLocator.get<PerformanceTracker>(),
     ),
     name: DINaming.bloc('Home'),
     description: 'Home BLoC for home screen state management',
