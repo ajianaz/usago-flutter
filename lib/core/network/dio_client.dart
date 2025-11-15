@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_constants.dart';
 import '../utils/logger.dart';
+import '../errors/exceptions.dart';
+import 'auth_interceptor.dart';
 
 class DioClient {
   late Dio _dio;
@@ -124,19 +125,127 @@ class DioClient {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return Exception('Connection timeout. Please check your internet connection.');
+        return TimeoutException(
+          message: 'Connection timeout. Please check your internet connection.',
+          operation: 'network',
+          timeout: const Duration(seconds: 30),
+          originalError: error,
+          code: 'CONNECTION_TIMEOUT',
+        );
       case DioExceptionType.badResponse:
-        final statusCode = error.response?.statusCode;
-        final message = error.response?.data?['message'] ?? 'Unknown error';
-        return Exception('HTTP $statusCode: $message');
+        return _handleHttpError(error);
       case DioExceptionType.cancel:
-        return Exception('Request was cancelled');
+        return NetworkException(
+          message: 'Request was cancelled',
+          code: 'CANCELLED',
+          originalError: error,
+        );
       case DioExceptionType.connectionError:
-        return Exception('No internet connection. Please check your network.');
+        return NetworkException(
+          message: 'No internet connection. Please check your network.',
+          code: 'CONNECTION_ERROR',
+          originalError: error,
+        );
       case DioExceptionType.unknown:
-        return Exception('An unknown error occurred: ${error.message}');
+        return NetworkException(
+          message: 'An unknown error occurred: ${error.message}',
+          code: 'UNKNOWN',
+          originalError: error,
+        );
       default:
-        return Exception('An unexpected error occurred: ${error.message}');
+        return NetworkException(
+          message: 'An unexpected error occurred: ${error.message}',
+          code: 'UNEXPECTED',
+          originalError: error,
+        );
+    }
+  }
+
+  /// Handle HTTP error responses and convert to specific exceptions
+  Exception _handleHttpError(DioException error) {
+    final statusCode = error.response?.statusCode;
+    final data = error.response?.data;
+    final endpoint = error.requestOptions.path;
+
+    String message = 'Unknown error';
+    Map<String, String>? fieldErrors;
+
+    if (data is Map<String, dynamic>) {
+      message = data['message'] ?? data['error'] ?? 'Unknown error';
+
+      // Extract field errors for validation failures
+      if (data.containsKey('errors') && data['errors'] is Map) {
+        final errors = data['errors'] as Map<String, dynamic>;
+        fieldErrors = <String, String>{};
+        errors.forEach((key, value) {
+          if (value is List && value.isNotEmpty) {
+            fieldErrors![key] = value.first.toString();
+          } else if (value is String) {
+            fieldErrors![key] = value;
+          }
+        });
+      }
+    } else if (data != null) {
+      message = data.toString();
+    }
+
+    switch (statusCode) {
+      case 400:
+      case 422:
+        return ValidationException(
+          message: message,
+          fieldErrors: fieldErrors,
+          code: statusCode == 400 ? 'BAD_REQUEST' : 'VALIDATION_ERROR',
+          originalError: error,
+        );
+      case 401:
+        return AuthException(
+          message: message,
+          type: AuthExceptionType.unauthorized,
+          code: 'UNAUTHORIZED',
+          originalError: error,
+        );
+      case 403:
+        return AuthException(
+          message: message,
+          type: AuthExceptionType.forbidden,
+          code: 'FORBIDDEN',
+          originalError: error,
+        );
+      case 404:
+        return ServerException(
+          message: message,
+          statusCode: statusCode,
+          endpoint: endpoint,
+          code: 'NOT_FOUND',
+          originalError: error,
+        );
+      case 429:
+        return ServerException(
+          message: message,
+          statusCode: statusCode,
+          endpoint: endpoint,
+          code: 'RATE_LIMIT_EXCEEDED',
+          originalError: error,
+        );
+      case 500:
+      case 502:
+      case 503:
+        return ServerException(
+          message: message,
+          statusCode: statusCode,
+          endpoint: endpoint,
+          code: 'SERVER_ERROR',
+          originalError: error,
+        );
+      default:
+        return ServerException(
+          message: 'HTTP $statusCode: $message',
+          statusCode: statusCode,
+          endpoint: endpoint,
+          code: 'HTTP_ERROR',
+          originalError: error,
+        );
     }
   }
 }
@@ -164,83 +273,5 @@ class LogInterceptor extends Interceptor {
   void onError(DioException error, ErrorInterceptorHandler handler) {
     _logger.error('NETWORK ERROR: ${error.message}', error);
     handler.next(error);
-  }
-}
-
-class AuthInterceptor extends Interceptor {
-  final AppLogger _logger;
-  bool _isRefreshing = false;
-
-  AuthInterceptor({required AppLogger logger}) : _logger = logger;
-
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    // Add auth token if available
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(AppConstants.bearerTokenKey);
-
-    if (token != null) {
-      options.headers['Authorization'] = 'Bearer $token';
-    }
-
-    handler.next(options);
-  }
-
-  @override
-  void onError(DioException error, ErrorInterceptorHandler handler) async {
-    // Handle 401 unauthorized
-    if (error.response?.statusCode == 401 && !_isRefreshing) {
-      _logger.warning('Unauthorized - attempting token refresh');
-      _isRefreshing = true;
-
-      try {
-        // Get current request options
-        final options = error.requestOptions;
-
-        // Create a new Dio instance to avoid infinite loop
-        final dio = Dio(BaseOptions(
-          baseUrl: AppConstants.apiBaseUrl,
-          connectTimeout: AppConstants.apiTimeout,
-          receiveTimeout: AppConstants.apiTimeout,
-        ));
-
-        // Refresh token
-        final refreshResponse = await dio.post(
-          AppConstants.refreshTokenEndpoint,
-          options: Options(
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-            },
-          ),
-        );
-
-        // Extract new token from response headers
-        final newToken = refreshResponse.headers['set-auth-token'];
-        if (newToken != null && newToken.isNotEmpty) {
-          // Save new token
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString(AppConstants.bearerTokenKey, newToken.first);
-          _logger.info('Token refreshed and saved');
-
-          // Update original request with new token
-          options.headers['Authorization'] = 'Bearer ${newToken.first}';
-
-          // Retry original request with new token
-          final retryResponse = await dio.fetch(options);
-          handler.resolve(retryResponse);
-        } else {
-          _logger.warning('Token refresh failed - no new token in response');
-          handler.next(error);
-        }
-      } catch (e) {
-        _logger.error('Token refresh failed', e);
-        handler.next(error);
-      } finally {
-        _isRefreshing = false;
-      }
-    } else {
-      handler.next(error);
-    }
   }
 }

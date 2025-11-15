@@ -53,6 +53,33 @@ messages:
   register_failed: Registration failed
   network_error: Network error. Please check your connection.
   unknown_error: An unknown error occurred
+  access_denied: Access denied
+  token_expired: Your session has expired. Please login again.
+  invalid_token: Invalid authentication token
+  account_locked: Your account has been locked. Please contact support.
+  account_not_verified: Please verify your email address.
+  session_expired: Your session has expired. Please login again.
+  refresh_failed: Failed to refresh your session. Please login again.
+  not_found: The requested resource was not found.
+  server_error: Server error. Please try again later.
+  rate_limit_exceeded: Too many requests. Please try again later.
+  request_cancelled: Request was cancelled.
+  cache_read_error: Failed to read from cache.
+  cache_write_error: Failed to save to cache.
+  cache_delete_error: Failed to delete from cache.
+  camera_permission_denied: Camera permission is required to use this feature.
+  microphone_permission_denied: Microphone permission is required to use this feature.
+  location_permission_denied: Location permission is required to use this feature.
+  storage_permission_denied: Storage permission is required to use this feature.
+  photos_permission_denied: Photos permission is required to use this feature.
+  api_config_error: API configuration error. Please contact support.
+  database_config_error: Database configuration error. Please contact support.
+  database_timeout: Database operation timed out.
+  cache_timeout: Cache operation timed out.
+  json_parse_error: Failed to parse server response.
+  xml_parse_error: Failed to parse XML data.
+  date_parse_error: Invalid date format.
+  number_parse_error: Invalid number format.
 
 # Common
 common:

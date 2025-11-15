@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/errors/error_handler.dart';
+import '../../../../core/errors/exceptions.dart';
 import '../../../../core/utils/logger.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -31,7 +32,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) async {
-    return _errorHandler.safeExecute(() async {
+    try {
       _logger.info('Login attempt for email: $email');
 
       // Call remote datasource
@@ -46,8 +47,48 @@ class AuthRepositoryImpl implements AuthRepository {
 
       _logger.info('Login successful for user: ${userModel.id}');
 
-      return userModel.toEntity();
-    });
+      return Right(userModel.toEntity());
+    } on AuthException catch (e) {
+      _logger.error('Login failed with auth exception', e);
+      return Left(AuthFailure(
+        message: e.message,
+        type: e.type,
+        code: e.code,
+        originalError: e.originalError,
+      ));
+    } on NetworkException catch (e) {
+      _logger.error('Login failed with network exception', e);
+      return Left(NetworkFailure(
+        message: e.message,
+        code: e.code,
+        statusCode: e.statusCode,
+        endpoint: e.endpoint,
+        originalError: e.originalError,
+      ));
+    } on ValidationException catch (e) {
+      _logger.error('Login failed with validation exception', e);
+      return Left(ValidationFailure(
+        message: e.message,
+        fieldErrors: e.fieldErrors,
+        code: e.code,
+        originalError: e.originalError,
+      ));
+    } on ServerException catch (e) {
+      _logger.error('Login failed with server exception', e);
+      return Left(ServerFailure(
+        message: e.message,
+        code: e.code,
+        statusCode: e.statusCode,
+        endpoint: e.endpoint,
+        originalError: e.originalError,
+      ));
+    } catch (e) {
+      _logger.error('Login failed with unknown exception', e);
+      return Left(UnknownFailure(
+        message: 'An unexpected error occurred during login',
+        originalError: e,
+      ));
+    }
   }
 
   @override
@@ -56,7 +97,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
     required String name,
   }) async {
-    return _errorHandler.safeExecute(() async {
+    try {
       _logger.info('Registration attempt for email: $email');
 
       // Call remote datasource
@@ -72,13 +113,53 @@ class AuthRepositoryImpl implements AuthRepository {
 
       _logger.info('Registration successful for user: ${userModel.id}');
 
-      return userModel.toEntity();
-    });
+      return Right(userModel.toEntity());
+    } on AuthException catch (e) {
+      _logger.error('Registration failed with auth exception', e);
+      return Left(AuthFailure(
+        message: e.message,
+        type: e.type,
+        code: e.code,
+        originalError: e.originalError,
+      ));
+    } on NetworkException catch (e) {
+      _logger.error('Registration failed with network exception', e);
+      return Left(NetworkFailure(
+        message: e.message,
+        code: e.code,
+        statusCode: e.statusCode,
+        endpoint: e.endpoint,
+        originalError: e.originalError,
+      ));
+    } on ValidationException catch (e) {
+      _logger.error('Registration failed with validation exception', e);
+      return Left(ValidationFailure(
+        message: e.message,
+        fieldErrors: e.fieldErrors,
+        code: e.code,
+        originalError: e.originalError,
+      ));
+    } on ServerException catch (e) {
+      _logger.error('Registration failed with server exception', e);
+      return Left(ServerFailure(
+        message: e.message,
+        code: e.code,
+        statusCode: e.statusCode,
+        endpoint: e.endpoint,
+        originalError: e.originalError,
+      ));
+    } catch (e) {
+      _logger.error('Registration failed with unknown exception', e);
+      return Left(UnknownFailure(
+        message: 'An unexpected error occurred during registration',
+        originalError: e,
+      ));
+    }
   }
 
   @override
   Future<Either<Failure, void>> logout() async {
-    return _errorHandler.safeExecute(() async {
+    try {
       _logger.info('Logout attempt');
 
       // Call remote datasource
@@ -88,12 +169,45 @@ class AuthRepositoryImpl implements AuthRepository {
       await _localDatasource.clearAllAuthData();
 
       _logger.info('Logout successful');
-    });
+      return const Right(null);
+    } on AuthException catch (e) {
+      _logger.error('Logout failed with auth exception', e);
+      return Left(AuthFailure(
+        message: e.message,
+        type: e.type,
+        code: e.code,
+        originalError: e.originalError,
+      ));
+    } on NetworkException catch (e) {
+      _logger.error('Logout failed with network exception', e);
+      return Left(NetworkFailure(
+        message: e.message,
+        code: e.code,
+        statusCode: e.statusCode,
+        endpoint: e.endpoint,
+        originalError: e.originalError,
+      ));
+    } on ServerException catch (e) {
+      _logger.error('Logout failed with server exception', e);
+      return Left(ServerFailure(
+        message: e.message,
+        code: e.code,
+        statusCode: e.statusCode,
+        endpoint: e.endpoint,
+        originalError: e.originalError,
+      ));
+    } catch (e) {
+      _logger.error('Logout failed with unknown exception', e);
+      return Left(UnknownFailure(
+        message: 'An unexpected error occurred during logout',
+        originalError: e,
+      ));
+    }
   }
 
   @override
   Future<Either<Failure, User?>> checkAuthStatus() async {
-    return _errorHandler.safeExecute(() async {
+    try {
       _logger.info('Checking auth status');
 
       // Try to get cached user first
@@ -102,17 +216,32 @@ class AuthRepositoryImpl implements AuthRepository {
 
       if (cachedUser != null && token != null) {
         _logger.info('User found in cache: ${cachedUser.id}');
-        return cachedUser.toEntity();
+        return Right(cachedUser.toEntity());
       }
 
       _logger.info('No cached user found');
-      return null;
-    });
+      return const Right(null);
+    } on CacheException catch (e) {
+      _logger.error('Check auth status failed with cache exception', e);
+      return Left(CacheFailure(
+        message: e.message,
+        code: e.code,
+        operation: e.operation,
+        key: e.key,
+        originalError: e.originalError,
+      ));
+    } catch (e) {
+      _logger.error('Check auth status failed with unknown exception', e);
+      return Left(UnknownFailure(
+        message: 'An unexpected error occurred while checking auth status',
+        originalError: e,
+      ));
+    }
   }
 
   @override
   Future<Either<Failure, User>> refreshToken() async {
-    return _errorHandler.safeExecute(() async {
+    try {
       _logger.info('Token refresh attempt');
 
       // Call remote datasource
@@ -123,8 +252,40 @@ class AuthRepositoryImpl implements AuthRepository {
 
       _logger.info('Token refresh successful for user: ${userModel.id}');
 
-      return userModel.toEntity();
-    });
+      return Right(userModel.toEntity());
+    } on AuthException catch (e) {
+      _logger.error('Token refresh failed with auth exception', e);
+      return Left(AuthFailure(
+        message: e.message,
+        type: e.type,
+        code: e.code,
+        originalError: e.originalError,
+      ));
+    } on NetworkException catch (e) {
+      _logger.error('Token refresh failed with network exception', e);
+      return Left(NetworkFailure(
+        message: e.message,
+        code: e.code,
+        statusCode: e.statusCode,
+        endpoint: e.endpoint,
+        originalError: e.originalError,
+      ));
+    } on ServerException catch (e) {
+      _logger.error('Token refresh failed with server exception', e);
+      return Left(ServerFailure(
+        message: e.message,
+        code: e.code,
+        statusCode: e.statusCode,
+        endpoint: e.endpoint,
+        originalError: e.originalError,
+      ));
+    } catch (e) {
+      _logger.error('Token refresh failed with unknown exception', e);
+      return Left(UnknownFailure(
+        message: 'An unexpected error occurred during token refresh',
+        originalError: e,
+      ));
+    }
   }
 
   @override

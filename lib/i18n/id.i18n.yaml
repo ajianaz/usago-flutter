@@ -53,6 +53,33 @@ messages:
   register_failed: Pendaftaran gagal
   network_error: Error jaringan. Periksa koneksi Anda.
   unknown_error: Terjadi error yang tidak diketahui
+  access_denied: Akses ditolak
+  token_expired: Sesi Anda telah berakhir. Silakan login kembali.
+  invalid_token: Token autentikasi tidak valid
+  account_locked: Akun Anda telah dikunci. Silakan hubungi dukungan.
+  account_not_verified: Silakan verifikasi alamat email Anda.
+  session_expired: Sesi Anda telah berakhir. Silakan login kembali.
+  refresh_failed: Gagal memperbarui sesi. Silakan login kembali.
+  not_found: Sumber daya yang diminta tidak ditemukan.
+  server_error: Error server. Silakan coba lagi nanti.
+  rate_limit_exceeded: Terlalu banyak permintaan. Silakan coba lagi nanti.
+  request_cancelled: Permintaan dibatalkan.
+  cache_read_error: Gagal membaca dari cache.
+  cache_write_error: Gagal menyimpan ke cache.
+  cache_delete_error: Gagal menghapus dari cache.
+  camera_permission_denied: Izin kamera diperlukan untuk menggunakan fitur ini.
+  microphone_permission_denied: Izin mikrofon diperlukan untuk menggunakan fitur ini.
+  location_permission_denied: Izin lokasi diperlukan untuk menggunakan fitur ini.
+  storage_permission_denied: Izin penyimpanan diperlukan untuk menggunakan fitur ini.
+  photos_permission_denied: Izin foto diperlukan untuk menggunakan fitur ini.
+  api_config_error: Error konfigurasi API. Silakan hubungi dukungan.
+  database_config_error: Error konfigurasi database. Silakan hubungi dukungan.
+  database_timeout: Operasi database timeout.
+  cache_timeout: Operasi cache timeout.
+  json_parse_error: Gagal memparse respons server.
+  xml_parse_error: Gagal memparse data XML.
+  date_parse_error: Format tanggal tidak valid.
+  number_parse_error: Format angka tidak valid.
 
 # Common
 common:
