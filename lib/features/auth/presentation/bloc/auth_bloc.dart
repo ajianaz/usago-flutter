@@ -13,6 +13,8 @@ import '../../domain/usecases/resend_verification_email_usecase.dart';
 import '../../domain/usecases/delete_account_usecase.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
+import '../../../../core/performance/performance_tracker.dart';
+import '../../../../core/config/app_config.dart';
 
 /// Authentication BLoC
 /// Handles all authentication state management
@@ -29,6 +31,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final ResendVerificationEmailUsecase _resendVerificationEmailUsecase;
   final DeleteAccountUsecase _deleteAccountUsecase;
 
+  // Performance monitoring
+  final PerformanceTracker _performanceTracker;
+  String? _blocTrackingId;
+
   AuthBloc({
     required LoginUsecase loginUsecase,
     required RegisterUsecase registerUsecase,
@@ -41,6 +47,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required VerifyEmailUsecase verifyEmailUsecase,
     required ResendVerificationEmailUsecase resendVerificationEmailUsecase,
     required DeleteAccountUsecase deleteAccountUsecase,
+    PerformanceTracker? performanceTracker,
   }) : _loginUsecase = loginUsecase,
         _registerUsecase = registerUsecase,
         _logoutUsecase = logoutUsecase,
@@ -52,6 +59,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _verifyEmailUsecase = verifyEmailUsecase,
         _resendVerificationEmailUsecase = resendVerificationEmailUsecase,
         _deleteAccountUsecase = deleteAccountUsecase,
+        _performanceTracker = performanceTracker ?? PerformanceTracker(),
         super(const AuthInitial()) {
     // Register event handlers
     on<LoginEvent>(_onLoginEvent);
@@ -65,16 +73,61 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<VerifyEmailEvent>(_onVerifyEmailEvent);
     on<ResendVerificationEmailEvent>(_onResendVerificationEmailEvent);
     on<DeleteAccountEvent>(_onDeleteAccountEvent);
+
+    // Initialize performance tracking
+    _initializePerformanceTracking();
+  }
+
+  // Initialize performance tracking
+  void _initializePerformanceTracking() {
+    if (!AppConfig.enablePerformanceMonitoring) return;
+
+    _blocTrackingId = _performanceTracker.startTracking(
+      'AuthBloc',
+      category: 'bloc_lifecycle',
+    );
   }
 
   // Check auth status on initialization
   @override
   void onTransition(Transition<AuthEvent, AuthState> transition) {
+    // Track performance if enabled
+    if (AppConfig.enablePerformanceMonitoring) {
+      _performanceTracker.trackTransition(
+        'AuthBloc',
+        transition.event.runtimeType.toString(),
+        transition.currentState.runtimeType.toString(),
+        transition.nextState.runtimeType.toString(),
+      );
+    }
+
     // Check auth status when BLoC is first created
     if (transition.currentState == const AuthInitial() && transition.nextState is! AuthLoading) {
       add(CheckAuthStatusEvent());
     }
     super.onTransition(transition);
+  }
+
+  @override
+  void onError(Object error, StackTrace stackTrace) {
+    if (AppConfig.enablePerformanceMonitoring) {
+      _performanceTracker.trackError(
+        'AuthBloc',
+        error.toString(),
+        stackTrace.toString(),
+      );
+    }
+    super.onError(error, stackTrace);
+  }
+
+  @override
+  Future<void> close() {
+    // Stop performance tracking
+    if (_blocTrackingId != null && AppConfig.enablePerformanceMonitoring) {
+      _performanceTracker.stopTracking(_blocTrackingId!);
+    }
+
+    return super.close();
   }
 
   Future<void> _onLoginEvent(LoginEvent event, Emitter<AuthState> emit) async {

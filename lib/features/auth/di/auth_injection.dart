@@ -22,6 +22,7 @@ import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/services/secure_storage_service.dart';
+import '../../../../core/performance/performance_tracker.dart';
 
 /// Register auth feature dependencies using simplified DI patterns
 ///
@@ -214,8 +215,9 @@ void setupAuthDependencies(GetIt getIt) {
       verifyEmailUsecase: DIServiceLocator.get<VerifyEmailUsecase>(),
       resendVerificationEmailUsecase: DIServiceLocator.get<ResendVerificationEmailUsecase>(),
       deleteAccountUsecase: DIServiceLocator.get<DeleteAccountUsecase>(),
+      performanceTracker: DIServiceLocator.get<PerformanceTracker>(),
     ),
     name: DINaming.bloc('Auth'),
-    description: 'Auth BLoC for authentication state management',
+    description: 'Auth BLoC for authentication state management with performance monitoring',
   );
 }
