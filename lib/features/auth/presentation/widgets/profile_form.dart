@@ -32,11 +32,18 @@ class _ProfileFormState extends State<ProfileForm> {
   }
 
   void _initializeForm() {
-    final authState = context.read<AuthBloc>().state;
-    if (authState is AuthSuccess) {
-      _nameController.text = authState.user.name;
-      _emailController.text = authState.user.email;
-      _profilePicture = authState.user.profilePicture;
+    try {
+      final authState = context.read<AuthBloc>().state;
+      if (authState is AuthSuccess) {
+        _nameController.text = authState.user.name;
+        _emailController.text = authState.user.email;
+        _profilePicture = authState.user.profilePicture;
+      }
+    } catch (e) {
+      // Handle dependency injection error
+      if (mounted) {
+        context.showErrorSnackBar('Failed to initialize profile form');
+      }
     }
   }
 
@@ -47,10 +54,25 @@ class _ProfileFormState extends State<ProfileForm> {
     super.dispose();
   }
 
-  void _pickImage() {
-    // TODO: Implement image picker functionality
-    // For now, just show a snackbar
-    context.showSnackBar('Image picker will be implemented soon');
+  Future<void> _pickImage() async {
+    try {
+      // Basic image picker implementation placeholder
+      // In a real implementation, you would use image_picker package
+      // For now, we'll simulate image selection with a placeholder
+      if (mounted) {
+        context.showSnackBar('Image picker feature will be available in the next update');
+
+        // For demo purposes, we'll use a placeholder image URL
+        // In production, this would be the actual picked image path
+        setState(() {
+          _profilePicture = 'https://via.placeholder.com/150';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        context.showErrorSnackBar('Failed to pick image: ${e.toString()}');
+      }
+    }
   }
 
   void _submitForm() {
@@ -66,15 +88,6 @@ class _ProfileFormState extends State<ProfileForm> {
         name: name,
         profilePicture: _profilePicture,
       ));
-
-      // Reset submitting state after a delay
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) {
-          setState(() {
-            _isSubmitting = false;
-          });
-        }
-      });
     }
   }
 
@@ -82,13 +95,26 @@ class _ProfileFormState extends State<ProfileForm> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
+        // Handle all state changes consistently
         if (state is ProfileUpdateSuccess) {
           context.showSuccessSnackBar('Profile updated successfully');
+          // Reset submitting state on success
+          if (_isSubmitting) {
+            setState(() {
+              _isSubmitting = false;
+            });
+          }
         } else if (state is AuthFailure) {
           context.showErrorSnackBar(state.message);
-          setState(() {
-            _isSubmitting = false;
-          });
+          // Reset submitting state on failure
+          if (_isSubmitting) {
+            setState(() {
+              _isSubmitting = false;
+            });
+          }
+        } else if (state is AuthLoading && _isSubmitting) {
+          // Keep submitting state true during loading
+          // No state change needed here
         }
       },
       child: Form(
@@ -204,7 +230,7 @@ class _ProfileFormState extends State<ProfileForm> {
               },
               enabled: !_isSubmitting,
             ),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: AppSpacing.md),
 
             // Email field (read-only)
             TextFormField(
@@ -230,7 +256,7 @@ class _ProfileFormState extends State<ProfileForm> {
                 fillColor: context.colorScheme.surface.withOpacity(0.5),
               ),
             ),
-            const SizedBox(height: AppSpacing.lg),
+            SizedBox(height: AppSpacing.lg),
 
             // Update button
             ElevatedButton(

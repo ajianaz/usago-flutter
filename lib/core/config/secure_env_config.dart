@@ -5,8 +5,8 @@ import '../utils/encryption_util.dart';
 /// Secure Environment Configuration untuk handle encrypted environment variables
 class SecureEnvConfig {
   static bool _isInitialized = false;
-  static late Map<String, String> _envMap;
-  static late Map<String, bool> _isEncryptedMap;
+  static Map<String, String> _envMap = {};
+  static Map<String, bool> _isEncryptedMap = {};
 
   /// List of sensitive environment variables yang harus dienkripsi
   static const Set<String> _sensitiveKeys = {
@@ -81,11 +81,11 @@ class SecureEnvConfig {
             _isEncryptedMap[key] = true;
 
             if (kDebugMode) {
-              print('Decrypted sensitive variable: $key');
+              print('Decrypted sensitive variable: ${_maskSensitiveKey(key)}');
             }
           } catch (e) {
             if (kDebugMode) {
-              print('Failed to decrypt $key: $e');
+              print('Failed to decrypt ${_maskSensitiveKey(key)}: $e');
             }
             _isEncryptedMap[key] = false;
           }
@@ -93,8 +93,8 @@ class SecureEnvConfig {
           _isEncryptedMap[key] = false;
 
           // Warning untuk development jika sensitive variables tidak terenkripsi
-          if (kDebugMode && !kReleaseMode) {
-            print('Warning: Sensitive variable $key is not encrypted');
+          if (kDebugMode) {
+            print('Warning: Sensitive variable ${_maskSensitiveKey(key)} is not encrypted');
           }
         }
       }
@@ -166,13 +166,13 @@ class SecureEnvConfig {
     final encryptedMap = <String, String>{};
 
     for (final key in _sensitiveKeys) {
-      if (_envMap.containsKey(key) && !_isEncryptedMap[key]!) {
+      if (_envMap.containsKey(key) && !(_isEncryptedMap[key] ?? false)) {
         try {
           final encryptedValue = await EncryptionUtil.encrypt(_envMap[key]!);
           encryptedMap[key] = encryptedValue;
         } catch (e) {
           if (kDebugMode) {
-            print('Failed to encrypt $key: $e');
+            print('Failed to encrypt ${_maskSensitiveKey(key)}: $e');
           }
         }
       }
@@ -221,7 +221,7 @@ class SecureEnvConfig {
     if (!_sensitiveKeys.contains(key)) {
       _sensitiveKeys.add(key);
       if (kDebugMode) {
-        print('Added new sensitive key: $key');
+        print('Added new sensitive key: ${_maskSensitiveKey(key)}');
       }
     }
   }
@@ -231,7 +231,7 @@ class SecureEnvConfig {
     if (_sensitiveKeys.contains(key)) {
       _sensitiveKeys.remove(key);
       if (kDebugMode) {
-        print('Removed sensitive key: $key');
+        print('Removed sensitive key: ${_maskSensitiveKey(key)}');
       }
     }
   }
@@ -258,5 +258,13 @@ class SecureEnvConfig {
     }
 
     return status;
+  }
+
+  /// Mask sensitive key untuk logging
+  static String _maskSensitiveKey(String key) {
+    if (key.length <= 4) {
+      return '${key.substring(0, 1)}***';
+    }
+    return '${key.substring(0, 2)}***${key.substring(key.length - 2)}';
   }
 }
