@@ -27,7 +27,8 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: AppSpacing.radiusButton,
           ),
-          padding: AppSpacing.paddingHorizontalMd + AppSpacing.paddingVerticalSm,
+          padding:
+              AppSpacing.paddingHorizontalMd + AppSpacing.paddingVerticalSm,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
@@ -37,7 +38,8 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: AppSpacing.radiusButton,
           ),
-          padding: AppSpacing.paddingHorizontalMd + AppSpacing.paddingVerticalSm,
+          padding:
+              AppSpacing.paddingHorizontalMd + AppSpacing.paddingVerticalSm,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -48,7 +50,8 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: AppSpacing.radiusButton,
           ),
-          padding: AppSpacing.paddingHorizontalMd + AppSpacing.paddingVerticalSm,
+          padding:
+              AppSpacing.paddingHorizontalMd + AppSpacing.paddingVerticalSm,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -145,7 +148,8 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: AppSpacing.radiusButton,
           ),
-          padding: AppSpacing.paddingHorizontalMd + AppSpacing.paddingVerticalSm,
+          padding:
+              AppSpacing.paddingHorizontalMd + AppSpacing.paddingVerticalSm,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
@@ -155,7 +159,8 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: AppSpacing.radiusButton,
           ),
-          padding: AppSpacing.paddingHorizontalMd + AppSpacing.paddingVerticalSm,
+          padding:
+              AppSpacing.paddingHorizontalMd + AppSpacing.paddingVerticalSm,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -166,7 +171,8 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: AppSpacing.radiusButton,
           ),
-          padding: AppSpacing.paddingHorizontalMd + AppSpacing.paddingVerticalSm,
+          padding:
+              AppSpacing.paddingHorizontalMd + AppSpacing.paddingVerticalSm,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -245,21 +251,36 @@ class AppTheme {
         color: Color(0xFFFFFFFF),
       ),
       textTheme: TextTheme(
-        displayLarge: AppTextStyles.headline1?.copyWith(color: const Color(0xFFFFFFFF)),
-        displayMedium: AppTextStyles.headline2?.copyWith(color: const Color(0xFFFFFFFF)),
-        displaySmall: AppTextStyles.headline3?.copyWith(color: const Color(0xFFFFFFFF)),
-        headlineLarge: AppTextStyles.headline4?.copyWith(color: const Color(0xFFFFFFFF)),
-        headlineMedium: AppTextStyles.headline5?.copyWith(color: const Color(0xFFFFFFFF)),
-        headlineSmall: AppTextStyles.headline6?.copyWith(color: const Color(0xFFFFFFFF)),
-        titleLarge: AppTextStyles.headline6?.copyWith(color: const Color(0xFFFFFFFF)),
-        titleMedium: AppTextStyles.bodyLarge?.copyWith(color: const Color(0xFFFFFFFF)),
-        titleSmall: AppTextStyles.bodyMedium?.copyWith(color: const Color(0xFFFFFFFF)),
-        bodyLarge: AppTextStyles.bodyLarge?.copyWith(color: const Color(0xFFFFFFFF)),
-        bodyMedium: AppTextStyles.bodyMedium?.copyWith(color: const Color(0xFFE0E0E0)),
-        bodySmall: AppTextStyles.bodySmall?.copyWith(color: const Color(0xFFE0E0E0)),
-        labelLarge: AppTextStyles.buttonLarge?.copyWith(color: const Color(0xFFFFFFFF)),
-        labelMedium: AppTextStyles.buttonMedium?.copyWith(color: const Color(0xFFFFFFFF)),
-        labelSmall: AppTextStyles.buttonSmall?.copyWith(color: const Color(0xFFFFFFFF)),
+        displayLarge:
+            AppTextStyles.headline1?.copyWith(color: const Color(0xFFFFFFFF)),
+        displayMedium:
+            AppTextStyles.headline2?.copyWith(color: const Color(0xFFFFFFFF)),
+        displaySmall:
+            AppTextStyles.headline3?.copyWith(color: const Color(0xFFFFFFFF)),
+        headlineLarge:
+            AppTextStyles.headline4?.copyWith(color: const Color(0xFFFFFFFF)),
+        headlineMedium:
+            AppTextStyles.headline5?.copyWith(color: const Color(0xFFFFFFFF)),
+        headlineSmall:
+            AppTextStyles.headline6?.copyWith(color: const Color(0xFFFFFFFF)),
+        titleLarge:
+            AppTextStyles.headline6?.copyWith(color: const Color(0xFFFFFFFF)),
+        titleMedium:
+            AppTextStyles.bodyLarge?.copyWith(color: const Color(0xFFFFFFFF)),
+        titleSmall:
+            AppTextStyles.bodyMedium?.copyWith(color: const Color(0xFFFFFFFF)),
+        bodyLarge:
+            AppTextStyles.bodyLarge?.copyWith(color: const Color(0xFFFFFFFF)),
+        bodyMedium:
+            AppTextStyles.bodyMedium?.copyWith(color: const Color(0xFFE0E0E0)),
+        bodySmall:
+            AppTextStyles.bodySmall?.copyWith(color: const Color(0xFFE0E0E0)),
+        labelLarge:
+            AppTextStyles.buttonLarge?.copyWith(color: const Color(0xFFFFFFFF)),
+        labelMedium: AppTextStyles.buttonMedium
+            ?.copyWith(color: const Color(0xFFFFFFFF)),
+        labelSmall:
+            AppTextStyles.buttonSmall?.copyWith(color: const Color(0xFFFFFFFF)),
       ),
     );
   }

@@ -19,7 +19,8 @@ class VerifyEmailParams extends Equatable {
 class VerifyEmailUsecase {
   final AuthRepository _repository;
 
-  VerifyEmailUsecase({required AuthRepository repository}) : _repository = repository;
+  VerifyEmailUsecase({required AuthRepository repository})
+      : _repository = repository;
 
   /// Execute email verification
   /// Returns Either<Failure, void>

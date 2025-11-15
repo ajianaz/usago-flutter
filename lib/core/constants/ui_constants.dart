@@ -49,10 +49,12 @@ class UIConstants {
   // ==================== EdgeInsets Helpers ====================
 
   /// EdgeInsets symmetric horizontal default
-  static const EdgeInsets paddingHorizontal = EdgeInsets.symmetric(horizontal: paddingDefault);
+  static const EdgeInsets paddingHorizontal =
+      EdgeInsets.symmetric(horizontal: paddingDefault);
 
   /// EdgeInsets symmetric vertical default
-  static const EdgeInsets paddingVertical = EdgeInsets.symmetric(vertical: paddingDefault);
+  static const EdgeInsets paddingVertical =
+      EdgeInsets.symmetric(vertical: paddingDefault);
 
   /// EdgeInsets all default
   static const EdgeInsets paddingAll = EdgeInsets.all(paddingDefault);

@@ -66,7 +66,8 @@ void setupNotificationDependencies(GetIt getIt) {
 
   // For demonstration, we'll log the setup
   logger.info('Notification feature dependencies setup completed');
-  logger.info('To implement this feature, uncomment the above code and create the necessary files:');
+  logger.info(
+      'To implement this feature, uncomment the above code and create the necessary files:');
   logger.info('1. NotificationRemoteDataSource interface and implementation');
   logger.info('2. NotificationRepository interface and implementation');
   logger.info('3. Use case implementations');

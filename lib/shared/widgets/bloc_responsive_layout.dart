@@ -5,7 +5,8 @@ import 'responsive_builder.dart';
 
 /// BLoC-compatible responsive layout widget with listener support
 class BlocResponsiveLayout<T extends BlocBase<S>, S> extends StatelessWidget {
-  final Widget Function(BuildContext context, T bloc, S state, DeviceType deviceType) builder;
+  final Widget Function(
+      BuildContext context, T bloc, S state, DeviceType deviceType) builder;
   final void Function(BuildContext context, S state)? listener;
   final T? bloc;
 
@@ -38,7 +39,8 @@ class BlocResponsiveLayout<T extends BlocBase<S>, S> extends StatelessWidget {
 }
 
 /// Simplified version for common use cases
-class BlocResponsiveLayoutListener<T extends BlocBase<S>, S> extends StatelessWidget {
+class BlocResponsiveLayoutListener<T extends BlocBase<S>, S>
+    extends StatelessWidget {
   final Widget Function(BuildContext context, DeviceType deviceType) builder;
   final void Function(BuildContext context, S state) listener;
   final T? bloc;

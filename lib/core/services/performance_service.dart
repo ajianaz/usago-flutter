@@ -125,7 +125,8 @@ class PerformanceService {
       _startPeriodicCleanup();
 
       // Initialize performance stream
-      _performanceStreamController = StreamController<Map<String, dynamic>>.broadcast(
+      _performanceStreamController =
+          StreamController<Map<String, dynamic>>.broadcast(
         onListen: () => _logger.debug('Performance stream listener added'),
         onCancel: () => _logger.debug('Performance stream listener removed'),
       );
@@ -256,6 +257,11 @@ class PerformanceService {
     try {
       final report = getPerformanceReport();
 
+      // Validate file path to prevent empty expressions
+      if (filePath.trim().isEmpty) {
+        filePath = '/tmp/performance_export.json';
+      }
+
       // In a real implementation, you would write this to a file
       // For now, we'll just log it
       _logger.info('Performance data exported to: $filePath');
@@ -381,9 +387,12 @@ class PerformanceService {
       if (_config.enableMemoryMonitoring) {
         final memoryInfo = MemoryManager().getCurrentMemoryInfo();
         if (memoryInfo.usagePercentage > _config.memoryCriticalThreshold) {
-          warnings.add('Critical memory usage: ${memoryInfo.usagePercentage.toStringAsFixed(1)}%');
-        } else if (memoryInfo.usagePercentage > _config.memoryWarningThreshold) {
-          warnings.add('High memory usage: ${memoryInfo.usagePercentage.toStringAsFixed(1)}%');
+          warnings.add(
+              'Critical memory usage: ${memoryInfo.usagePercentage.toStringAsFixed(1)}%');
+        } else if (memoryInfo.usagePercentage >
+            _config.memoryWarningThreshold) {
+          warnings.add(
+              'High memory usage: ${memoryInfo.usagePercentage.toStringAsFixed(1)}%');
         }
       }
 
@@ -395,7 +404,8 @@ class PerformanceService {
       }
 
       // Auto-optimize if enabled and needed
-      if (_config.enableAutoOptimization && !PerformanceUtils.isPerformanceHealthy()) {
+      if (_config.enableAutoOptimization &&
+          !PerformanceUtils.isPerformanceHealthy()) {
         _logger.info('Auto-optimization triggered');
         optimizePerformance();
       }
@@ -449,7 +459,8 @@ class PerformanceService {
     if (_config.enablePerformanceTracking) {
       _logger.info('Performance: ${deviceProfile['performance']}');
     }
-    _logger.info('Health: ${PerformanceUtils.isPerformanceHealthy() ? 'Good' : 'Warning'}');
+    _logger.info(
+        'Health: ${PerformanceUtils.isPerformanceHealthy() ? 'Good' : 'Warning'}');
     _logger.info('=== End Initial State ===');
   }
 }

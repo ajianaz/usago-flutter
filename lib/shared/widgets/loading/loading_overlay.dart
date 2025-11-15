@@ -91,11 +91,12 @@ class LoadingOverlay extends StatelessWidget {
   Widget _buildMessage(BuildContext context) {
     return Text(
       message!,
-      style: messageStyle ?? const TextStyle(
-        color: Colors.white,
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-      ),
+      style: messageStyle ??
+          const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
       textAlign: TextAlign.center,
     );
   }
@@ -183,9 +184,9 @@ class CustomLoadingOverlay extends StatelessWidget {
                 Text(
                   message!,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w500,
-                  ),
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w500,
+                      ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -280,9 +281,9 @@ class ProgressLoadingOverlay extends StatelessWidget {
                 Text(
                   message!,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w500,
-                  ),
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w500,
+                      ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -290,8 +291,8 @@ class ProgressLoadingOverlay extends StatelessWidget {
               Text(
                 '${(progress * 100).toInt()}%',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                      color: AppColors.textSecondary,
+                    ),
               ),
             ],
           ),

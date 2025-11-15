@@ -110,19 +110,20 @@ class EnhancedSecureStorageService {
 
   /// Konfigurasi Flutter Secure Storage dengan keamanan maksimal
   AndroidOptions get _androidOptions => const AndroidOptions(
-    encryptedSharedPreferences: true,
-    keyCipherAlgorithm: KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
-    storageCipherAlgorithm: StorageCipherAlgorithm.AES_GCM_NoPadding,
-    sharedPreferencesName: 'SecureStorage',
-    preferencesKeyPrefix: 'UsagoSecure_',
-    resetOnError: true,
-  );
+        encryptedSharedPreferences: true,
+        keyCipherAlgorithm:
+            KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
+        storageCipherAlgorithm: StorageCipherAlgorithm.AES_GCM_NoPadding,
+        sharedPreferencesName: 'SecureStorage',
+        preferencesKeyPrefix: 'UsagoSecure_',
+        resetOnError: true,
+      );
 
   IOSOptions get _iosOptions => const IOSOptions(
-    accessibility: KeychainAccessibility.first_unlock,
-    synchronizable: false,
-    accountName: 'usago_secure_storage',
-  );
+        accessibility: KeychainAccessibility.first_unlock,
+        synchronizable: false,
+        accountName: 'usago_secure_storage',
+      );
 
   /// Enkripsi data sebelum disimpan
   String _encryptData(String data) {
@@ -299,7 +300,9 @@ class EnhancedSecureStorageService {
       'encryptionAlgorithm': 'AES-256-GCM',
       'keyCipherAlgorithm': 'RSA_ECB_OAEPwithSHA_256andMGF1Padding',
       'storageCipherAlgorithm': 'AES_GCM_NoPadding',
-      'recommendedStorage': isSecureStorageAvailable ? 'EnhancedFlutterSecureStorage' : 'SharedPreferences',
+      'recommendedStorage': isSecureStorageAvailable
+          ? 'EnhancedFlutterSecureStorage'
+          : 'SharedPreferences',
     };
   }
 
@@ -328,8 +331,10 @@ class EnhancedSecureStorageService {
       _iv = newIV;
 
       // Simpan key dan IV baru
-      await _secureStorage.write(key: _encryptionKeyKey, value: base64.encode(newKey.bytes));
-      await _secureStorage.write(key: _ivKey, value: base64.encode(newIV.bytes));
+      await _secureStorage.write(
+          key: _encryptionKeyKey, value: base64.encode(newKey.bytes));
+      await _secureStorage.write(
+          key: _ivKey, value: base64.encode(newIV.bytes));
 
       _logger.info('Encryption key rotation completed successfully');
     } catch (e) {

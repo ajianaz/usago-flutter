@@ -22,7 +22,8 @@ class UpdateProfileParams extends Equatable {
 class UpdateProfileUsecase {
   final AuthRepository _repository;
 
-  UpdateProfileUsecase({required AuthRepository repository}) : _repository = repository;
+  UpdateProfileUsecase({required AuthRepository repository})
+      : _repository = repository;
 
   /// Execute profile update
   /// Returns Either<Failure, User>

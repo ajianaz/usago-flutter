@@ -54,7 +54,8 @@ class ForgotPasswordPage extends StatelessWidget {
 
   void _handleAuthStates(BuildContext context, AuthState state) {
     if (state is PasswordResetEmailSent) {
-      context.showSuccessSnackBar('Password reset email sent to ${state.email}');
+      context
+          .showSuccessSnackBar('Password reset email sent to ${state.email}');
       // Navigate back to login after successful email sent
       Future.delayed(const Duration(seconds: 2), () {
         context.router.maybePop();
@@ -64,7 +65,8 @@ class ForgotPasswordPage extends StatelessWidget {
     }
   }
 
-  Widget _buildBody(BuildContext context, AuthBloc authBloc, AuthState state, DeviceType deviceType) {
+  Widget _buildBody(BuildContext context, AuthBloc authBloc, AuthState state,
+      DeviceType deviceType) {
     if (state is AuthLoading) {
       return const Center(child: CircularProgressIndicator());
     }

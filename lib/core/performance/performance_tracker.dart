@@ -54,8 +54,8 @@ class PerformanceMetric {
   @override
   String toString() {
     return 'PerformanceMetric(name: $name, category: $category, '
-           'duration: ${duration.inMilliseconds}ms, '
-           'timestamp: ${timestamp.toIso8601String()})';
+        'duration: ${duration.inMilliseconds}ms, '
+        'timestamp: ${timestamp.toIso8601String()})';
   }
 }
 
@@ -91,8 +91,8 @@ class TransitionMetric {
   @override
   String toString() {
     return 'TransitionMetric(bloc: $blocType, event: $eventType, '
-           '${fromState} -> $toState, '
-           'duration: ${processingTime?.inMilliseconds ?? 0}ms)';
+        '${fromState} -> $toState, '
+        'duration: ${processingTime?.inMilliseconds ?? 0}ms)';
   }
 }
 
@@ -122,7 +122,7 @@ class ErrorMetric {
   @override
   String toString() {
     return 'ErrorMetric(bloc: $blocType, error: $error, '
-           'timestamp: ${timestamp.toIso8601String()})';
+        'timestamp: ${timestamp.toIso8601String()})';
   }
 }
 
@@ -171,7 +171,8 @@ class PerformanceTracker {
   final List<TransitionMetric> _transitions = [];
   final List<ErrorMetric> _errors = [];
   final Map<String, Stopwatch> _activeStopwatches = {};
-  final PerformanceThresholds _thresholds = PerformanceThresholds.forEnvironment();
+  final PerformanceThresholds _thresholds =
+      PerformanceThresholds.forEnvironment();
   Timer? _cleanupTimer;
 
   /// Initialize performance tracker
@@ -198,7 +199,12 @@ class PerformanceTracker {
 
   /// Start tracking a performance operation
   String startTracking(String name, {String category = 'general'}) {
-    if (!AppConfig.enableLogging) return '';
+    if (!AppConfig.enableLogging) return 'disabled_tracking';
+
+    // Validate input to prevent empty expressions
+    if (name.trim().isEmpty) {
+      name = 'unnamed_operation';
+    }
 
     final trackingId = '${name}_${DateTime.now().millisecondsSinceEpoch}';
     _activeStopwatches[trackingId] = Stopwatch()..start();
@@ -216,15 +222,32 @@ class PerformanceTracker {
     Map<String, dynamic> metadata = const {},
     String? stackTrace,
   }) {
-    if (!AppConfig.enableLogging || !_activeStopwatches.containsKey(trackingId)) {
+    if (!AppConfig.enableLogging ||
+        !_activeStopwatches.containsKey(trackingId)) {
       return;
     }
 
     final stopwatch = _activeStopwatches.remove(trackingId)!;
     stopwatch.stop();
 
-    // Extract name from tracking ID
-    final name = trackingId.split('_').sublist(0, -1).join('_');
+    // Extract name from tracking ID, with validation
+    String name;
+    if (trackingId == 'disabled_tracking') {
+      name = 'disabled_operation';
+    } else {
+      final parts = trackingId.split('_');
+      if (parts.length > 1) {
+        name = parts.sublist(0, parts.length - 1).join('_');
+      } else {
+        name = trackingId;
+      }
+    }
+
+    // Ensure name is not empty
+    if (name.trim().isEmpty) {
+      name = 'unnamed_operation';
+    }
+
     final category = metadata['category'] ?? 'general';
 
     final metric = PerformanceMetric.fromStopwatch(
@@ -241,7 +264,8 @@ class PerformanceTracker {
     _checkThresholds(metric);
 
     if (AppConfig.debugMode) {
-      _logger.debug('Stopped tracking: $name (${metric.duration.inMilliseconds}ms)');
+      _logger.debug(
+          'Stopped tracking: $name (${metric.duration.inMilliseconds}ms)');
     }
   }
 
@@ -269,9 +293,11 @@ class PerformanceTracker {
     // Check for slow transitions
     if (processingTime != null) {
       if (processingTime > _thresholds.blocEventCritical) {
-        _logger.error('CRITICAL: Slow BLoC transition detected: ${transition.toString()}');
+        _logger.error(
+            'CRITICAL: Slow BLoC transition detected: ${transition.toString()}');
       } else if (processingTime > _thresholds.blocEventWarning) {
-        _logger.warning('WARNING: Slow BLoC transition detected: ${transition.toString()}');
+        _logger.warning(
+            'WARNING: Slow BLoC transition detected: ${transition.toString()}');
       }
     }
 
@@ -320,16 +346,18 @@ class PerformanceTracker {
     // Calculate averages
     final avgOperationTime = totalMetrics > 0
         ? _metrics.fold<Duration>(
-            Duration.zero,
-            (sum, metric) => sum + metric.duration,
-          ) ~/ totalMetrics
+              Duration.zero,
+              (sum, metric) => sum + metric.duration,
+            ) ~/
+            totalMetrics
         : Duration.zero;
 
     final avgTransitionTime = totalTransitions > 0
         ? _transitions.where((t) => t.processingTime != null).fold<Duration>(
-            Duration.zero,
-            (sum, transition) => sum + transition.processingTime!,
-          ) ~/ _transitions.where((t) => t.processingTime != null).length
+                  Duration.zero,
+                  (sum, transition) => sum + transition.processingTime!,
+                ) ~/
+            _transitions.where((t) => t.processingTime != null).length
         : Duration.zero;
 
     // Get slow operations count
@@ -356,7 +384,8 @@ class PerformanceTracker {
       'errors': _errors.map((e) => e.toJson()).toList(),
       'thresholds': {
         'slowOperationWarning': _thresholds.slowOperationWarning.inMicroseconds,
-        'slowOperationCritical': _thresholds.slowOperationCritical.inMicroseconds,
+        'slowOperationCritical':
+            _thresholds.slowOperationCritical.inMicroseconds,
         'blocEventWarning': _thresholds.blocEventWarning.inMicroseconds,
         'blocEventCritical': _thresholds.blocEventCritical.inMicroseconds,
       },
@@ -412,7 +441,8 @@ class PerformanceTracker {
     }
 
     if (_transitions.length > _thresholds.maxMetricsHistory) {
-      _transitions.removeRange(0, _transitions.length - _thresholds.maxMetricsHistory);
+      _transitions.removeRange(
+          0, _transitions.length - _thresholds.maxMetricsHistory);
     }
 
     if (_errors.length > _thresholds.maxMetricsHistory) {
@@ -423,7 +453,8 @@ class PerformanceTracker {
     final cutoffTime = DateTime.now().subtract(const Duration(minutes: 5));
     _activeStopwatches.removeWhere((id, stopwatch) {
       final timestamp = int.tryParse(id.split('_').last) ?? 0;
-      return DateTime.fromMillisecondsSinceEpoch(timestamp).isBefore(cutoffTime);
+      return DateTime.fromMillisecondsSinceEpoch(timestamp)
+          .isBefore(cutoffTime);
     });
   }
 }
@@ -440,6 +471,11 @@ class PerformanceTrackerHelper {
     Map<String, dynamic> metadata = const {},
   }) {
     if (!AppConfig.enableLogging) return operation();
+
+    // Validate input to prevent empty expressions
+    if (name.trim().isEmpty) {
+      name = 'unnamed_operation';
+    }
 
     final trackingId = _tracker.startTracking(name, category: category);
     try {
@@ -464,6 +500,11 @@ class PerformanceTrackerHelper {
     Map<String, dynamic> metadata = const {},
   }) async {
     if (!AppConfig.enableLogging) return await operation();
+
+    // Validate input to prevent empty expressions
+    if (name.trim().isEmpty) {
+      name = 'unnamed_operation';
+    }
 
     final trackingId = _tracker.startTracking(name, category: category);
     try {

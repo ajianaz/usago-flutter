@@ -111,13 +111,15 @@ class _GestureFeedbackState extends State<GestureFeedback>
       child: Stack(
         children: [
           // Ripple effect
-          if (widget.enableVisualFeedback && _controller.status == AnimationStatus.forward)
+          if (widget.enableVisualFeedback &&
+              _controller.status == AnimationStatus.forward)
             Positioned.fill(
               child: IgnorePointer(
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
-                    color: (widget.feedbackColor ?? Theme.of(context).colorScheme.primary)
+                    color: (widget.feedbackColor ??
+                            Theme.of(context).colorScheme.primary)
                         .withOpacity(_rippleAnimation.value * 0.2),
                   ),
                 ),

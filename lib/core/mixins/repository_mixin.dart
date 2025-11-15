@@ -29,7 +29,8 @@ mixin RepositoryMixin {
       logger.debug('Repository operation completed successfully: $opName');
       return Right(result);
     } on ServerException catch (e) {
-      logger.error('Repository operation failed with server exception: $opName', e);
+      logger.error(
+          'Repository operation failed with server exception: $opName', e);
       return Left(ServerFailure(
         message: e.message,
         statusCode: e.statusCode,
@@ -38,14 +39,16 @@ mixin RepositoryMixin {
         originalError: e.originalError,
       ));
     } on NetworkException catch (e) {
-      logger.error('Repository operation failed with network exception: $opName', e);
+      logger.error(
+          'Repository operation failed with network exception: $opName', e);
       return Left(NetworkFailure(
         message: e.message,
         code: e.code,
         originalError: e.originalError,
       ));
     } on AuthException catch (e) {
-      logger.error('Repository operation failed with auth exception: $opName', e);
+      logger.error(
+          'Repository operation failed with auth exception: $opName', e);
       return Left(AuthFailure(
         message: e.message,
         type: e.type,
@@ -53,7 +56,8 @@ mixin RepositoryMixin {
         originalError: e.originalError,
       ));
     } on ValidationException catch (e) {
-      logger.error('Repository operation failed with validation exception: $opName', e);
+      logger.error(
+          'Repository operation failed with validation exception: $opName', e);
       return Left(ValidationFailure(
         message: e.message,
         fieldErrors: e.fieldErrors,
@@ -61,7 +65,8 @@ mixin RepositoryMixin {
         originalError: e.originalError,
       ));
     } on CacheException catch (e) {
-      logger.error('Repository operation failed with cache exception: $opName', e);
+      logger.error(
+          'Repository operation failed with cache exception: $opName', e);
       return Left(CacheFailure(
         message: e.message,
         operation: e.operation,
@@ -70,7 +75,10 @@ mixin RepositoryMixin {
         originalError: e.originalError,
       ));
     } catch (e, stackTrace) {
-      logger.error('Repository operation failed with unknown exception: $opName', e, stackTrace);
+      logger.error(
+          'Repository operation failed with unknown exception: $opName',
+          e,
+          stackTrace);
       return Left(UnknownFailure(
         message: 'An unexpected error occurred during $opName',
         originalError: e,
@@ -99,7 +107,8 @@ mixin RepositoryMixin {
       logger.debug('Void repository operation completed successfully: $opName');
       return const Right(null);
     } on ServerException catch (e) {
-      logger.error('Void repository operation failed with server exception: $opName', e);
+      logger.error(
+          'Void repository operation failed with server exception: $opName', e);
       return Left(ServerFailure(
         message: e.message,
         statusCode: e.statusCode,
@@ -108,14 +117,17 @@ mixin RepositoryMixin {
         originalError: e.originalError,
       ));
     } on NetworkException catch (e) {
-      logger.error('Void repository operation failed with network exception: $opName', e);
+      logger.error(
+          'Void repository operation failed with network exception: $opName',
+          e);
       return Left(NetworkFailure(
         message: e.message,
         code: e.code,
         originalError: e.originalError,
       ));
     } on AuthException catch (e) {
-      logger.error('Void repository operation failed with auth exception: $opName', e);
+      logger.error(
+          'Void repository operation failed with auth exception: $opName', e);
       return Left(AuthFailure(
         message: e.message,
         type: e.type,
@@ -123,7 +135,9 @@ mixin RepositoryMixin {
         originalError: e.originalError,
       ));
     } on ValidationException catch (e) {
-      logger.error('Void repository operation failed with validation exception: $opName', e);
+      logger.error(
+          'Void repository operation failed with validation exception: $opName',
+          e);
       return Left(ValidationFailure(
         message: e.message,
         fieldErrors: e.fieldErrors,
@@ -131,7 +145,8 @@ mixin RepositoryMixin {
         originalError: e.originalError,
       ));
     } on CacheException catch (e) {
-      logger.error('Void repository operation failed with cache exception: $opName', e);
+      logger.error(
+          'Void repository operation failed with cache exception: $opName', e);
       return Left(CacheFailure(
         message: e.message,
         operation: e.operation,
@@ -140,7 +155,10 @@ mixin RepositoryMixin {
         originalError: e.originalError,
       ));
     } catch (e, stackTrace) {
-      logger.error('Void repository operation failed with unknown exception: $opName', e, stackTrace);
+      logger.error(
+          'Void repository operation failed with unknown exception: $opName',
+          e,
+          stackTrace);
       return Left(UnknownFailure(
         message: 'An unexpected error occurred during $opName',
         originalError: e,
@@ -256,7 +274,8 @@ mixin RepositoryMixin {
 
     try {
       final entities = models.map((model) => toEntity(model)).toList();
-      logger.debug('Batch entity mapping completed successfully: $opName (${entities.length} items)');
+      logger.debug(
+          'Batch entity mapping completed successfully: $opName (${entities.length} items)');
       return Right(entities);
     } catch (e, stackTrace) {
       logger.error('Batch entity mapping failed: $opName', e, stackTrace);
@@ -288,13 +307,17 @@ mixin RepositoryMixin {
   }
 
   /// Log repository operation success
-  void logOperationSuccess(String operationName, Map<String, dynamic>? metadata) {
-    logger.info('Repository operation completed successfully: $operationName', metadata);
+  void logOperationSuccess(
+      String operationName, Map<String, dynamic>? metadata) {
+    logger.info('Repository operation completed successfully: $operationName',
+        metadata);
   }
 
   /// Log repository operation failure
-  void logOperationFailure(String operationName, Failure failure, Map<String, dynamic>? metadata) {
-    final message = 'Repository operation failed: $operationName - ${failure.message}';
+  void logOperationFailure(
+      String operationName, Failure failure, Map<String, dynamic>? metadata) {
+    final message =
+        'Repository operation failed: $operationName - ${failure.message}';
     if (metadata != null) {
       logger.error('$message | Metadata: $metadata', failure);
     } else {
@@ -332,16 +355,19 @@ extension RepositoryExtensions on RepositoryMixin {
       }
 
       if (attempt == maxRetries) {
-        logger.error('Operation failed after $maxRetries retries: $opName', result.fold((l) => l, (r) => null));
+        logger.error('Operation failed after $maxRetries retries: $opName',
+            result.fold((l) => l, (r) => null));
         return result;
       }
 
-      logger.warning('Operation failed, retrying in ${delay.inSeconds}s (attempt ${attempt + 1}/$maxRetries): $opName');
+      logger.warning(
+          'Operation failed, retrying in ${delay.inSeconds}s (attempt ${attempt + 1}/$maxRetries): $opName');
       await Future.delayed(delay);
       delay *= 2; // Exponential backoff
     }
 
-    return const Left(UnknownFailure(message: 'Retry operation failed unexpectedly'));
+    return const Left(
+        UnknownFailure(message: 'Retry operation failed unexpectedly'));
   }
 }
 

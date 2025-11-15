@@ -14,7 +14,8 @@ class InstantLocaleHelper {
 
   InstantLocaleHelper._();
 
-  final ValueNotifier<Locale> _localeNotifier = ValueNotifier<Locale>(const Locale('en'));
+  final ValueNotifier<Locale> _localeNotifier =
+      ValueNotifier<Locale>(const Locale('en'));
   final LocaleService _localeService = getIt<LocaleService>();
 
   /// Get current locale

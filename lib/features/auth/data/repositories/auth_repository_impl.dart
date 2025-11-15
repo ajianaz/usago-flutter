@@ -296,7 +296,8 @@ class AuthRepositoryImpl implements AuthRepository {
       // Update cached user verification status
       final cachedUserModel = await _localDatasource.getUser();
       if (cachedUserModel != null) {
-        final updatedUserModel = cachedUserModel.copyWith(isEmailVerified: true);
+        final updatedUserModel =
+            cachedUserModel.copyWith(isEmailVerified: true);
         await _localDatasource.saveUser(UserModel.fromEntity(updatedUserModel));
       }
 

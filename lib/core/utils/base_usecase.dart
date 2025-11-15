@@ -36,7 +36,8 @@ abstract class BaseUseCase<Params, Type> {
       // Pre-execution validation
       final validationResult = validateParams(params);
       if (validationResult != null) {
-        _logger.warning('Validation failed for use case: $opName', validationResult);
+        _logger.warning(
+            'Validation failed for use case: $opName', validationResult);
         return Left(validationResult);
       }
 
@@ -73,7 +74,8 @@ abstract class BaseUseCase<Params, Type> {
   }
 
   /// Helper method to log use case failure with metadata
-  void logUseCaseFailure(String operationName, Failure failure, Map<String, dynamic>? metadata) {
+  void logUseCaseFailure(
+      String operationName, Failure failure, Map<String, dynamic>? metadata) {
     final message = 'Use case failed: $operationName - ${failure.message}';
     if (metadata != null) {
       _logger.error('$message | Metadata: $metadata', failure);
@@ -132,7 +134,8 @@ mixin ValidationMixin<T> {
     }
 
     if (password.length < 8) {
-      return const ValidationFailure(message: 'Password must be at least 8 characters long');
+      return const ValidationFailure(
+          message: 'Password must be at least 8 characters long');
     }
 
     return null;

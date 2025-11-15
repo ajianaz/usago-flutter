@@ -147,7 +147,8 @@ class StaggeredSlideTransition extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StaggeredSlideTransition> createState() => _StaggeredSlideTransitionState();
+  State<StaggeredSlideTransition> createState() =>
+      _StaggeredSlideTransitionState();
 }
 
 class _StaggeredSlideTransitionState extends State<StaggeredSlideTransition>

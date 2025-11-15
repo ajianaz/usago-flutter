@@ -45,7 +45,8 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> {
                     Text('Light'),
                     if (themeMode == ThemeMode.light) ...[
                       const Spacer(),
-                      FaIcon(FontAwesomeIcons.check, color: Colors.blue, size: 16),
+                      FaIcon(FontAwesomeIcons.check,
+                          color: Colors.blue, size: 16),
                     ],
                   ],
                 ),
@@ -59,7 +60,8 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> {
                     Text('Dark'),
                     if (themeMode == ThemeMode.dark) ...[
                       const Spacer(),
-                      FaIcon(FontAwesomeIcons.check, color: Colors.blue, size: 16),
+                      FaIcon(FontAwesomeIcons.check,
+                          color: Colors.blue, size: 16),
                     ],
                   ],
                 ),
@@ -73,7 +75,8 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> {
                     Text('System'),
                     if (themeMode == ThemeMode.system) ...[
                       const Spacer(),
-                      FaIcon(FontAwesomeIcons.check, color: Colors.blue, size: 16),
+                      FaIcon(FontAwesomeIcons.check,
+                          color: Colors.blue, size: 16),
                     ],
                   ],
                 ),

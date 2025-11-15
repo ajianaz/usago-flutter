@@ -18,7 +18,8 @@ class AuthInterceptor extends Interceptor {
         _secureStorage = secureStorage;
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
     // Add auth token if available
     try {
       final token = await _secureStorage.getToken();
@@ -63,7 +64,8 @@ class AuthInterceptor extends Interceptor {
           final options = error.requestOptions;
           options.headers['Authorization'] = 'Bearer $newToken';
 
-          _logger.info('Token refreshed successfully, retrying original request');
+          _logger
+              .info('Token refreshed successfully, retrying original request');
 
           // Retry original request with new token
           final retryResponse = await _retryRequest(options);
@@ -108,7 +110,8 @@ class AuthInterceptor extends Interceptor {
     try {
       _logger.info('Attempting to refresh token');
       _logger.info('Using base URL: ${AppConstants.apiBaseUrl}');
-      _logger.info('Using refresh endpoint: ${AppConstants.refreshTokenEndpoint}');
+      _logger
+          .info('Using refresh endpoint: ${AppConstants.refreshTokenEndpoint}');
 
       // Get refresh token from secure storage
       final refreshToken = await _secureStorage.getRefreshToken();
@@ -128,7 +131,8 @@ class AuthInterceptor extends Interceptor {
         },
       ));
 
-      final fullUrl = '${AppConstants.apiBaseUrl}${AppConstants.refreshTokenEndpoint}';
+      final fullUrl =
+          '${AppConstants.apiBaseUrl}${AppConstants.refreshTokenEndpoint}';
       _logger.info('Full refresh token URL: $fullUrl');
 
       final response = await dio.post(
@@ -156,7 +160,8 @@ class AuthInterceptor extends Interceptor {
       // Also check response body for token
       if (response.data is Map<String, dynamic>) {
         final responseData = response.data as Map<String, dynamic>;
-        final tokenFromBody = responseData['token'] ?? responseData['accessToken'];
+        final tokenFromBody =
+            responseData['token'] ?? responseData['accessToken'];
         if (tokenFromBody != null) {
           _logger.info('New token received from response body');
           return tokenFromBody.toString();
@@ -171,13 +176,15 @@ class AuthInterceptor extends Interceptor {
           e.type == DioExceptionType.sendTimeout ||
           e.type == DioExceptionType.receiveTimeout) {
         throw NetworkException(
-          message: 'Token refresh timeout. Please check your internet connection.',
+          message:
+              'Token refresh timeout. Please check your internet connection.',
           code: 'TOKEN_REFRESH_TIMEOUT',
           originalError: e,
         );
       } else if (e.type == DioExceptionType.connectionError) {
         throw NetworkException(
-          message: 'No internet connection for token refresh. Please check your network.',
+          message:
+              'No internet connection for token refresh. Please check your network.',
           code: 'TOKEN_REFRESH_CONNECTION_ERROR',
           originalError: e,
         );
@@ -239,14 +246,16 @@ class AuthInterceptor extends Interceptor {
           e.type == DioExceptionType.sendTimeout ||
           e.type == DioExceptionType.receiveTimeout) {
         throw TimeoutException(
-          message: 'Request retry timeout. Please check your internet connection.',
+          message:
+              'Request retry timeout. Please check your internet connection.',
           operation: 'retry_request',
           code: 'RETRY_TIMEOUT',
           originalError: e,
         );
       } else if (e.type == DioExceptionType.connectionError) {
         throw NetworkException(
-          message: 'No internet connection for retry. Please check your network.',
+          message:
+              'No internet connection for retry. Please check your network.',
           code: 'RETRY_CONNECTION_ERROR',
           originalError: e,
         );
@@ -278,7 +287,8 @@ class AuthInterceptor extends Interceptor {
   }
 
   /// Create auth-specific error
-  DioException _createAuthError(DioException originalError, AuthException authException) {
+  DioException _createAuthError(
+      DioException originalError, AuthException authException) {
     return DioException(
       requestOptions: originalError.requestOptions,
       response: originalError.response,
@@ -288,7 +298,8 @@ class AuthInterceptor extends Interceptor {
   }
 
   /// Create network-specific error
-  DioException _createNetworkError(DioException originalError, NetworkException networkException) {
+  DioException _createNetworkError(
+      DioException originalError, NetworkException networkException) {
     return DioException(
       requestOptions: originalError.requestOptions,
       response: originalError.response,
@@ -298,7 +309,8 @@ class AuthInterceptor extends Interceptor {
   }
 
   /// Create server-specific error
-  DioException _createServerError(DioException originalError, ServerException serverException) {
+  DioException _createServerError(
+      DioException originalError, ServerException serverException) {
     return DioException(
       requestOptions: originalError.requestOptions,
       response: originalError.response,

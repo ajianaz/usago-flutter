@@ -73,7 +73,8 @@ class EnvConfig {
   }
 
   /// Check if current environment is development
-  static bool get isDevelopment => currentEnvironment == Environment.development;
+  static bool get isDevelopment =>
+      currentEnvironment == Environment.development;
 
   /// Check if current environment is staging
   static bool get isStaging => currentEnvironment == Environment.staging;

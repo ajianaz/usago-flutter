@@ -9,12 +9,16 @@ class AppConfig {
   // API Configuration
   static String get apiBaseUrl => EnvConfig.get('API_BASE_URL');
   static Duration get apiTimeout => TimeoutConstants.network;
-  static String get apiVersion => EnvConfig.get('API_VERSION', defaultValue: 'v1');
+  static String get apiVersion =>
+      EnvConfig.get('API_VERSION', defaultValue: 'v1');
 
   // Headers
-  static String get contentTypeHeader => EnvConfig.get('CONTENT_TYPE_HEADER', defaultValue: 'application/json');
-  static String get acceptHeader => EnvConfig.get('ACCEPT_HEADER', defaultValue: 'application/json');
-  static String get bearerTokenHeader => EnvConfig.get('BEARER_TOKEN_HEADER', defaultValue: 'Authorization');
+  static String get contentTypeHeader =>
+      EnvConfig.get('CONTENT_TYPE_HEADER', defaultValue: 'application/json');
+  static String get acceptHeader =>
+      EnvConfig.get('ACCEPT_HEADER', defaultValue: 'application/json');
+  static String get bearerTokenHeader =>
+      EnvConfig.get('BEARER_TOKEN_HEADER', defaultValue: 'Authorization');
 
   // Response Codes
   static int get successCode => ApiStatusCode.ok.code;
@@ -24,57 +28,85 @@ class AppConfig {
   static int get serverErrorCode => ApiStatusCode.internalServerError.code;
 
   // Feature Flags
-  static bool get enableLogging => EnvConfig.getBool('ENABLE_LOGGING', defaultValue: kDebugMode);
-  static bool get enableCrashReporting => EnvConfig.getBool('ENABLE_CRASH_REPORTING', defaultValue: !kDebugMode);
-  static bool get enableAnalytics => EnvConfig.getBool('ENABLE_ANALYTICS', defaultValue: !kDebugMode);
+  static bool get enableLogging =>
+      EnvConfig.getBool('ENABLE_LOGGING', defaultValue: kDebugMode);
+  static bool get enableCrashReporting =>
+      EnvConfig.getBool('ENABLE_CRASH_REPORTING', defaultValue: !kDebugMode);
+  static bool get enableAnalytics =>
+      EnvConfig.getBool('ENABLE_ANALYTICS', defaultValue: !kDebugMode);
 
   // Performance Configuration
-  static bool get enablePerformanceMonitoring => EnvConfig.getBool('ENABLE_PERFORMANCE_MONITORING', defaultValue: kDebugMode);
-  static bool get enableMemoryMonitoring => EnvConfig.getBool('ENABLE_MEMORY_MONITORING', defaultValue: kDebugMode);
-  static bool get enableBlocMonitoring => EnvConfig.getBool('ENABLE_BLOC_MONITORING', defaultValue: kDebugMode);
-  static bool get enableAutoOptimization => EnvConfig.getBool('ENABLE_AUTO_OPTIMIZATION', defaultValue: !kDebugMode);
-  static bool get enablePerformanceReporting => EnvConfig.getBool('ENABLE_PERFORMANCE_REPORTING', defaultValue: kDebugMode);
-  static bool get enablePerformanceExport => EnvConfig.getBool('ENABLE_PERFORMANCE_EXPORT', defaultValue: kDebugMode);
+  static bool get enablePerformanceMonitoring =>
+      EnvConfig.getBool('ENABLE_PERFORMANCE_MONITORING',
+          defaultValue: kDebugMode);
+  static bool get enableMemoryMonitoring =>
+      EnvConfig.getBool('ENABLE_MEMORY_MONITORING', defaultValue: kDebugMode);
+  static bool get enableBlocMonitoring =>
+      EnvConfig.getBool('ENABLE_BLOC_MONITORING', defaultValue: kDebugMode);
+  static bool get enableAutoOptimization =>
+      EnvConfig.getBool('ENABLE_AUTO_OPTIMIZATION', defaultValue: !kDebugMode);
+  static bool get enablePerformanceReporting =>
+      EnvConfig.getBool('ENABLE_PERFORMANCE_REPORTING',
+          defaultValue: kDebugMode);
+  static bool get enablePerformanceExport =>
+      EnvConfig.getBool('ENABLE_PERFORMANCE_EXPORT', defaultValue: kDebugMode);
 
   // Memory Configuration
-  static double get memoryWarningThreshold => PerformanceConstants.memoryWarningThreshold * 100;
-  static double get memoryCriticalThreshold => PerformanceConstants.memoryCriticalThreshold * 100;
-  static int get maxMetricsHistory => PerformanceConstants.maxMetricsHistoryLength;
-  static Duration get memoryMonitoringInterval => PerformanceConstants.memoryMonitoringInterval;
+  static double get memoryWarningThreshold =>
+      PerformanceConstants.memoryWarningThreshold * 100;
+  static double get memoryCriticalThreshold =>
+      PerformanceConstants.memoryCriticalThreshold * 100;
+  static int get maxMetricsHistory =>
+      PerformanceConstants.maxMetricsHistoryLength;
+  static Duration get memoryMonitoringInterval =>
+      PerformanceConstants.memoryMonitoringInterval;
 
   // BLoC Performance Configuration
   static Duration get slowBlocEventWarning => TimeoutConstants.blocWarning;
   static Duration get slowBlocEventCritical => TimeoutConstants.blocCritical;
-  static int get maxActiveBlocs => EnvConfig.getInt('MAX_ACTIVE_BLOCS', defaultValue: 20);
+  static int get maxActiveBlocs =>
+      EnvConfig.getInt('MAX_ACTIVE_BLOCS', defaultValue: 20);
   static Duration get blocCleanupInterval => Duration(
-    minutes: EnvConfig.getInt('BLOC_CLEANUP_INTERVAL_MINUTES', defaultValue: 5)
-  );
+      minutes:
+          EnvConfig.getInt('BLOC_CLEANUP_INTERVAL_MINUTES', defaultValue: 5));
 
   // Performance Tracking Configuration
-  static Duration get performanceMonitoringInterval => PerformanceConstants.performanceMonitoringInterval;
+  static Duration get performanceMonitoringInterval =>
+      PerformanceConstants.performanceMonitoringInterval;
   static Duration get performanceCleanupInterval => Duration(minutes: 10);
   static Duration get slowOperationWarning => TimeoutConstants.blocCritical;
   static Duration get slowOperationCritical => TimeoutConstants.critical;
 
   // Performance Reporting Configuration
   static Duration get performanceReportingInterval => Duration(
-    minutes: EnvConfig.getInt('PERFORMANCE_REPORTING_INTERVAL_MINUTES', defaultValue: 2)
-  );
-  static String get performanceExportPath => EnvConfig.get('PERFORMANCE_EXPORT_PATH', defaultValue: '/tmp/performance_logs');
+      minutes: EnvConfig.getInt('PERFORMANCE_REPORTING_INTERVAL_MINUTES',
+          defaultValue: 2));
+  static String get performanceExportPath =>
+      EnvConfig.get('PERFORMANCE_EXPORT_PATH',
+          defaultValue: '/tmp/performance_logs');
 
   // Security
   static String get encryptionKey => EnvConfig.get('ENCRYPTION_KEY');
   static String get jwtSecret => EnvConfig.get('JWT_SECRET');
 
   // Enhanced Security Configuration
-  static bool get enableEnhancedSecurity => EnvConfig.getBool('ENABLE_ENHANCED_SECURITY', defaultValue: true);
-  static bool get enableHardwareSecurity => EnvConfig.getBool('ENABLE_HARDWARE_SECURITY', defaultValue: true);
-  static bool get enableEncryptionKeyRotation => EnvConfig.getBool('ENABLE_ENCRYPTION_KEY_ROTATION', defaultValue: false);
-  static Duration get encryptionKeyRotationInterval => SecurityConstants.keyRotationInterval;
-  static String get encryptionAlgorithm => EnvConfig.get('ENCRYPTION_ALGORITHM', defaultValue: 'AES-256-GCM');
-  static String get keyCipherAlgorithm => EnvConfig.get('KEY_CIPHER_ALGORITHM', defaultValue: 'RSA_ECB_OAEPwithSHA_256andMGF1Padding');
-  static String get storageCipherAlgorithm => EnvConfig.get('STORAGE_CIPHER_ALGORITHM', defaultValue: 'AES_GCM_NoPadding');
-  static bool get enableDataIntegrityCheck => EnvConfig.getBool('ENABLE_DATA_INTEGRITY_CHECK', defaultValue: true);
+  static bool get enableEnhancedSecurity =>
+      EnvConfig.getBool('ENABLE_ENHANCED_SECURITY', defaultValue: true);
+  static bool get enableHardwareSecurity =>
+      EnvConfig.getBool('ENABLE_HARDWARE_SECURITY', defaultValue: true);
+  static bool get enableEncryptionKeyRotation =>
+      EnvConfig.getBool('ENABLE_ENCRYPTION_KEY_ROTATION', defaultValue: false);
+  static Duration get encryptionKeyRotationInterval =>
+      SecurityConstants.keyRotationInterval;
+  static String get encryptionAlgorithm =>
+      EnvConfig.get('ENCRYPTION_ALGORITHM', defaultValue: 'AES-256-GCM');
+  static String get keyCipherAlgorithm => EnvConfig.get('KEY_CIPHER_ALGORITHM',
+      defaultValue: 'RSA_ECB_OAEPwithSHA_256andMGF1Padding');
+  static String get storageCipherAlgorithm =>
+      EnvConfig.get('STORAGE_CIPHER_ALGORITHM',
+          defaultValue: 'AES_GCM_NoPadding');
+  static bool get enableDataIntegrityCheck =>
+      EnvConfig.getBool('ENABLE_DATA_INTEGRITY_CHECK', defaultValue: true);
   static int get maxFailedAccessAttempts => SecurityConstants.maxFailedAttempts;
   static Duration get lockoutDuration => SecurityConstants.lockoutDuration;
 
@@ -83,8 +115,10 @@ class AppConfig {
   static String get firebaseApiKey => EnvConfig.get('FIREBASE_API_KEY');
 
   // Debug Settings
-  static bool get debugMode => EnvConfig.getBool('DEBUG_MODE', defaultValue: kDebugMode);
-  static String get logLevel => EnvConfig.get('LOG_LEVEL', defaultValue: kDebugMode ? 'debug' : 'error');
+  static bool get debugMode =>
+      EnvConfig.getBool('DEBUG_MODE', defaultValue: kDebugMode);
+  static String get logLevel =>
+      EnvConfig.get('LOG_LEVEL', defaultValue: kDebugMode ? 'debug' : 'error');
 
   // Environment Information
   static String get environment => EnvConfig.currentEnvironment.name;
@@ -143,7 +177,8 @@ class AppConfig {
 
     // Memory validation
     if (memoryWarningThreshold >= memoryCriticalThreshold) {
-      issues.add('MEMORY_WARNING_THRESHOLD should be less than MEMORY_CRITICAL_THRESHOLD');
+      issues.add(
+          'MEMORY_WARNING_THRESHOLD should be less than MEMORY_CRITICAL_THRESHOLD');
     }
 
     if (memoryWarningThreshold < 0 || memoryWarningThreshold > 100) {
@@ -161,7 +196,8 @@ class AppConfig {
 
     // Performance monitoring validation
     if (performanceMonitoringInterval.inSeconds < 10) {
-      issues.add('PERFORMANCE_MONITORING_INTERVAL_SECONDS should be at least 10');
+      issues
+          .add('PERFORMANCE_MONITORING_INTERVAL_SECONDS should be at least 10');
     }
 
     if (performanceCleanupInterval.inMinutes < 1) {
@@ -174,8 +210,10 @@ class AppConfig {
     }
 
     // BLoC performance validation
-    if (slowBlocEventWarning.inMilliseconds >= slowBlocEventCritical.inMilliseconds) {
-      issues.add('SLOW_BLOC_EVENT_WARNING_MS should be less than SLOW_BLOC_EVENT_CRITICAL_MS');
+    if (slowBlocEventWarning.inMilliseconds >=
+        slowBlocEventCritical.inMilliseconds) {
+      issues.add(
+          'SLOW_BLOC_EVENT_WARNING_MS should be less than SLOW_BLOC_EVENT_CRITICAL_MS');
     }
 
     if (maxActiveBlocs < 5) {
@@ -187,8 +225,10 @@ class AppConfig {
     }
 
     // Operation performance validation
-    if (slowOperationWarning.inMilliseconds >= slowOperationCritical.inMilliseconds) {
-      issues.add('SLOW_OPERATION_WARNING_MS should be less than SLOW_OPERATION_CRITICAL_SECONDS');
+    if (slowOperationWarning.inMilliseconds >=
+        slowOperationCritical.inMilliseconds) {
+      issues.add(
+          'SLOW_OPERATION_WARNING_MS should be less than SLOW_OPERATION_CRITICAL_SECONDS');
     }
 
     // Performance reporting validation
@@ -235,11 +275,14 @@ class AppConfig {
       print('=== Memory Config ===');
       print('Memory Warning Threshold: $memoryWarningThreshold%');
       print('Memory Critical Threshold: $memoryCriticalThreshold%');
-      print('Memory Monitoring Interval: ${memoryMonitoringInterval.inSeconds}s');
+      print(
+          'Memory Monitoring Interval: ${memoryMonitoringInterval.inSeconds}s');
       print('');
       print('=== BLoC Performance Config ===');
-      print('Slow BLoC Event Warning: ${slowBlocEventWarning.inMilliseconds}ms');
-      print('Slow BLoC Event Critical: ${slowBlocEventCritical.inMilliseconds}ms');
+      print(
+          'Slow BLoC Event Warning: ${slowBlocEventWarning.inMilliseconds}ms');
+      print(
+          'Slow BLoC Event Critical: ${slowBlocEventCritical.inMilliseconds}ms');
       print('Max Active BLoCs: $maxActiveBlocs');
       print('BLoC Cleanup Interval: ${blocCleanupInterval.inMinutes}m');
       print('');
@@ -248,13 +291,16 @@ class AppConfig {
       print('Slow Operation Critical: ${slowOperationCritical.inSeconds}s');
       print('');
       print('=== Performance Reporting Config ===');
-      print('Performance Reporting Interval: ${performanceReportingInterval.inMinutes}m');
+      print(
+          'Performance Reporting Interval: ${performanceReportingInterval.inMinutes}m');
       print('Performance Export Path: $performanceExportPath');
       print('');
       print('=== General Performance Config ===');
       print('Max Metrics History: $maxMetricsHistory');
-      print('Performance Monitoring Interval: ${performanceMonitoringInterval.inSeconds}s');
-      print('Performance Cleanup Interval: ${performanceCleanupInterval.inMinutes}m');
+      print(
+          'Performance Monitoring Interval: ${performanceMonitoringInterval.inSeconds}s');
+      print(
+          'Performance Cleanup Interval: ${performanceCleanupInterval.inMinutes}m');
       print('=============================');
     }
   }

@@ -43,7 +43,8 @@ class NetworkException extends AppException {
         );
 
   @override
-  List<Object?> get props => [message, code, statusCode, endpoint, originalError, stackTrace];
+  List<Object?> get props =>
+      [message, code, statusCode, endpoint, originalError, stackTrace];
 
   @override
   String toString() {
@@ -109,7 +110,8 @@ class ValidationException extends AppException {
         );
 
   @override
-  List<Object?> get props => [message, code, fieldErrors, originalError, stackTrace];
+  List<Object?> get props =>
+      [message, code, fieldErrors, originalError, stackTrace];
 
   @override
   String toString() {
@@ -137,7 +139,8 @@ class ServerException extends AppException {
         );
 
   @override
-  List<Object?> get props => [message, code, statusCode, endpoint, originalError, stackTrace];
+  List<Object?> get props =>
+      [message, code, statusCode, endpoint, originalError, stackTrace];
 
   @override
   String toString() {
@@ -165,7 +168,8 @@ class CacheException extends AppException {
         );
 
   @override
-  List<Object?> get props => [message, code, operation, key, originalError, stackTrace];
+  List<Object?> get props =>
+      [message, code, operation, key, originalError, stackTrace];
 
   @override
   String toString() {
@@ -191,7 +195,8 @@ class PermissionException extends AppException {
         );
 
   @override
-  List<Object?> get props => [message, code, permission, originalError, stackTrace];
+  List<Object?> get props =>
+      [message, code, permission, originalError, stackTrace];
 
   @override
   String toString() {
@@ -217,7 +222,8 @@ class ConfigurationException extends AppException {
         );
 
   @override
-  List<Object?> get props => [message, code, configKey, originalError, stackTrace];
+  List<Object?> get props =>
+      [message, code, configKey, originalError, stackTrace];
 
   @override
   String toString() {
@@ -245,7 +251,8 @@ class TimeoutException extends AppException {
         );
 
   @override
-  List<Object?> get props => [message, code, timeout, operation, originalError, stackTrace];
+  List<Object?> get props =>
+      [message, code, timeout, operation, originalError, stackTrace];
 
   @override
   String toString() {
@@ -273,7 +280,8 @@ class ParseException extends AppException {
         );
 
   @override
-  List<Object?> get props => [message, code, dataType, expectedFormat, originalError, stackTrace];
+  List<Object?> get props =>
+      [message, code, dataType, expectedFormat, originalError, stackTrace];
 
   @override
   String toString() {

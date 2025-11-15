@@ -77,12 +77,14 @@ class _InheritedThemeProvider extends InheritedWidget {
   }
 
   static ThemeMode? of(BuildContext context) {
-    final provider = context.dependOnInheritedWidgetOfExactType<_InheritedThemeProvider>();
+    final provider =
+        context.dependOnInheritedWidgetOfExactType<_InheritedThemeProvider>();
     return provider?.themeMode;
   }
 
   static Function(ThemeMode)? getUpdateTheme(BuildContext context) {
-    final provider = context.dependOnInheritedWidgetOfExactType<_InheritedThemeProvider>();
+    final provider =
+        context.dependOnInheritedWidgetOfExactType<_InheritedThemeProvider>();
     return provider?.updateTheme;
   }
 }

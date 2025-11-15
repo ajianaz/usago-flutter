@@ -210,9 +210,9 @@ class _SuccessAnimationState extends State<SuccessAnimation>
           builder: (context, child) {
             return Positioned(
               left: MediaQuery.of(context).size.width / 2 +
-                     (distance * math.cos(angle)),
+                  (distance * math.cos(angle)),
               top: MediaQuery.of(context).size.height / 2 +
-                     (distance * math.sin(angle)),
+                  (distance * math.sin(angle)),
               child: Transform.rotate(
                 angle: _scaleAnimation.value * 2 * 3.14159265359,
                 child: Container(
@@ -401,10 +401,11 @@ class _SuccessOverlayState extends State<SuccessOverlay>
                 if (widget.successMessage != null)
                   Text(
                     widget.successMessage!,
-                    style: widget.messageStyle ?? Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: widget.messageStyle ??
+                        Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
                     textAlign: TextAlign.center,
                   ),
               ],

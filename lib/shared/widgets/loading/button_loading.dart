@@ -110,7 +110,8 @@ class _LoadingButtonState extends State<LoadingButton>
     );
   }
 
-  Widget _buildButtonVariant(BuildContext context, ButtonStyle buttonStyle, bool isEnabled) {
+  Widget _buildButtonVariant(
+      BuildContext context, ButtonStyle buttonStyle, bool isEnabled) {
     switch (widget.variant) {
       case ButtonVariant.primary:
         return ElevatedButton(
@@ -223,31 +224,31 @@ class _LoadingButtonState extends State<LoadingButton>
     switch (widget.size) {
       case ButtonSize.small:
         return widget.textStyle ??
-               Theme.of(context).textTheme.labelSmall?.copyWith(
-                 fontWeight: FontWeight.w600,
-               ) ??
-               const TextStyle(
-                 fontSize: 12,
-                 fontWeight: FontWeight.w600,
-               );
+            Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ) ??
+            const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            );
       case ButtonSize.medium:
         return widget.textStyle ??
-               Theme.of(context).textTheme.labelMedium?.copyWith(
-                 fontWeight: FontWeight.w600,
-               ) ??
-               const TextStyle(
-                 fontSize: 14,
-                 fontWeight: FontWeight.w600,
-               );
+            Theme.of(context).textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ) ??
+            const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            );
       case ButtonSize.large:
         return widget.textStyle ??
-               Theme.of(context).textTheme.labelLarge?.copyWith(
-                 fontWeight: FontWeight.w600,
-               ) ??
-               const TextStyle(
-                 fontSize: 16,
-                 fontWeight: FontWeight.w600,
-               );
+            Theme.of(context).textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ) ??
+            const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            );
     }
   }
 
@@ -262,8 +263,10 @@ class _LoadingButtonState extends State<LoadingButton>
     switch (widget.variant) {
       case ButtonVariant.primary:
         return ElevatedButton.styleFrom(
-          backgroundColor: widget.backgroundColor ?? Theme.of(context).colorScheme.primary,
-          foregroundColor: widget.foregroundColor ?? Theme.of(context).colorScheme.onPrimary,
+          backgroundColor:
+              widget.backgroundColor ?? Theme.of(context).colorScheme.primary,
+          foregroundColor:
+              widget.foregroundColor ?? Theme.of(context).colorScheme.onPrimary,
           textStyle: _getTextStyle(),
           shape: RoundedRectangleBorder(
             borderRadius: widget.borderRadius ?? AppSpacing.radiusButton,
@@ -274,8 +277,10 @@ class _LoadingButtonState extends State<LoadingButton>
         );
       case ButtonVariant.secondary:
         return ElevatedButton.styleFrom(
-          backgroundColor: widget.backgroundColor ?? Theme.of(context).colorScheme.secondary,
-          foregroundColor: widget.foregroundColor ?? Theme.of(context).colorScheme.onSecondary,
+          backgroundColor:
+              widget.backgroundColor ?? Theme.of(context).colorScheme.secondary,
+          foregroundColor: widget.foregroundColor ??
+              Theme.of(context).colorScheme.onSecondary,
           textStyle: _getTextStyle(),
           shape: RoundedRectangleBorder(
             borderRadius: widget.borderRadius ?? AppSpacing.radiusButton,
@@ -286,8 +291,11 @@ class _LoadingButtonState extends State<LoadingButton>
         );
       case ButtonVariant.outline:
         return OutlinedButton.styleFrom(
-          foregroundColor: widget.foregroundColor ?? Theme.of(context).colorScheme.primary,
-          side: BorderSide(color: widget.backgroundColor ?? Theme.of(context).colorScheme.primary),
+          foregroundColor:
+              widget.foregroundColor ?? Theme.of(context).colorScheme.primary,
+          side: BorderSide(
+              color: widget.backgroundColor ??
+                  Theme.of(context).colorScheme.primary),
           textStyle: _getTextStyle(),
           shape: RoundedRectangleBorder(
             borderRadius: widget.borderRadius ?? AppSpacing.radiusButton,
@@ -298,7 +306,8 @@ class _LoadingButtonState extends State<LoadingButton>
         );
       case ButtonVariant.ghost:
         return TextButton.styleFrom(
-          foregroundColor: widget.foregroundColor ?? Theme.of(context).colorScheme.primary,
+          foregroundColor:
+              widget.foregroundColor ?? Theme.of(context).colorScheme.primary,
           textStyle: _getTextStyle(),
           shape: RoundedRectangleBorder(
             borderRadius: widget.borderRadius ?? AppSpacing.radiusButton,
@@ -579,7 +588,9 @@ class _LoadingIconButtonState extends State<LoadingIconButton>
       child: CircularProgressIndicator(
         strokeWidth: 2,
         valueColor: AlwaysStoppedAnimation<Color>(
-          widget.loadingColor ?? widget.foregroundColor ?? Theme.of(context).colorScheme.primary,
+          widget.loadingColor ??
+              widget.foregroundColor ??
+              Theme.of(context).colorScheme.primary,
         ),
       ),
     );

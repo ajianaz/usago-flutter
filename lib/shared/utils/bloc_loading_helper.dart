@@ -14,8 +14,8 @@ class BlocLoadingHelper {
 
     // Cek untuk property isLoading jika ada
     try {
-      final hasLoadingProperty = state is dynamic &&
-          (state as dynamic).isLoading != null;
+      final hasLoadingProperty =
+          state is dynamic && (state as dynamic).isLoading != null;
       if (hasLoadingProperty) {
         return (state as dynamic).isLoading == true;
       }
@@ -37,8 +37,8 @@ class BlocLoadingHelper {
 
     // Cek untuk property loadingMessage jika ada
     try {
-      final hasMessageProperty = state is dynamic &&
-          (state as dynamic).loadingMessage != null;
+      final hasMessageProperty =
+          state is dynamic && (state as dynamic).loadingMessage != null;
       if (hasMessageProperty) {
         return (state as dynamic).loadingMessage as String?;
       }
@@ -55,8 +55,8 @@ class BlocLoadingHelper {
 
     // Cek untuk property progress jika ada
     try {
-      final hasProgressProperty = state is dynamic &&
-          (state as dynamic).progress != null;
+      final hasProgressProperty =
+          state is dynamic && (state as dynamic).progress != null;
       if (hasProgressProperty) {
         return (state as dynamic).progress as double?;
       }
@@ -91,11 +91,14 @@ class BlocLoadingHelper {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (customMessage != null || getLoadingMessage(bloc) != null)
+                      if (customMessage != null ||
+                          getLoadingMessage(bloc) != null)
                         Padding(
                           padding: const EdgeInsets.all(16),
                           child: Text(
-                            customMessage ?? getLoadingMessage(bloc) ?? 'Memuat...',
+                            customMessage ??
+                                getLoadingMessage(bloc) ??
+                                'Memuat...',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -109,7 +112,8 @@ class BlocLoadingHelper {
                         height: 40,
                         child: CircularProgressIndicator(
                           strokeWidth: 3,
-                          valueColor: AlwaysStoppedAnimation<Color>(spinnerColor ?? Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              spinnerColor ?? Colors.white),
                         ),
                       ),
                     ],
@@ -134,18 +138,20 @@ class BlocLoadingHelper {
       builder: (context, state) {
         if (isLoading(bloc)) {
           return customSkeleton ??
-                 Column(
-                   mainAxisSize: MainAxisSize.min,
-                   children: List.generate(5, (index) => Container(
-                     margin: const EdgeInsets.only(bottom: 8),
-                     width: double.infinity,
-                     height: 80,
-                     decoration: BoxDecoration(
-                       color: Colors.grey[300],
-                       borderRadius: BorderRadius.circular(8),
-                     ),
-                   )),
-                 );
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(
+                    5,
+                    (index) => Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          width: double.infinity,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        )),
+              );
         }
 
         return child;
@@ -174,8 +180,10 @@ class BlocLoadingHelper {
         return ElevatedButton(
           onPressed: isLoading(bloc) ? null : onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.primary,
-            foregroundColor: foregroundColor ?? Theme.of(context).colorScheme.onPrimary,
+            backgroundColor:
+                backgroundColor ?? Theme.of(context).colorScheme.primary,
+            foregroundColor:
+                foregroundColor ?? Theme.of(context).colorScheme.onPrimary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
@@ -189,7 +197,8 @@ class BlocLoadingHelper {
                   height: 16,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(loadingColor ?? Colors.white),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        loadingColor ?? Colors.white),
                   ),
                 )
               else if (icon != null) ...[
@@ -199,7 +208,9 @@ class BlocLoadingHelper {
               Text(
                 text,
                 style: TextStyle(
-                  color: isLoading(bloc) ? Colors.white.withOpacity(0.7) : Colors.white,
+                  color: isLoading(bloc)
+                      ? Colors.white.withOpacity(0.7)
+                      : Colors.white,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),

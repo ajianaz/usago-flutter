@@ -1,8 +1,9 @@
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/user.dart';
+import '../../../../core/blocs/base_bloc.dart';
 
 /// Abstract class for all auth states
-abstract class AuthState extends Equatable {
+abstract class AuthState extends BaseState {
   const AuthState();
 }
 

@@ -249,7 +249,8 @@ class ResultHandler {
       attempts++;
     }
 
-    return const Left(UnknownFailure(message: 'Retry operation failed unexpectedly'));
+    return const Left(
+        UnknownFailure(message: 'Retry operation failed unexpectedly'));
   }
 
   /// Convert result to nullable value

@@ -115,8 +115,12 @@ class _HomeViewState extends State<HomeView> {
                       return BlocBuilder<HomeBloc, HomeState>(
                         builder: (context, homeState) {
                           return UserHeader(
-                            user: authState is AuthSuccess ? authState.user : null,
-                            userDashboard: homeState is HomeLoaded ? homeState.userDashboard : null,
+                            user: authState is AuthSuccess
+                                ? authState.user
+                                : null,
+                            userDashboard: homeState is HomeLoaded
+                                ? homeState.userDashboard
+                                : null,
                             onProfileTap: () {
                               context.router.pushNamed('/profile');
                             },
@@ -159,7 +163,9 @@ class _HomeViewState extends State<HomeView> {
                         return FeatureGrid(
                           menuItems: homeState.filteredMenuItems,
                           onMenuTap: (menuItem) {
-                            context.read<HomeBloc>().add(NavigateToMenu(menuItem));
+                            context
+                                .read<HomeBloc>()
+                                .add(NavigateToMenu(menuItem));
                             context.router.pushNamed(menuItem.route);
                           },
                         );

@@ -141,9 +141,11 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
 
           // Back to login button
           TextButton(
-            onPressed: _isSubmitting ? null : () {
-              Navigator.of(context).pop();
-            },
+            onPressed: _isSubmitting
+                ? null
+                : () {
+                    Navigator.of(context).pop();
+                  },
             child: Text(context.t.authLogin),
           ),
         ],

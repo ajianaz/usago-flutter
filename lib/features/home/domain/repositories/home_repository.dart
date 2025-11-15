@@ -12,7 +12,8 @@ abstract class HomeRepository {
   Future<Either<Failure, UserDashboard>> getUserDashboard();
 
   /// Get menu items by category
-  Future<Either<Failure, List<MenuItem>>> getMenuItemsByCategory(String category);
+  Future<Either<Failure, List<MenuItem>>> getMenuItemsByCategory(
+      String category);
 
   /// Check if user has permission for specific menu
   Future<Either<Failure, bool>> hasMenuPermission(String menuId, String userId);

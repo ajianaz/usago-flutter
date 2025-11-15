@@ -37,7 +37,8 @@ class CustomProgressIndicator extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CustomProgressIndicator> createState() => _CustomProgressIndicatorState();
+  State<CustomProgressIndicator> createState() =>
+      _CustomProgressIndicatorState();
 }
 
 class _CustomProgressIndicatorState extends State<CustomProgressIndicator>
@@ -126,8 +127,8 @@ class _CustomProgressIndicatorState extends State<CustomProgressIndicator>
           Text(
             '${(_animation.value * 100).toInt()}%',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.textSecondary,
-            ),
+                  color: AppColors.textSecondary,
+                ),
           ),
         ],
       ],
@@ -163,10 +164,12 @@ class CustomCircularProgressIndicator extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CustomCircularProgressIndicator> createState() => _CustomCircularProgressIndicatorState();
+  State<CustomCircularProgressIndicator> createState() =>
+      _CustomCircularProgressIndicatorState();
 }
 
-class _CustomCircularProgressIndicatorState extends State<CustomCircularProgressIndicator>
+class _CustomCircularProgressIndicatorState
+    extends State<CustomCircularProgressIndicator>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -250,7 +253,8 @@ class _CustomCircularProgressIndicatorState extends State<CustomCircularProgress
             child: CustomPaint(
               painter: CirclePainter(
                 progress: _animation.value,
-                color: widget.progressColor ?? Theme.of(context).colorScheme.primary,
+                color: widget.progressColor ??
+                    Theme.of(context).colorScheme.primary,
                 strokeWidth: strokeWidth,
               ),
             ),
@@ -275,9 +279,10 @@ class _CustomCircularProgressIndicatorState extends State<CustomCircularProgress
     if (widget.showPercentage) {
       return Text(
         '${(_animation.value * 100).toInt()}%',
-        style: widget.centerTextStyle ?? Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.bold,
-        ),
+        style: widget.centerTextStyle ??
+            Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
       );
     }
 
@@ -320,8 +325,8 @@ class CirclePainter extends CustomPainter {
   @override
   bool shouldRepaint(CirclePainter oldDelegate) {
     return oldDelegate.progress != progress ||
-           oldDelegate.color != color ||
-           oldDelegate.strokeWidth != strokeWidth;
+        oldDelegate.color != color ||
+        oldDelegate.strokeWidth != strokeWidth;
   }
 }
 
@@ -378,7 +383,8 @@ class StepProgressIndicator extends StatelessWidget {
                     height: lineWidth ?? 4,
                     decoration: BoxDecoration(
                       color: isCompleted
-                          ? completedColor ?? Theme.of(context).colorScheme.primary
+                          ? completedColor ??
+                              Theme.of(context).colorScheme.primary
                           : inactiveColor ?? AppColors.border,
                       borderRadius: isLast
                           ? const BorderRadius.only(
@@ -428,11 +434,14 @@ class StepProgressIndicator extends StatelessWidget {
                       )
                     : Text(
                         '${index + 1}',
-                        style: textStyle ?? TextStyle(
-                          color: isActive ? Colors.white : AppColors.textSecondary,
-                          fontSize: (stepSize ?? 24) * 0.4,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: textStyle ??
+                            TextStyle(
+                              color: isActive
+                                  ? Colors.white
+                                  : AppColors.textSecondary,
+                              fontSize: (stepSize ?? 24) * 0.4,
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
               ),
             ),
@@ -441,12 +450,14 @@ class StepProgressIndicator extends StatelessWidget {
               width: 60,
               child: Text(
                 steps[index],
-                style: textStyle ?? Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: isActive
-                      ? Theme.of(context).colorScheme.primary
-                      : AppColors.textSecondary,
-                  fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                ),
+                style: textStyle ??
+                    Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: isActive
+                              ? Theme.of(context).colorScheme.primary
+                              : AppColors.textSecondary,
+                          fontWeight:
+                              isActive ? FontWeight.bold : FontWeight.normal,
+                        ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -483,7 +494,8 @@ class DottedProgressIndicator extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<DottedProgressIndicator> createState() => _DottedProgressIndicatorState();
+  State<DottedProgressIndicator> createState() =>
+      _DottedProgressIndicatorState();
 }
 
 class _DottedProgressIndicatorState extends State<DottedProgressIndicator>
@@ -543,14 +555,16 @@ class _DottedProgressIndicatorState extends State<DottedProgressIndicator>
             final isActive = index < _animation.value;
 
             return Padding(
-              padding: EdgeInsets.only(right: index < widget.totalDots - 1 ? widget.spacing : 0),
+              padding: EdgeInsets.only(
+                  right: index < widget.totalDots - 1 ? widget.spacing : 0),
               child: AnimatedContainer(
                 duration: AnimationUtils.durationFast,
                 width: widget.dotSize,
                 height: widget.dotSize,
                 decoration: BoxDecoration(
                   color: isActive
-                      ? widget.activeColor ?? Theme.of(context).colorScheme.primary
+                      ? widget.activeColor ??
+                          Theme.of(context).colorScheme.primary
                       : widget.inactiveColor ?? AppColors.border,
                   shape: BoxShape.circle,
                 ),

@@ -17,10 +17,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     required GetMenuItemsUseCase getMenuItemsUseCase,
     required GetUserDashboardUseCase getUserDashboardUseCase,
     PerformanceTracker? performanceTracker,
-  }) : _getMenuItemsUseCase = getMenuItemsUseCase,
-       _getUserDashboardUseCase = getUserDashboardUseCase,
-       _performanceTracker = performanceTracker ?? PerformanceTracker(),
-       super(const HomeInitial()) {
+  })  : _getMenuItemsUseCase = getMenuItemsUseCase,
+        _getUserDashboardUseCase = getUserDashboardUseCase,
+        _performanceTracker = performanceTracker ?? PerformanceTracker(),
+        super(const HomeInitial()) {
     on<LoadHomeData>(_onLoadHomeData);
     on<RefreshHomeData>(_onRefreshHomeData);
     on<NavigateToMenu>(_onNavigateToMenu);

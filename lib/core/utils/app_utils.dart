@@ -9,8 +9,18 @@ class AppUtils {
   /// Get formatted date string
   static String formatDate(DateTime date, {String format = 'dd MMM yyyy'}) {
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
     ];
 
     final day = date.day.toString().padLeft(2, '0');
@@ -41,7 +51,8 @@ class AppUtils {
 
   /// Generate random string
   static String generateRandomString(int length) {
-    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const chars =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     final random = DateTime.now().millisecondsSinceEpoch;
     final randomGenerator = random;
 
@@ -179,7 +190,8 @@ class AppUtils {
   /// Check if color is light
   static bool isLightColor(Color color) {
     // Calculate luminance
-    final luminance = (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue) / 255;
+    final luminance =
+        (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue) / 255;
     return luminance > 0.5;
   }
 

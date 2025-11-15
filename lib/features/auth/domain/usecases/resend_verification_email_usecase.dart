@@ -15,11 +15,13 @@ class ResendVerificationEmailParams extends Equatable {
 class ResendVerificationEmailUsecase {
   final AuthRepository _repository;
 
-  ResendVerificationEmailUsecase({required AuthRepository repository}) : _repository = repository;
+  ResendVerificationEmailUsecase({required AuthRepository repository})
+      : _repository = repository;
 
   /// Execute resend verification email
   /// Returns Either<Failure, void>
-  Future<Either<Failure, void>> call(ResendVerificationEmailParams params) async {
+  Future<Either<Failure, void>> call(
+      ResendVerificationEmailParams params) async {
     // Delegate to repository
     return await _repository.resendVerificationEmail();
   }

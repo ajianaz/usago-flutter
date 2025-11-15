@@ -14,7 +14,8 @@ abstract class HomeRemoteDataSource {
   Future<Either<Failure, List<MenuItemModel>>> getFeaturedMenuItems();
 
   /// Get menu items by category
-  Future<Either<Failure, List<MenuItemModel>>> getMenuItemsByCategory(String category);
+  Future<Either<Failure, List<MenuItemModel>>> getMenuItemsByCategory(
+      String category);
 
   /// Track menu usage analytics
   Future<Either<Failure, void>> trackMenuUsage(String menuId, String userId);

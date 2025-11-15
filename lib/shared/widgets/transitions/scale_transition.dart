@@ -100,7 +100,8 @@ class StaggeredScaleTransition extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StaggeredScaleTransition> createState() => _StaggeredScaleTransitionState();
+  State<StaggeredScaleTransition> createState() =>
+      _StaggeredScaleTransitionState();
 }
 
 class _StaggeredScaleTransitionState extends State<StaggeredScaleTransition>
@@ -118,7 +119,7 @@ class _StaggeredScaleTransitionState extends State<StaggeredScaleTransition>
 
     _animations = List.generate(widget.children.length, (index) {
       final stagger = (index * (widget.staggerDelay?.inMilliseconds ?? 100)) /
-                   (_controller.duration?.inMilliseconds ?? 300);
+          (_controller.duration?.inMilliseconds ?? 300);
 
       return Tween<double>(
         begin: widget.beginScale ?? 0.0,

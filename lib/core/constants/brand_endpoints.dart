@@ -19,6 +19,7 @@ class BrandEndpoints {
   // Brand Invitations
   static const String inviteUser = '/api/brands/{id}/invite';
   static const String acceptInvitation = '/api/invitations/accept';
-  static const String declineInvitation = '/api/invitations/{invitationId}/decline';
+  static const String declineInvitation =
+      '/api/invitations/{invitationId}/decline';
   static const String getBrandInvitations = '/api/brands/{id}/invitations';
 }

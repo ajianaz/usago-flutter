@@ -205,21 +205,23 @@ class PulseCurve extends Curve {
 class AnimationStateHelper {
   static bool isAnimationCompleted(AnimationController controller) {
     return controller.status == AnimationStatus.completed ||
-           controller.status == AnimationStatus.dismissed;
+        controller.status == AnimationStatus.dismissed;
   }
 
   static bool isAnimationRunning(AnimationController controller) {
     return controller.status == AnimationStatus.forward ||
-           controller.status == AnimationStatus.reverse;
+        controller.status == AnimationStatus.reverse;
   }
 
-  static Future<void> playAnimationForward(AnimationController controller) async {
+  static Future<void> playAnimationForward(
+      AnimationController controller) async {
     if (controller.isDismissed) {
       await controller.forward();
     }
   }
 
-  static Future<void> playAnimationReverse(AnimationController controller) async {
+  static Future<void> playAnimationReverse(
+      AnimationController controller) async {
     if (controller.isCompleted) {
       await controller.reverse();
     }
@@ -249,7 +251,8 @@ class OptimizedAnimationBuilder extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<OptimizedAnimationBuilder> createState() => _OptimizedAnimationBuilderState();
+  State<OptimizedAnimationBuilder> createState() =>
+      _OptimizedAnimationBuilderState();
 }
 
 class _OptimizedAnimationBuilderState extends State<OptimizedAnimationBuilder>

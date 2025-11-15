@@ -55,7 +55,8 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<Either<Failure, List<MenuItem>>> getMenuItemsByCategory(String category) async {
+  Future<Either<Failure, List<MenuItem>>> getMenuItemsByCategory(
+      String category) async {
     try {
       final result = await _remoteDataSource.getMenuItemsByCategory(category);
 
@@ -75,16 +76,16 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> hasMenuPermission(String menuId, String userId) async {
+  Future<Either<Failure, bool>> hasMenuPermission(
+      String menuId, String userId) async {
     try {
       final result = await _remoteDataSource.getMenuItems();
 
       return result.fold(
         (failure) => Left(failure),
         (menuItems) {
-          final menuItem = menuItems
-              .where((item) => item.id == menuId)
-              .firstOrNull;
+          final menuItem =
+              menuItems.where((item) => item.id == menuId).firstOrNull;
 
           if (menuItem == null) {
             return const Right(false);
@@ -143,7 +144,8 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<Either<Failure, void>> trackMenuUsage(String menuId, String userId) async {
+  Future<Either<Failure, void>> trackMenuUsage(
+      String menuId, String userId) async {
     try {
       final result = await _remoteDataSource.trackMenuUsage(menuId, userId);
 

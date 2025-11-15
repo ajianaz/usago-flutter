@@ -19,7 +19,8 @@ class ForgotPasswordParams extends Equatable {
 class ForgotPasswordUsecase {
   final AuthRepository _repository;
 
-  ForgotPasswordUsecase({required AuthRepository repository}) : _repository = repository;
+  ForgotPasswordUsecase({required AuthRepository repository})
+      : _repository = repository;
 
   /// Execute forgot password
   /// Returns Either<Failure, void>

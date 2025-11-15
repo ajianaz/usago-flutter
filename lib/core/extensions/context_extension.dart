@@ -116,7 +116,6 @@ extension ContextExtension on BuildContext {
     Navigator.of(this).popUntil(ModalRoute.withName(routeName));
   }
 
-
   /// Responsive layout builder helper
   Widget responsiveLayout({
     required Widget mobile,
@@ -149,32 +148,31 @@ extension ContextExtension on BuildContext {
   }
 
   // Tambahkan di context_extension.dart
-/// Get responsive padding
-EdgeInsets get responsivePadding {
-  if (isDesktop) return const EdgeInsets.all(32.0);
-  if (isTablet) return const EdgeInsets.all(24.0);
-  return const EdgeInsets.all(16.0);
-}
+  /// Get responsive padding
+  EdgeInsets get responsivePadding {
+    if (isDesktop) return const EdgeInsets.all(32.0);
+    if (isTablet) return const EdgeInsets.all(24.0);
+    return const EdgeInsets.all(16.0);
+  }
 
-/// Get responsive margin
-EdgeInsets get responsiveMargin {
-  if (isDesktop) return const EdgeInsets.all(24.0);
-  if (isTablet) return const EdgeInsets.all(16.0);
-  return const EdgeInsets.all(12.0);
-}
+  /// Get responsive margin
+  EdgeInsets get responsiveMargin {
+    if (isDesktop) return const EdgeInsets.all(24.0);
+    if (isTablet) return const EdgeInsets.all(16.0);
+    return const EdgeInsets.all(12.0);
+  }
 
-/// Get responsive spacing
-double get responsiveSpacing {
-  if (isDesktop) return 24.0;
-  if (isTablet) return 16.0;
-  return 12.0;
-}
+  /// Get responsive spacing
+  double get responsiveSpacing {
+    if (isDesktop) return 24.0;
+    if (isTablet) return 16.0;
+    return 12.0;
+  }
 
-/// Get responsive font size
-double responsiveFontSize(double baseSize) {
-  if (isDesktop) return baseSize * 1.2;
-  if (isTablet) return baseSize * 1.1;
-  return baseSize;
-}
-
+  /// Get responsive font size
+  double responsiveFontSize(double baseSize) {
+    if (isDesktop) return baseSize * 1.2;
+    if (isTablet) return baseSize * 1.1;
+    return baseSize;
+  }
 }

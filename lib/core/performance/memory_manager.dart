@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'dart:developer' as developer;
-import 'dart:io';
 import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import '../utils/logger.dart';
 import '../config/app_config.dart';
+import '../platform/platform_detector.dart';
+// Conditional import for desktop-only functionality
+import 'dart:io' if (dart.library.html) 'dart:html' as io;
+// Import desktop-specific memory functions
+import 'memory_manager_desktop.dart' if (dart.library.io) 'memory_manager_desktop.dart';
 
 /// Memory usage information
 class MemoryInfo {
@@ -26,7 +30,17 @@ class MemoryInfo {
   factory MemoryInfo.current() {
     final timestamp = DateTime.now();
 
-    if (Platform.isIOS || Platform.isAndroid) {
+    if (PlatformDetector.isWeb) {
+      // For web platform, use browser-compatible memory info
+      final info = _getWebMemoryInfo();
+      return MemoryInfo(
+        totalMemoryMB: info['total'] ?? 0.0,
+        usedMemoryMB: info['used'] ?? 0.0,
+        freeMemoryMB: info['free'] ?? 0.0,
+        usagePercentage: info['percentage'] ?? 0.0,
+        timestamp: timestamp,
+      );
+    } else if (PlatformDetector.isMobile) {
       // For mobile platforms, we'll use Flutter's memory info
       final info = _getMobileMemoryInfo();
       return MemoryInfo(
@@ -48,6 +62,36 @@ class MemoryInfo {
     }
   }
 
+  /// Get memory info for web platforms
+  static Map<String, double> _getWebMemoryInfo() {
+    try {
+      // Web platform has limited memory access
+      // Use estimated memory usage as fallback
+      final currentMemoryMB = MemoryInfo._estimateCurrentMemoryUsage();
+
+      // Estimate total memory for web browsers (typically 4-8GB)
+      final totalMemoryMB = 4096.0; // Default to 4GB for web
+
+      final usedMemoryMB = currentMemoryMB;
+      final freeMemoryMB = totalMemoryMB - usedMemoryMB;
+      final usagePercentage = totalMemoryMB > 0 ? (usedMemoryMB / totalMemoryMB) * 100 : 0.0;
+
+      return {
+        'total': totalMemoryMB,
+        'used': usedMemoryMB,
+        'free': freeMemoryMB,
+        'percentage': usagePercentage,
+      };
+    } catch (e) {
+      return {
+        'total': 0.0,
+        'used': 0.0,
+        'free': 0.0,
+        'percentage': 0.0,
+      };
+    }
+  }
+
   /// Get memory info for mobile platforms
   static Map<String, double> _getMobileMemoryInfo() {
     try {
@@ -57,10 +101,10 @@ class MemoryInfo {
 
       // Estimate total memory based on platform
       double totalMemoryMB = 0;
-      if (Platform.isIOS) {
+      if (PlatformDetector.isIOS) {
         // iOS devices typically have 2-8GB RAM
         totalMemoryMB = 4096; // Default to 4GB
-      } else if (Platform.isAndroid) {
+      } else if (PlatformDetector.isAndroid) {
         // Android devices vary widely
         totalMemoryMB = 6144; // Default to 6GB
       }
@@ -88,33 +132,47 @@ class MemoryInfo {
   /// Get total system memory in MB (desktop platforms)
   static double _getTotalMemoryMB() {
     try {
-      if (Platform.isLinux || Platform.isMacOS) {
-        final result = Process.runSync('sysctl', ['-n', 'hw.memsize']);
-        if (result.exitCode == 0) {
-          final bytes = int.parse(result.stdout.toString().trim());
-          return bytes / (1024 * 1024);
-        }
-      } else if (Platform.isWindows) {
-        final result = Process.runSync('wmic', ['computersystem', 'get', 'TotalPhysicalMemory']);
-        if (result.exitCode == 0) {
-          final lines = result.stdout.toString().split('\n');
-          for (final line in lines) {
-            if (line.trim().isNotEmpty && !line.contains('TotalPhysicalMemory')) {
-              final bytes = int.parse(line.trim());
-              return bytes / (1024 * 1024);
-            }
-          }
-        }
+      if (PlatformDetector.isWeb) {
+        // Web platform - return estimated value
+        return 4096.0; // 4GB default for web
+      } else if (PlatformDetector.isLinux || PlatformDetector.isMacOS) {
+        // Desktop platforms - use system commands
+        // Use dynamic import to avoid web compilation issues
+        return _getSystemMemoryLinuxMac();
+      } else if (PlatformDetector.isWindows) {
+        return _getSystemMemoryWindows();
       }
     } catch (e) {
       // Fallback to default values
     }
 
     // Default fallback values
-    if (Platform.isWindows) return 8192; // 8GB
-    if (Platform.isMacOS) return 16384; // 16GB
-    if (Platform.isLinux) return 8192; // 8GB
+    if (PlatformDetector.isWindows) return 8192; // 8GB
+    if (PlatformDetector.isMacOS) return 16384; // 16GB
+    if (PlatformDetector.isLinux) return 8192; // 8GB
     return 4096; // 4GB default
+  }
+
+  /// Get system memory for Linux/macOS (desktop only)
+  static double _getSystemMemoryLinuxMac() {
+    try {
+      // Use desktop-specific implementation
+      return MemoryManagerDesktop.getSystemMemoryLinuxMac();
+    } catch (e) {
+      // Fallback
+    }
+    return 4096.0; // Default fallback
+  }
+
+  /// Get system memory for Windows (desktop only)
+  static double _getSystemMemoryWindows() {
+    try {
+      // Use desktop-specific implementation
+      return MemoryManagerDesktop.getSystemMemoryWindows();
+    } catch (e) {
+      // Fallback
+    }
+    return 8192.0; // Default fallback
   }
 
   /// Get used memory in MB (desktop platforms)
@@ -132,12 +190,18 @@ class MemoryInfo {
     try {
       // This is a rough estimation for mobile platforms
       // In a real implementation, you might use platform-specific APIs
-      if (Platform.isIOS) {
+      if (PlatformDetector.isIOS) {
         // iOS devices typically use more memory per app
-        return 50.0 + (DateTime.now().millisecond % 100); // Base + random variation
-      } else if (Platform.isAndroid) {
+        return 50.0 +
+            (DateTime.now().millisecond % 100); // Base + random variation
+      } else if (PlatformDetector.isAndroid) {
         // Android devices vary widely
-        return 80.0 + (DateTime.now().millisecond % 150); // Base + random variation
+        return 80.0 +
+            (DateTime.now().millisecond % 150); // Base + random variation
+      } else if (PlatformDetector.isWeb) {
+        // Web platform estimation
+        return 40.0 +
+            (DateTime.now().millisecond % 80); // Base + random variation
       }
       return 60.0; // Default for other platforms
     } catch (e) {
@@ -174,9 +238,9 @@ class MemoryInfo {
   @override
   String toString() {
     return 'MemoryInfo(total: ${totalMemoryMB.toStringAsFixed(1)}MB, '
-           'used: ${usedMemoryMB.toStringAsFixed(1)}MB, '
-           'free: ${freeMemoryMB.toStringAsFixed(1)}MB, '
-           'usage: ${usagePercentage.toStringAsFixed(1)}%)';
+        'used: ${usedMemoryMB.toStringAsFixed(1)}MB, '
+        'free: ${freeMemoryMB.toStringAsFixed(1)}MB, '
+        'usage: ${usagePercentage.toStringAsFixed(1)}%)';
   }
 }
 
@@ -293,7 +357,7 @@ class MemoryManager {
 
     double totalChange = 0;
     for (int i = 1; i < recent.length; i++) {
-      totalChange += recent[i].usedMemoryMB - recent[i-1].usedMemoryMB;
+      totalChange += recent[i].usedMemoryMB - recent[i - 1].usedMemoryMB;
     }
 
     final avgChange = totalChange / (recent.length - 1);
@@ -323,13 +387,14 @@ class MemoryManager {
         createdAt: existingData.createdAt,
         instanceCount: existingData.instanceCount + 1,
         memoryFootprintMB: memoryFootprintMB,
-        isPotentialLeak: existingData.instanceCount > 5, // Threshold for potential leak
+        isPotentialLeak:
+            existingData.instanceCount > 5, // Threshold for potential leak
       );
     }
 
     if (_trackedObjects[objectName]!.isPotentialLeak) {
       _logger.warning('Potential memory leak detected: $objectName '
-                     '(${_trackedObjects[objectName]!.instanceCount} instances)');
+          '(${_trackedObjects[objectName]!.instanceCount} instances)');
     }
   }
 
@@ -379,9 +444,8 @@ class MemoryManager {
       'trend': trend,
       'historySize': _memoryHistory.length,
       'trackedObjects': _trackedObjects.length,
-      'potentialLeaks': _trackedObjects.values
-          .where((data) => data.isPotentialLeak)
-          .length,
+      'potentialLeaks':
+          _trackedObjects.values.where((data) => data.isPotentialLeak).length,
       'timestamp': DateTime.now().toIso8601String(),
     };
   }
@@ -391,7 +455,8 @@ class MemoryManager {
     return {
       'summary': getMemorySummary(),
       'history': _memoryHistory.map((info) => info.toJson()).toList(),
-      'trackedObjects': _trackedObjects.values.map((data) => data.toJson()).toList(),
+      'trackedObjects':
+          _trackedObjects.values.map((data) => data.toJson()).toList(),
       'potentialLeaks': _trackedObjects.values
           .where((data) => data.isPotentialLeak)
           .map((data) => data.toJson())
@@ -410,10 +475,12 @@ class MemoryManager {
 
     // Check thresholds
     if (memoryInfo.usagePercentage > _criticalThreshold) {
-      _logger.error('CRITICAL: Memory usage at ${memoryInfo.usagePercentage.toStringAsFixed(1)}%');
+      _logger.error(
+          'CRITICAL: Memory usage at ${memoryInfo.usagePercentage.toStringAsFixed(1)}%');
       _suggestMemoryCleanup();
     } else if (memoryInfo.usagePercentage > _warningThreshold) {
-      _logger.warning('WARNING: Memory usage at ${memoryInfo.usagePercentage.toStringAsFixed(1)}%');
+      _logger.warning(
+          'WARNING: Memory usage at ${memoryInfo.usagePercentage.toStringAsFixed(1)}%');
     }
 
     // Log in debug mode
@@ -453,7 +520,7 @@ class MemoryMonitorWidget {
   static String getMemoryDisplay() {
     final memoryInfo = MemoryManager().getCurrentMemoryInfo();
     return '${memoryInfo.usedMemoryMB.toStringAsFixed(1)}MB '
-           '(${memoryInfo.usagePercentage.toStringAsFixed(1)}%)';
+        '(${memoryInfo.usagePercentage.toStringAsFixed(1)}%)';
   }
 
   static String getMemoryTrendDisplay() {

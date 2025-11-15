@@ -60,7 +60,8 @@ class _ProfileFormState extends State<ProfileForm> {
       // In a real implementation, you would use image_picker package
       // For now, we'll simulate image selection with a placeholder
       if (mounted) {
-        context.showSnackBar('Image picker feature will be available in the next update');
+        context.showSnackBar(
+            'Image picker feature will be available in the next update');
 
         // For demo purposes, we'll use a placeholder image URL
         // In production, this would be the actual picked image path
@@ -85,9 +86,9 @@ class _ProfileFormState extends State<ProfileForm> {
 
       // Dispatch update profile event
       context.read<AuthBloc>().add(UpdateProfileEvent(
-        name: name,
-        profilePicture: _profilePicture,
-      ));
+            name: name,
+            profilePicture: _profilePicture,
+          ));
     }
   }
 

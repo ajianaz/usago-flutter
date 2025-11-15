@@ -74,9 +74,12 @@ extension StringExtension on String {
     final hasNumber = contains(RegExp(r'[0-9]'));
     final hasSpecialChar = contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
 
-    final strengthScore = [hasUppercase, hasLowercase, hasNumber, hasSpecialChar]
-        .where((condition) => condition)
-        .length;
+    final strengthScore = [
+      hasUppercase,
+      hasLowercase,
+      hasNumber,
+      hasSpecialChar
+    ].where((condition) => condition).length;
 
     return strengthScore >= 2;
   }
@@ -85,9 +88,8 @@ extension StringExtension on String {
   String get removeAllWhitespace => replaceAll(RegExp(r'\s+'), '');
 
   /// Convert to title case
-  String get toTitleCase => split(' ')
-      .map((word) => word.isEmpty ? word : word.capitalize)
-      .join(' ');
+  String get toTitleCase =>
+      split(' ').map((word) => word.isEmpty ? word : word.capitalize).join(' ');
 
   /// Truncate string and add ellipsis
   String truncate(int maxLength, {String suffix = '...'}) {
@@ -97,7 +99,8 @@ extension StringExtension on String {
 
   /// Remove HTML tags
   String get removeHtmlTags {
-    final htmlTagRegex = RegExp(r'<[^>]*>', multiLine: true, caseSensitive: true);
+    final htmlTagRegex =
+        RegExp(r'<[^>]*>', multiLine: true, caseSensitive: true);
     return replaceAll(htmlTagRegex, '');
   }
 
@@ -109,9 +112,9 @@ extension StringExtension on String {
     if (number == null) return this;
 
     return 'Rp ${number.toStringAsFixed(0).replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]}.',
-    )}';
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]}.',
+        )}';
   }
 
   /// Mask email for privacy
@@ -126,7 +129,8 @@ extension StringExtension on String {
 
     if (username.length <= 2) return this;
 
-    final maskedUsername = '${username[0]}${'*' * (username.length - 2)}${username[username.length - 1]}';
+    final maskedUsername =
+        '${username[0]}${'*' * (username.length - 2)}${username[username.length - 1]}';
     return '$maskedUsername@$domain';
   }
 
@@ -164,7 +168,8 @@ extension StringExtension on String {
       return Left('Password must be at least $minLength characters');
     }
     if (requireStrong && !isStrongPassword) {
-      return const Left('Password must contain uppercase, lowercase, number, and special character');
+      return const Left(
+          'Password must contain uppercase, lowercase, number, and special character');
     }
     return Right(this);
   }

@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:developer' as developer;
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../utils/logger.dart';
 import '../config/app_config.dart';
+import '../platform/platform_detector.dart';
 import 'performance_tracker.dart';
 import 'memory_manager.dart';
 import 'bloc_monitor.dart';
@@ -31,14 +31,18 @@ class PerformanceUtils {
       _tracker.stopTracking(trackingId, metadata: metadata);
 
       if (AppConfig.debugMode) {
-        _logger.debug('Performance: $name completed in ${stopwatch.elapsedMilliseconds}ms');
+        _logger.debug(
+            'Performance: $name completed in ${stopwatch.elapsedMilliseconds}ms');
       }
 
       return result;
     } catch (e, stackTrace) {
       stopwatch.stop();
 
-      _logger.error('Performance: $name failed after ${stopwatch.elapsedMilliseconds}ms', e, stackTrace);
+      _logger.error(
+          'Performance: $name failed after ${stopwatch.elapsedMilliseconds}ms',
+          e,
+          stackTrace);
       rethrow;
     }
   }
@@ -61,14 +65,18 @@ class PerformanceUtils {
       _tracker.stopTracking(trackingId, metadata: metadata);
 
       if (AppConfig.debugMode) {
-        _logger.debug('Performance: $name completed in ${stopwatch.elapsedMilliseconds}ms');
+        _logger.debug(
+            'Performance: $name completed in ${stopwatch.elapsedMilliseconds}ms');
       }
 
       return result;
     } catch (e, stackTrace) {
       stopwatch.stop();
 
-      _logger.error('Performance: $name failed after ${stopwatch.elapsedMilliseconds}ms', e, stackTrace);
+      _logger.error(
+          'Performance: $name failed after ${stopwatch.elapsedMilliseconds}ms',
+          e,
+          stackTrace);
       rethrow;
     }
   }
@@ -104,9 +112,15 @@ class PerformanceUtils {
 
     // Platform information
     profile['platform'] = {
-      'isIOS': Platform.isIOS,
-      'isAndroid': Platform.isAndroid,
-      'isWeb': kIsWeb,
+      'isIOS': PlatformDetector.isIOS,
+      'isAndroid': PlatformDetector.isAndroid,
+      'isWeb': PlatformDetector.isWeb,
+      'isWindows': PlatformDetector.isWindows,
+      'isMacOS': PlatformDetector.isMacOS,
+      'isLinux': PlatformDetector.isLinux,
+      'isDesktop': PlatformDetector.isDesktop,
+      'isMobile': PlatformDetector.isMobile,
+      'platformName': PlatformDetector.platformName,
       'debugMode': kDebugMode,
       'profileMode': kProfileMode,
       'releaseMode': kReleaseMode,
@@ -159,7 +173,8 @@ class PerformanceUtils {
     // Check for memory leaks
     final memorySummary = MemoryManager().getMemorySummary();
     if (memorySummary['potentialLeaks'] > 0) {
-      _logger.warning('Potential memory leaks detected: ${memorySummary['potentialLeaks']}');
+      _logger.warning(
+          'Potential memory leaks detected: ${memorySummary['potentialLeaks']}');
     }
   }
 
@@ -279,13 +294,16 @@ class PerformanceUtils {
       final slowOps = _tracker.getSlowOperations();
       if (slowOps.isNotEmpty) {
         recommendations.add('Optimize slow operations');
-        recommendations.add('Consider implementing caching for expensive operations');
+        recommendations
+            .add('Consider implementing caching for expensive operations');
       }
 
       // General recommendations
       if (!isPerformanceHealthy()) {
-        recommendations.add('Restart the app if performance continues to degrade');
-        recommendations.add('Check for memory leaks in long-running operations');
+        recommendations
+            .add('Restart the app if performance continues to degrade');
+        recommendations
+            .add('Check for memory leaks in long-running operations');
       }
     } catch (e) {
       _logger.error('Failed to generate performance recommendations', e);
@@ -303,7 +321,7 @@ class PerformanceMonitorHelper {
 
     final memoryInfo = MemoryManager().getCurrentMemoryInfo();
     return '${memoryInfo.usedMemoryMB.toStringAsFixed(1)}MB '
-           '(${memoryInfo.usagePercentage.toStringAsFixed(1)}%)';
+        '(${memoryInfo.usagePercentage.toStringAsFixed(1)}%)';
   }
 
   /// Get memory usage color based on threshold

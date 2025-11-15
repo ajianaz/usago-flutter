@@ -274,12 +274,13 @@ class SkeletonList extends StatelessWidget {
       padding: padding,
       itemCount: itemCount,
       separatorBuilder: (context, index) => SizedBox(height: spacing),
-      itemBuilder: itemBuilder ?? (context, index) {
-        return SkeletonCard(
-          width: double.infinity,
-          height: itemHeight,
-        );
-      },
+      itemBuilder: itemBuilder ??
+          (context, index) {
+            return SkeletonCard(
+              width: double.infinity,
+              height: itemHeight,
+            );
+          },
     );
   }
 }
@@ -314,12 +315,13 @@ class SkeletonGrid extends StatelessWidget {
         mainAxisSpacing: spacing,
       ),
       itemCount: itemCount,
-      itemBuilder: itemBuilder ?? (context, index) {
-        return SkeletonCard(
-          width: double.infinity,
-          height: double.infinity,
-        );
-      },
+      itemBuilder: itemBuilder ??
+          (context, index) {
+            return SkeletonCard(
+              width: double.infinity,
+              height: double.infinity,
+            );
+          },
     );
   }
 }

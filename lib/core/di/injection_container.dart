@@ -57,6 +57,13 @@ Future<void> _setupCoreServices() async {
     description: 'Secure storage for sensitive data',
   );
 
+  // Register logger first as other services depend on it
+  DIServiceLocator.registerSingleton<AppLogger>(
+    AppLogger(),
+    name: 'AppLogger',
+    description: 'Application logger',
+  );
+
   // Register enhanced secure storage service
   DIServiceLocator.registerLazySingleton<EnhancedSecureStorageService>(
     () => EnhancedSecureStorageService(
@@ -76,12 +83,6 @@ Future<void> _setupCoreServices() async {
     ),
     name: 'DioClient',
     description: 'HTTP client for API communication',
-  );
-
-  DIServiceLocator.registerSingleton<AppLogger>(
-    AppLogger(),
-    name: 'AppLogger',
-    description: 'Application logger',
   );
 
   DIServiceLocator.registerSingleton<ErrorHandler>(

@@ -35,7 +35,8 @@ mixin DataSourceMixin {
       ...?metadata,
     };
 
-    logger.info('API Call Started: $method $endpoint [CID: $corrId] | ${logMetadata.toString()}');
+    logger.info(
+        'API Call Started: $method $endpoint [CID: $corrId] | ${logMetadata.toString()}');
   }
 
   /// Log API call after successful completion
@@ -61,7 +62,8 @@ mixin DataSourceMixin {
       ...?metadata,
     };
 
-    logger.info('API Call Success: $method $endpoint -> $statusCode [CID: $corrId] | ${logMetadata.toString()}');
+    logger.info(
+        'API Call Success: $method $endpoint -> $statusCode [CID: $corrId] | ${logMetadata.toString()}');
   }
 
   /// Log API call after failure
@@ -87,7 +89,9 @@ mixin DataSourceMixin {
       ...?metadata,
     };
 
-    logger.error('API Call Failed: $method $endpoint [CID: $corrId] | ${logMetadata.toString()}', error);
+    logger.error(
+        'API Call Failed: $method $endpoint [CID: $corrId] | ${logMetadata.toString()}',
+        error);
   }
 
   /// Extract relevant headers from response
@@ -143,22 +147,26 @@ mixin DataSourceMixin {
 
     try {
       // Log API call start
-      logApiCallStart(method, endpoint, correlationId: corrId, metadata: metadata);
+      logApiCallStart(method, endpoint,
+          correlationId: corrId, metadata: metadata);
 
       // Execute API call
       final result = await apiCall();
 
       // Log success (for Response objects, we can get status code)
       if (result is Response) {
-        logApiCallSuccess(method, endpoint, result.statusCode ?? 0, correlationId: corrId, metadata: metadata);
+        logApiCallSuccess(method, endpoint, result.statusCode ?? 0,
+            correlationId: corrId, metadata: metadata);
       } else {
-        logApiCallSuccess(method, endpoint, 200, correlationId: corrId, metadata: metadata);
+        logApiCallSuccess(method, endpoint, 200,
+            correlationId: corrId, metadata: metadata);
       }
 
       return Right(result);
     } on DioException catch (e) {
       // Log failure
-      logApiCallFailure(method, endpoint, e, correlationId: corrId, metadata: metadata);
+      logApiCallFailure(method, endpoint, e,
+          correlationId: corrId, metadata: metadata);
 
       // Convert to appropriate exception
       final failure = ErrorHandlerUtils.handleDioException(
@@ -170,7 +178,8 @@ mixin DataSourceMixin {
       return Left(failure.toException()!);
     } catch (e, stackTrace) {
       // Log failure
-      logApiCallFailure(method, endpoint, e, correlationId: corrId, metadata: metadata);
+      logApiCallFailure(method, endpoint, e,
+          correlationId: corrId, metadata: metadata);
 
       // Convert to unknown exception
       final failure = UnknownFailure(
@@ -201,7 +210,8 @@ mixin DataSourceMixin {
 
     try {
       // Log API call start
-      logApiCallStart(method, endpoint, correlationId: corrId, metadata: metadata);
+      logApiCallStart(method, endpoint,
+          correlationId: corrId, metadata: metadata);
 
       // Execute API call
       final response = await apiCall();
@@ -224,7 +234,8 @@ mixin DataSourceMixin {
       return Right(response);
     } on DioException catch (e) {
       // Log failure
-      logApiCallFailure(method, endpoint, e, correlationId: corrId, metadata: metadata);
+      logApiCallFailure(method, endpoint, e,
+          correlationId: corrId, metadata: metadata);
 
       // Convert to appropriate exception
       final failure = ErrorHandlerUtils.handleDioException(
@@ -236,7 +247,8 @@ mixin DataSourceMixin {
       return Left(failure.toException()!);
     } catch (e, stackTrace) {
       // Log failure
-      logApiCallFailure(method, endpoint, e, correlationId: corrId, metadata: metadata);
+      logApiCallFailure(method, endpoint, e,
+          correlationId: corrId, metadata: metadata);
 
       // Convert to unknown exception
       final failure = UnknownFailure(
@@ -350,9 +362,11 @@ mixin DataSourceMixin {
         final headerValue = value.first;
         // Try to parse as number
         if (int.tryParse(headerValue) != null) {
-          pagination[header.replaceAll('x-', '').replaceAll('-', '_')] = int.parse(headerValue);
+          pagination[header.replaceAll('x-', '').replaceAll('-', '_')] =
+              int.parse(headerValue);
         } else {
-          pagination[header.replaceAll('x-', '').replaceAll('-', '_')] = headerValue;
+          pagination[header.replaceAll('x-', '').replaceAll('-', '_')] =
+              headerValue;
         }
       }
     }
@@ -360,7 +374,14 @@ mixin DataSourceMixin {
     // Also check response data for pagination info
     if (response.data is Map<String, dynamic>) {
       final data = response.data as Map<String, dynamic>;
-      final paginationKeys = ['pagination', 'meta', 'page', 'total', 'limit', 'offset'];
+      final paginationKeys = [
+        'pagination',
+        'meta',
+        'page',
+        'total',
+        'limit',
+        'offset'
+      ];
 
       for (final key in paginationKeys) {
         if (data.containsKey(key)) {

@@ -15,7 +15,8 @@ class DeleteAccountParams extends Equatable {
 class DeleteAccountUsecase {
   final AuthRepository _repository;
 
-  DeleteAccountUsecase({required AuthRepository repository}) : _repository = repository;
+  DeleteAccountUsecase({required AuthRepository repository})
+      : _repository = repository;
 
   /// Execute delete account
   /// Returns Either<Failure, void>

@@ -7,7 +7,8 @@ import '../repositories/auth_repository.dart';
 class CheckAuthUsecase {
   final AuthRepository _repository;
 
-  CheckAuthUsecase({required AuthRepository repository}) : _repository = repository;
+  CheckAuthUsecase({required AuthRepository repository})
+      : _repository = repository;
 
   /// Execute check auth status
   /// Returns Either<Failure, User?>

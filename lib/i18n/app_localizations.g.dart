@@ -40,37 +40,52 @@ class AppLocalizations {
   // Validation
   String get validationRequired => 'This field is required';
   String get validationEmailInvalid => 'Please enter a valid email';
-  String get validationPasswordTooShort => 'Password must be at least 6 characters';
-  String get validationPasswordTooLong => 'Password must be less than 50 characters';
+  String get validationPasswordTooShort =>
+      'Password must be at least 6 characters';
+  String get validationPasswordTooLong =>
+      'Password must be less than 50 characters';
 
   // Messages
   String get messagesLoginSuccess => 'Login successful';
   String get messagesLoginFailed => 'Login failed';
   String get messagesRegisterSuccess => 'Registration successful';
   String get messagesRegisterFailed => 'Registration failed';
-  String get messagesNetworkError => 'Network error. Please check your connection.';
+  String get messagesNetworkError =>
+      'Network error. Please check your connection.';
   String get messagesUnknownError => 'An unknown error occurred';
   String get messagesAccessDenied => 'Access denied';
-  String get messagesTokenExpired => 'Your session has expired. Please login again.';
+  String get messagesTokenExpired =>
+      'Your session has expired. Please login again.';
   String get messagesInvalidToken => 'Invalid authentication token';
-  String get messagesAccountLocked => 'Your account has been locked. Please contact support.';
+  String get messagesAccountLocked =>
+      'Your account has been locked. Please contact support.';
   String get messagesAccountNotVerified => 'Please verify your email address.';
-  String get messagesSessionExpired => 'Your session has expired. Please login again.';
-  String get messagesRefreshFailed => 'Failed to refresh your session. Please login again.';
+  String get messagesSessionExpired =>
+      'Your session has expired. Please login again.';
+  String get messagesRefreshFailed =>
+      'Failed to refresh your session. Please login again.';
   String get messagesNotFound => 'The requested resource was not found.';
   String get messagesServerError => 'Server error. Please try again later.';
-  String get messagesRateLimitExceeded => 'Too many requests. Please try again later.';
+  String get messagesRateLimitExceeded =>
+      'Too many requests. Please try again later.';
   String get messagesRequestCancelled => 'Request was cancelled.';
   String get messagesCacheReadError => 'Failed to read from cache.';
   String get messagesCacheWriteError => 'Failed to save to cache.';
   String get messagesCacheDeleteError => 'Failed to delete from cache.';
-  String get messagesCameraPermissionDenied => 'Camera permission is required to use this feature.';
-  String get messagesMicrophonePermissionDenied => 'Microphone permission is required to use this feature.';
-  String get messagesLocationPermissionDenied => 'Location permission is required to use this feature.';
-  String get messagesStoragePermissionDenied => 'Storage permission is required to use this feature.';
-  String get messagesPhotosPermissionDenied => 'Photos permission is required to use this feature.';
-  String get messagesApiConfigError => 'API configuration error. Please contact support.';
-  String get messagesDatabaseConfigError => 'Database configuration error. Please contact support.';
+  String get messagesCameraPermissionDenied =>
+      'Camera permission is required to use this feature.';
+  String get messagesMicrophonePermissionDenied =>
+      'Microphone permission is required to use this feature.';
+  String get messagesLocationPermissionDenied =>
+      'Location permission is required to use this feature.';
+  String get messagesStoragePermissionDenied =>
+      'Storage permission is required to use this feature.';
+  String get messagesPhotosPermissionDenied =>
+      'Photos permission is required to use this feature.';
+  String get messagesApiConfigError =>
+      'API configuration error. Please contact support.';
+  String get messagesDatabaseConfigError =>
+      'Database configuration error. Please contact support.';
   String get messagesDatabaseTimeout => 'Database operation timed out.';
   String get messagesCacheTimeout => 'Cache operation timed out.';
   String get messagesJsonParseError => 'Failed to parse server response.';
@@ -159,23 +174,29 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get messagesAccessDenied => 'Akses ditolak';
   @override
-  String get messagesTokenExpired => 'Sesi Anda telah berakhir. Silakan login kembali.';
+  String get messagesTokenExpired =>
+      'Sesi Anda telah berakhir. Silakan login kembali.';
   @override
   String get messagesInvalidToken => 'Token autentikasi tidak valid';
   @override
-  String get messagesAccountLocked => 'Akun Anda telah dikunci. Silakan hubungi dukungan.';
+  String get messagesAccountLocked =>
+      'Akun Anda telah dikunci. Silakan hubungi dukungan.';
   @override
-  String get messagesAccountNotVerified => 'Silakan verifikasi alamat email Anda.';
+  String get messagesAccountNotVerified =>
+      'Silakan verifikasi alamat email Anda.';
   @override
-  String get messagesSessionExpired => 'Sesi Anda telah berakhir. Silakan login kembali.';
+  String get messagesSessionExpired =>
+      'Sesi Anda telah berakhir. Silakan login kembali.';
   @override
-  String get messagesRefreshFailed => 'Gagal memperbarui sesi. Silakan login kembali.';
+  String get messagesRefreshFailed =>
+      'Gagal memperbarui sesi. Silakan login kembali.';
   @override
   String get messagesNotFound => 'Sumber daya yang diminta tidak ditemukan.';
   @override
   String get messagesServerError => 'Error server. Silakan coba lagi nanti.';
   @override
-  String get messagesRateLimitExceeded => 'Terlalu banyak permintaan. Silakan coba lagi nanti.';
+  String get messagesRateLimitExceeded =>
+      'Terlalu banyak permintaan. Silakan coba lagi nanti.';
   @override
   String get messagesRequestCancelled => 'Permintaan dibatalkan.';
   @override
@@ -185,19 +206,26 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get messagesCacheDeleteError => 'Gagal menghapus dari cache.';
   @override
-  String get messagesCameraPermissionDenied => 'Izin kamera diperlukan untuk menggunakan fitur ini.';
+  String get messagesCameraPermissionDenied =>
+      'Izin kamera diperlukan untuk menggunakan fitur ini.';
   @override
-  String get messagesMicrophonePermissionDenied => 'Izin mikrofon diperlukan untuk menggunakan fitur ini.';
+  String get messagesMicrophonePermissionDenied =>
+      'Izin mikrofon diperlukan untuk menggunakan fitur ini.';
   @override
-  String get messagesLocationPermissionDenied => 'Izin lokasi diperlukan untuk menggunakan fitur ini.';
+  String get messagesLocationPermissionDenied =>
+      'Izin lokasi diperlukan untuk menggunakan fitur ini.';
   @override
-  String get messagesStoragePermissionDenied => 'Izin penyimpanan diperlukan untuk menggunakan fitur ini.';
+  String get messagesStoragePermissionDenied =>
+      'Izin penyimpanan diperlukan untuk menggunakan fitur ini.';
   @override
-  String get messagesPhotosPermissionDenied => 'Izin foto diperlukan untuk menggunakan fitur ini.';
+  String get messagesPhotosPermissionDenied =>
+      'Izin foto diperlukan untuk menggunakan fitur ini.';
   @override
-  String get messagesApiConfigError => 'Error konfigurasi API. Silakan hubungi dukungan.';
+  String get messagesApiConfigError =>
+      'Error konfigurasi API. Silakan hubungi dukungan.';
   @override
-  String get messagesDatabaseConfigError => 'Error konfigurasi database. Silakan hubungi dukungan.';
+  String get messagesDatabaseConfigError =>
+      'Error konfigurasi database. Silakan hubungi dukungan.';
   @override
   String get messagesDatabaseTimeout => 'Operasi database timeout.';
   @override

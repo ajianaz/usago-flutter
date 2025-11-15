@@ -72,9 +72,9 @@ class BlocMetrics {
   @override
   String toString() {
     return 'BlocMetrics(blocType: $blocType, eventCount: $eventCount, '
-           'stateCount: $stateCount, isActive: $isActive, '
-           'avgProcessingTime: ${averageEventProcessingTime.inMilliseconds}ms, '
-           'avgMemory: ${averageMemoryUsage.toStringAsFixed(2)}MB)';
+        'stateCount: $stateCount, isActive: $isActive, '
+        'avgProcessingTime: ${averageEventProcessingTime.inMilliseconds}ms, '
+        'avgMemory: ${averageMemoryUsage.toStringAsFixed(2)}MB)';
   }
 }
 
@@ -198,7 +198,8 @@ class BlocMonitor {
     final metrics = _blocMetrics[blocHash];
 
     if (metrics != null) {
-      _logger.debug('Unregistering BLoC: ${metrics.blocType} (hash: $blocHash)');
+      _logger
+          .debug('Unregistering BLoC: ${metrics.blocType} (hash: $blocHash)');
 
       // Update disposal time
       _blocMetrics[blocHash] = BlocMetrics(
@@ -260,7 +261,8 @@ class BlocMonitor {
         eventCount: metrics.eventCount + 1,
         stateCount: metrics.stateCount,
         transitionCount: metrics.transitionCount,
-        totalEventProcessingTime: metrics.totalEventProcessingTime + processingTime,
+        totalEventProcessingTime:
+            metrics.totalEventProcessingTime + processingTime,
         maxEventProcessingTime: processingTime > metrics.maxEventProcessingTime
             ? processingTime
             : metrics.maxEventProcessingTime,
@@ -270,7 +272,9 @@ class BlocMonitor {
                 ? processingTime
                 : metrics.minEventProcessingTime),
         averageMemoryUsage: (metrics.averageMemoryUsage + memoryAfter) / 2,
-        maxMemoryUsage: memoryAfter > metrics.maxMemoryUsage ? memoryAfter : metrics.maxMemoryUsage,
+        maxMemoryUsage: memoryAfter > metrics.maxMemoryUsage
+            ? memoryAfter
+            : metrics.maxMemoryUsage,
         isActive: metrics.isActive,
       );
     }
@@ -295,14 +299,18 @@ class BlocMonitor {
       'totalBlocs': totalBlocs,
       'activeBlocs': activeBlocs.length,
       'disposedBlocs': totalBlocs - activeBlocs.length,
-      'totalEvents': _blocMetrics.values.fold(0, (sum, m) => sum + m.eventCount),
-      'totalTransitions': _blocMetrics.values.fold(0, (sum, m) => sum + m.transitionCount),
+      'totalEvents':
+          _blocMetrics.values.fold(0, (sum, m) => sum + m.eventCount),
+      'totalTransitions':
+          _blocMetrics.values.fold(0, (sum, m) => sum + m.transitionCount),
       'averageMemoryUsage': activeBlocs.isEmpty
           ? 0.0
-          : activeBlocs.fold(0.0, (sum, m) => sum + m.averageMemoryUsage) / activeBlocs.length,
+          : activeBlocs.fold(0.0, (sum, m) => sum + m.averageMemoryUsage) /
+              activeBlocs.length,
       'maxMemoryUsage': activeBlocs.isEmpty
           ? 0.0
-          : activeBlocs.fold(0.0, (max, m) => m.maxMemoryUsage > max ? m.maxMemoryUsage : max),
+          : activeBlocs.fold(
+              0.0, (max, m) => m.maxMemoryUsage > max ? m.maxMemoryUsage : max),
       'timestamp': DateTime.now().toIso8601String(),
     };
   }
@@ -374,17 +382,21 @@ class BlocMonitor {
     final activeBlocs = getActiveBlocs();
 
     _logger.info('=== BLoC Performance Report ===');
-    _logger.info('Active BLoCs: ${summary['activeBlocs']}/${summary['totalBlocs']}');
+    _logger.info(
+        'Active BLoCs: ${summary['activeBlocs']}/${summary['totalBlocs']}');
     _logger.info('Total Events: ${summary['totalEvents']}');
     _logger.info('Total Transitions: ${summary['totalTransitions']}');
-    _logger.info('Average Memory: ${summary['averageMemoryUsage']?.toStringAsFixed(2)}MB');
-    _logger.info('Max Memory: ${summary['maxMemoryUsage']?.toStringAsFixed(2)}MB');
+    _logger.info(
+        'Average Memory: ${summary['averageMemoryUsage']?.toStringAsFixed(2)}MB');
+    _logger
+        .info('Max Memory: ${summary['maxMemoryUsage']?.toStringAsFixed(2)}MB');
 
     if (activeBlocs.isNotEmpty) {
       _logger.info('Active BLoCs:');
-      for (final bloc in activeBlocs.take(5)) { // Show top 5
+      for (final bloc in activeBlocs.take(5)) {
+        // Show top 5
         _logger.info('  - ${bloc.blocType}: ${bloc.eventCount} events, '
-                   '${bloc.averageEventProcessingTime.inMilliseconds}ms avg');
+            '${bloc.averageEventProcessingTime.inMilliseconds}ms avg');
       }
     }
 
@@ -434,7 +446,7 @@ class _BlocObserverWrapper extends BlocObserver {
 
     if (AppConfig.debugMode) {
       _logger.debug('State change in ${bloc.runtimeType}: '
-                   '${change.currentState.runtimeType} -> ${change.nextState.runtimeType}');
+          '${change.currentState.runtimeType} -> ${change.nextState.runtimeType}');
     }
   }
 
@@ -454,7 +466,8 @@ class _BlocObserverWrapper extends BlocObserver {
   void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
     super.onError(bloc, error, stackTrace);
 
-    _logger.error('BLoC error in ${bloc.runtimeType}: $error', error, stackTrace);
+    _logger.error(
+        'BLoC error in ${bloc.runtimeType}: $error', error, stackTrace);
 
     _tracker.trackError(
       bloc.runtimeType.toString(),

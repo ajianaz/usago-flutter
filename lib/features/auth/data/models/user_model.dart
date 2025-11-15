@@ -13,15 +13,15 @@ class UserModel extends User {
     DateTime? updatedAt,
     DateTime? lastLoginAt,
   }) : super(
-    id: id,
-    email: email,
-    name: name,
-    profilePicture: profilePicture,
-    isEmailVerified: isEmailVerified,
-    createdAt: createdAt,
-    updatedAt: updatedAt,
-    lastLoginAt: lastLoginAt,
-  );
+          id: id,
+          email: email,
+          name: name,
+          profilePicture: profilePicture,
+          isEmailVerified: isEmailVerified,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+          lastLoginAt: lastLoginAt,
+        );
 
   /// Create from JSON API response
   factory UserModel.fromJson(Map<String, dynamic> json) {

@@ -63,10 +63,10 @@ class ResponsiveRow extends StatelessWidget {
                     .skip(i)
                     .take(crossAxisCount)
                     .expand((child) => [
-                      Expanded(child: child),
-                      if (children.indexOf(child) < i + crossAxisCount - 1)
-                        const SizedBox(width: 16),
-                    ])
+                          Expanded(child: child),
+                          if (children.indexOf(child) < i + crossAxisCount - 1)
+                            const SizedBox(width: 16),
+                        ])
                     .toList(),
               ),
           ],

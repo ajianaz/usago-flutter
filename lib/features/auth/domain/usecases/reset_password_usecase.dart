@@ -21,7 +21,8 @@ class ResetPasswordParams extends Equatable {
 class ResetPasswordUsecase {
   final AuthRepository _repository;
 
-  ResetPasswordUsecase({required AuthRepository repository}) : _repository = repository;
+  ResetPasswordUsecase({required AuthRepository repository})
+      : _repository = repository;
 
   /// Execute reset password
   /// Returns Either<Failure, void>

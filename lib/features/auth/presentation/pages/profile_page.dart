@@ -58,7 +58,8 @@ class ProfilePage extends StatelessWidget {
     }
   }
 
-  Widget _buildBody(BuildContext context, AuthBloc authBloc, AuthState state, DeviceType deviceType) {
+  Widget _buildBody(BuildContext context, AuthBloc authBloc, AuthState state,
+      DeviceType deviceType) {
     if (state is AuthLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -237,7 +238,9 @@ class ProfilePage extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    user.isEmailVerified ? 'Email Verified' : 'Email Not Verified',
+                    user.isEmailVerified
+                        ? 'Email Verified'
+                        : 'Email Not Verified',
                     style: context.textTheme.bodySmall?.copyWith(
                       color: user.isEmailVerified
                           ? context.colorScheme.primary

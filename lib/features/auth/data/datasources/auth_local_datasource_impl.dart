@@ -130,7 +130,8 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
     try {
       final token = await getToken();
       final user = await getUser();
-      _logger.info('User login status checked: ${token != null && user != null}');
+      _logger
+          .info('User login status checked: ${token != null && user != null}');
       return token != null && user != null;
     } catch (e) {
       _logger.error('Failed to check user login status', e);

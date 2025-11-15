@@ -10,7 +10,7 @@ class PlatformDetector {
   static bool get isMobile {
     try {
       return defaultTargetPlatform == TargetPlatform.iOS ||
-             defaultTargetPlatform == TargetPlatform.android;
+          defaultTargetPlatform == TargetPlatform.android;
     } catch (e) {
       _logger.warning('Failed to detect mobile platform', e);
       return false;
@@ -116,7 +116,8 @@ class PlatformDetector {
       'hasSecureStorage': isMobile, // Flutter Secure Storage is mobile-only
       'hasFileSystem': !isWeb,
       'hasNetwork': true, // Assume all platforms have network capability
-      'supportsNotifications': isMobile || isWeb, // Mobile and web support notifications
+      'supportsNotifications':
+          isMobile || isWeb, // Mobile and web support notifications
       'supportsBiometrics': isMobile, // Biometrics typically mobile-only
       'hasCamera': true, // Most platforms support camera
       'hasGPS': isMobile, // GPS typically mobile-only

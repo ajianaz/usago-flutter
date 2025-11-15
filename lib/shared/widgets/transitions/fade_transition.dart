@@ -97,7 +97,8 @@ class StaggeredFadeTransition extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StaggeredFadeTransition> createState() => _StaggeredFadeTransitionState();
+  State<StaggeredFadeTransition> createState() =>
+      _StaggeredFadeTransitionState();
 }
 
 class _StaggeredFadeTransitionState extends State<StaggeredFadeTransition>
@@ -115,7 +116,7 @@ class _StaggeredFadeTransitionState extends State<StaggeredFadeTransition>
 
     _animations = List.generate(widget.children.length, (index) {
       final stagger = (index * (widget.staggerDelay?.inMilliseconds ?? 100)) /
-                   (_controller.duration?.inMilliseconds ?? 300);
+          (_controller.duration?.inMilliseconds ?? 300);
 
       return Tween<double>(
         begin: widget.beginOpacity ?? 0.0,

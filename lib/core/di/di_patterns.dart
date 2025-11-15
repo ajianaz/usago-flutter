@@ -310,7 +310,8 @@ class DINaming {
   ///
   /// Pattern: {Action}{Feature}UseCase
   /// Contoh: LoginAuthUseCase, GetUserProfileUseCase
-  static String useCase(String action, String feature) => '${action}${feature}UseCase';
+  static String useCase(String action, String feature) =>
+      '${action}${feature}UseCase';
 
   /// Standard naming untuk BLoCs
   ///

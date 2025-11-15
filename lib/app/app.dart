@@ -76,7 +76,8 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   }
 
   @override
-  String toString() => 'AppLocalizationsDelegate(${supportedLocales.join(', ')})';
+  String toString() =>
+      'AppLocalizationsDelegate(${supportedLocales.join(', ')})';
 
   static const List<Locale> supportedLocales = [
     Locale('en'),

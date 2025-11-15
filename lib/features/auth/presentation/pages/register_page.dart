@@ -13,7 +13,9 @@ import '../bloc/auth_state.dart';
 import '../widgets/register_form.dart';
 
 /// Responsive Register Page
-/// Handles user registration with responsive design
+/// Handles user registration with responsive design.
+/// Optimized to leverage BaseBloc patterns for enhanced state management
+/// and performance tracking.
 @RoutePage()
 class ResponsiveRegisterPage extends StatelessWidget {
   const ResponsiveRegisterPage({Key? key}) : super(key: key);
@@ -52,16 +54,33 @@ class ResponsiveRegisterPage extends StatelessWidget {
     );
   }
 
+  /// Handles authentication state changes using BaseState helper methods
+  ///
+  /// Leverages BaseState's isError helper method for more efficient error handling.
+  /// The AuthBloc's performance tracking automatically monitors state transitions.
   void _handleAuthStates(BuildContext context, AuthState state) {
+    // Use BaseState helper methods for more efficient state checking
     if (state is AuthSuccess) {
       context.router.replace(const HomeRoute());
-    } else if (state is AuthFailure) {
-      context.showErrorSnackBar(state.message);
+    } else if (state.isError) {
+      // Handle all error states using the BaseState helper
+      final errorMessage = state is AuthFailure
+          ? state.message
+          : state.failure?.displayMessage ?? 'An error occurred';
+      context.showErrorSnackBar(errorMessage);
+    } else if (state is EmailVerificationSuccess) {
+      context.showSuccessSnackBar('Email verified successfully');
     }
   }
 
-  Widget _buildBody(BuildContext context, AuthBloc authBloc, AuthState state, DeviceType deviceType) {
-    if (state is AuthLoading) {
+  /// Builds the body content with responsive layout based on device type
+  ///
+  /// Uses BaseState's isLoading helper method for efficient loading state checking.
+  /// Performance tracking is automatically handled by the BaseBloc.
+  Widget _buildBody(BuildContext context, AuthBloc authBloc, AuthState state,
+      DeviceType deviceType) {
+    // Use BaseState helper method for loading state checking
+    if (state.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -103,8 +122,8 @@ class ResponsiveRegisterPage extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  context.colorScheme.primary.withOpacity(0.1),
-                  context.colorScheme.secondary.withOpacity(0.1),
+                  context.colorScheme.primary.withValues(alpha: 0.1),
+                  context.colorScheme.secondary.withValues(alpha: 0.1),
                 ],
               ),
             ),

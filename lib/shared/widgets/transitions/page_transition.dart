@@ -502,7 +502,8 @@ class StaggeredPageTransition extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StaggeredPageTransition> createState() => _StaggeredPageTransitionState();
+  State<StaggeredPageTransition> createState() =>
+      _StaggeredPageTransitionState();
 }
 
 class _StaggeredPageTransitionState extends State<StaggeredPageTransition>

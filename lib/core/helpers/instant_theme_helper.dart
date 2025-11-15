@@ -13,7 +13,8 @@ class InstantThemeHelper {
 
   InstantThemeHelper._();
 
-  final ValueNotifier<ThemeMode> _themeNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
+  final ValueNotifier<ThemeMode> _themeNotifier =
+      ValueNotifier<ThemeMode>(ThemeMode.system);
   final ThemeService _themeService = ThemeService.instance;
 
   /// Get current theme mode

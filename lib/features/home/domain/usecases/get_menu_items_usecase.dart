@@ -20,7 +20,8 @@ class GetMenuItemsUseCase {
 
   GetMenuItemsUseCase(this._repository);
 
-  Future<Either<Failure, List<MenuItem>>> call(GetMenuItemsParams params) async {
+  Future<Either<Failure, List<MenuItem>>> call(
+      GetMenuItemsParams params) async {
     if (params.category != null) {
       return await _repository.getMenuItemsByCategory(params.category!);
     } else if (params.featuredOnly == true) {

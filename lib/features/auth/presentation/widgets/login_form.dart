@@ -45,9 +45,9 @@ class _LoginFormState extends State<LoginForm> {
 
       if (email.isNotEmpty && password.isNotEmpty) {
         context.read<AuthBloc>().add(LoginEvent(
-          email: email,
-          password: password,
-        ));
+              email: email,
+              password: password,
+            ));
       }
     }
   }
@@ -103,7 +103,9 @@ class _LoginFormState extends State<LoginForm> {
               ),
               suffixIcon: IconButton(
                 icon: Icon(
-                  _obscurePassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
+                  _obscurePassword
+                      ? FontAwesomeIcons.eye
+                      : FontAwesomeIcons.eyeSlash,
                   size: 20,
                 ),
                 onPressed: _togglePasswordVisibility,

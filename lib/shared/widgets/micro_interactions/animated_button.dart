@@ -189,8 +189,10 @@ class _AnimatedButtonState extends State<AnimatedButton>
     switch (widget.variant) {
       case ButtonVariant.primary:
         return ElevatedButton.styleFrom(
-          backgroundColor: widget.backgroundColor ?? Theme.of(context).colorScheme.primary,
-          foregroundColor: widget.foregroundColor ?? Theme.of(context).colorScheme.onPrimary,
+          backgroundColor:
+              widget.backgroundColor ?? Theme.of(context).colorScheme.primary,
+          foregroundColor:
+              widget.foregroundColor ?? Theme.of(context).colorScheme.onPrimary,
           textStyle: _getTextStyle(),
           shape: RoundedRectangleBorder(
             borderRadius: widget.borderRadius ?? AppSpacing.radiusButton,
@@ -201,8 +203,10 @@ class _AnimatedButtonState extends State<AnimatedButton>
         );
       case ButtonVariant.secondary:
         return ElevatedButton.styleFrom(
-          backgroundColor: widget.backgroundColor ?? Theme.of(context).colorScheme.secondary,
-          foregroundColor: widget.foregroundColor ?? Theme.of(context).colorScheme.onSecondary,
+          backgroundColor:
+              widget.backgroundColor ?? Theme.of(context).colorScheme.secondary,
+          foregroundColor: widget.foregroundColor ??
+              Theme.of(context).colorScheme.onSecondary,
           textStyle: _getTextStyle(),
           shape: RoundedRectangleBorder(
             borderRadius: widget.borderRadius ?? AppSpacing.radiusButton,
@@ -213,8 +217,11 @@ class _AnimatedButtonState extends State<AnimatedButton>
         );
       case ButtonVariant.outline:
         return OutlinedButton.styleFrom(
-          foregroundColor: widget.foregroundColor ?? Theme.of(context).colorScheme.primary,
-          side: BorderSide(color: widget.backgroundColor ?? Theme.of(context).colorScheme.primary),
+          foregroundColor:
+              widget.foregroundColor ?? Theme.of(context).colorScheme.primary,
+          side: BorderSide(
+              color: widget.backgroundColor ??
+                  Theme.of(context).colorScheme.primary),
           textStyle: _getTextStyle(),
           shape: RoundedRectangleBorder(
             borderRadius: widget.borderRadius ?? AppSpacing.radiusButton,
@@ -225,7 +232,8 @@ class _AnimatedButtonState extends State<AnimatedButton>
         );
       case ButtonVariant.ghost:
         return TextButton.styleFrom(
-          foregroundColor: widget.foregroundColor ?? Theme.of(context).colorScheme.primary,
+          foregroundColor:
+              widget.foregroundColor ?? Theme.of(context).colorScheme.primary,
           textStyle: _getTextStyle(),
           shape: RoundedRectangleBorder(
             borderRadius: widget.borderRadius ?? AppSpacing.radiusButton,
@@ -417,8 +425,10 @@ class _ShimmerButtonState extends State<ShimmerButton>
     return ElevatedButton(
       onPressed: widget.onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: widget.backgroundColor ?? Theme.of(context).colorScheme.primary,
-        foregroundColor: widget.foregroundColor ?? Theme.of(context).colorScheme.onPrimary,
+        backgroundColor:
+            widget.backgroundColor ?? Theme.of(context).colorScheme.primary,
+        foregroundColor:
+            widget.foregroundColor ?? Theme.of(context).colorScheme.onPrimary,
         textStyle: _getTextStyle(),
         shape: RoundedRectangleBorder(
           borderRadius: AppSpacing.radiusButton,

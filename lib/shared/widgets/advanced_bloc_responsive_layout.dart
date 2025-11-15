@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'responsive_builder.dart';
 
 /// Advanced BLoC responsive layout with multiple listeners
-class AdvancedBlocResponsiveLayout<T extends BlocBase<S>, S> extends StatelessWidget {
-  final Widget Function(BuildContext context, T bloc, S state, DeviceType deviceType) builder;
+class AdvancedBlocResponsiveLayout<T extends BlocBase<S>, S>
+    extends StatelessWidget {
+  final Widget Function(
+      BuildContext context, T bloc, S state, DeviceType deviceType) builder;
   final List<BlocListenerCondition<T, S>> listeners;
   final T? bloc;
 

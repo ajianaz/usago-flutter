@@ -40,7 +40,8 @@ class ErrorHandlerUtils {
       'method': exception.requestOptions.method,
     };
 
-    _logger.error('DioException occurred in $opName | ${metadata.toString()}', exception);
+    _logger.error(
+        'DioException occurred in $opName | ${metadata.toString()}', exception);
 
     switch (exception.type) {
       case DioExceptionType.connectionTimeout:
@@ -48,7 +49,8 @@ class ErrorHandlerUtils {
       case DioExceptionType.receiveTimeout:
         return TimeoutFailure(
           message: 'Connection timeout. Please check your internet connection.',
-          timeout: exception.requestOptions.receiveTimeout ?? exception.requestOptions.sendTimeout,
+          timeout: exception.requestOptions.receiveTimeout ??
+              exception.requestOptions.sendTimeout,
           operation: opName,
           code: 'CONNECTION_TIMEOUT',
           originalError: exception,
@@ -109,7 +111,8 @@ class ErrorHandlerUtils {
     // Extract error information from response
     if (data is Map<String, dynamic>) {
       message = data['message'] ?? data['error'] ?? 'Unknown error';
-      userFriendlyMessage = data['userMessage'] ?? data['user_friendly_message'];
+      userFriendlyMessage =
+          data['userMessage'] ?? data['user_friendly_message'];
 
       // Extract field errors for validation failures
       if (data.containsKey('errors') && data['errors'] is Map) {
@@ -155,7 +158,8 @@ class ErrorHandlerUtils {
           type: AuthExceptionType.unauthorized,
           code: 'UNAUTHORIZED',
           originalError: exception,
-          userFriendlyMessage: userFriendlyMessage ?? 'Please log in to continue',
+          userFriendlyMessage:
+              userFriendlyMessage ?? 'Please log in to continue',
         );
 
       case 403:
@@ -164,7 +168,8 @@ class ErrorHandlerUtils {
           type: AuthExceptionType.forbidden,
           code: 'FORBIDDEN',
           originalError: exception,
-          userFriendlyMessage: userFriendlyMessage ?? 'You don\'t have permission to perform this action',
+          userFriendlyMessage: userFriendlyMessage ??
+              'You don\'t have permission to perform this action',
         );
 
       case 404:
@@ -174,7 +179,8 @@ class ErrorHandlerUtils {
           endpoint: endpoint,
           code: 'NOT_FOUND',
           originalError: exception,
-          userFriendlyMessage: userFriendlyMessage ?? 'The requested resource was not found',
+          userFriendlyMessage:
+              userFriendlyMessage ?? 'The requested resource was not found',
         );
 
       case 429:
@@ -184,7 +190,8 @@ class ErrorHandlerUtils {
           endpoint: endpoint,
           code: 'RATE_LIMIT_EXCEEDED',
           originalError: exception,
-          userFriendlyMessage: userFriendlyMessage ?? 'Too many requests. Please try again later',
+          userFriendlyMessage: userFriendlyMessage ??
+              'Too many requests. Please try again later',
         );
 
       case 500:
@@ -196,7 +203,8 @@ class ErrorHandlerUtils {
           endpoint: endpoint,
           code: 'SERVER_ERROR',
           originalError: exception,
-          userFriendlyMessage: userFriendlyMessage ?? 'Server error. Please try again later',
+          userFriendlyMessage:
+              userFriendlyMessage ?? 'Server error. Please try again later',
         );
 
       default:
@@ -232,7 +240,9 @@ class ErrorHandlerUtils {
       'exceptionMessage': exception.toString(),
     };
 
-    _logger.error('Exception converted to failure in $opName | ${metadata.toString()}', exception);
+    _logger.error(
+        'Exception converted to failure in $opName | ${metadata.toString()}',
+        exception);
 
     if (exception is ServerException) {
       return ServerFailure(
@@ -279,7 +289,8 @@ class ErrorHandlerUtils {
         originalError: exception.originalError,
       );
     } else if (exception is DioException) {
-      return handleDioException(exception, correlationId: corrId, operation: opName);
+      return handleDioException(exception,
+          correlationId: corrId, operation: opName);
     } else {
       return UnknownFailure(
         message: 'An unexpected error occurred during $opName',
@@ -314,7 +325,8 @@ class ErrorHandlerUtils {
       ...?metadata,
     };
 
-    _logger.error('Error in $opName [CID: $corrId] | ${logMetadata.toString()}', error, stackTrace);
+    _logger.error('Error in $opName [CID: $corrId] | ${logMetadata.toString()}',
+        error, stackTrace);
   }
 
   /// Log warning with structured format and correlation ID
@@ -338,7 +350,8 @@ class ErrorHandlerUtils {
       ...?metadata,
     };
 
-    _logger.warning('Warning in $opName [CID: $corrId]: $message | ${logMetadata.toString()}');
+    _logger.warning(
+        'Warning in $opName [CID: $corrId]: $message | ${logMetadata.toString()}');
   }
 
   /// Log info with structured format and correlation ID
@@ -362,7 +375,8 @@ class ErrorHandlerUtils {
       ...?metadata,
     };
 
-    _logger.info('Info in $opName [CID: $corrId]: $message | ${logMetadata.toString()}');
+    _logger.info(
+        'Info in $opName [CID: $corrId]: $message | ${logMetadata.toString()}');
   }
 
   /// Create user-friendly error message from failure
@@ -400,7 +414,8 @@ class ErrorHandlerUtils {
         }
       case ValidationFailure:
         final validationFailure = failure as ValidationFailure;
-        if (validationFailure.fieldErrors != null && validationFailure.fieldErrors!.isNotEmpty) {
+        if (validationFailure.fieldErrors != null &&
+            validationFailure.fieldErrors!.isNotEmpty) {
           final firstError = validationFailure.fieldErrors!.values.first;
           return firstError;
         }
@@ -478,7 +493,8 @@ extension ErrorHandlingExtensions on Failure {
   bool get isRecoverable => ErrorHandlerUtils.isRecoverableFailure(this);
 
   /// Get retry delay for this failure
-  Duration getRetryDelay(int attemptNumber) => ErrorHandlerUtils.getRetryDelay(this, attemptNumber);
+  Duration getRetryDelay(int attemptNumber) =>
+      ErrorHandlerUtils.getRetryDelay(this, attemptNumber);
 }
 
 /// Example usage:

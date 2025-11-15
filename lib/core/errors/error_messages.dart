@@ -36,7 +36,8 @@ class ErrorMessages {
   }
 
   /// Get user-friendly message for NetworkException
-  static String _getNetworkMessage(BuildContext context, NetworkException exception) {
+  static String _getNetworkMessage(
+      BuildContext context, NetworkException exception) {
     final localizations = AppLocalizations.of(context);
 
     if (exception.statusCode != null) {
@@ -46,9 +47,11 @@ class ErrorMessages {
         case 401:
           return localizations.messagesLoginFailed;
         case 403:
-          return localizations.messagesUnknownError; // TODO: Add forbidden message
+          return localizations
+              .messagesUnknownError; // TODO: Add forbidden message
         case 404:
-          return localizations.messagesUnknownError; // TODO: Add not found message
+          return localizations
+              .messagesUnknownError; // TODO: Add not found message
         case 408:
           return localizations.messagesNetworkError;
         case 429:
@@ -111,7 +114,8 @@ class ErrorMessages {
   }
 
   /// Get user-friendly message for ValidationException
-  static String _getValidationMessage(BuildContext context, ValidationException exception) {
+  static String _getValidationMessage(
+      BuildContext context, ValidationException exception) {
     final localizations = AppLocalizations.of(context);
 
     // Check for field-specific errors
@@ -123,17 +127,21 @@ class ErrorMessages {
 
       // Handle common field errors
       if (field.toLowerCase().contains('email')) {
-        if (error.toLowerCase().contains('required') || error.toLowerCase().contains('empty')) {
+        if (error.toLowerCase().contains('required') ||
+            error.toLowerCase().contains('empty')) {
           return localizations.validationRequired;
         } else {
           return localizations.validationEmailInvalid;
         }
       } else if (field.toLowerCase().contains('password')) {
-        if (error.toLowerCase().contains('required') || error.toLowerCase().contains('empty')) {
+        if (error.toLowerCase().contains('required') ||
+            error.toLowerCase().contains('empty')) {
           return localizations.validationRequired;
-        } else if (error.toLowerCase().contains('short') || error.toLowerCase().contains('min')) {
+        } else if (error.toLowerCase().contains('short') ||
+            error.toLowerCase().contains('min')) {
           return localizations.validationPasswordTooShort;
-        } else if (error.toLowerCase().contains('long') || error.toLowerCase().contains('max')) {
+        } else if (error.toLowerCase().contains('long') ||
+            error.toLowerCase().contains('max')) {
           return localizations.validationPasswordTooLong;
         }
       }
@@ -145,11 +153,14 @@ class ErrorMessages {
     }
 
     // Default validation error
-    return exception.message.isNotEmpty ? exception.message : localizations.validationRequired;
+    return exception.message.isNotEmpty
+        ? exception.message
+        : localizations.validationRequired;
   }
 
   /// Get user-friendly message for ServerException
-  static String _getServerMessage(BuildContext context, ServerException exception) {
+  static String _getServerMessage(
+      BuildContext context, ServerException exception) {
     final localizations = AppLocalizations.of(context);
 
     if (exception.statusCode != null) {
@@ -180,7 +191,8 @@ class ErrorMessages {
   }
 
   /// Get user-friendly message for CacheException
-  static String _getCacheMessage(BuildContext context, CacheException exception) {
+  static String _getCacheMessage(
+      BuildContext context, CacheException exception) {
     final localizations = AppLocalizations.of(context);
 
     // Handle specific cache operations
@@ -204,7 +216,8 @@ class ErrorMessages {
   }
 
   /// Get user-friendly message for PermissionException
-  static String _getPermissionMessage(BuildContext context, PermissionException exception) {
+  static String _getPermissionMessage(
+      BuildContext context, PermissionException exception) {
     final localizations = AppLocalizations.of(context);
 
     // Handle specific permissions
@@ -228,7 +241,8 @@ class ErrorMessages {
   }
 
   /// Get user-friendly message for ConfigurationException
-  static String _getConfigurationMessage(BuildContext context, ConfigurationException exception) {
+  static String _getConfigurationMessage(
+      BuildContext context, ConfigurationException exception) {
     final localizations = AppLocalizations.of(context);
 
     // Handle specific configuration keys
@@ -245,7 +259,8 @@ class ErrorMessages {
   }
 
   /// Get user-friendly message for TimeoutException
-  static String _getTimeoutMessage(BuildContext context, TimeoutException exception) {
+  static String _getTimeoutMessage(
+      BuildContext context, TimeoutException exception) {
     final localizations = AppLocalizations.of(context);
 
     // Handle specific operations
@@ -267,7 +282,8 @@ class ErrorMessages {
   }
 
   /// Get user-friendly message for ParseException
-  static String _getParseMessage(BuildContext context, ParseException exception) {
+  static String _getParseMessage(
+      BuildContext context, ParseException exception) {
     final localizations = AppLocalizations.of(context);
 
     // Handle specific data types

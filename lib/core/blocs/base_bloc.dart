@@ -4,7 +4,7 @@ import 'package:fpdart/fpdart.dart';
 import '../performance/performance_tracker.dart';
 import '../config/app_config.dart';
 import '../utils/logger.dart';
-import '../errors/failure.dart';
+import '../errors/failure.dart' as core_failure;
 
 /// Base event class for all BLoC events
 abstract class BaseEvent extends Equatable {
@@ -37,7 +37,8 @@ abstract class BaseState extends Equatable {
   bool get isSuccess => this is BaseSuccessState;
 
   /// Get the failure if this is an error state
-  Failure? get failure => this is BaseErrorState ? (this as BaseErrorState).failure : null;
+  core_failure.Failure? get failure =>
+      this is BaseErrorState ? (this as BaseErrorState).failure : null;
 }
 
 /// Initial state for BLoCs
@@ -70,7 +71,7 @@ class BaseSuccessState<T> extends BaseState {
 
 /// Error state for BLoCs
 class BaseErrorState extends BaseState {
-  final Failure failure;
+  final core_failure.Failure failure;
   final String? userMessage;
   final Map<String, dynamic>? metadata;
 
@@ -91,7 +92,8 @@ class BaseErrorState extends BaseState {
 ///
 /// [Event] - Type of events this BLoC handles
 /// [State] - Type of states this BLoC emits
-abstract class BaseBloc<Event extends BaseEvent, State extends BaseState> extends Bloc<Event, State> {
+abstract class BaseBloc<Event extends BaseEvent, State extends BaseState>
+    extends Bloc<Event, State> {
   final PerformanceTracker _performanceTracker;
   final AppLogger _logger;
   String? _blocTrackingId;
@@ -103,9 +105,9 @@ abstract class BaseBloc<Event extends BaseEvent, State extends BaseState> extend
     required State initialState,
     PerformanceTracker? performanceTracker,
     AppLogger? logger,
-  }) : _performanceTracker = performanceTracker ?? PerformanceTracker(),
-       _logger = logger ?? AppLogger(),
-       super(initialState) {
+  })  : _performanceTracker = performanceTracker ?? PerformanceTracker(),
+        _logger = logger ?? AppLogger(),
+        super(initialState) {
     // Initialize performance tracking
     _initializePerformanceTracking();
 
@@ -190,7 +192,7 @@ abstract class BaseBloc<Event extends BaseEvent, State extends BaseState> extend
   /// [eventName] - Name for tracking purposes
   /// Returns [Future<void>] - Completes when the operation is done
   Future<void> executeUseCase<T, P>(
-    Future<Either<Failure, T>> Function(P) useCase,
+    Future<Either<core_failure.Failure, T>> Function(P) useCase,
     P params, {
     String? loadingMessage,
     String? successMessage,
@@ -204,23 +206,32 @@ abstract class BaseBloc<Event extends BaseEvent, State extends BaseState> extend
 
     try {
       // Emit loading state
-      emit(_createLoadingState(loadingMessage, metadata));
+      final loadingState = _createLoadingState(loadingMessage, metadata);
+      if (isClosed) return;
+      _emitState(loadingState);
 
       // Execute use case
       final result = await useCase(params);
 
       // Handle result
-      emit(result.fold(
+      final newState = result.fold(
         (failure) {
           if (trackingId != null) {
             _performanceTracker.stopTracking(trackingId, metadata: {
               'success': false,
-              'error': failure.message,
+              'error': failure?.message,
               ...?metadata,
             });
           }
 
-          return _createErrorState(failure, metadata);
+          // DEBUG: Log before calling _createErrorState
+          print('DEBUG: BaseBloc.executeUseCase - Creating error state for use case failure');
+          print('DEBUG: Failure type: ${failure.runtimeType}');
+          print('DEBUG: Failure is core_failure.Failure: ${failure is core_failure.Failure}');
+
+          final errorState = _createErrorState(failure!, metadata);
+          print('DEBUG: Error state created: ${errorState.runtimeType}');
+          return errorState;
         },
         (data) {
           if (trackingId != null) {
@@ -233,9 +244,13 @@ abstract class BaseBloc<Event extends BaseEvent, State extends BaseState> extend
 
           return _createSuccessState(data, successMessage, metadata);
         },
-      ));
+      );
+
+      if (isClosed) return;
+      _emitState(newState);
     } catch (e, stackTrace) {
-      _logger.error('Unexpected error in use case execution: $opName', e, stackTrace);
+      _logger.error(
+          'Unexpected error in use case execution: $opName', e, stackTrace);
 
       if (trackingId != null) {
         _performanceTracker.stopTracking(trackingId, metadata: {
@@ -245,13 +260,23 @@ abstract class BaseBloc<Event extends BaseEvent, State extends BaseState> extend
         });
       }
 
-      emit(_createErrorState(
-        UnknownFailure(
+      final errorState = _createErrorState(
+        core_failure.UnknownFailure(
           message: 'An unexpected error occurred during $opName',
           originalError: e,
         ),
         metadata,
-      ));
+      );
+
+      if (isClosed) return;
+      _emitState(errorState);
+    }
+  }
+
+  /// Helper method to safely emit states
+  void _emitState(State state) {
+    if (!isClosed) {
+      super.emit(state);
     }
   }
 
@@ -264,7 +289,7 @@ abstract class BaseBloc<Event extends BaseEvent, State extends BaseState> extend
   /// [eventName] - Name for tracking purposes
   /// Returns [Future<void>] - Completes when the operation is done
   Future<void> executeVoidUseCase<P>(
-    Future<Either<Failure, void>> Function(P) useCase,
+    Future<Either<core_failure.Failure, void>> Function(P) useCase,
     P params, {
     String? loadingMessage,
     String? successMessage,
@@ -278,23 +303,25 @@ abstract class BaseBloc<Event extends BaseEvent, State extends BaseState> extend
 
     try {
       // Emit loading state
-      emit(_createLoadingState(loadingMessage, metadata));
+      final loadingState = _createLoadingState(loadingMessage, metadata);
+      if (isClosed) return;
+      _emitState(loadingState);
 
       // Execute use case
       final result = await useCase(params);
 
       // Handle result
-      emit(result.fold(
+      final newState = result.fold(
         (failure) {
           if (trackingId != null) {
             _performanceTracker.stopTracking(trackingId, metadata: {
               'success': false,
-              'error': failure.message,
+              'error': failure?.message,
               ...?metadata,
             });
           }
 
-          return _createErrorState(failure, metadata);
+          return _createErrorState(failure!, metadata);
         },
         (_) {
           if (trackingId != null) {
@@ -307,9 +334,13 @@ abstract class BaseBloc<Event extends BaseEvent, State extends BaseState> extend
 
           return _createSuccessState<void>(null, successMessage, metadata);
         },
-      ));
+      );
+
+      if (isClosed) return;
+      _emitState(newState);
     } catch (e, stackTrace) {
-      _logger.error('Unexpected error in void use case execution: $opName', e, stackTrace);
+      _logger.error('Unexpected error in void use case execution: $opName', e,
+          stackTrace);
 
       if (trackingId != null) {
         _performanceTracker.stopTracking(trackingId, metadata: {
@@ -319,13 +350,16 @@ abstract class BaseBloc<Event extends BaseEvent, State extends BaseState> extend
         });
       }
 
-      emit(_createErrorState(
-        UnknownFailure(
+      final errorState = _createErrorState(
+        core_failure.UnknownFailure(
           message: 'An unexpected error occurred during $opName',
           originalError: e,
         ),
         metadata,
-      ));
+      );
+
+      if (isClosed) return;
+      _emitState(errorState);
     }
   }
 
@@ -336,19 +370,19 @@ abstract class BaseBloc<Event extends BaseEvent, State extends BaseState> extend
   }
 
   /// Create success state - override in subclasses for custom success states
-  State _createSuccessState<T>(T? data, String? message, Map<String, dynamic>? metadata) {
+  State _createSuccessState<T>(
+      T? data, String? message, Map<String, dynamic>? metadata) {
     // Default implementation - subclasses should override
-    return BaseSuccessState<T>(data: data, message: message, metadata: metadata) as State;
+    return BaseSuccessState<T>(data: data, message: message, metadata: metadata)
+        as State;
   }
 
-  /// Create error state - override in subclasses for custom error states
-  State _createErrorState(Failure failure, Map<String, dynamic>? metadata) {
-    // Default implementation - subclasses should override
-    return BaseErrorState(failure: failure, metadata: metadata) as State;
-  }
+  /// Create error state - must be implemented by subclasses for proper type safety
+  State _createErrorState(core_failure.Failure failure, Map<String, dynamic>? metadata);
 
   /// Get metadata for transition tracking
-  Map<String, dynamic>? _getTransitionMetadata(Transition<Event, State> transition) {
+  Map<String, dynamic>? _getTransitionMetadata(
+      Transition<Event, State> transition) {
     final metadata = <String, dynamic>{
       'eventType': transition.event.runtimeType.toString(),
       'fromState': transition.currentState.runtimeType.toString(),
@@ -370,11 +404,13 @@ abstract class BaseBloc<Event extends BaseEvent, State extends BaseState> extend
 
   /// Log transition with appropriate level
   void _logTransition(Transition<Event, State> transition) {
-    final message = 'BLoC Transition: $blocName - ${transition.event.runtimeType} -> ${transition.nextState.runtimeType}';
+    final message =
+        'BLoC Transition: $blocName - ${transition.event.runtimeType} -> ${transition.nextState.runtimeType}';
 
-    if (transition.nextState is BaseErrorState) {
+    // Check for error state using the base state's isError property
+    if (transition.nextState.isError) {
       _logger.error(message);
-    } else if (transition.nextState is BaseLoadingState) {
+    } else if (transition.nextState.isLoading) {
       _logger.debug(message);
     } else {
       _logger.info(message);
@@ -387,21 +423,26 @@ abstract class BaseBloc<Event extends BaseEvent, State extends BaseState> extend
   }
 
   /// Emit error state with proper logging
-  void emitError(Failure failure, {Map<String, dynamic>? metadata}) {
+  void emitError(core_failure.Failure failure, {Map<String, dynamic>? metadata}) {
+    if (isClosed) return;
     _logger.error('Emitting error state in BLoC: $blocName', failure);
-    emit(_createErrorState(failure, metadata));
+    _emitState(_createErrorState(failure, metadata));
   }
 
   /// Emit loading state with proper logging
   void emitLoading({String? message, Map<String, dynamic>? metadata}) {
+    if (isClosed) return;
     _logger.debug('Emitting loading state in BLoC: $blocName', message);
-    emit(_createLoadingState(message, metadata));
+    _emitState(_createLoadingState(message, metadata));
   }
 
   /// Emit success state with proper logging
-  void emitSuccess<T>(T data, {String? message, Map<String, dynamic>? metadata}) {
-    _logger.info('Emitting success state in BLoC: $blocName', {'data': data.toString()});
-    emit(_createSuccessState(data, message, metadata));
+  void emitSuccess<T>(T data,
+      {String? message, Map<String, dynamic>? metadata}) {
+    if (isClosed) return;
+    _logger.info(
+        'Emitting success state in BLoC: $blocName', {'data': data.toString()});
+    _emitState(_createSuccessState(data, message, metadata));
   }
 }
 

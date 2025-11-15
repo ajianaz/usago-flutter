@@ -94,7 +94,8 @@ class SecureEnvConfig {
 
           // Warning untuk development jika sensitive variables tidak terenkripsi
           if (kDebugMode) {
-            print('Warning: Sensitive variable ${_maskSensitiveKey(key)} is not encrypted');
+            print(
+                'Warning: Sensitive variable ${_maskSensitiveKey(key)} is not encrypted');
           }
         }
       }
@@ -104,7 +105,8 @@ class SecureEnvConfig {
   /// Get environment variable dengan automatic decryption untuk sensitive variables
   static String get(String key, {String? defaultValue}) {
     if (!_isInitialized) {
-      throw Exception('SecureEnvConfig not initialized. Call initialize() first.');
+      throw Exception(
+          'SecureEnvConfig not initialized. Call initialize() first.');
     }
 
     final value = _envMap[key];
@@ -147,7 +149,8 @@ class SecureEnvConfig {
   /// Check apakah environment variable terenkripsi
   static bool isEncrypted(String key) {
     if (!_isInitialized) {
-      throw Exception('SecureEnvConfig not initialized. Call initialize() first.');
+      throw Exception(
+          'SecureEnvConfig not initialized. Call initialize() first.');
     }
     return _isEncryptedMap[key] ?? false;
   }
@@ -198,7 +201,8 @@ class SecureEnvConfig {
   /// Get semua environment variables (untuk debugging)
   static Map<String, String> get all {
     if (!_isInitialized) {
-      throw Exception('SecureEnvConfig not initialized. Call initialize() first.');
+      throw Exception(
+          'SecureEnvConfig not initialized. Call initialize() first.');
     }
 
     // Return copy untuk prevent modification
@@ -211,7 +215,8 @@ class SecureEnvConfig {
   /// Check apakah environment variable exists
   static bool contains(String key) {
     if (!_isInitialized) {
-      throw Exception('SecureEnvConfig not initialized. Call initialize() first.');
+      throw Exception(
+          'SecureEnvConfig not initialized. Call initialize() first.');
     }
     return _envMap.containsKey(key) && _envMap[key]!.isNotEmpty;
   }
@@ -245,7 +250,8 @@ class SecureEnvConfig {
   /// Get encryption status summary
   static Map<String, dynamic> getEncryptionStatus() {
     if (!_isInitialized) {
-      throw Exception('SecureEnvConfig not initialized. Call initialize() first.');
+      throw Exception(
+          'SecureEnvConfig not initialized. Call initialize() first.');
     }
 
     final status = <String, dynamic>{};

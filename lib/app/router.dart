@@ -18,35 +18,35 @@ part 'router.gr.dart';
 class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
-    // Login route - menggunakan LoginPage
-    AutoRoute(
-      page: LoginRoute.page,
-      path: '/login',
-      initial: true,
-    ),
-    // Register route
-    AutoRoute(
-      page: RegisterRoute.page,
-      path: '/register',
-    ),
-    // Forgot password route
-    AutoRoute(
-      page: ForgotPasswordRoute.page,
-      path: '/forgot-password',
-    ),
-    // Profile route - protected route
-    AutoRoute(
-      page: ProfileRoute.page,
-      path: '/profile',
-      guards: [AuthGuard()],
-    ),
-    // Home route - protected route
-    AutoRoute(
-      page: HomeRoute.page,
-      path: '/home',
-      guards: [AuthGuard()],
-    ),
-  ];
+        // Login route - menggunakan LoginPage
+        AutoRoute(
+          page: LoginRoute.page,
+          path: '/login',
+          initial: true,
+        ),
+        // Register route
+        AutoRoute(
+          page: RegisterRoute.page,
+          path: '/register',
+        ),
+        // Forgot password route
+        AutoRoute(
+          page: ForgotPasswordRoute.page,
+          path: '/forgot-password',
+        ),
+        // Profile route - protected route
+        AutoRoute(
+          page: ProfileRoute.page,
+          path: '/profile',
+          guards: [AuthGuard()],
+        ),
+        // Home route - protected route
+        AutoRoute(
+          page: HomeRoute.page,
+          path: '/home',
+          guards: [AuthGuard()],
+        ),
+      ];
 }
 
 /// Auth guard to protect routes

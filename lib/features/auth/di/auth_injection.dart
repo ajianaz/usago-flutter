@@ -153,43 +153,50 @@ Future<void> setupAuthDependencies(GetIt getIt) async {
   );
 
   DIServiceLocator.registerLazySingleton<UpdateProfileUsecase>(
-    () => UpdateProfileUsecase(repository: DIServiceLocator.get<AuthRepository>()),
+    () => UpdateProfileUsecase(
+        repository: DIServiceLocator.get<AuthRepository>()),
     name: DINaming.useCase('UpdateProfile', 'Auth'),
     description: 'Update profile use case',
   );
 
   DIServiceLocator.registerLazySingleton<ChangePasswordUsecase>(
-    () => ChangePasswordUsecase(repository: DIServiceLocator.get<AuthRepository>()),
+    () => ChangePasswordUsecase(
+        repository: DIServiceLocator.get<AuthRepository>()),
     name: DINaming.useCase('ChangePassword', 'Auth'),
     description: 'Change password use case',
   );
 
   DIServiceLocator.registerLazySingleton<ForgotPasswordUsecase>(
-    () => ForgotPasswordUsecase(repository: DIServiceLocator.get<AuthRepository>()),
+    () => ForgotPasswordUsecase(
+        repository: DIServiceLocator.get<AuthRepository>()),
     name: DINaming.useCase('ForgotPassword', 'Auth'),
     description: 'Forgot password use case',
   );
 
   DIServiceLocator.registerLazySingleton<ResetPasswordUsecase>(
-    () => ResetPasswordUsecase(repository: DIServiceLocator.get<AuthRepository>()),
+    () => ResetPasswordUsecase(
+        repository: DIServiceLocator.get<AuthRepository>()),
     name: DINaming.useCase('ResetPassword', 'Auth'),
     description: 'Reset password use case',
   );
 
   DIServiceLocator.registerLazySingleton<VerifyEmailUsecase>(
-    () => VerifyEmailUsecase(repository: DIServiceLocator.get<AuthRepository>()),
+    () =>
+        VerifyEmailUsecase(repository: DIServiceLocator.get<AuthRepository>()),
     name: DINaming.useCase('VerifyEmail', 'Auth'),
     description: 'Verify email use case',
   );
 
   DIServiceLocator.registerLazySingleton<ResendVerificationEmailUsecase>(
-    () => ResendVerificationEmailUsecase(repository: DIServiceLocator.get<AuthRepository>()),
+    () => ResendVerificationEmailUsecase(
+        repository: DIServiceLocator.get<AuthRepository>()),
     name: DINaming.useCase('ResendVerificationEmail', 'Auth'),
     description: 'Resend verification email use case',
   );
 
   DIServiceLocator.registerLazySingleton<DeleteAccountUsecase>(
-    () => DeleteAccountUsecase(repository: DIServiceLocator.get<AuthRepository>()),
+    () => DeleteAccountUsecase(
+        repository: DIServiceLocator.get<AuthRepository>()),
     name: DINaming.useCase('DeleteAccount', 'Auth'),
     description: 'Delete account use case',
   );
@@ -213,11 +220,12 @@ Future<void> setupAuthDependencies(GetIt getIt) async {
       forgotPasswordUsecase: DIServiceLocator.get<ForgotPasswordUsecase>(),
       resetPasswordUsecase: DIServiceLocator.get<ResetPasswordUsecase>(),
       verifyEmailUsecase: DIServiceLocator.get<VerifyEmailUsecase>(),
-      resendVerificationEmailUsecase: DIServiceLocator.get<ResendVerificationEmailUsecase>(),
+      resendVerificationEmailUsecase:
+          DIServiceLocator.get<ResendVerificationEmailUsecase>(),
       deleteAccountUsecase: DIServiceLocator.get<DeleteAccountUsecase>(),
-      performanceTracker: DIServiceLocator.get<PerformanceTracker>(),
     ),
     name: DINaming.bloc('Auth'),
-    description: 'Auth BLoC for authentication state management with performance monitoring',
+    description:
+        'Auth BLoC for authentication state management with performance monitoring',
   );
 }

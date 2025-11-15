@@ -16,7 +16,8 @@ class GetUserDashboardUseCase {
 
   GetUserDashboardUseCase(this._repository);
 
-  Future<Either<Failure, UserDashboard>> call(GetUserDashboardParams params) async {
+  Future<Either<Failure, UserDashboard>> call(
+      GetUserDashboardParams params) async {
     return await _repository.getUserDashboard();
   }
 }

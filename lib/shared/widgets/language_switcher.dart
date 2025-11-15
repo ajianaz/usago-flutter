@@ -36,7 +36,8 @@ class _LanguageSwitcherState extends State<LanguageSwitcher> {
           },
           itemBuilder: (BuildContext context) {
             return supportedLocales.map((Locale locale) {
-              final isSelected = currentLocale.languageCode == locale.languageCode;
+              final isSelected =
+                  currentLocale.languageCode == locale.languageCode;
               final displayName = _localeHelper.getLocaleDisplayName(locale);
 
               return PopupMenuItem<Locale>(
@@ -47,7 +48,8 @@ class _LanguageSwitcherState extends State<LanguageSwitcher> {
                     if (isSelected)
                       const Padding(
                         padding: EdgeInsets.only(right: 8.0),
-                        child: FaIcon(FontAwesomeIcons.check, color: Colors.blue, size: 16),
+                        child: FaIcon(FontAwesomeIcons.check,
+                            color: Colors.blue, size: 16),
                       )
                     else
                       const SizedBox(width: 24),
@@ -71,7 +73,8 @@ class _LanguageSwitcherState extends State<LanguageSwitcher> {
   void _showLanguageChangedSnackBar(BuildContext context, Locale locale) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Language changed to ${_localeHelper.getLocaleDisplayName(locale)}'),
+        content: Text(
+            'Language changed to ${_localeHelper.getLocaleDisplayName(locale)}'),
         duration: const Duration(seconds: 2),
       ),
     );

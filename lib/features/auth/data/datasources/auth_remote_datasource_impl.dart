@@ -34,9 +34,12 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
 
     try {
       _logger.info('[$correlationId] Attempting login for email: $email');
-      _logger.info('[$correlationId] Using base URL: ${AppConstants.apiBaseUrl}');
-      _logger.info('[$correlationId] Using sign-in endpoint: ${AppConstants.signInEndpoint}');
-      _logger.info('[$correlationId] Full login URL: ${AppConstants.apiBaseUrl}${AppConstants.signInEndpoint}');
+      _logger
+          .info('[$correlationId] Using base URL: ${AppConstants.apiBaseUrl}');
+      _logger.info(
+          '[$correlationId] Using sign-in endpoint: ${AppConstants.signInEndpoint}');
+      _logger.info(
+          '[$correlationId] Full login URL: ${AppConstants.apiBaseUrl}${AppConstants.signInEndpoint}');
 
       final response = await _dioClient.postWithHeaders(
         AppConstants.signInEndpoint,
@@ -53,7 +56,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         _logger.info('[$correlationId] Bearer token extracted and saved');
       }
 
-      _logger.info('[$correlationId] Login successful for user: ${response.data['user']['id']}');
+      _logger.info(
+          '[$correlationId] Login successful for user: ${response.data['user']['id']}');
 
       return Right(UserModel.fromJson(response.data['user']));
     } on DioException catch (e) {
@@ -78,10 +82,14 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     final correlationId = const Uuid().v4();
 
     try {
-      _logger.info('[$correlationId] Attempting registration for email: $email');
-      _logger.info('[$correlationId] Using base URL: ${AppConstants.apiBaseUrl}');
-      _logger.info('[$correlationId] Using sign-up endpoint: ${AppConstants.signUpEndpoint}');
-      _logger.info('[$correlationId] Full register URL: ${AppConstants.apiBaseUrl}${AppConstants.signUpEndpoint}');
+      _logger
+          .info('[$correlationId] Attempting registration for email: $email');
+      _logger
+          .info('[$correlationId] Using base URL: ${AppConstants.apiBaseUrl}');
+      _logger.info(
+          '[$correlationId] Using sign-up endpoint: ${AppConstants.signUpEndpoint}');
+      _logger.info(
+          '[$correlationId] Full register URL: ${AppConstants.apiBaseUrl}${AppConstants.signUpEndpoint}');
 
       final response = await _dioClient.postWithHeaders(
         AppConstants.signUpEndpoint,
@@ -96,10 +104,12 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       final authToken = response.headers['set-auth-token'];
       if (authToken != null && authToken.isNotEmpty) {
         await _localDatasource.saveToken(authToken.first);
-        _logger.info('[$correlationId] Bearer token extracted and saved after registration');
+        _logger.info(
+            '[$correlationId] Bearer token extracted and saved after registration');
       }
 
-      _logger.info('[$correlationId] Registration successful for user: ${response.data['user']['id']}');
+      _logger.info(
+          '[$correlationId] Registration successful for user: ${response.data['user']['id']}');
 
       return Right(UserModel.fromJson(response.data['user']));
     } on DioException catch (e) {
@@ -145,17 +155,22 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
 
     try {
       _logger.info('[$correlationId] Attempting token refresh');
-      _logger.info('[$correlationId] Using base URL: ${AppConstants.apiBaseUrl}');
-      _logger.info('[$correlationId] Using refresh endpoint: ${AppConstants.refreshTokenEndpoint}');
-      _logger.info('[$correlationId] Full refresh URL: ${AppConstants.apiBaseUrl}${AppConstants.refreshTokenEndpoint}');
+      _logger
+          .info('[$correlationId] Using base URL: ${AppConstants.apiBaseUrl}');
+      _logger.info(
+          '[$correlationId] Using refresh endpoint: ${AppConstants.refreshTokenEndpoint}');
+      _logger.info(
+          '[$correlationId] Full refresh URL: ${AppConstants.apiBaseUrl}${AppConstants.refreshTokenEndpoint}');
 
-      final response = await _dioClient.postWithHeaders(AppConstants.refreshTokenEndpoint);
+      final response =
+          await _dioClient.postWithHeaders(AppConstants.refreshTokenEndpoint);
 
       // Extract new Bearer token from response headers
       final authToken = response.headers['set-auth-token'];
       if (authToken != null && authToken.isNotEmpty) {
         await _localDatasource.saveToken(authToken.first);
-        _logger.info('[$correlationId] New Bearer token extracted and saved after refresh');
+        _logger.info(
+            '[$correlationId] New Bearer token extracted and saved after refresh');
       }
 
       _logger.info('[$correlationId] Token refresh successful');
@@ -166,7 +181,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       final failure = _handleBetterAuthError(e, correlationId);
       return Left(failure);
     } catch (e) {
-      _logger.error('[$correlationId] Unexpected error during token refresh', e);
+      _logger.error(
+          '[$correlationId] Unexpected error during token refresh', e);
       return Left(UnknownFailure(
         message: 'Token refresh failed: ${e.toString()}',
         originalError: e,
@@ -193,7 +209,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       final failure = _handleBetterAuthError(e, correlationId);
       return Left(failure);
     } catch (e) {
-      _logger.error('[$correlationId] Unexpected error during password reset', e);
+      _logger.error(
+          '[$correlationId] Unexpected error during password reset', e);
       return Left(UnknownFailure(
         message: 'Password reset failed: ${e.toString()}',
         originalError: e,
@@ -226,7 +243,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       final failure = _handleBetterAuthError(e, correlationId);
       return Left(failure);
     } catch (e) {
-      _logger.error('[$correlationId] Unexpected error during password reset', e);
+      _logger.error(
+          '[$correlationId] Unexpected error during password reset', e);
       return Left(UnknownFailure(
         message: 'Password reset failed: ${e.toString()}',
         originalError: e,
@@ -259,7 +277,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       final failure = _handleBetterAuthError(e, correlationId);
       return Left(failure);
     } catch (e) {
-      _logger.error('[$correlationId] Unexpected error during password change', e);
+      _logger.error(
+          '[$correlationId] Unexpected error during password change', e);
       return Left(UnknownFailure(
         message: 'Password change failed: ${e.toString()}',
         originalError: e,
@@ -294,7 +313,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       final failure = _handleBetterAuthError(e, correlationId);
       return Left(failure);
     } catch (e) {
-      _logger.error('[$correlationId] Unexpected error during profile update', e);
+      _logger.error(
+          '[$correlationId] Unexpected error during profile update', e);
       return Left(UnknownFailure(
         message: 'Profile update failed: ${e.toString()}',
         originalError: e,
@@ -321,7 +341,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       final failure = _handleBetterAuthError(e, correlationId);
       return Left(failure);
     } catch (e) {
-      _logger.error('[$correlationId] Unexpected error during email verification', e);
+      _logger.error(
+          '[$correlationId] Unexpected error during email verification', e);
       return Left(UnknownFailure(
         message: 'Email verification failed: ${e.toString()}',
         originalError: e,
@@ -345,7 +366,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       final failure = _handleBetterAuthError(e, correlationId);
       return Left(failure);
     } catch (e) {
-      _logger.error('[$correlationId] Unexpected error during resend verification', e);
+      _logger.error(
+          '[$correlationId] Unexpected error during resend verification', e);
       return Left(UnknownFailure(
         message: 'Resend verification failed: ${e.toString()}',
         originalError: e,
@@ -369,7 +391,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       final failure = _handleBetterAuthError(e, correlationId);
       return Left(failure);
     } catch (e) {
-      _logger.error('[$correlationId] Unexpected error during account deletion', e);
+      _logger.error(
+          '[$correlationId] Unexpected error during account deletion', e);
       return Left(UnknownFailure(
         message: 'Account deletion failed: ${e.toString()}',
         originalError: e,
@@ -386,7 +409,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       final message = errorData['message'] as String? ?? 'Unknown error';
 
       if (correlationId != null) {
-        _logger.error('[$correlationId] Better Auth error - Code: $code, Message: $message');
+        _logger.error(
+            '[$correlationId] Better Auth error - Code: $code, Message: $message');
       } else {
         _logger.error('Better Auth error - Code: $code, Message: $message');
       }

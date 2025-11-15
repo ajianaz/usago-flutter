@@ -16,7 +16,8 @@ class DioClient {
   })  : _logger = logger ?? AppLogger(),
         _secureStorage = secureStorage {
     // Log the base URL for debugging
-    _logger.info('Initializing DioClient with base URL: ${AppConstants.apiBaseUrl}');
+    _logger.info(
+        'Initializing DioClient with base URL: ${AppConstants.apiBaseUrl}');
 
     _dio = Dio(BaseOptions(
       baseUrl: AppConstants.apiBaseUrl,
@@ -282,7 +283,8 @@ class LogInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    final fullUrl = '${response.requestOptions.baseUrl}${response.requestOptions.path}';
+    final fullUrl =
+        '${response.requestOptions.baseUrl}${response.requestOptions.path}';
     _logger.debug('RESPONSE: ${response.statusCode} $fullUrl');
     _logger.debug('HEADERS: ${response.headers}');
     _logger.debug('DATA: ${response.data}');

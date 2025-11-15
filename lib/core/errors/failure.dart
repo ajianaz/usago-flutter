@@ -15,7 +15,8 @@ abstract class Failure extends Equatable {
   });
 
   @override
-  List<Object?> get props => [message, code, originalError, userFriendlyMessage];
+  List<Object?> get props =>
+      [message, code, originalError, userFriendlyMessage];
 
   /// Get the user-friendly message for display
   String get displayMessage => userFriendlyMessage ?? message;
@@ -89,7 +90,8 @@ class NetworkFailure extends Failure {
         );
 
   @override
-  List<Object?> get props => [message, code, statusCode, endpoint, originalError, userFriendlyMessage];
+  List<Object?> get props =>
+      [message, code, statusCode, endpoint, originalError, userFriendlyMessage];
 }
 
 class AuthFailure extends Failure {
@@ -109,7 +111,8 @@ class AuthFailure extends Failure {
         );
 
   @override
-  List<Object?> get props => [message, code, type, originalError, userFriendlyMessage];
+  List<Object?> get props =>
+      [message, code, type, originalError, userFriendlyMessage];
 }
 
 class ValidationFailure extends Failure {
@@ -129,7 +132,8 @@ class ValidationFailure extends Failure {
         );
 
   @override
-  List<Object?> get props => [message, code, fieldErrors, originalError, userFriendlyMessage];
+  List<Object?> get props =>
+      [message, code, fieldErrors, originalError, userFriendlyMessage];
 }
 
 class ServerFailure extends Failure {
@@ -151,7 +155,8 @@ class ServerFailure extends Failure {
         );
 
   @override
-  List<Object?> get props => [message, code, statusCode, endpoint, originalError, userFriendlyMessage];
+  List<Object?> get props =>
+      [message, code, statusCode, endpoint, originalError, userFriendlyMessage];
 }
 
 class CacheFailure extends Failure {
@@ -173,7 +178,8 @@ class CacheFailure extends Failure {
         );
 
   @override
-  List<Object?> get props => [message, code, operation, key, originalError, userFriendlyMessage];
+  List<Object?> get props =>
+      [message, code, operation, key, originalError, userFriendlyMessage];
 }
 
 class PermissionFailure extends Failure {
@@ -193,7 +199,8 @@ class PermissionFailure extends Failure {
         );
 
   @override
-  List<Object?> get props => [message, code, permission, originalError, userFriendlyMessage];
+  List<Object?> get props =>
+      [message, code, permission, originalError, userFriendlyMessage];
 }
 
 class ConfigurationFailure extends Failure {
@@ -213,7 +220,8 @@ class ConfigurationFailure extends Failure {
         );
 
   @override
-  List<Object?> get props => [message, code, configKey, originalError, userFriendlyMessage];
+  List<Object?> get props =>
+      [message, code, configKey, originalError, userFriendlyMessage];
 }
 
 class TimeoutFailure extends Failure {
@@ -235,7 +243,8 @@ class TimeoutFailure extends Failure {
         );
 
   @override
-  List<Object?> get props => [message, code, timeout, operation, originalError, userFriendlyMessage];
+  List<Object?> get props =>
+      [message, code, timeout, operation, originalError, userFriendlyMessage];
 }
 
 class ParseFailure extends Failure {
@@ -257,7 +266,14 @@ class ParseFailure extends Failure {
         );
 
   @override
-  List<Object?> get props => [message, code, dataType, expectedFormat, originalError, userFriendlyMessage];
+  List<Object?> get props => [
+        message,
+        code,
+        dataType,
+        expectedFormat,
+        originalError,
+        userFriendlyMessage
+      ];
 }
 
 class BetterAuthFailure extends Failure {
@@ -274,7 +290,8 @@ class BetterAuthFailure extends Failure {
         );
 
   @override
-  List<Object?> get props => [message, code, originalError, userFriendlyMessage];
+  List<Object?> get props =>
+      [message, code, originalError, userFriendlyMessage];
 }
 
 class UnknownFailure extends Failure {
@@ -291,5 +308,6 @@ class UnknownFailure extends Failure {
         );
 
   @override
-  List<Object?> get props => [message, code, originalError, userFriendlyMessage];
+  List<Object?> get props =>
+      [message, code, originalError, userFriendlyMessage];
 }

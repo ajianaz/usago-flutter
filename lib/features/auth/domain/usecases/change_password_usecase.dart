@@ -21,7 +21,8 @@ class ChangePasswordParams extends Equatable {
 class ChangePasswordUsecase {
   final AuthRepository _repository;
 
-  ChangePasswordUsecase({required AuthRepository repository}) : _repository = repository;
+  ChangePasswordUsecase({required AuthRepository repository})
+      : _repository = repository;
 
   /// Execute password change
   /// Returns Either<Failure, void>

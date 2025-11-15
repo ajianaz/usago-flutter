@@ -114,14 +114,17 @@ class _InteractiveInputState extends State<InteractiveInput>
 
     _colorAnimation = ColorTween(
       begin: widget.fillColor ?? Theme.of(context).colorScheme.surface,
-      end: widget.focusColor ?? Theme.of(context).colorScheme.primary.withOpacity(0.1),
+      end: widget.focusColor ??
+          Theme.of(context).colorScheme.primary.withOpacity(0.1),
     ).animate(CurvedAnimation(
       parent: _focusController,
-      curve: widget.animationCurve ?? context.microInteractionTheme.inputFocusCurve,
+      curve: widget.animationCurve ??
+          context.microInteractionTheme.inputFocusCurve,
     ));
 
     _focusNode = widget.focusNode ?? FocusNode();
-    _textController = widget.controller ?? TextEditingController(text: widget.initialValue);
+    _textController =
+        widget.controller ?? TextEditingController(text: widget.initialValue);
 
     _focusNode.addListener(_handleFocusChange);
   }
@@ -166,7 +169,9 @@ class _InteractiveInputState extends State<InteractiveInput>
           boxShadow: _isFocused
               ? [
                   BoxShadow(
-                    color: (widget.focusColor ?? Theme.of(context).colorScheme.primary).withOpacity(0.2),
+                    color: (widget.focusColor ??
+                            Theme.of(context).colorScheme.primary)
+                        .withOpacity(0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -216,7 +221,9 @@ class _InteractiveInputState extends State<InteractiveInput>
       readOnly: widget.readOnly,
       maxLines: widget.maxLines,
       maxLength: widget.maxLength,
-      validator: widget.validator != null ? (value) => widget.validator!(value!) : null,
+      validator: widget.validator != null
+          ? (value) => widget.validator!(value!)
+          : null,
       autovalidateMode: widget.autovalidateMode,
       textCapitalization: widget.textCapitalization,
       style: TextStyle(
@@ -370,7 +377,8 @@ class _FloatingLabelInputState extends State<FloatingLabelInput>
     ));
 
     _focusNode = widget.focusNode ?? FocusNode();
-    _textController = widget.controller ?? TextEditingController(text: widget.initialValue);
+    _textController =
+        widget.controller ?? TextEditingController(text: widget.initialValue);
     _hasText = _textController.text.isNotEmpty;
 
     _focusNode.addListener(_handleFocusChange);

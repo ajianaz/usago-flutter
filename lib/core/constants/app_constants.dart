@@ -18,7 +18,8 @@ class AppConstants {
   // UI Constants
   static double get defaultPadding => UIConstants.paddingDefault;
   static double get defaultBorderRadius => UIConstants.borderRadiusDefault;
-  static Duration get defaultAnimationDuration => AnimationConstants.defaultDuration;
+  static Duration get defaultAnimationDuration =>
+      AnimationConstants.defaultDuration;
 
   // Validation Constants
   static int get minPasswordLength => ValidationConstants.passwordMinLength;
@@ -29,13 +30,15 @@ class AppConstants {
   static int get defaultPageSize => PerformanceConstants.defaultPageSize;
 
   // Cache Constants
-  static Duration get cacheExpiration => PerformanceConstants.defaultCacheExpiry;
+  static Duration get cacheExpiration =>
+      PerformanceConstants.defaultCacheExpiry;
 
   // Storage Keys (delegated to StorageConstants)
   static String get authTokenKey => StorageConstants.authTokenKey;
   static String get bearerTokenKey => StorageConstants.bearerTokenKey;
   static String get userDataKey => StorageConstants.userDataKey;
-  static String get onboardingCompletedKey => StorageConstants.onboardingCompletedKey;
+  static String get onboardingCompletedKey =>
+      StorageConstants.onboardingCompletedKey;
 
   // Auth Endpoints (delegated to AuthEndpoints)
   static String get signInEndpoint => AuthEndpoints.signIn;
@@ -45,7 +48,8 @@ class AppConstants {
   static String get forgotPasswordEndpoint => AuthEndpoints.forgotPassword;
   static String get resetPasswordEndpoint => AuthEndpoints.resetPassword;
   static String get verifyEmailEndpoint => AuthEndpoints.verifyEmail;
-  static String get resendVerificationEmailEndpoint => AuthEndpoints.resendVerificationEmail;
+  static String get resendVerificationEmailEndpoint =>
+      AuthEndpoints.resendVerificationEmail;
   static String get changePasswordEndpoint => AuthEndpoints.changePassword;
   static String get updateProfileEndpoint => AuthEndpoints.updateProfile;
   static String get deleteAccountEndpoint => AuthEndpoints.deleteAccount;

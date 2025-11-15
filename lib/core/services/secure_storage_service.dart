@@ -224,7 +224,8 @@ class SecureStorageService {
           // Handle different JSON formats
           if (sessionJson.startsWith('{') && sessionJson.endsWith('}')) {
             // Standard JSON format
-            sessionMap = Map<String, dynamic>.from(jsonDecode(sessionJson) as Map<String, dynamic>);
+            sessionMap = Map<String, dynamic>.from(
+                jsonDecode(sessionJson) as Map<String, dynamic>);
           } else {
             // Simple key:value format (comma-separated)
             final List<String> entries = sessionJson.split(',');

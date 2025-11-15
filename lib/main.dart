@@ -18,11 +18,13 @@ void main() async {
     final missingVars = AppConfig.validateRequiredVariables();
     if (missingVars.isNotEmpty) {
       if (kDebugMode) {
-        print('Warning: Missing required environment variables: ${missingVars.join(', ')}');
+        print(
+            'Warning: Missing required environment variables: ${missingVars.join(', ')}');
       }
       // In production, you might want to throw an exception or handle this differently
       if (AppConfig.isProduction) {
-        throw Exception('Missing required environment variables: ${missingVars.join(', ')}');
+        throw Exception(
+            'Missing required environment variables: ${missingVars.join(', ')}');
       }
     }
 

@@ -23,9 +23,12 @@ class AppSpacing {
   static EdgeInsets get paddingVerticalMd => EdgeInsets.symmetric(vertical: md);
   static EdgeInsets get paddingVerticalLg => EdgeInsets.symmetric(vertical: lg);
 
-  static EdgeInsets get paddingHorizontalSm => EdgeInsets.symmetric(horizontal: sm);
-  static EdgeInsets get paddingHorizontalMd => EdgeInsets.symmetric(horizontal: md);
-  static EdgeInsets get paddingHorizontalLg => EdgeInsets.symmetric(horizontal: lg);
+  static EdgeInsets get paddingHorizontalSm =>
+      EdgeInsets.symmetric(horizontal: sm);
+  static EdgeInsets get paddingHorizontalMd =>
+      EdgeInsets.symmetric(horizontal: md);
+  static EdgeInsets get paddingHorizontalLg =>
+      EdgeInsets.symmetric(horizontal: lg);
 
   // Margin constants
   static EdgeInsets get marginAllXs => EdgeInsets.all(xs);
@@ -39,14 +42,18 @@ class AppSpacing {
   static EdgeInsets get marginVerticalMd => EdgeInsets.symmetric(vertical: md);
   static EdgeInsets get marginVerticalLg => EdgeInsets.symmetric(vertical: lg);
 
-  static EdgeInsets get marginHorizontalSm => EdgeInsets.symmetric(horizontal: sm);
-  static EdgeInsets get marginHorizontalMd => EdgeInsets.symmetric(horizontal: md);
-  static EdgeInsets get marginHorizontalLg => EdgeInsets.symmetric(horizontal: lg);
+  static EdgeInsets get marginHorizontalSm =>
+      EdgeInsets.symmetric(horizontal: sm);
+  static EdgeInsets get marginHorizontalMd =>
+      EdgeInsets.symmetric(horizontal: md);
+  static EdgeInsets get marginHorizontalLg =>
+      EdgeInsets.symmetric(horizontal: lg);
 
   // Specific spacing combinations
   static EdgeInsets get paddingCard => EdgeInsets.all(md);
   static EdgeInsets get paddingScreen => EdgeInsets.all(lg);
-  static EdgeInsets get paddingSection => EdgeInsets.symmetric(vertical: lg, horizontal: md);
+  static EdgeInsets get paddingSection =>
+      EdgeInsets.symmetric(vertical: lg, horizontal: md);
 
   static EdgeInsets get marginCard => EdgeInsets.all(sm);
   static EdgeInsets get marginSection => EdgeInsets.symmetric(vertical: md);

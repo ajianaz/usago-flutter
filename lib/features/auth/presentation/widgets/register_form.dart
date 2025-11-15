@@ -37,12 +37,12 @@ class _RegisterFormState extends State<RegisterForm> {
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AuthBloc>().add(
-        RegisterEvent(
-          name: _nameController.text.trim(),
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-        ),
-      );
+            RegisterEvent(
+              name: _nameController.text.trim(),
+              email: _emailController.text.trim(),
+              password: _passwordController.text,
+            ),
+          );
     }
   }
 
@@ -76,9 +76,7 @@ class _RegisterFormState extends State<RegisterForm> {
               return null;
             },
           ),
-
           SizedBox(height: AppSpacing.md),
-
           TextFormField(
             controller: _emailController,
             decoration: InputDecoration(
@@ -107,9 +105,7 @@ class _RegisterFormState extends State<RegisterForm> {
               return null;
             },
           ),
-
           SizedBox(height: AppSpacing.md),
-
           TextFormField(
             controller: _passwordController,
             obscureText: _obscurePassword,
@@ -122,7 +118,9 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
               suffixIcon: IconButton(
                 icon: Icon(
-                  _obscurePassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
+                  _obscurePassword
+                      ? FontAwesomeIcons.eye
+                      : FontAwesomeIcons.eyeSlash,
                   size: 20,
                 ),
                 onPressed: () {
@@ -149,9 +147,7 @@ class _RegisterFormState extends State<RegisterForm> {
               return null;
             },
           ),
-
           SizedBox(height: AppSpacing.md),
-
           TextFormField(
             controller: _confirmPasswordController,
             obscureText: _obscureConfirmPassword,
@@ -164,7 +160,9 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
               suffixIcon: IconButton(
                 icon: Icon(
-                  _obscureConfirmPassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
+                  _obscureConfirmPassword
+                      ? FontAwesomeIcons.eye
+                      : FontAwesomeIcons.eyeSlash,
                   size: 20,
                 ),
                 onPressed: () {
@@ -191,9 +189,7 @@ class _RegisterFormState extends State<RegisterForm> {
               return null;
             },
           ),
-
           SizedBox(height: AppSpacing.lg),
-
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
               return CustomButton(
