@@ -523,6 +523,475 @@ class AuthRepository {
 
 ---
 
+## 🔗 **Error Handling Patterns**
+
+### Centralized Error Handling
+
+Aplikasi menggunakan centralized error handling dengan [`ErrorHandlerUtils`](../lib/core/utils/error_handler_utils.dart:9) untuk konsistensi dan tracking.
+
+```dart
+// Error handling pattern di datasource
+return await safeApiCall<UserModel>(
+  () async {
+    final response = await _dioClient.post('/auth/login', data: loginData);
+    return parseResponse(response, (data) => UserModel.fromJson(data));
+  },
+  method: 'POST',
+  endpoint: '/auth/login',
+  correlationId: correlationId,
+  metadata: {'email': email},
+);
+```
+
+### Error Response Format
+
+Semua error responses mengikuti format standar:
+
+```json
+{
+  "error": "Validation failed",
+  "message": "Email is required",
+  "userMessage": "Please enter your email address",
+  "errors": {
+    "email": ["Email is required"],
+    "password": ["Password must be at least 8 characters"]
+  },
+  "code": "VALIDATION_ERROR",
+  "correlationId": "abc12345"
+}
+```
+
+### Error Types and Handling
+
+| Error Type | HTTP Status | Handling Pattern | User Message |
+|-------------|---------------|------------------|--------------|
+| Validation Error | 400/422 | Form validation | Field-specific errors |
+| Authentication Error | 401 | Redirect to login | Session expired |
+| Authorization Error | 403 | Show permission error | Access denied |
+| Not Found | 404 | Show 404 page | Resource not found |
+| Rate Limit | 429 | Retry with backoff | Too many requests |
+| Server Error | 500+ | Retry mechanism | Server error |
+
+---
+
+## 📊 **Correlation ID Tracking**
+
+### Correlation ID Generation
+
+Setiap request memiliki correlation ID unik untuk tracking:
+
+```dart
+// Generate correlation ID
+final correlationId = ErrorHandlerUtils.generateCorrelationId();
+
+// Include in request headers
+final options = Options(
+  headers: {
+    'X-Correlation-ID': correlationId,
+    'Content-Type': 'application/json',
+  },
+);
+
+// Log dengan correlation ID
+ErrorHandlerUtils.logError(
+  error,
+  correlationId: correlationId,
+  operation: 'Login',
+  metadata: {'endpoint': '/auth/login'},
+);
+```
+
+### Request Chain Tracking
+
+Correlation ID memungkinkan tracking request chain:
+
+```
+User Action (CID: abc12345)
+    │
+    ▼
+BLoC Event (CID: abc12345)
+    │
+    ▼
+Use Case (CID: abc12345)
+    │
+    ▼
+Repository (CID: abc12345)
+    │
+    ▼
+Data Source (CID: abc12345)
+    │
+    ▼
+API Request (CID: abc12345)
+```
+
+### Debugging dengan Correlation ID
+
+```dart
+// Debug helper untuk tracing
+class DebugTracer {
+  static void trace(String operation, String correlationId, String message) {
+    if (AppConfig.enableLogging) {
+      print('[$correlationId] $operation: $message');
+    }
+  }
+}
+
+// Usage
+DebugTracer.trace('API_CALL', correlationId, 'POST /auth/login');
+```
+
+---
+
+## 📈 **Performance Monitoring**
+
+### API Performance Tracking
+
+Setiap API call di-track performancenya:
+
+```dart
+// Performance tracking di DataSourceMixin
+class DataSourceMixin {
+  Future<Either<Exception, T>> safeApiCall<T>(
+    Future<T> Function() apiCall, {
+    required String method,
+    required String endpoint,
+    String? correlationId,
+  }) async {
+    final stopwatch = Stopwatch()..start();
+    final corrId = correlationId ?? generateCorrelationId();
+
+    try {
+      final result = await apiCall();
+      stopwatch.stop();
+
+      // Log performance metrics
+      _logApiPerformance(
+        method: method,
+        endpoint: endpoint,
+        duration: stopwatch.elapsed,
+        success: true,
+        correlationId: corrId,
+      );
+
+      return Right(result);
+    } catch (e) {
+      stopwatch.stop();
+
+      // Log performance metrics
+      _logApiPerformance(
+        method: method,
+        endpoint: endpoint,
+        duration: stopwatch.elapsed,
+        success: false,
+        correlationId: corrId,
+        error: e.toString(),
+      );
+
+      return Left(e);
+    }
+  }
+}
+```
+
+### Performance Metrics
+
+Metrics yang dikumpulkan untuk setiap API call:
+
+```dart
+class ApiPerformanceMetrics {
+  final String method;
+  final String endpoint;
+  final Duration duration;
+  final bool success;
+  final String correlationId;
+  final int? statusCode;
+  final String? error;
+  final DateTime timestamp;
+
+  const ApiPerformanceMetrics({
+    required this.method,
+    required this.endpoint,
+    required this.duration,
+    required this.success,
+    required this.correlationId,
+    this.statusCode,
+    this.error,
+    required this.timestamp,
+  });
+
+  // Check if performance is slow
+  bool get isSlow => duration.inMilliseconds > 1000;
+
+  // Check if performance is critical
+  bool get isCritical => duration.inMilliseconds > 5000;
+
+  // Get performance level
+  String get performanceLevel {
+    if (isCritical) return 'CRITICAL';
+    if (isSlow) return 'SLOW';
+    return 'NORMAL';
+  }
+}
+```
+
+### Performance Alerts
+
+System akan mengirim alert untuk performance issues:
+
+```dart
+class PerformanceAlertManager {
+  static void checkAndAlert(ApiPerformanceMetrics metrics) {
+    if (metrics.isCritical) {
+      _sendCriticalAlert(metrics);
+    } else if (metrics.isSlow) {
+      _sendSlowAlert(metrics);
+    }
+  }
+
+  static void _sendCriticalAlert(ApiPerformanceMetrics metrics) {
+    // Send alert to monitoring system
+    ErrorHandlerUtils.logError(
+      'Critical API performance detected',
+      correlationId: metrics.correlationId,
+      operation: 'PerformanceAlert',
+      metadata: {
+        'method': metrics.method,
+        'endpoint': metrics.endpoint,
+        'duration': metrics.duration.inMilliseconds,
+        'performanceLevel': metrics.performanceLevel,
+      },
+    );
+  }
+}
+```
+
+### Performance Dashboard
+
+Metrics dikumpulkan untuk performance dashboard:
+
+```dart
+class PerformanceDashboard {
+  static List<ApiPerformanceMetrics> getRecentMetrics({Duration? timeRange}) {
+    final range = timeRange ?? const Duration(hours: 1);
+    final now = DateTime.now();
+    final cutoff = now.subtract(range);
+
+    return _metrics.where((m) => m.timestamp.isAfter(cutoff)).toList();
+  }
+
+  static Map<String, dynamic> getPerformanceSummary() {
+    final recent = getRecentMetrics();
+
+    return {
+      'totalRequests': recent.length,
+      'successRate': _calculateSuccessRate(recent),
+      'averageResponseTime': _calculateAverageResponseTime(recent),
+      'slowestEndpoint': _findSlowestEndpoint(recent),
+      'mostErrorProneEndpoint': _findMostErrorProneEndpoint(recent),
+      'performanceDistribution': _getPerformanceDistribution(recent),
+    };
+  }
+}
+```
+
+---
+
+## 🔄 **Retry Mechanisms**
+
+### Exponential Backoff
+
+Implementasi retry dengan exponential backoff:
+
+```dart
+class RetryManager {
+  static Future<Either<Failure, T>> retryWithBackoff<T>(
+    Future<Either<Failure, T>> Function() operation, {
+    int maxRetries = 3,
+    Duration initialDelay = const Duration(seconds: 1),
+    double backoffMultiplier = 2.0,
+    String? operationName,
+  }) async {
+    var delay = initialDelay;
+    var attempt = 0;
+
+    while (attempt <= maxRetries) {
+      final result = await operation();
+
+      if (result.isRight()) {
+        return result;
+      }
+
+      final failure = result.fold((l) => l, (r) => null)!;
+
+      // Check if failure is recoverable
+      if (!ErrorHandlerUtils.isRecoverableFailure(failure)) {
+        return result;
+      }
+
+      attempt++;
+
+      if (attempt <= maxRetries) {
+        await Future.delayed(delay);
+        delay = Duration(
+          milliseconds: (delay.inMilliseconds * backoffMultiplier).round(),
+        );
+
+        // Log retry attempt
+        ErrorHandlerUtils.logWarning(
+          'Retrying operation (attempt $attempt/$maxRetries)',
+          correlationId: ErrorHandlerUtils.generateCorrelationId(),
+          operation: operationName ?? 'RetryOperation',
+          metadata: {
+            'delay': delay.inMilliseconds,
+            'failure': failure.message,
+          },
+        );
+      }
+    }
+
+    return const Left(ServerFailure(message: 'Max retries exceeded'));
+  }
+}
+```
+
+### Retry Configuration
+
+Retry behavior dapat dikonfigurasi per endpoint:
+
+```dart
+class RetryConfig {
+  final int maxRetries;
+  final Duration initialDelay;
+  final double backoffMultiplier;
+  final List<String> recoverableErrors;
+
+  const RetryConfig({
+    this.maxRetries = 3,
+    this.initialDelay = const Duration(seconds: 1),
+    this.backoffMultiplier = 2.0,
+    this.recoverableErrors = const ['TIMEOUT', 'CONNECTION_ERROR'],
+  });
+}
+
+// Usage
+final authRetryConfig = RetryConfig(
+  maxRetries: 2,
+  initialDelay: const Duration(milliseconds: 500),
+  recoverableErrors: ['TIMEOUT'],
+);
+
+final dataRetryConfig = RetryConfig(
+  maxRetries: 5,
+  initialDelay: const Duration(seconds: 2),
+  recoverableErrors: ['TIMEOUT', 'CONNECTION_ERROR', 'SERVER_ERROR'],
+);
+```
+
+---
+
+## 🛡️ **Security Headers**
+
+### Standard Security Headers
+
+Semua API requests menyertakan security headers:
+
+```dart
+class SecurityHeaders {
+  static Map<String, String> getStandardHeaders({
+    String? correlationId,
+    String? authToken,
+  }) {
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'X-Client-Version': AppConfig.appVersion,
+      'X-Platform': Platform.operatingSystem,
+      'X-Device-ID': DeviceInfo.deviceId,
+    };
+
+    if (correlationId != null) {
+      headers['X-Correlation-ID'] = correlationId!;
+    }
+
+    if (authToken != null) {
+      headers['Authorization'] = 'Bearer $authToken';
+    }
+
+    return headers;
+  }
+
+  static Map<String, String> getAuthenticatedHeaders({
+    required String authToken,
+    String? correlationId,
+  }) {
+    return {
+      ...getStandardHeaders(correlationId: correlationId),
+      'Authorization': 'Bearer $authToken',
+    };
+  }
+}
+```
+
+### Request Signing
+
+Untuk endpoint kritis, request dapat di-sign:
+
+```dart
+class RequestSigner {
+  static String signRequest(
+    String method,
+    String endpoint,
+    Map<String, dynamic> data,
+    String secretKey,
+  ) {
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final payload = '$method:$endpoint:$timestamp:${jsonEncode(data)}';
+
+    final hmac = Hmac(sha256, utf8.encode(secretKey));
+    final digest = hmac.convert(utf8.encode(payload));
+
+    return base64Encode(digest.bytes);
+  }
+
+  static Map<String, String> getSignedHeaders({
+    required String method,
+    required String endpoint,
+    required Map<String, dynamic> data,
+    required String secretKey,
+  }) {
+    final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+    final signature = signRequest(method, endpoint, data, secretKey);
+
+    return {
+      'X-Timestamp': timestamp,
+      'X-Signature': signature,
+      'X-Algorithm': 'HMAC-SHA256',
+    };
+  }
+}
+```
+
+---
+
+## 📝 **Notes**
+
+### **Current Status (November 15, 2025)**
+- ✅ **API Endpoints**: Complete endpoint structure defined
+- ✅ **Error Handling**: Centralized error handling with correlation tracking
+- ✅ **Performance Monitoring**: Built-in performance tracking for API calls
+- ✅ **Retry Mechanisms**: Exponential backoff with configurable retry
+- ✅ **Security Headers**: Standard security headers implementation
+- ✅ **Request Signing**: HMAC-based request signing for critical endpoints
+
+### **Future Enhancements**
+- 🔄 **GraphQL Support**: GraphQL endpoint structure
+- 🔄 **WebSocket Support**: Real-time communication patterns
+- 🔄 **Caching Strategy**: Intelligent API response caching
+- 🔄 **Rate Limiting**: Client-side rate limiting implementation
+- 🔄 **Circuit Breaker**: Circuit breaker pattern for resilience
+
+---
+
 **Document End**
 
 **Go Digital, Grow Together.**
