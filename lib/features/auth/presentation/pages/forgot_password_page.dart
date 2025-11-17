@@ -79,7 +79,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     });
 
     if (state is PasswordResetEmailSent) {
-      context.showSuccessSnackBar('Password reset email sent to ${state.email}');
+      context.showSuccessSnackBar(context.t.passwordResetEmailSent(state.email));
       // Navigate back to login after successful submission
       Future.delayed(const Duration(seconds: 2), () {
         context.pop();
@@ -213,7 +213,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Enter your email address and we\'ll send you a link to reset your password',
+          context.t.forgotPasswordDescription,
           style: context.textTheme.bodyMedium?.copyWith(
             fontSize: context.responsiveFontSize(16),
           ),
@@ -234,8 +234,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
-              labelText: 'Email',
-              hintText: 'Enter your email address',
+              labelText: context.t.authEmail,
+              hintText: context.t.enterYourEmail,
               prefixIcon: const Icon(Icons.email_outlined),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
@@ -256,10 +256,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your email address';
+                return context.t.validationRequired;
               }
               if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                return 'Please enter a valid email address';
+                return context.t.validationEmailInvalid;
               }
               return null;
             },
@@ -282,7 +282,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     width: 20.0,
                     child: CircularProgressIndicator(strokeWidth: 2.0),
                   )
-                : const Text('Send Reset Link'),
+                : Text(context.t.sendResetLink),
           ),
         ],
       ),
@@ -293,12 +293,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text('Remember your password?'),
+        Text(context.t.rememberPassword),
         TextButton(
           onPressed: () {
             context.pop();
           },
-          child: const Text('Back to Login'),
+          child: Text(context.t.backToLogin),
         ),
       ],
     );

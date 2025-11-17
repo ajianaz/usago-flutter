@@ -50,6 +50,11 @@ class AppLocalizations {
   String get messagesRegisterFailed => 'Registration failed';
   String get messagesNetworkError => 'Network error. Please check your connection.';
   String get messagesUnknownError => 'An unknown error occurred';
+  String passwordResetEmailSent(String email) => 'Password reset email sent to $email';
+  String get forgotPasswordDescription => 'Enter your email address and we\'ll send you a link to reset your password';
+  String get sendResetLink => 'Send Reset Link';
+  String get rememberPassword => 'Remember your password?';
+  String get backToLogin => 'Back to Login';
 
   // Common
   String get commonOk => 'OK';
@@ -129,6 +134,16 @@ class AppLocalizationsId extends AppLocalizations {
   String get messagesNetworkError => 'Error jaringan. Periksa koneksi Anda.';
   @override
   String get messagesUnknownError => 'Terjadi error yang tidak diketahui';
+  @override
+  String passwordResetEmailSent(String email) => 'Email reset kata sandi telah dikirim ke $email';
+  @override
+  String get forgotPasswordDescription => 'Masukkan alamat email Anda dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi Anda';
+  @override
+  String get sendResetLink => 'Kirim Tautan Reset';
+  @override
+  String get rememberPassword => 'Ingat kata sandi Anda?';
+  @override
+  String get backToLogin => 'Kembali ke Login';
 
   @override
   String get commonOk => 'OK';

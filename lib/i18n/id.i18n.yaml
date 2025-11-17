@@ -34,6 +34,13 @@ auth:
   authCreateAccount: Buat Akun
   authSignUpToContinue: Daftar untuk melanjutkan
   authAlreadyHaveAccount: Sudah punya akun?
+  forgot_password_description: Masukkan alamat email Anda dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi Anda
+  sendResetLink: Kirim Tautan Reset
+  rememberPassword: Ingat kata sandi Anda?
+  backToLogin: Kembali ke Login
+  send_reset_link: Kirim Tautan Reset
+  remember_password: Ingat kata sandi Anda?
+  back_to_login: Kembali ke Login
 
 # Validation
 validation:
@@ -53,6 +60,8 @@ messages:
   register_failed: Pendaftaran gagal
   network_error: Error jaringan. Periksa koneksi Anda.
   unknown_error: Terjadi error yang tidak diketahui
+  password_reset_email_sent: Email reset kata sandi telah dikirim ke {email}
+  passwordResetEmailSent(email): Email reset kata sandi telah dikirim ke {email}
 
 # Common
 common:

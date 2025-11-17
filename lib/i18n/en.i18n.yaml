@@ -34,6 +34,13 @@ auth:
   authCreateAccount: Create Account
   authSignUpToContinue: Sign up to continue
   authAlreadyHaveAccount: Already have an account?
+  forgot_password_description: Enter your email address and we'll send you a link to reset your password
+  sendResetLink: Send Reset Link
+  rememberPassword: Remember your password?
+  backToLogin: Back to Login
+  send_reset_link: Send Reset Link
+  remember_password: Remember your password?
+  back_to_login: Back to Login
 
 # Validation
 validation:
@@ -53,6 +60,8 @@ messages:
   register_failed: Registration failed
   network_error: Network error. Please check your connection.
   unknown_error: An unknown error occurred
+  password_reset_email_sent: Password reset email sent to {email}
+  passwordResetEmailSent(email): Password reset email sent to {email}
 
 # Common
 common:
