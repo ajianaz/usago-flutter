@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../app/router.dart';
 import '../../../../core/extensions/context_extension.dart';
@@ -8,14 +9,29 @@ import '../../../../shared/widgets/responsive_builder.dart';
 import '../../../../shared/widgets/language_switcher.dart';
 import '../../../../shared/widgets/theme_switcher.dart';
 import '../bloc/auth_bloc.dart';
+import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
-import '../widgets/login_form.dart';
 
-/// Login Page
-/// Handles user authentication with responsive design
+/// Forgot Password Page
+/// Handles password reset requests with responsive design
 @RoutePage()
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({Key? key}) : super(key: key);
+
+  @override
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+}
+
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  bool _isSubmitting = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +50,16 @@ class LoginPage extends StatelessWidget {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: Text(context.t.authLogin),
+      title: Text(context.t.authForgotPassword),
       centerTitle: true,
       backgroundColor: Colors.transparent,
       elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          context.pop();
+        },
+      ),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 8.0),
@@ -52,17 +74,23 @@ class LoginPage extends StatelessWidget {
   }
 
   void _handleAuthStates(BuildContext context, AuthState state) {
-    if (state is AuthSuccess) {
-      context.router.replace(const HomeRoute());
+    setState(() {
+      _isSubmitting = state is AuthLoading;
+    });
+
+    if (state is PasswordResetEmailSent) {
+      context.showSuccessSnackBar('Password reset email sent to ${state.email}');
+      // Navigate back to login after successful submission
+      Future.delayed(const Duration(seconds: 2), () {
+        context.pop();
+      });
     } else if (state is AuthFailure) {
       context.showErrorSnackBar(state.message);
-    } else if (state is PasswordResetEmailSent) {
-      context.showSuccessSnackBar('Password reset email sent to ${state.email}');
     }
   }
 
   Widget _buildBody(BuildContext context, AuthBloc authBloc, AuthState state, DeviceType deviceType) {
-    if (state is AuthLoading) {
+    if (state is AuthLoading && _isSubmitting) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -79,7 +107,7 @@ class LoginPage extends StatelessWidget {
   Widget _buildDesktopLayout(BuildContext context, AuthBloc authBloc) {
     return Row(
       children: [
-        // Left side - Login Form
+        // Left side - Forgot Password Form
         Expanded(
           flex: 1,
           child: Padding(
@@ -88,11 +116,9 @@ class LoginPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const LoginForm(),
-                const SizedBox(height: 16),
-                _buildForgotPasswordLink(context),
-                const SizedBox(height: 8),
-                _buildRegisterLink(context),
+                _buildForgotPasswordForm(context, authBloc),
+                const SizedBox(height: 24),
+                _buildBackToLoginLink(context),
               ],
             ),
           ),
@@ -129,11 +155,9 @@ class LoginPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const LoginForm(),
-                const SizedBox(height: 16),
-                _buildForgotPasswordLink(context),
-                const SizedBox(height: 8),
-                _buildRegisterLink(context),
+                _buildForgotPasswordForm(context, authBloc),
+                const SizedBox(height: 24),
+                _buildBackToLoginLink(context),
               ],
             ),
           ),
@@ -157,18 +181,12 @@ class LoginPage extends StatelessWidget {
           const SizedBox(height: 60),
           _buildWelcomeSection(context),
           const SizedBox(height: 40),
-          const LoginForm(),
-          const SizedBox(height: 16),
-          _buildForgotPasswordLink(context),
-          const SizedBox(height: 8),
-          _buildRegisterLink(context),
+          _buildForgotPasswordForm(context, authBloc),
+          const SizedBox(height: 24),
+          _buildBackToLoginLink(context),
         ],
       ),
     );
-  }
-
-  Widget _buildLoginForm(BuildContext context, AuthBloc authBloc) {
-    return const LoginForm();
   }
 
   Widget _buildWelcomeSection(BuildContext context) {
@@ -176,7 +194,7 @@ class LoginPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(
-          FontAwesomeIcons.lock,
+          FontAwesomeIcons.key,
           size: context.responsiveValue(
             mobile: 48.0,
             tablet: 64.0,
@@ -186,7 +204,7 @@ class LoginPage extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Text(
-          context.t.authWelcomeBack,
+          context.t.authForgotPassword,
           style: context.textTheme.headlineMedium?.copyWith(
             fontSize: context.responsiveFontSize(24),
             fontWeight: FontWeight.bold,
@@ -195,7 +213,7 @@ class LoginPage extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          context.t.authSignInToContinue,
+          'Enter your email address and we\'ll send you a link to reset your password',
           style: context.textTheme.bodyMedium?.copyWith(
             fontSize: context.responsiveFontSize(16),
           ),
@@ -205,30 +223,91 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _buildRegisterLink(BuildContext context) {
+  Widget _buildForgotPasswordForm(BuildContext context, AuthBloc authBloc) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Email Field
+          TextFormField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              labelText: 'Email',
+              hintText: 'Enter your email address',
+              prefixIcon: const Icon(Icons.email_outlined),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(
+                  color: context.colorScheme.outline,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(
+                  color: context.colorScheme.primary,
+                  width: 2.0,
+                ),
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your email address';
+              }
+              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                return 'Please enter a valid email address';
+              }
+              return null;
+            },
+            enabled: !_isSubmitting,
+          ),
+          const SizedBox(height: 24),
+
+          // Submit Button
+          ElevatedButton(
+            onPressed: _isSubmitting ? null : () => _submitForm(authBloc),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+            child: _isSubmitting
+                ? const SizedBox(
+                    height: 20.0,
+                    width: 20.0,
+                    child: CircularProgressIndicator(strokeWidth: 2.0),
+                  )
+                : const Text('Send Reset Link'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBackToLoginLink(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(context.t.authDontHaveAccount),
+        const Text('Remember your password?'),
         TextButton(
           onPressed: () {
-            context.router.pushNamed('/register');
+            context.pop();
           },
-          child: Text(context.t.authRegister),
+          child: const Text('Back to Login'),
         ),
       ],
     );
   }
 
-  Widget _buildForgotPasswordLink(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: TextButton(
-        onPressed: () {
-          context.router.pushNamed('/forgot-password');
-        },
-        child: Text(context.t.authForgotPassword),
-      ),
-    );
+  void _submitForm(AuthBloc authBloc) {
+    if (_formKey.currentState!.validate()) {
+      final email = _emailController.text.trim();
+      authBloc.add(ForgotPasswordEvent(email: email));
+    }
   }
 }
