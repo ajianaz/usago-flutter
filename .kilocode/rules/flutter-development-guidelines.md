@@ -12,7 +12,7 @@ Project-specific guidelines for Flutter development that emphasize documentation
 - Ensure tests have a defined flow from start to finish
 - Run tests periodically and manage using a checklist that records the last check date
 - Test files should follow the existing structure in the test/ directory
-- Test files just 100 - 150 lines only, not more. Make it simple and little per file.
+- Test files just 100 - 350 lines only, not more. Make it simple and little per file.
 - Target test coverage minimum 80% untuk semua fitur kritis
 
 ## Development approach
