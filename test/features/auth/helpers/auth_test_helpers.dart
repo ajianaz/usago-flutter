@@ -1,12 +1,11 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:fpdart/fpdart.dart';
 import '../../../../lib/features/auth/domain/entities/user.dart';
 import '../../../../lib/core/errors/failure.dart';
+import '../../../../lib/core/errors/exceptions.dart';
 
-/// Helper utilities for auth feature testing
+/// Helper class for creating test data and utilities for authentication tests
 class AuthTestHelpers {
-  /// Create a test user with default values
+  /// Creates a test user entity for testing purposes
   static User createTestUser({
     String id = 'test-user-id',
     String email = 'test@example.com',
@@ -15,7 +14,6 @@ class AuthTestHelpers {
     bool isEmailVerified = true,
     DateTime? createdAt,
     DateTime? updatedAt,
-    DateTime? lastLoginAt,
   }) {
     return User(
       id: id,
@@ -24,146 +22,97 @@ class AuthTestHelpers {
       profilePicture: profilePicture,
       isEmailVerified: isEmailVerified,
       createdAt: createdAt ?? DateTime.now().subtract(const Duration(days: 30)),
-      updatedAt: updatedAt ?? DateTime.now().subtract(const Duration(days: 1)),
-      lastLoginAt: lastLoginAt ?? DateTime.now().subtract(const Duration(hours: 2)),
+      updatedAt: updatedAt ?? DateTime.now(),
     );
   }
 
-  /// Create an unverified test user
-  static User createUnverifiedTestUser({
-    String id = 'unverified-user-id',
-    String email = 'unverified@example.com',
-    String name = 'Unverified User',
+  /// Creates a test failure for testing error scenarios
+  static Failure createTestFailure({
+    String message = 'Test failure',
+    String code = 'TEST_ERROR',
+    int? statusCode,
   }) {
-    return createTestUser(
-      id: id,
-      email: email,
-      name: name,
-      isEmailVerified: false,
+    return ServerFailure(
+      message: message,
+      code: code,
+      statusCode: statusCode ?? 400,
     );
   }
 
-  /// Create a test user with profile picture
-  static User createTestUserWithProfilePicture({
-    String id = 'user-with-pic-id',
-    String email = 'withpic@example.com',
-    String name = 'User With Pic',
-    String profilePicture = 'https://example.com/avatar.jpg',
+  /// Creates a test network failure
+  static Failure createNetworkFailure({
+    String message = 'Network error',
   }) {
-    return createTestUser(
-      id: id,
-      email: email,
-      name: name,
-      profilePicture: profilePicture,
-    );
+    return NetworkFailure(message: message);
   }
 
-  /// Create a newly registered user (less than 7 days)
-  static User createNewTestUser({
-    String id = 'new-user-id',
-    String email = 'newuser@example.com',
-    String name = 'New User',
+  /// Creates a test validation failure
+  static Failure createValidationFailure({
+    String message = 'Validation error',
+    String field = 'email',
   }) {
-    return User(
-      id: id,
-      email: email,
-      name: name,
-      isEmailVerified: false,
-      createdAt: DateTime.now().subtract(const Duration(days: 2)),
-      updatedAt: DateTime.now(),
-      lastLoginAt: DateTime.now(),
+    return ValidationFailure(
+      message: message,
+      fieldErrors: field != null ? {field: message} : null,
     );
   }
 
-  /// Create an inactive user (last login more than 30 days ago)
-  static User createInactiveTestUser({
-    String id = 'inactive-user-id',
-    String email = 'inactive@example.com',
-    String name = 'Inactive User',
+  /// Creates a test authentication failure
+  static Failure createAuthFailure({
+    String message = 'Authentication failed',
   }) {
-    return User(
-      id: id,
-      email: email,
-      name: name,
-      isEmailVerified: true,
-      createdAt: DateTime.now().subtract(const Duration(days: 100)),
-      updatedAt: DateTime.now().subtract(const Duration(days: 35)),
-      lastLoginAt: DateTime.now().subtract(const Duration(days: 35)),
+    return AuthFailure(
+      message: message,
+      type: AuthExceptionType.invalidCredentials,
     );
   }
 
-  /// Create a successful Either result with User
-  static Either<Failure, User> createSuccessUserResult([User? user]) {
+  /// Creates a successful Either result with a test user
+  static Either<Failure, User> createSuccessResult({User? user}) {
     return Right(user ?? createTestUser());
   }
 
-  /// Create a failure Either result
-  static Either<Failure, User> createFailureResult(Failure failure) {
-    return Left(failure);
+  /// Creates a failure Either result
+  static Either<Failure, User> createFailureResult({Failure? failure}) {
+    return Left(failure ?? createTestFailure());
   }
 
-  /// Create a void success result
+  /// Creates a successful Either result with void
+  static Either<Failure, void> createVoidSuccessResult() {
+    return const Right(null);
+  }
+
+  /// Creates a failure Either result with void
+  static Either<Failure, void> createVoidFailureResult({Failure? failure}) {
+    return Left(failure ?? createTestFailure());
+  }
+
+  /// Creates a successful Either result with void (alias for createVoidSuccessResult)
   static Either<Failure, void> createSuccessVoidResult() {
     return const Right(null);
   }
 
-  /// Create a void failure result
-  static Either<Failure, void> createFailureVoidResult(Failure failure) {
-    return Left(failure);
-  }
+  /// Valid test email
+  static const String validEmail = 'test@example.com';
 
-  /// Create a nullable user success result
-  static Either<Failure, User?> createNullableUserResult([User? user]) {
-    return Right(user);
-  }
+  /// Valid test password
+  static const String validPassword = 'Password123!';
 
-  /// Verify mock interaction was called exactly once
-  static void verifyCalledOnce(Mock mock) {
-    verify(mock).called(1);
-  }
+  /// Invalid test email
+  static const String invalidEmail = 'invalid-email';
 
-  /// Verify mock interaction was never called
-  static void verifyNeverCalled(Mock mock) {
-    verifyNever(mock);
-  }
+  /// Invalid test password (too short)
+  static const String invalidPassword = '123';
 
-  /// Verify mock interaction was called specific number of times
-  static void verifyCalledTimes(Mock mock, int count) {
-    verify(mock).called(count);
-  }
+  /// Test name
+  static const String testName = 'Test User';
 
-  /// Create test email variations
-  static List<String> get testEmails => [
-    'valid@example.com',
-    'user.name+tag@domain.co.uk',
-    'user123@test-domain.com',
-    'invalid-email',
-    '',
-    'no-at-symbol.com',
-    '@missing-local.com',
-    'missing-domain@',
-  ];
+  /// Test profile picture URL
+  static const String testProfilePicture = 'https://example.com/avatar.jpg';
 
-  /// Create test password variations
-  static List<String> get testPasswords => [
-    'ValidPass123!',
-    'short',
-    'longenoughbutnonumber',
-    'longenoughbutnouppercase',
-    'longenoughbutnolowercase',
-    '12345678',
-    '',
-  ];
+  /// Test token
+  static const String testToken = 'test-token-12345';
 
-  /// Create test name variations
-  static List<String> get testNames => [
-    'Valid Name',
-    'John Doe',
-    'A',
-    'Very Long Name That Exceeds Normal Limits',
-    '',
-    '123',
-    'Name with numbers 123',
-    'Name-with-dashes',
-  ];
+  /// Test reset token
+  static const String testResetToken = 'reset-token-67890';
 }
