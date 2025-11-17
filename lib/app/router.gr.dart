@@ -29,6 +29,25 @@ class HomeRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [LoginPage]
+class LoginRoute extends PageRouteInfo<void> {
+  const LoginRoute({List<PageRouteInfo>? children})
+      : super(
+          LoginRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'LoginRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const LoginPage();
+    },
+  );
+}
+
+/// generated route for
 /// [RegisterPage]
 class RegisterRoute extends PageRouteInfo<void> {
   const RegisterRoute({List<PageRouteInfo>? children})
@@ -43,25 +62,6 @@ class RegisterRoute extends PageRouteInfo<void> {
     name,
     builder: (data) {
       return const RegisterPage();
-    },
-  );
-}
-
-/// generated route for
-/// [ResponsiveLoginPage]
-class ResponsiveLoginRoute extends PageRouteInfo<void> {
-  const ResponsiveLoginRoute({List<PageRouteInfo>? children})
-      : super(
-          ResponsiveLoginRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'ResponsiveLoginRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      return const ResponsiveLoginPage();
     },
   );
 }
