@@ -183,7 +183,13 @@ class ShakeCurve extends Curve {
 
   @override
   double transform(double t) {
-    return math.sin(t * 2 * math.pi) * (1 - t);
+    // Fix the endpoint issue: ensure t=1.0 maps to a value near 1.0
+    if (t >= 1.0) return 1.0;
+
+    // Create a shake effect that decreases in amplitude as t approaches 1.0
+    // The sine wave creates the shake, and (1-t) creates the damping
+    // We add t to ensure the endpoint is near 1.0
+    return t + (math.sin(t * math.pi * 4) * (1 - t) * 0.1);
   }
 }
 

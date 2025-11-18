@@ -50,10 +50,12 @@ class AnimatedTextField extends StatefulWidget {
 }
 
 class _AnimatedTextFieldState extends State<AnimatedTextField>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _animationController;
+  AnimationController? _shakeController;
   late Animation<double> _focusAnimation;
   late Animation<double> _errorAnimation;
+  late Animation<double> _shakeAnimation;
   late Animation<Color?> _borderColorAnimation;
   late Animation<double> _borderWidthAnimation;
 
@@ -84,11 +86,17 @@ class _AnimatedTextFieldState extends State<AnimatedTextField>
       curve: AnimationTheme.inputFocusCurve,
     ));
 
-    _errorAnimation = Tween<double>(
+    // Create a separate controller for shake animation
+    _shakeController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _shakeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(
-      parent: _animationController,
+      parent: _shakeController!,
       curve: AnimationTheme.shakeCurve,
     ));
 
@@ -114,6 +122,7 @@ class _AnimatedTextFieldState extends State<AnimatedTextField>
   @override
   void dispose() {
     _animationController.dispose();
+    _shakeController?.dispose();
     _focusNode.dispose();
     if (widget.controller == null) {
       _controller.dispose();
@@ -147,8 +156,8 @@ class _AnimatedTextFieldState extends State<AnimatedTextField>
   }
 
   void _triggerErrorAnimation() {
-    _animationController.forward().then((_) {
-      _animationController.reverse();
+    _shakeController?.forward().then((_) {
+      _shakeController?.reverse();
     });
   }
 
@@ -213,15 +222,24 @@ class _AnimatedTextFieldState extends State<AnimatedTextField>
               AnimatedContainer(
                 duration: AnimationConstants.fastDuration,
                 margin: const EdgeInsets.only(top: 4.0),
-                child: Transform.translate(
-                  offset: Offset(_errorAnimation.value * 2, 0),
-                  child: Text(
-                    _errorMessage ?? '',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
-                      fontSize: 12,
+                // Wrap in a flexible container to prevent overflow
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Transform.translate(
+                        offset: Offset((_shakeAnimation.value - 0.5) * 10, 0),  // Center the shake and scale it
+                        child: Text(
+                          _errorMessage ?? '',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                            fontSize: 12,
+                          ),
+                          overflow: TextOverflow.visible,  // Handle text overflow gracefully
+                          maxLines: 2,  // Limit lines to prevent excessive height
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
           ],
