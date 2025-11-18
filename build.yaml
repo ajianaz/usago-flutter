@@ -5,8 +5,9 @@ targets:
         options:
           base_locale: en
           input_directory: lib/i18n
+          input_file_pattern: .i18n.yaml
           output_directory: lib/i18n
-          output_localization_file: app_localizations.g.dart
+          output_localization_file: strings.g.dart
           output_class_name: AppLocalizations
           namespaces: true
           translation_class_visibility: private
@@ -14,7 +15,7 @@ targets:
           enum_output_directory: lib/i18n
           key_case: snake
           key_map_case: snake
-          string_interpolation: "dart"
+          string_interpolation: dart
           pluralization:
             auto: plural
             parameter: count

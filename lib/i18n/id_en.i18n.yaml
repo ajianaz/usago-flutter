@@ -1,0 +1,271 @@
+# App
+app:
+  title: Usago
+  welcome: Selamat Datang
+
+# Auth
+auth:
+  login: Masuk
+  register: Daftar
+  email: Email
+  password: Kata Sandi
+  forgot_password: Lupa Kata Sandi?
+  dont_have_account: Belum punya akun?
+  welcome_back: Selamat Datang Kembali
+  sign_in_to_continue: Masuk untuk melanjutkan
+  create_account: Buat Akun
+  sign_up_to_continue: Daftar untuk melanjutkan
+  already_have_account: Sudah punya akun?
+  name: Nama
+  confirm_password: Konfirmasi Kata Sandi
+  passwords_do_not_match: Kata sandi tidak cocok
+  enter_your_name: Masukkan nama Anda
+  enter_your_email: Masukkan email Anda
+  enter_your_password: Masukkan kata sandi Anda
+  confirm_your_password: Konfirmasi kata sandi Anda
+  forgot_password_description: Masukkan alamat email Anda dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi Anda
+  send_reset_link: Kirim Tautan Reset
+  remember_password: Ingat kata sandi Anda?
+  back_to_login: Kembali ke Login
+
+# Validation
+validation:
+  required: Field ini wajib diisi
+  email_invalid: Masukkan email yang valid
+  password_too_short: Kata sandi minimal 6 karakter
+  password_too_long: Kata sandi maksimal 50 karakter
+  validation_required: Field ini wajib diisi
+  validation_email_invalid: Masukkan email yang valid
+  validation_password_too_short: Kata sandi minimal 6 karakter
+
+# Messages
+messages:
+  login_success: Login berhasil
+  login_failed: Login gagal
+  register_success: Pendaftaran berhasil
+  register_failed: Pendaftaran gagal
+  network_error: Error jaringan. Periksa koneksi Anda.
+  unknown_error: Terjadi error yang tidak diketahui
+  password_reset_email_sent: Email reset kata sandi telah dikirim ke {email}
+
+# Common
+common:
+  ok: OK
+  cancel: Batal
+  save: Simpan
+  delete: Hapus
+  edit: Edit
+  loading: Memuat...
+  retry: Coba Lagi
+  close: Tutup
+
+# Home
+home:
+  welcome_message: Apa yang ingin Anda lakukan hari ini? 🎯
+  select_feature: Pilih fitur yang tersedia di bawah ini
+  error_occurred: Terjadi kesalahan
+  no_menu_in_category: Tidak ada menu dalam kategori {category}
+  no_menu_available: Tidak ada menu tersedia
+  contact_admin: Hubungi administrator untuk mengakses fitur ini
+  you_have_pending_items: Anda memiliki {count} item yang perlu ditangani
+  welcome_back: Selamat Datang! 👋
+  management: Manajemen
+  operations: Operasional
+  reports: Laporan
+  settings: Pengaturan
+  all_menu: Semua Menu
+  logout: Keluar
+
+# Brand
+brand:
+  # Page titles
+  create_brand: Buat Brand Baru
+  edit_brand: Edit Brand
+  brand_selection: Pilih Brand
+  brand_stats: Statistik Brand
+  manage_invitations_page: Kelola Undangan
+  transfer_ownership: Transfer Kepemilikanan
+  brand_info: Informasi Brand
+
+  # Form labels and placeholders
+  brand_name: Nama Brand
+  enter_brand_name: Masukkan nama brand
+  slug: Slug
+  url_friendly_identifier: URL-friendly identifier
+  description: Deskripsi
+  brand_description: Deskripsi singkat brand (opsional)
+  industry: Industri
+  brand_industry: Industri brand (opsional)
+  business_type: Tipe Bisnis
+  timezone: Zona Waktu
+  currency: Mata Uang
+  auto_generate_from_name: Auto-generate dari nama
+  enable_manual_slug_input: Enable manual slug input
+  auto_generate_from_name_tooltip: Auto-generate dari nama
+
+  # Business types
+  service: Layanan
+  retail: Ritel
+  manufacturing: Manufaktur
+  other: Lainnya
+
+  # Timezones
+  timezone_jakarta: Asia/Jakarta (WIB)
+  timezone_singapore: Asia/Singapore (SGT)
+  timezone_bangkok: Asia/Bangkok (ICT)
+  timezone_kuala_lumpur: Asia/Kuala Lumpur (MYT)
+  timezone_manila: Asia/Manila (PHT)
+  timezone_utc: UTC
+
+  # Currencies
+  currency_idr: Rupiah Indonesia (IDR)
+  currency_usd: US Dollar (USD)
+  currency_eur: Euro (EUR)
+  currency_sgd: Singapore Dollar (SGD)
+  currency_myr: Malaysian Ringgit (MYR)
+  currency_thb: Thai Baht (THB)
+  currency_php: Philippine Peso (PHP)
+
+  # Button text
+  create_brand_btn: Buat Brand
+  update_brand_btn: Perbarui Brand
+  send_confirmation_code: Kirim Kode Konfirmasi
+  confirm_transfer: Konfirmasi Transfer
+  send_invitation: Kirim Undangan
+  invite_user: Undang Pengguna
+
+  # Messages
+  brand_created_successfully: Brand berhasil dibuat
+  brand_updated_successfully: Brand berhasil diperbarui
+  brand_deleted_successfully: Brand berhasil dihapus
+  invitation_sent_successfully: Undangan berhasil dikirim
+  confirmation_code_sent: Kode konfirmasi telah dikirim ke email pemilik baru
+  transfer_completed_successfully: Kepemilikanan brand berhasil ditransfer
+
+  # Validation messages
+  brand_name_required: Nama brand wajib diisi
+  brand_name_min_length: Nama brand minimal 3 karakter
+  brand_name_max_length: Nama brand maksimal 50 karakter
+  slug_required: Slug wajib diisi
+  slug_min_length: Slug minimal 3 karakter
+  slug_max_length: Slug maksimal 50 karakter
+  slug_invalid_characters: Slug hanya boleh mengandung huruf kecil, angka, dan strip (-)
+  description_max_length: Deskripsi maksimal 500 karakter
+  industry_max_length: Industri maksimal 100 karakter
+  email_required: Email wajib diisi
+  email_invalid: Format email tidak valid
+  confirmation_code_required: Kode konfirmasi wajib diisi
+  confirmation_code_length: Kode konfirmasi harus 6 digit
+
+  # Dialog text
+  edit_brand_dialog_title: Edit Brand
+  edit_brand_dialog_message: Apakah Anda ingin mengedit brand ini?
+  delete_brand_dialog_title: Hapus Brand
+  delete_brand_dialog_message: Apakah Anda yakin ingin menghapus brand ini?
+  delete_brand_warning: Tindakan ini tidak dapat dibatalkan.
+  accept_invitation_dialog_title: Terima Undangan
+  accept_invitation_dialog_message: Apakah Anda yakin ingin menerima undangan untuk bergabung dengan {brandName}?
+  accept_invitation_role_info: Anda akan ditambahkan ke brand dengan peran {role}.
+  decline_invitation_dialog_title: Tolak Undangan
+  decline_invitation_dialog_message: Apakah Anda yakin ingin menolak undangan dari {brandName}?
+  cancel_invitation_dialog_title: Batalkan Undangan
+  cancel_invitation_dialog_message: Apakah Anda yakin ingin membatalkan undangan ke {email}?
+
+  # Status labels
+  k_new: BARU
+  active: Aktif
+  brand_active: Brand Aktif
+  joined: 'Bergabung: {date}'
+  status: Status
+  created: Dibuat
+  total_users: Total Pengguna
+  active_branches: Cabang Aktif
+  monthly_revenue: Pendapatan Bulan Ini
+  growth: Pertumbuhan
+  invitations_sent: Undangan Terkirim
+  weekly_activity: Aktivitas Minggu Ini
+  performance_score: Skor Kinerja
+  active_users: 'Aktif: {count}'
+  total_branches: 'Total: {count}'
+  revenue_target: 'Target: {amount}'
+  compare_last_month: Banding bulan lalu
+  pending_invitations: '{pending} tertunda, {accepted} diterima'
+  daily_average: 'Rata-rata: {count}/hari'
+  very_good: Sangat Baik
+
+  # Search and filter
+  search_brand: Cari brand...
+  search_results: Hasil Pencarian
+  type: Tipe
+  all: Semua
+  loading_brands: Memuat brands...
+  no_brands_available: Belum ada brand
+  no_brands_message: Buat brand pertama untuk memulai bisnis Anda
+  create_new_brand: Buat Brand Baru
+  statistics: Statistik
+  invitations: Undangan
+  transfer: Transfer
+  view_statistics: Lihat Statistik
+  manage_invitations: Kelola Undangan
+  transfer_brand: Transfer Brand
+  received: Diterima
+  sent: Terkirim
+  no_received_invitations: Belum ada undangan yang diterima
+  no_received_invitations_message: Anda belum menerima undangan brand apa pun. Undangan yang diterima akan muncul di sini.
+  no_sent_invitations: Belum ada undangan terkirim
+  no_sent_invitations_message: Anda belum mengirim undangan brand apa pun. Undangan yang terkirim akan muncul di sini.
+  failed_to_load_invitations: Gagal memuat undangan
+  failed_to_load_received_invitations: Terjadi kesalahan saat memuat undangan yang diterima. Silakan coba lagi.
+  failed_to_load_sent_invitations: Terjadi kesalahan saat memuat undangan terkirim. Silakan coba lagi.
+  invitation_details: Detail Undangan
+  brand_label: Brand
+  from_label: Dari
+  to_label: Ke
+  role_label: Peran
+  sent_label: Dikirim
+  expires_label: Kadaluarsa
+  close_label: Tutup
+  invite_new_user: Undang Pengguna Baru
+  invite_new_user_tooltip: Undang Pengguna Baru
+
+  # Invitation actions
+  accept: Terima
+  decline: Tolak
+  cancel: Batal
+  resend: Kirim Ulang
+  reject: Tolak
+  pending: Pending
+  accepted: Diterima
+  declined: Ditolak
+  expired: Kadaluarsa
+
+  # User roles
+  brand_owner: Pemilik Brand
+  brand_admin: Admin Brand
+  branch_manager: Manajer Cabang
+  branch_admin: Admin Cabang
+  branch_staff: Staf Cabang
+  cross_branch_viewer: Penonton Lintas Cabang
+
+  # Transfer form
+  transfer_ownership_warning: Peringatan Transfer Kepemilikanan
+  transfer_warning_message: Tindakan ini tidak dapat dibatalkan dan akan mengubah kepemilikanan brand secara permanen. Pastikan Anda memasukkan email yang benar dan pemilik baru telah menyetujui transfer ini.
+  new_owner_email: Email Pemilik Baru
+  enter_new_owner_email: Masukkan email pemilik baru
+  example_email: 'contoh: user@example.com'
+  confirmation_code: Kode Konfirmasi
+  enter_confirmation_code: Masukkan kode konfirmasi
+  six_digit_code: Kode 6 digit
+  message_optional: Pesan (Opsional)
+  message_for_new_owner: Pesan untuk pemilik baru
+  add_explanation_message: Tambahkan pesan penjelasan jika diperlukan
+  detail_transfer: Detail Transfer
+  brand_id_label: 'Brand ID: {id}'
+
+  # Brand selector
+  no_brands_available_selector: Tidak ada brand tersedia
+  select_brand: Pilih Brand
+  currently: 'Saat ini:'
+  back: Kembali
+  refresh: Refresh
+  brand_not_found: Brand tidak ditemukan
