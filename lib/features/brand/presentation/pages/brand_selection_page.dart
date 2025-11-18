@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/constants/ui_constants.dart';
 import '../../../../shared/themes/app_colors.dart';
-import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
-import '../../../../shared/widgets/bloc_responsive_layout.dart';
 import '../../../../shared/widgets/responsive_builder.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../domain/entities/brand.dart';
@@ -15,6 +12,7 @@ import '../bloc/brand_event.dart';
 import '../bloc/brand_state.dart';
 import '../widgets/brand_card.dart';
 import '../widgets/brand_selector.dart';
+import '../services/brand_navigation_service.dart';
 
 /// Brand Selection Page
 /// Allows users to select from available brands or create new ones
@@ -24,12 +22,7 @@ class BrandSelectionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<BrandBloc>(
-      create: (context) => BrandBloc(
-        brandRepository: context.read(),
-      ),
-      child: const BrandSelectionView(),
-    );
+    return const BrandSelectionView();
   }
 }
 
@@ -88,11 +81,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<BrandBloc>(
-      create: (context) => BrandBloc(
-        brandRepository: context.read(),
-      ),
-      child: BlocListener<BrandBloc, BrandState>(
+    return BlocListener<BrandBloc, BrandState>(
         listener: (context, state) {
           // Handle search state changes
           if (state is BrandSearchLoaded) {
@@ -132,10 +121,9 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
               },
             );
           },
-        ),
-      ),
+         ),
     );
-   }
+  }
 
   Widget _buildLoadingState(BuildContext context, DeviceType deviceType) {
     return Scaffold(
@@ -436,6 +424,15 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
             onDelete: () {
               _showDeleteBrandDialog(context, brand);
             },
+            onViewStats: () {
+              _navigateToBrandStats(context, brand);
+            },
+            onViewInvitations: () {
+              _navigateToBrandInvitations(context, brand);
+            },
+            onTransfer: () {
+              _navigateToBrandTransfer(context, brand);
+            },
             showOptions: true,
           );
         },
@@ -525,5 +522,26 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
         ],
       ),
     );
+  }
+
+  void _navigateToBrandStats(BuildContext context, Brand brand) {
+    // Use navigation service for consistent navigation
+    if (mounted) {
+      BrandNavigationService.navigateToStats(context, brand);
+    }
+  }
+
+  void _navigateToBrandInvitations(BuildContext context, Brand brand) {
+    // Use navigation service for consistent navigation
+    if (mounted) {
+      BrandNavigationService.navigateToInvitations(context, brand);
+    }
+  }
+
+  void _navigateToBrandTransfer(BuildContext context, Brand brand) {
+    // Use navigation service for consistent navigation
+    if (mounted) {
+      BrandNavigationService.navigateToTransfer(context, brand);
+    }
   }
 }

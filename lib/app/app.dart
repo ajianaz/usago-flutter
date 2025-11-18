@@ -7,11 +7,12 @@ import '../core/services/locale_service.dart';
 import '../core/helpers/instant_theme_helper.dart';
 import '../core/helpers/instant_locale_helper.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
+import '../features/brand/presentation/bloc/brand_bloc.dart';
 import '../i18n/app_localizations.g.dart';
 import 'router.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +21,11 @@ class MyApp extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => getIt<AuthBloc>(),
+        BlocProvider.value(
+          value: getIt<AuthBloc>(),
+        ),
+        BlocProvider.value(
+          value: getIt<BrandBloc>(),
         ),
       ],
       child: ValueListenableBuilder<ThemeMode>(

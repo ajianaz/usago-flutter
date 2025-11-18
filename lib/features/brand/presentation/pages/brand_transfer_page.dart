@@ -48,40 +48,35 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<BrandBloc>(
-      create: (context) => BrandBloc(
-        brandRepository: context.read(),
-      ),
-      child: BlocResponsiveLayout<BrandBloc, BrandState>(
-        builder: (context, bloc, state, deviceType) {
-          return _buildContent(context, deviceType);
-        },
-        listener: (context, state) {
-          if (state is BrandOperationSuccess) {
-            setState(() {
-              _isLoading = false;
-              _confirmationSent = true;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.success,
-              ),
-            );
-          }
-          if (state is BrandError) {
-            setState(() {
-              _isLoading = false;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.error,
-              ),
-            );
-          }
-        },
-      ),
+    return BlocResponsiveLayout<BrandBloc, BrandState>(
+      builder: (context, bloc, state, deviceType) {
+        return _buildContent(context, deviceType);
+      },
+      listener: (context, state) {
+        if (state is BrandOperationSuccess) {
+          setState(() {
+            _isLoading = false;
+            _confirmationSent = true;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.success,
+            ),
+          );
+        }
+        if (state is BrandError) {
+          setState(() {
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      },
     );
   }
 

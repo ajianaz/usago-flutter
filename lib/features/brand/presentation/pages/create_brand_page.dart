@@ -16,21 +16,16 @@ import '../widgets/create_brand_form.dart';
 /// Wrapper page for brand creation form
 @RoutePage()
 class CreateBrandPage extends StatelessWidget {
-  const CreateBrandPage({Key? key}) : super(key: key);
+  const CreateBrandPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<BrandBloc>(
-      create: (context) => BrandBloc(
-        brandRepository: context.read(),
-      ),
-      child: const CreateBrandView(),
-    );
+    return const CreateBrandView();
   }
 }
 
 class CreateBrandView extends StatefulWidget {
-  const CreateBrandView({Key? key}) : super(key: key);
+  const CreateBrandView({super.key});
 
   @override
   State<CreateBrandView> createState() => _CreateBrandViewState();
@@ -40,6 +35,7 @@ class _CreateBrandViewState extends State<CreateBrandView> {
   @override
   Widget build(BuildContext context) {
     return BlocResponsiveLayoutListener<BrandBloc, BrandState>(
+      bloc: context.read<BrandBloc>(),
       listener: (context, state) {
         if (state is BrandOperationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -52,7 +48,9 @@ class _CreateBrandViewState extends State<CreateBrandView> {
 
           // Navigate back to brand selection after successful creation
           Future.delayed(const Duration(seconds: 2), () {
-            context.router.maybePop();
+            if (context.mounted) {
+              context.router.maybePop();
+            }
           });
         } else if (state is BrandError) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -71,7 +69,6 @@ class _CreateBrandViewState extends State<CreateBrandView> {
   }
 
   Widget _buildContent(BuildContext context, DeviceType deviceType) {
-    final isMobile = deviceType == DeviceType.mobile;
 
     return Scaffold(
       appBar: AppBar(
@@ -117,8 +114,8 @@ class _CreateBrandViewState extends State<CreateBrandView> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppColors.primary.withOpacity(0.1),
-                    AppColors.primary.withOpacity(0.05),
+                    AppColors.primary.withValues(alpha: 0.1),
+                    AppColors.primary.withValues(alpha: 0.05),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -148,7 +145,7 @@ class _CreateBrandViewState extends State<CreateBrandView> {
                   Text(
                     'Lengkapi data brand Anda dan mulai beroperasi',
                     style: AppTextStyles.bodyLarge.copyWith(
-                      color: AppColors.onPrimary.withOpacity(0.9),
+                      color: AppColors.onPrimary.withValues(alpha: 0.9),
                     ),
                   ),
                 ],

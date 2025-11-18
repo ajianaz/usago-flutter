@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -18,13 +19,10 @@ class BrandInvitationListRoute
     required Brand brand,
     List<PageRouteInfo>? children,
   }) : super(
-          BrandInvitationListRoute.name,
-          args: BrandInvitationListRouteArgs(
-            key: key,
-            brand: brand,
-          ),
-          initialChildren: children,
-        );
+         BrandInvitationListRoute.name,
+         args: BrandInvitationListRouteArgs(key: key, brand: brand),
+         initialChildren: children,
+       );
 
   static const String name = 'BrandInvitationListRoute';
 
@@ -32,19 +30,13 @@ class BrandInvitationListRoute
     name,
     builder: (data) {
       final args = data.argsAs<BrandInvitationListRouteArgs>();
-      return BrandInvitationListPage(
-        key: args.key,
-        brand: args.brand,
-      );
+      return BrandInvitationListPage(key: args.key, brand: args.brand);
     },
   );
 }
 
 class BrandInvitationListRouteArgs {
-  const BrandInvitationListRouteArgs({
-    this.key,
-    required this.brand,
-  });
+  const BrandInvitationListRouteArgs({this.key, required this.brand});
 
   final Key? key;
 
@@ -60,10 +52,7 @@ class BrandInvitationListRouteArgs {
 /// [BrandSelectionPage]
 class BrandSelectionRoute extends PageRouteInfo<void> {
   const BrandSelectionRoute({List<PageRouteInfo>? children})
-      : super(
-          BrandSelectionRoute.name,
-          initialChildren: children,
-        );
+    : super(BrandSelectionRoute.name, initialChildren: children);
 
   static const String name = 'BrandSelectionRoute';
 
@@ -83,13 +72,10 @@ class BrandStatsRoute extends PageRouteInfo<BrandStatsRouteArgs> {
     required Brand brand,
     List<PageRouteInfo>? children,
   }) : super(
-          BrandStatsRoute.name,
-          args: BrandStatsRouteArgs(
-            key: key,
-            brand: brand,
-          ),
-          initialChildren: children,
-        );
+         BrandStatsRoute.name,
+         args: BrandStatsRouteArgs(key: key, brand: brand),
+         initialChildren: children,
+       );
 
   static const String name = 'BrandStatsRoute';
 
@@ -97,19 +83,13 @@ class BrandStatsRoute extends PageRouteInfo<BrandStatsRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<BrandStatsRouteArgs>();
-      return BrandStatsPage(
-        key: args.key,
-        brand: args.brand,
-      );
+      return BrandStatsPage(key: args.key, brand: args.brand);
     },
   );
 }
 
 class BrandStatsRouteArgs {
-  const BrandStatsRouteArgs({
-    this.key,
-    required this.brand,
-  });
+  const BrandStatsRouteArgs({this.key, required this.brand});
 
   final Key? key;
 
@@ -129,13 +109,10 @@ class BrandTransferRoute extends PageRouteInfo<BrandTransferRouteArgs> {
     required Brand brand,
     List<PageRouteInfo>? children,
   }) : super(
-          BrandTransferRoute.name,
-          args: BrandTransferRouteArgs(
-            key: key,
-            brand: brand,
-          ),
-          initialChildren: children,
-        );
+         BrandTransferRoute.name,
+         args: BrandTransferRouteArgs(key: key, brand: brand),
+         initialChildren: children,
+       );
 
   static const String name = 'BrandTransferRoute';
 
@@ -143,19 +120,13 @@ class BrandTransferRoute extends PageRouteInfo<BrandTransferRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<BrandTransferRouteArgs>();
-      return BrandTransferPage(
-        key: args.key,
-        brand: args.brand,
-      );
+      return BrandTransferPage(key: args.key, brand: args.brand);
     },
   );
 }
 
 class BrandTransferRouteArgs {
-  const BrandTransferRouteArgs({
-    this.key,
-    required this.brand,
-  });
+  const BrandTransferRouteArgs({this.key, required this.brand});
 
   final Key? key;
 
@@ -171,10 +142,7 @@ class BrandTransferRouteArgs {
 /// [CreateBrandPage]
 class CreateBrandRoute extends PageRouteInfo<void> {
   const CreateBrandRoute({List<PageRouteInfo>? children})
-      : super(
-          CreateBrandRoute.name,
-          initialChildren: children,
-        );
+    : super(CreateBrandRoute.name, initialChildren: children);
 
   static const String name = 'CreateBrandRoute';
 
@@ -194,13 +162,10 @@ class EditBrandRoute extends PageRouteInfo<EditBrandRouteArgs> {
     required String brandId,
     List<PageRouteInfo>? children,
   }) : super(
-          EditBrandRoute.name,
-          args: EditBrandRouteArgs(
-            key: key,
-            brandId: brandId,
-          ),
-          initialChildren: children,
-        );
+         EditBrandRoute.name,
+         args: EditBrandRouteArgs(key: key, brandId: brandId),
+         initialChildren: children,
+       );
 
   static const String name = 'EditBrandRoute';
 
@@ -208,19 +173,13 @@ class EditBrandRoute extends PageRouteInfo<EditBrandRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<EditBrandRouteArgs>();
-      return EditBrandPage(
-        key: args.key,
-        brandId: args.brandId,
-      );
+      return EditBrandPage(key: args.key, brandId: args.brandId);
     },
   );
 }
 
 class EditBrandRouteArgs {
-  const EditBrandRouteArgs({
-    this.key,
-    required this.brandId,
-  });
+  const EditBrandRouteArgs({this.key, required this.brandId});
 
   final Key? key;
 
@@ -236,10 +195,7 @@ class EditBrandRouteArgs {
 /// [ForgotPasswordPage]
 class ForgotPasswordRoute extends PageRouteInfo<void> {
   const ForgotPasswordRoute({List<PageRouteInfo>? children})
-      : super(
-          ForgotPasswordRoute.name,
-          initialChildren: children,
-        );
+    : super(ForgotPasswordRoute.name, initialChildren: children);
 
   static const String name = 'ForgotPasswordRoute';
 
@@ -255,10 +211,7 @@ class ForgotPasswordRoute extends PageRouteInfo<void> {
 /// [HomePage]
 class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute({List<PageRouteInfo>? children})
-      : super(
-          HomeRoute.name,
-          initialChildren: children,
-        );
+    : super(HomeRoute.name, initialChildren: children);
 
   static const String name = 'HomeRoute';
 
@@ -274,10 +227,7 @@ class HomeRoute extends PageRouteInfo<void> {
 /// [LoginPage]
 class LoginRoute extends PageRouteInfo<void> {
   const LoginRoute({List<PageRouteInfo>? children})
-      : super(
-          LoginRoute.name,
-          initialChildren: children,
-        );
+    : super(LoginRoute.name, initialChildren: children);
 
   static const String name = 'LoginRoute';
 
@@ -293,10 +243,7 @@ class LoginRoute extends PageRouteInfo<void> {
 /// [RegisterPage]
 class RegisterRoute extends PageRouteInfo<void> {
   const RegisterRoute({List<PageRouteInfo>? children})
-      : super(
-          RegisterRoute.name,
-          initialChildren: children,
-        );
+    : super(RegisterRoute.name, initialChildren: children);
 
   static const String name = 'RegisterRoute';
 

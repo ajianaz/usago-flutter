@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../../../core/constants/ui_constants.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_text_styles.dart';
-import '../../../../shared/widgets/animated_button.dart';
 import '../../../../shared/widgets/responsive_builder.dart';
 import '../../domain/entities/brand.dart';
-import '../bloc/brand_bloc.dart';
+// Import routes will be handled by the parent component
 
 /// Brand Card Widget for displaying brand information
 class BrandCard extends StatelessWidget {
@@ -14,6 +14,9 @@ class BrandCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final VoidCallback? onViewStats;
+  final VoidCallback? onViewInvitations;
+  final VoidCallback? onTransfer;
   final bool showOptions;
 
   const BrandCard({
@@ -23,6 +26,9 @@ class BrandCard extends StatelessWidget {
     this.onTap,
     this.onEdit,
     this.onDelete,
+    this.onViewStats,
+    this.onViewInvitations,
+    this.onTransfer,
     this.showOptions = true,
   }) : super(key: key);
 
@@ -71,21 +77,33 @@ class BrandCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           child: Padding(
             padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Brand Logo
-                _buildLogo(context, isMobile),
-                const SizedBox(width: 12),
+                // Main content row
+                Row(
+                  children: [
+                    // Brand Logo
+                    _buildLogo(context, isMobile),
+                    const SizedBox(width: 12),
 
-                // Brand Information
-                Expanded(
-                  child: _buildBrandInfo(context, isMobile),
+                    // Brand Information
+                    Expanded(
+                      child: _buildBrandInfo(context, isMobile),
+                    ),
+
+                    // Options Menu
+                    if (showOptions && !isMobile) ...[
+                      const SizedBox(width: 8),
+                      _buildOptionsMenu(context),
+                    ],
+                  ],
                 ),
 
-                // Options Menu
-                if (showOptions && !isMobile) ...[
-                  const SizedBox(width: 8),
-                  _buildOptionsMenu(context),
+                // Quick Actions
+                if (showOptions) ...[
+                  const SizedBox(height: 12),
+                  _buildQuickActions(context, isMobile),
                 ],
               ],
             ),
@@ -265,6 +283,96 @@ class BrandCard extends StatelessWidget {
     );
   }
 
+  Widget _buildQuickActions(BuildContext context, bool isMobile) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildActionButton(
+          context,
+          'Statistik',
+          FontAwesomeIcons.chartLine,
+          AppColors.info,
+          () {
+            onViewStats?.call();
+          },
+          isMobile,
+        ),
+        _buildActionButton(
+          context,
+          'Undangan',
+          FontAwesomeIcons.envelope,
+          AppColors.warning,
+          () {
+            onViewInvitations?.call();
+          },
+          isMobile,
+        ),
+        _buildActionButton(
+          context,
+          'Transfer',
+          FontAwesomeIcons.rightLeft,
+          AppColors.secondary,
+          () {
+            onTransfer?.call();
+          },
+          isMobile,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButton(
+    BuildContext context,
+    String label,
+    IconData icon,
+    Color color,
+    VoidCallback onPressed,
+    bool isMobile,
+  ) {
+    final buttonSize = isMobile ? 60.0 : 70.0;
+    final iconSize = isMobile ? UIConstants.fontSizeDefault : UIConstants.fontSizeLarge;
+    final fontSize = isMobile ? UIConstants.fontSizeSmall : UIConstants.fontSizeDefault;
+
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(UIConstants.borderRadiusDefault),
+      child: Container(
+        width: buttonSize,
+        height: buttonSize,
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(UIConstants.borderRadiusDefault),
+          border: Border.all(
+            color: color.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: color,
+              size: iconSize,
+            ),
+            const SizedBox(height: UIConstants.spacingTiny),
+            Text(
+              label,
+              style: AppTextStyles.caption.copyWith(
+                color: color,
+                fontWeight: FontWeight.w600,
+                fontSize: fontSize * 0.7,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildOptionsMenu(BuildContext context) {
     return PopupMenuButton<String>(
       icon: Icon(
@@ -274,6 +382,15 @@ class BrandCard extends StatelessWidget {
       ),
       onSelected: (value) {
         switch (value) {
+          case 'stats':
+            onViewStats?.call();
+            break;
+          case 'invitations':
+            onViewInvitations?.call();
+            break;
+          case 'transfer':
+            onTransfer?.call();
+            break;
           case 'edit':
             onEdit?.call();
             break;
@@ -283,6 +400,58 @@ class BrandCard extends StatelessWidget {
         }
       },
       itemBuilder: (BuildContext context) => [
+        PopupMenuItem<String>(
+          value: 'stats',
+          child: Row(
+            children: [
+              Icon(
+                FontAwesomeIcons.chartLine,
+                size: 18,
+                color: AppColors.info,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Lihat Statistik',
+                style: AppTextStyles.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'invitations',
+          child: Row(
+            children: [
+              Icon(
+                FontAwesomeIcons.envelope,
+                size: 18,
+                color: AppColors.warning,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Kelola Undangan',
+                style: AppTextStyles.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'transfer',
+          child: Row(
+            children: [
+              Icon(
+                FontAwesomeIcons.rightLeft,
+                size: 18,
+                color: AppColors.secondary,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Transfer Brand',
+                style: AppTextStyles.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+        const PopupMenuDivider(),
         PopupMenuItem<String>(
           value: 'edit',
           child: Row(

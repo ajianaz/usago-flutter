@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/constants/ui_constants.dart';
+import '../../../../core/di/injection_container.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
@@ -27,10 +28,8 @@ class EditBrandPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<BrandBloc>(
-      create: (context) => BrandBloc(
-        brandRepository: context.read(),
-      ),
+    return BlocProvider.value(
+      value: getIt<BrandBloc>(),
       child: EditBrandView(brandId: brandId),
     );
   }
