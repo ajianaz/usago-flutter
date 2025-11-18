@@ -183,7 +183,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
             // Header
             Container(
               width: double.infinity,
-              padding: EdgeInsets.all(isMobile ? 16.0 : 24.0),
+              padding: EdgeInsets.all(isMobile ? AppSpacing.md : AppSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -211,7 +211,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
             // Form Fields
             Container(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.0 : 24.0),
+                padding: EdgeInsets.symmetric(horizontal: isMobile ? AppSpacing.md : AppSpacing.lg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -299,6 +299,13 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                                 _generateSlug();
                               }
                             },
+                            fillColor: WidgetStateProperty.resolveWith((states) {
+                              if (states.contains(WidgetState.selected)) {
+                                return AppColors.primary;
+                              }
+                              return AppColors.border;
+                            }),
+                            checkColor: AppColors.onPrimary,
                           ),
                           const SizedBox(width: 8),
                           Expanded(
@@ -358,16 +365,19 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                     SizedBox(height: AppSpacing.sm),
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: AppSpacing.radiusSm,
                         border: Border.all(color: AppColors.border),
                       ),
                       child: DropdownButtonHideUnderline(
                         items: _businessTypes.map((type) {
                           return DropdownMenuItem<String>(
                             value: type['value'],
-                            child: Text(type['label']!),
+                            child: Text(
+                              type['label']!,
+                              style: AppTextStyles.bodyMedium,
+                            ),
                           );
                         }).toList(),
                         value: _selectedBusinessType,
@@ -391,16 +401,19 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                     SizedBox(height: AppSpacing.sm),
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: AppSpacing.radiusSm,
                         border: Border.all(color: AppColors.border),
                       ),
                       child: DropdownButtonHideUnderline(
                         items: _timezones.map((timezone) {
                           return DropdownMenuItem<String>(
                             value: timezone['value'],
-                            child: Text(timezone['label']!),
+                            child: Text(
+                              timezone['label']!,
+                              style: AppTextStyles.bodyMedium,
+                            ),
                           );
                         }).toList(),
                         value: _selectedTimezone,
@@ -424,16 +437,19 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                     SizedBox(height: AppSpacing.sm),
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: AppSpacing.radiusSm,
                         border: Border.all(color: AppColors.border),
                       ),
                       child: DropdownButtonHideUnderline(
                         items: _currencies.map((currency) {
                           return DropdownMenuItem<String>(
                             value: currency['value'],
-                            child: Text(currency['label']!),
+                            child: Text(
+                              currency['label']!,
+                              style: AppTextStyles.bodyMedium,
+                            ),
                           );
                         }).toList(),
                         value: _selectedCurrency,
@@ -493,6 +509,12 @@ class DropdownButtonHideUnderline<T> extends StatelessWidget {
       items: items,
       underline: Container(),
       isExpanded: true,
+      style: AppTextStyles.bodyMedium,
+      dropdownColor: AppColors.surface,
+      icon: Icon(
+        Icons.arrow_drop_down,
+        color: AppColors.textSecondary,
+      ),
     );
   }
 }

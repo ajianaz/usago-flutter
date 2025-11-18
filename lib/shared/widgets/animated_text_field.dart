@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../themes/animation_theme.dart';
+import '../themes/app_colors.dart';
+import '../themes/app_text_styles.dart';
+import '../themes/app_spacing.dart';
 import '../../core/constants/animation_constants.dart';
 
 /// Animated text field with focus animations and validation feedback
@@ -101,8 +104,8 @@ class _AnimatedTextFieldState extends State<AnimatedTextField>
     ));
 
     _borderColorAnimation = ColorTween(
-      begin: Colors.grey,
-      end: Colors.blue,
+      begin: AppColors.border,
+      end: AppColors.primary,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: AnimationTheme.inputFocusCurve,
@@ -172,16 +175,16 @@ class _AnimatedTextFieldState extends State<AnimatedTextField>
             AnimatedContainer(
               duration: AnimationTheme.inputFocusDuration,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
+                borderRadius: AppSpacing.radiusSm,
                 border: Border.all(
                   color: _hasError
-                    ? Theme.of(context).colorScheme.error
-                    : _borderColorAnimation.value ?? Colors.grey,
+                    ? AppColors.error
+                    : _borderColorAnimation.value ?? AppColors.border,
                   width: _borderWidthAnimation.value,
                 ),
                 boxShadow: _focusNode.hasFocus ? [
                   BoxShadow(
-                    color: (Theme.of(context).colorScheme.primary).withOpacity(0.2),
+                    color: AppColors.primary.withValues(alpha: 0.2),
                     blurRadius: 8 * _focusAnimation.value,
                     offset: Offset(0, 2 * _focusAnimation.value),
                   ),
@@ -221,7 +224,7 @@ class _AnimatedTextFieldState extends State<AnimatedTextField>
             if (_hasError)
               AnimatedContainer(
                 duration: AnimationConstants.fastDuration,
-                margin: const EdgeInsets.only(top: 4.0),
+                margin: EdgeInsets.only(top: AppSpacing.xs),
                 // Wrap in a flexible container to prevent overflow
                 child: Row(
                   children: [
@@ -230,10 +233,7 @@ class _AnimatedTextFieldState extends State<AnimatedTextField>
                         offset: Offset((_shakeAnimation.value - 0.5) * 10, 0),  // Center the shake and scale it
                         child: Text(
                           _errorMessage ?? '',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                            fontSize: 12,
-                          ),
+                          style: AppTextStyles.error,
                           overflow: TextOverflow.visible,  // Handle text overflow gracefully
                           maxLines: 2,  // Limit lines to prevent excessive height
                         ),
