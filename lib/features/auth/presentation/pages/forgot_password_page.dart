@@ -258,45 +258,37 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
       );
     }
 
-    // Tablet layout (also used for desktop with constraint)
-    return Padding(
+    // Tablet layout (vertical like mobile, but with enhanced spacing)
+    return SingleChildScrollView(
       padding: padding,
-      child: Row(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            flex: 1,
-            child: _buildWelcomeSection(context),
-          ),
-          const SizedBox(width: 32),
-          Expanded(
-            flex: 2,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AnimatedBuilder(
-                  animation: _staggeredAnimations[3],
-                  builder: (context, child) {
-                    return FadeTransition(
-                      opacity: _staggeredAnimations[3],
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0.2, 0.0),
-                          end: Offset.zero,
-                        ).animate(CurvedAnimation(
-                          parent: _contentController,
-                          curve: const Interval(0.3, 0.8, curve: Curves.easeOut),
-                        )),
-                        child: _buildForgotPasswordForm(context, authBloc),
-                      ),
-                    );
-                  },
+          const SizedBox(height: 80),
+          _buildWelcomeSection(context),
+          const SizedBox(height: 60),
+          AnimatedBuilder(
+            animation: _staggeredAnimations[3],
+            builder: (context, child) {
+              return FadeTransition(
+                opacity: _staggeredAnimations[3],
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0.0, 0.2),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(
+                    parent: _contentController,
+                    curve: const Interval(0.3, 0.8, curve: Curves.easeOut),
+                  )),
+                  child: _buildForgotPasswordForm(context, authBloc),
                 ),
-                const SizedBox(height: 24),
-                _buildBackToLoginLink(context),
-              ],
-            ),
+              );
+            },
           ),
+          const SizedBox(height: 32),
+          _buildBackToLoginLink(context),
+          const SizedBox(height: 40),
         ],
       ),
     );
