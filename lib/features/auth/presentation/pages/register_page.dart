@@ -5,7 +5,7 @@ import '../../../../app/router.dart';
 import '../../../../core/constants/animation_constants.dart';
 import '../../../../core/extensions/context_extension.dart';
 import '../../../../shared/widgets/bloc_responsive_layout.dart';
-import '../../../../shared/widgets/responsive_builder.dart';
+import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../../../../shared/widgets/language_switcher.dart';
 import '../../../../shared/widgets/theme_switcher.dart';
 import '../../../../shared/widgets/animated_feedback.dart';
@@ -189,84 +189,57 @@ class _RegisterPageState extends State<RegisterPage>
       return const Center(child: CircularProgressIndicator());
     }
 
-    switch (deviceType) {
-      case DeviceType.desktop:
-        return _buildDesktopLayout(context, authBloc);
-      case DeviceType.tablet:
-        return _buildTabletLayout(context, authBloc);
-      case DeviceType.mobile:
-        return _buildMobileLayout(context, authBloc);
+    final content = _buildUnconstrainedContent(context, deviceType);
+
+    // Apply desktop constraint
+    if (deviceType == DeviceType.desktop) {
+      return DesktopConstrainedContent(child: content);
     }
+
+    return content;
   }
 
-  Widget _buildDesktopLayout(BuildContext context, AuthBloc authBloc) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1200),
-        child: Container(
-          margin: const EdgeInsets.all(32.0),
-          padding: const EdgeInsets.all(48.0),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(16.0),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              // Left side - Welcome Section
-              Expanded(
-                flex: 1,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 48.0),
-                  child: _buildWelcomeSection(context),
-                ),
-              ),
-              // Right side - Register Form
-              Expanded(
-                flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AnimatedBuilder(
-                      animation: _staggeredAnimations[3],
-                      builder: (context, child) {
-                        return FadeTransition(
-                          opacity: _staggeredAnimations[3],
-                          child: SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(0.2, 0.0),
-                              end: Offset.zero,
-                            ).animate(CurvedAnimation(
-                              parent: _contentController,
-                              curve: const Interval(0.3, 0.8, curve: Curves.easeOut),
-                            )),
-                            child: const RegisterForm(),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    _buildLoginLink(context),
-                  ],
-                ),
-              ),
-            ],
-          ),
+  Widget _buildUnconstrainedContent(BuildContext context, DeviceType deviceType) {
+    final padding = _getPaddingForDeviceType(deviceType);
+
+    if (deviceType == DeviceType.mobile) {
+      return SingleChildScrollView(
+        padding: padding,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 60),
+            _buildWelcomeSection(context),
+            const SizedBox(height: 40),
+            AnimatedBuilder(
+              animation: _staggeredAnimations[3],
+              builder: (context, child) {
+                return FadeTransition(
+                  opacity: _staggeredAnimations[3],
+                  child: SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0.0, 0.2),
+                      end: Offset.zero,
+                    ).animate(CurvedAnimation(
+                      parent: _contentController,
+                      curve: const Interval(0.3, 0.8, curve: Curves.easeOut),
+                    )),
+                    child: const RegisterForm(),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 24),
+            _buildLoginLink(context),
+          ],
         ),
-      ),
-    );
-  }
+      );
+    }
 
-  Widget _buildTabletLayout(BuildContext context, AuthBloc authBloc) {
+    // Tablet layout (also used for desktop with constraint)
     return Padding(
-      padding: const EdgeInsets.all(32.0),
+      padding: padding,
       child: Row(
         children: [
           Expanded(
@@ -308,39 +281,16 @@ class _RegisterPageState extends State<RegisterPage>
     );
   }
 
-  Widget _buildMobileLayout(BuildContext context, AuthBloc authBloc) {
-    return SingleChildScrollView(
-      padding: context.responsivePadding,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 60),
-          _buildWelcomeSection(context),
-          const SizedBox(height: 40),
-          AnimatedBuilder(
-            animation: _staggeredAnimations[3],
-            builder: (context, child) {
-              return FadeTransition(
-                opacity: _staggeredAnimations[3],
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0.0, 0.2),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: _contentController,
-                    curve: const Interval(0.3, 0.8, curve: Curves.easeOut),
-                  )),
-                  child: const RegisterForm(),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 24),
-          _buildLoginLink(context),
-        ],
-      ),
-    );
+  EdgeInsets _getPaddingForDeviceType(DeviceType deviceType) {
+    switch (deviceType) {
+      case DeviceType.mobile:
+        return context.responsivePadding;
+      case DeviceType.tablet:
+        return const EdgeInsets.all(32.0);
+      case DeviceType.desktop:
+        // Desktop content will be constrained, so we don't need special padding here
+        return EdgeInsets.zero;
+    }
   }
 
   Widget _buildWelcomeSection(BuildContext context) {

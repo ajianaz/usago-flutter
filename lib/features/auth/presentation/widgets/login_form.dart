@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/widgets/animated_button.dart';
 import '../../../../shared/widgets/animated_text_field.dart';
+import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -55,7 +56,7 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
+    final formContent = Form(
       key: _formKey,
       child: Column(
         children: [
@@ -67,7 +68,11 @@ class _LoginFormState extends State<LoginForm> {
             hintText: context.t.enterYourEmail,
             prefixIcon: Icon(
               FontAwesomeIcons.envelope,
-              size: 20,
+              size: context.responsiveValue(
+                mobile: 20.0,
+                tablet: 22.0,
+                desktop: 24.0,
+              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -80,7 +85,7 @@ class _LoginFormState extends State<LoginForm> {
             },
           ),
 
-          SizedBox(height: AppSpacing.md),
+          SizedBox(height: _getSpacing(context)),
 
           // Password field
           AnimatedTextField(
@@ -90,12 +95,20 @@ class _LoginFormState extends State<LoginForm> {
             hintText: context.t.enterYourPassword,
             prefixIcon: Icon(
               FontAwesomeIcons.lock,
-              size: 20,
+              size: context.responsiveValue(
+                mobile: 20.0,
+                tablet: 22.0,
+                desktop: 24.0,
+              ),
             ),
             suffixIcon: IconButton(
               icon: Icon(
                 _obscurePassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
-                size: 20,
+                size: context.responsiveValue(
+                  mobile: 20.0,
+                  tablet: 22.0,
+                  desktop: 24.0,
+                ),
               ),
               onPressed: _togglePasswordVisibility,
             ),
@@ -110,7 +123,7 @@ class _LoginFormState extends State<LoginForm> {
             },
           ),
 
-          SizedBox(height: AppSpacing.lg),
+          SizedBox(height: _getLargeSpacing(context)),
 
           // Login button
           BlocBuilder<AuthBloc, AuthState>(
@@ -120,22 +133,57 @@ class _LoginFormState extends State<LoginForm> {
                 isLoading: state is AuthLoading,
                 onPressed: _submitForm,
                 isFullWidth: true,
-                size: AnimatedButtonSize.medium,
+                size: _getButtonSize(context),
               );
             },
           ),
 
-          SizedBox(height: AppSpacing.md),
+          SizedBox(height: _getSpacing(context)),
 
           // Forgot password link
           TextButton(
             onPressed: () {
               context.router.pushNamed('/forgot-password');
             },
-            child: Text(context.t.authForgotPassword),
+            child: Text(
+              context.t.authForgotPassword,
+              style: TextStyle(
+                fontSize: context.responsiveFontSize(14),
+              ),
+            ),
           ),
         ],
       ),
     );
+
+    // Apply desktop constraint if needed
+    if (context.isDesktop) {
+      return DesktopConstrainedContent(child: formContent);
+    }
+
+    return formContent;
+  }
+
+  double _getSpacing(BuildContext context) {
+    return context.responsiveValue(
+      mobile: AppSpacing.md,
+      tablet: AppSpacing.lg,
+      desktop: AppSpacing.xl,
+    );
+  }
+
+  double _getLargeSpacing(BuildContext context) {
+    return context.responsiveValue(
+      mobile: AppSpacing.lg,
+      tablet: AppSpacing.xl,
+      desktop: AppSpacing.xxl,
+    );
+  }
+
+  AnimatedButtonSize _getButtonSize(BuildContext context) {
+    if (context.isMobile) {
+      return AnimatedButtonSize.medium;
+    }
+    return AnimatedButtonSize.large;
   }
 }

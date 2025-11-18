@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/widgets/animated_button.dart';
 import '../../../../shared/widgets/animated_text_field.dart';
+import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -49,7 +50,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
+    final formContent = Form(
       key: _formKey,
       child: Column(
         children: [
@@ -59,7 +60,11 @@ class _RegisterFormState extends State<RegisterForm> {
             hintText: context.t.enterYourName,
             prefixIcon: Icon(
               FontAwesomeIcons.user,
-              size: 20,
+              size: context.responsiveValue(
+                mobile: 20.0,
+                tablet: 22.0,
+                desktop: 24.0,
+              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -69,7 +74,7 @@ class _RegisterFormState extends State<RegisterForm> {
             },
           ),
 
-          SizedBox(height: AppSpacing.md),
+          SizedBox(height: _getSpacing(context)),
 
           AnimatedTextField(
             controller: _emailController,
@@ -77,7 +82,11 @@ class _RegisterFormState extends State<RegisterForm> {
             hintText: context.t.enterYourEmail,
             prefixIcon: Icon(
               FontAwesomeIcons.envelope,
-              size: 20,
+              size: context.responsiveValue(
+                mobile: 20.0,
+                tablet: 22.0,
+                desktop: 24.0,
+              ),
             ),
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
@@ -91,7 +100,7 @@ class _RegisterFormState extends State<RegisterForm> {
             },
           ),
 
-          SizedBox(height: AppSpacing.md),
+          SizedBox(height: _getSpacing(context)),
 
           AnimatedTextField(
             controller: _passwordController,
@@ -100,12 +109,20 @@ class _RegisterFormState extends State<RegisterForm> {
             hintText: context.t.enterYourPassword,
             prefixIcon: Icon(
               FontAwesomeIcons.lock,
-              size: 20,
+              size: context.responsiveValue(
+                mobile: 20.0,
+                tablet: 22.0,
+                desktop: 24.0,
+              ),
             ),
             suffixIcon: IconButton(
               icon: Icon(
                 _obscurePassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
-                size: 20,
+                size: context.responsiveValue(
+                  mobile: 20.0,
+                  tablet: 22.0,
+                  desktop: 24.0,
+                ),
               ),
               onPressed: () {
                 setState(() {
@@ -124,7 +141,7 @@ class _RegisterFormState extends State<RegisterForm> {
             },
           ),
 
-          SizedBox(height: AppSpacing.md),
+          SizedBox(height: _getSpacing(context)),
 
           AnimatedTextField(
             controller: _confirmPasswordController,
@@ -133,12 +150,20 @@ class _RegisterFormState extends State<RegisterForm> {
             hintText: context.t.confirmYourPassword,
             prefixIcon: Icon(
               FontAwesomeIcons.lock,
-              size: 20,
+              size: context.responsiveValue(
+                mobile: 20.0,
+                tablet: 22.0,
+                desktop: 24.0,
+              ),
             ),
             suffixIcon: IconButton(
               icon: Icon(
                 _obscureConfirmPassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
-                size: 20,
+                size: context.responsiveValue(
+                  mobile: 20.0,
+                  tablet: 22.0,
+                  desktop: 24.0,
+                ),
               ),
               onPressed: () {
                 setState(() {
@@ -157,7 +182,7 @@ class _RegisterFormState extends State<RegisterForm> {
             },
           ),
 
-          SizedBox(height: AppSpacing.lg),
+          SizedBox(height: _getLargeSpacing(context)),
 
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
@@ -166,11 +191,42 @@ class _RegisterFormState extends State<RegisterForm> {
                 isLoading: state is AuthLoading,
                 isFullWidth: true,
                 onPressed: _submitForm,
+                size: _getButtonSize(context),
               );
             },
           ),
         ],
       ),
     );
+
+    // Apply desktop constraint if needed
+    if (context.isDesktop) {
+      return DesktopConstrainedContent(child: formContent);
+    }
+
+    return formContent;
+  }
+
+  double _getSpacing(BuildContext context) {
+    return context.responsiveValue(
+      mobile: AppSpacing.md,
+      tablet: AppSpacing.lg,
+      desktop: AppSpacing.xl,
+    );
+  }
+
+  double _getLargeSpacing(BuildContext context) {
+    return context.responsiveValue(
+      mobile: AppSpacing.lg,
+      tablet: AppSpacing.xl,
+      desktop: AppSpacing.xxl,
+    );
+  }
+
+  AnimatedButtonSize _getButtonSize(BuildContext context) {
+    if (context.isMobile) {
+      return AnimatedButtonSize.medium;
+    }
+    return AnimatedButtonSize.large;
   }
 }
