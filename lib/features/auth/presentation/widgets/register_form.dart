@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../shared/themes/app_spacing.dart';
-import '../../../../shared/widgets/custom_button.dart';
+import '../../../../shared/widgets/animated_button.dart';
+import '../../../../shared/widgets/animated_text_field.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -52,22 +53,13 @@ class _RegisterFormState extends State<RegisterForm> {
       key: _formKey,
       child: Column(
         children: [
-          TextFormField(
+          AnimatedTextField(
             controller: _nameController,
-            decoration: InputDecoration(
-              labelText: context.t.name,
-              hintText: context.t.enterYourName,
-              prefixIcon: Icon(
-                FontAwesomeIcons.user,
-                size: 20,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 16.0,
-              ),
+            labelText: context.t.name,
+            hintText: context.t.enterYourName,
+            prefixIcon: Icon(
+              FontAwesomeIcons.user,
+              size: 20,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -79,22 +71,13 @@ class _RegisterFormState extends State<RegisterForm> {
 
           SizedBox(height: AppSpacing.md),
 
-          TextFormField(
+          AnimatedTextField(
             controller: _emailController,
-            decoration: InputDecoration(
-              labelText: context.t.authEmail,
-              hintText: context.t.enterYourEmail,
-              prefixIcon: Icon(
-                FontAwesomeIcons.envelope,
-                size: 20,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 16.0,
-              ),
+            labelText: context.t.authEmail,
+            hintText: context.t.enterYourEmail,
+            prefixIcon: Icon(
+              FontAwesomeIcons.envelope,
+              size: 20,
             ),
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
@@ -110,34 +93,25 @@ class _RegisterFormState extends State<RegisterForm> {
 
           SizedBox(height: AppSpacing.md),
 
-          TextFormField(
+          AnimatedTextField(
             controller: _passwordController,
             obscureText: _obscurePassword,
-            decoration: InputDecoration(
-              labelText: context.t.authPassword,
-              hintText: context.t.enterYourPassword,
-              prefixIcon: Icon(
-                FontAwesomeIcons.lock,
+            labelText: context.t.authPassword,
+            hintText: context.t.enterYourPassword,
+            prefixIcon: Icon(
+              FontAwesomeIcons.lock,
+              size: 20,
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscurePassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
                 size: 20,
               ),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscurePassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
-                  size: 20,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscurePassword = !_obscurePassword;
-                  });
-                },
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 16.0,
-              ),
+              onPressed: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -152,34 +126,25 @@ class _RegisterFormState extends State<RegisterForm> {
 
           SizedBox(height: AppSpacing.md),
 
-          TextFormField(
+          AnimatedTextField(
             controller: _confirmPasswordController,
             obscureText: _obscureConfirmPassword,
-            decoration: InputDecoration(
-              labelText: context.t.confirmPassword,
-              hintText: context.t.confirmYourPassword,
-              prefixIcon: Icon(
-                FontAwesomeIcons.lock,
+            labelText: context.t.confirmPassword,
+            hintText: context.t.confirmYourPassword,
+            prefixIcon: Icon(
+              FontAwesomeIcons.lock,
+              size: 20,
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscureConfirmPassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
                 size: 20,
               ),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscureConfirmPassword ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
-                  size: 20,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscureConfirmPassword = !_obscureConfirmPassword;
-                  });
-                },
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 16.0,
-              ),
+              onPressed: () {
+                setState(() {
+                  _obscureConfirmPassword = !_obscureConfirmPassword;
+                });
+              },
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -196,9 +161,10 @@ class _RegisterFormState extends State<RegisterForm> {
 
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
-              return CustomButton(
+              return AnimatedButton(
                 text: context.t.authRegister,
                 isLoading: state is AuthLoading,
+                isFullWidth: true,
                 onPressed: _submitForm,
               );
             },

@@ -2,11 +2,15 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../app/router.dart';
+import '../../../../core/constants/animation_constants.dart';
 import '../../../../core/extensions/context_extension.dart';
 import '../../../../shared/widgets/bloc_responsive_layout.dart';
 import '../../../../shared/widgets/responsive_builder.dart';
 import '../../../../shared/widgets/language_switcher.dart';
 import '../../../../shared/widgets/theme_switcher.dart';
+import '../../../../shared/widgets/animated_feedback.dart';
+import '../../../../shared/themes/animation_theme.dart';
+import '../../../../shared/utils/animation_utils.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/login_form.dart';
@@ -14,20 +18,110 @@ import '../widgets/login_form.dart';
 /// Login Page
 /// Handles user authentication with responsive design
 @RoutePage()
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage>
+    with TickerProviderStateMixin {
+  late AnimationController _pageEntryController;
+  late AnimationController _contentController;
+  late Animation<double> _pageFadeAnimation;
+  late Animation<Offset> _pageSlideAnimation;
+  late Animation<double> _contentFadeAnimation;
+  late Animation<Offset> _contentSlideAnimation;
+  late List<Animation<double>> _staggeredAnimations;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pageEntryController = AnimationController(
+      duration: AnimationTheme.pageTransitionDuration,
+      vsync: this,
+    );
+
+    _contentController = AnimationController(
+      duration: AnimationConstants.slowDuration,
+      vsync: this,
+    );
+
+    _pageFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _pageEntryController,
+      curve: AnimationTheme.pageTransitionCurve,
+    ));
+
+    _pageSlideAnimation = Tween<Offset>(
+      begin: const Offset(0.0, 0.1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _pageEntryController,
+      curve: AnimationTheme.pageTransitionCurve,
+    ));
+
+    _contentFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _contentController,
+      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+    ));
+
+    _contentSlideAnimation = Tween<Offset>(
+      begin: const Offset(0.0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _contentController,
+      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+    ));
+
+    _staggeredAnimations = AnimationUtils.createStaggeredAnimations(
+      controller: _contentController,
+      count: 4,
+      staggerDelay: const Duration(milliseconds: 150),
+    );
+
+    // Start animations
+    _pageEntryController.forward().then((_) {
+      _contentController.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageEntryController.dispose();
+    _contentController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocResponsiveLayout<AuthBloc, AuthState>(
-      builder: (context, authBloc, state, deviceType) {
-        return Scaffold(
-          appBar: _buildAppBar(context),
-          body: _buildBody(context, authBloc, state, deviceType),
+    return AnimatedBuilder(
+      animation: _pageEntryController,
+      builder: (context, child) {
+        return BlocResponsiveLayout<AuthBloc, AuthState>(
+          builder: (context, authBloc, state, deviceType) {
+            return FadeTransition(
+              opacity: _pageFadeAnimation,
+              child: SlideTransition(
+                position: _pageSlideAnimation,
+                child: Scaffold(
+                  appBar: _buildAppBar(context),
+                  body: _buildBody(context, authBloc, state, deviceType),
+                ),
+              ),
+            );
+          },
+          listener: (context, state) {
+            _handleAuthStates(context, state);
+          },
         );
-      },
-      listener: (context, state) {
-        _handleAuthStates(context, state);
       },
     );
   }
@@ -53,12 +147,57 @@ class LoginPage extends StatelessWidget {
 
   void _handleAuthStates(BuildContext context, AuthState state) {
     if (state is AuthSuccess) {
-      context.router.replace(const HomeRoute());
+      _showSuccessFeedback(context);
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        context.router.replace(const HomeRoute());
+      });
     } else if (state is AuthFailure) {
-      context.showErrorSnackBar(state.message);
+      _showErrorFeedback(context, state.message);
     } else if (state is PasswordResetEmailSent) {
-      context.showSuccessSnackBar('Password reset email sent to ${state.email}');
+      _showInfoFeedback(context, 'Password reset email sent to ${state.email}');
     }
+  }
+
+  void _showSuccessFeedback(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: AnimatedToast(
+          message: 'Login successful! Redirecting...',
+          type: FeedbackType.success,
+          duration: const Duration(milliseconds: 1500),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+    );
+  }
+
+  void _showErrorFeedback(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: AnimatedToast(
+          message: message,
+          type: FeedbackType.error,
+          duration: const Duration(seconds: 3),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+    );
+  }
+
+  void _showInfoFeedback(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: AnimatedToast(
+          message: message,
+          type: FeedbackType.info,
+          duration: const Duration(seconds: 3),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+    );
   }
 
   Widget _buildBody(BuildContext context, AuthBloc authBloc, AuthState state, DeviceType deviceType) {
@@ -77,44 +216,67 @@ class LoginPage extends StatelessWidget {
   }
 
   Widget _buildDesktopLayout(BuildContext context, AuthBloc authBloc) {
-    return Row(
-      children: [
-        // Left side - Login Form
-        Expanded(
-          flex: 1,
-          child: Padding(
-            padding: context.responsivePadding,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const LoginForm(),
-                const SizedBox(height: 16),
-                _buildForgotPasswordLink(context),
-                const SizedBox(height: 8),
-                _buildRegisterLink(context),
-              ],
-            ),
-          ),
-        ),
-        // Right side - Welcome Section
-        Expanded(
-          flex: 1,
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  context.colorScheme.primary.withOpacity(0.1),
-                  context.colorScheme.secondary.withOpacity(0.1),
-                ],
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1200),
+        child: Container(
+          margin: const EdgeInsets.all(32.0),
+          padding: const EdgeInsets.all(48.0),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(16.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
-            ),
-            child: _buildWelcomeSection(context),
+            ],
+          ),
+          child: Row(
+            children: [
+              // Left side - Welcome Section (now on left)
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 48.0),
+                  child: _buildWelcomeSection(context),
+                ),
+              ),
+              // Right side - Login Form
+              Expanded(
+                flex: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AnimatedBuilder(
+                      animation: _staggeredAnimations[3],
+                      builder: (context, child) {
+                        return FadeTransition(
+                          opacity: _staggeredAnimations[3],
+                          child: SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(0.2, 0.0),
+                              end: Offset.zero,
+                            ).animate(CurvedAnimation(
+                              parent: _contentController,
+                              curve: const Interval(0.3, 0.8, curve: Curves.easeOut),
+                            )),
+                            child: const LoginForm(),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    _buildRegisterLink(context),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -124,23 +286,38 @@ class LoginPage extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
+            flex: 1,
+            child: _buildWelcomeSection(context),
+          ),
+          const SizedBox(width: 32),
+          Expanded(
             flex: 2,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const LoginForm(),
-                const SizedBox(height: 16),
-                _buildForgotPasswordLink(context),
-                const SizedBox(height: 8),
+                AnimatedBuilder(
+                  animation: _staggeredAnimations[3],
+                  builder: (context, child) {
+                    return FadeTransition(
+                      opacity: _staggeredAnimations[3],
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0.2, 0.0),
+                          end: Offset.zero,
+                        ).animate(CurvedAnimation(
+                          parent: _contentController,
+                          curve: const Interval(0.3, 0.8, curve: Curves.easeOut),
+                        )),
+                        child: const LoginForm(),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
                 _buildRegisterLink(context),
               ],
             ),
-          ),
-          const SizedBox(width: 32),
-          Expanded(
-            flex: 1,
-            child: _buildWelcomeSection(context),
           ),
         ],
       ),
@@ -157,51 +334,98 @@ class LoginPage extends StatelessWidget {
           const SizedBox(height: 60),
           _buildWelcomeSection(context),
           const SizedBox(height: 40),
-          const LoginForm(),
-          const SizedBox(height: 16),
-          _buildForgotPasswordLink(context),
-          const SizedBox(height: 8),
+          AnimatedBuilder(
+            animation: _staggeredAnimations[3],
+            builder: (context, child) {
+              return FadeTransition(
+                opacity: _staggeredAnimations[3],
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0.0, 0.2),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(
+                    parent: _contentController,
+                    curve: const Interval(0.3, 0.8, curve: Curves.easeOut),
+                  )),
+                  child: const LoginForm(),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 24),
           _buildRegisterLink(context),
         ],
       ),
     );
   }
 
-  Widget _buildLoginForm(BuildContext context, AuthBloc authBloc) {
-    return const LoginForm();
-  }
 
   Widget _buildWelcomeSection(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          FontAwesomeIcons.lock,
-          size: context.responsiveValue(
-            mobile: 48.0,
-            tablet: 64.0,
-            desktop: 96.0,
+    return AnimatedBuilder(
+      animation: Listenable.merge([_contentFadeAnimation, _contentSlideAnimation]),
+      builder: (context, child) {
+        return FadeTransition(
+          opacity: _contentFadeAnimation,
+          child: SlideTransition(
+            position: _contentSlideAnimation,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedBuilder(
+                  animation: _staggeredAnimations[0],
+                  builder: (context, child) {
+                    return Transform.scale(
+                      scale: 0.8 + (_staggeredAnimations[0].value * 0.2),
+                      child: Icon(
+                        FontAwesomeIcons.lock,
+                        size: context.responsiveValue(
+                          mobile: 48.0,
+                          tablet: 64.0,
+                          desktop: 96.0,
+                        ),
+                        color: context.colorScheme.primary,
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 16),
+                AnimatedBuilder(
+                  animation: _staggeredAnimations[1],
+                  builder: (context, child) {
+                    return FadeTransition(
+                      opacity: _staggeredAnimations[1],
+                      child: Text(
+                        context.t.authWelcomeBack,
+                        style: context.textTheme.headlineMedium?.copyWith(
+                          fontSize: context.responsiveFontSize(24),
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 8),
+                AnimatedBuilder(
+                  animation: _staggeredAnimations[2],
+                  builder: (context, child) {
+                    return FadeTransition(
+                      opacity: _staggeredAnimations[2],
+                      child: Text(
+                        context.t.authSignInToContinue,
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          fontSize: context.responsiveFontSize(16),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
-          color: context.colorScheme.primary,
-        ),
-        const SizedBox(height: 16),
-        Text(
-          context.t.authWelcomeBack,
-          style: context.textTheme.headlineMedium?.copyWith(
-            fontSize: context.responsiveFontSize(24),
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          context.t.authSignInToContinue,
-          style: context.textTheme.bodyMedium?.copyWith(
-            fontSize: context.responsiveFontSize(16),
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -217,18 +441,6 @@ class LoginPage extends StatelessWidget {
           child: Text(context.t.authRegister),
         ),
       ],
-    );
-  }
-
-  Widget _buildForgotPasswordLink(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: TextButton(
-        onPressed: () {
-          context.router.pushNamed('/forgot-password');
-        },
-        child: Text(context.t.authForgotPassword),
-      ),
     );
   }
 }
