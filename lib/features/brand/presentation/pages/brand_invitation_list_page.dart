@@ -8,6 +8,7 @@ import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/widgets/bloc_responsive_layout.dart';
+import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../../domain/entities/brand.dart';
 import '../../domain/entities/brand_invitation.dart';
 import '../bloc/brand_bloc.dart';
@@ -31,17 +32,42 @@ class BrandInvitationListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: getIt<BrandBloc>(),
-      child: BrandInvitationListView(brand: brand),
+      child: BlocResponsiveLayout<BrandBloc, BrandState>(
+        builder: (context, bloc, state, deviceType) {
+          return BrandInvitationListView(brand: brand, deviceType: deviceType);
+        },
+        listener: (context, state) {
+          if (state is BrandOperationSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.success,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          } else if (state is BrandError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.error,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }
 
 class BrandInvitationListView extends StatefulWidget {
   final Brand brand;
+  final DeviceType deviceType;
 
   const BrandInvitationListView({
     Key? key,
     required this.brand,
+    required this.deviceType,
   }) : super(key: key);
 
   @override
@@ -71,34 +97,18 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
 
   @override
   Widget build(BuildContext context) {
-    return BlocResponsiveLayoutListener<BrandBloc, BrandState>(
-      listener: (context, state) {
-        if (state is BrandOperationSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.success,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        } else if (state is BrandError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        }
-      },
-      builder: (context, deviceType) {
-        return _buildContent(context, deviceType);
-      },
-    );
+    final content = _buildContent(context);
+
+    // Apply desktop constraint
+    if (widget.deviceType == DeviceType.desktop) {
+      return DesktopConstrainedContent(child: content);
+    }
+
+    return content;
   }
 
-  Widget _buildContent(BuildContext context, DeviceType deviceType) {
-    final isMobile = deviceType == DeviceType.mobile;
+  Widget _buildContent(BuildContext context) {
+    final isMobile = widget.deviceType == DeviceType.mobile;
 
     return Scaffold(
       appBar: AppBar(
@@ -151,8 +161,8 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildReceivedInvitations(context, deviceType),
-          _buildSentInvitations(context, deviceType),
+          _buildReceivedInvitations(context),
+          _buildSentInvitations(context),
         ],
       ),
       floatingActionButton: isMobile
@@ -168,8 +178,8 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
     );
   }
 
-  Widget _buildReceivedInvitations(BuildContext context, DeviceType deviceType) {
-    final isMobile = deviceType == DeviceType.mobile;
+  Widget _buildReceivedInvitations(BuildContext context) {
+    final isMobile = widget.deviceType == DeviceType.mobile;
 
     return BlocBuilder<BrandBloc, BrandState>(
       builder: (context, state) {
@@ -199,7 +209,6 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
             },
             child: _buildInvitationList(
               context,
-              deviceType,
               invitations,
               true,
             ),
@@ -216,8 +225,8 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
     );
   }
 
-  Widget _buildSentInvitations(BuildContext context, DeviceType deviceType) {
-    final isMobile = deviceType == DeviceType.mobile;
+  Widget _buildSentInvitations(BuildContext context) {
+    final isMobile = widget.deviceType == DeviceType.mobile;
 
     return BlocBuilder<BrandBloc, BrandState>(
       builder: (context, state) {
@@ -247,7 +256,6 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
             },
             child: _buildInvitationList(
               context,
-              deviceType,
               invitations,
               false,
             ),
@@ -266,11 +274,10 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
 
   Widget _buildInvitationList(
     BuildContext context,
-    DeviceType deviceType,
     List<BrandInvitation> invitations,
     bool isReceived,
   ) {
-    final isMobile = deviceType == DeviceType.mobile;
+    final isMobile = widget.deviceType == DeviceType.mobile;
 
     if (isMobile) {
       return ListView.builder(

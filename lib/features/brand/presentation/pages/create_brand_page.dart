@@ -7,7 +7,7 @@ import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/widgets/bloc_responsive_layout.dart';
-import '../../../../shared/widgets/responsive_builder.dart';
+import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../bloc/brand_bloc.dart';
 import '../bloc/brand_state.dart';
 import '../widgets/create_brand_form.dart';
@@ -20,22 +20,10 @@ class CreateBrandPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const CreateBrandView();
-  }
-}
-
-class CreateBrandView extends StatefulWidget {
-  const CreateBrandView({super.key});
-
-  @override
-  State<CreateBrandView> createState() => _CreateBrandViewState();
-}
-
-class _CreateBrandViewState extends State<CreateBrandView> {
-  @override
-  Widget build(BuildContext context) {
-    return BlocResponsiveLayoutListener<BrandBloc, BrandState>(
-      bloc: context.read<BrandBloc>(),
+    return BlocResponsiveLayout<BrandBloc, BrandState>(
+      builder: (context, bloc, state, deviceType) {
+        return CreateBrandView(deviceType: deviceType);
+      },
       listener: (context, state) {
         if (state is BrandOperationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -62,14 +50,33 @@ class _CreateBrandViewState extends State<CreateBrandView> {
           );
         }
       },
-      builder: (context, deviceType) {
-        return _buildContent(context, deviceType);
-      },
     );
   }
+}
 
-  Widget _buildContent(BuildContext context, DeviceType deviceType) {
+class CreateBrandView extends StatefulWidget {
+  final DeviceType deviceType;
 
+  const CreateBrandView({super.key, required this.deviceType});
+
+  @override
+  State<CreateBrandView> createState() => _CreateBrandViewState();
+}
+
+class _CreateBrandViewState extends State<CreateBrandView> {
+  @override
+  Widget build(BuildContext context) {
+    final content = _buildContent(context);
+
+    // Apply desktop constraint
+    if (widget.deviceType == DeviceType.desktop) {
+      return DesktopConstrainedContent(child: content);
+    }
+
+    return content;
+  }
+
+  Widget _buildContent(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -89,16 +96,12 @@ class _CreateBrandViewState extends State<CreateBrandView> {
           onPressed: () => context.router.maybePop(),
         ),
       ),
-      body: ResponsiveBuilder(
-        builder: (context, deviceType) {
-          return _buildForm(context, deviceType);
-        },
-      ),
+      body: _buildForm(context),
     );
   }
 
-  Widget _buildForm(BuildContext context, DeviceType deviceType) {
-    final isMobile = deviceType == DeviceType.mobile;
+  Widget _buildForm(BuildContext context) {
+    final isMobile = widget.deviceType == DeviceType.mobile;
 
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -192,7 +195,7 @@ class _CreateBrandViewState extends State<CreateBrandView> {
                   SizedBox(height: AppSpacing.lg),
 
                   // Brand Form
-                  const CreateBrandForm(),
+                  CreateBrandForm(deviceType: widget.deviceType),
                 ],
               ),
             ),

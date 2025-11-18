@@ -15,10 +15,12 @@ import '../bloc/brand_event.dart';
 /// Handles brand creation and editing with validation and auto-slug generation
 class CreateBrandForm extends StatefulWidget {
   final Brand? brand; // Add brand parameter for edit mode
+  final DeviceType deviceType;
 
   const CreateBrandForm({
     Key? key,
     this.brand, // Optional brand for edit mode
+    required this.deviceType,
   }) : super(key: key);
 
   @override
@@ -145,11 +147,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveBuilder(
-      builder: (context, deviceType) {
-        return _buildForm(context, deviceType);
-      },
-    );
+    return _buildForm(context, widget.deviceType);
   }
 
   Widget _buildForm(BuildContext context, DeviceType deviceType) {

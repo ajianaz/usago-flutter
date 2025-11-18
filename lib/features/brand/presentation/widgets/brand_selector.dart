@@ -13,6 +13,7 @@ class BrandSelector extends StatelessWidget {
   final Function(Brand)? onBrandSelected;
   final bool showActiveIndicator;
   final bool isCompact;
+  final DeviceType deviceType;
 
   const BrandSelector({
     Key? key,
@@ -21,6 +22,7 @@ class BrandSelector extends StatelessWidget {
     this.onBrandSelected,
     this.showActiveIndicator = true,
     this.isCompact = false,
+    required this.deviceType,
   }) : super(key: key);
 
   @override
@@ -29,13 +31,9 @@ class BrandSelector extends StatelessWidget {
       return _buildEmptyState(context);
     }
 
-    return ResponsiveBuilder(
-      builder: (context, deviceType) {
-        return isCompact
-            ? _buildCompactSelector(context, deviceType)
-            : _buildFullSelector(context, deviceType);
-      },
-    );
+    return isCompact
+        ? _buildCompactSelector(context)
+        : _buildFullSelector(context);
   }
 
   Widget _buildEmptyState(BuildContext context) {
@@ -65,7 +63,7 @@ class BrandSelector extends StatelessWidget {
     );
   }
 
-  Widget _buildCompactSelector(BuildContext context, DeviceType deviceType) {
+  Widget _buildCompactSelector(BuildContext context) {
     return PopupMenuButton<Brand>(
       icon: _buildCurrentBrandIndicator(),
       onSelected: (brand) {
@@ -121,7 +119,7 @@ class BrandSelector extends StatelessWidget {
     );
   }
 
-  Widget _buildFullSelector(BuildContext context, DeviceType deviceType) {
+  Widget _buildFullSelector(BuildContext context) {
     final isMobile = deviceType == DeviceType.mobile;
 
     return Container(

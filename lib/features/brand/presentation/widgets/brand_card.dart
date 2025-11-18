@@ -18,6 +18,7 @@ class BrandCard extends StatelessWidget {
   final VoidCallback? onViewInvitations;
   final VoidCallback? onTransfer;
   final bool showOptions;
+  final DeviceType deviceType;
 
   const BrandCard({
     Key? key,
@@ -30,15 +31,12 @@ class BrandCard extends StatelessWidget {
     this.onViewInvitations,
     this.onTransfer,
     this.showOptions = true,
+    required this.deviceType,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveBuilder(
-      builder: (context, deviceType) {
-        return _buildCard(context, deviceType);
-      },
-    );
+    return _buildCard(context, deviceType);
   }
 
   Widget _buildCard(BuildContext context, DeviceType deviceType) {

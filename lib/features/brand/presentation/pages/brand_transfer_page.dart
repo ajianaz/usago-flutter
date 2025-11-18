@@ -7,7 +7,7 @@ import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/widgets/bloc_responsive_layout.dart';
-import '../../../../shared/widgets/responsive_builder.dart';
+import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../../../shared/widgets/animated_text_field.dart';
 import '../../domain/entities/brand.dart';
@@ -83,7 +83,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
   Widget _buildContent(BuildContext context, DeviceType deviceType) {
     final isMobile = deviceType == DeviceType.mobile;
 
-    return Scaffold(
+    final content = Scaffold(
       appBar: AppBar(
         title: Text(
           'Transfer Kepemilikanan Brand',
@@ -99,17 +99,19 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
           onPressed: () => context.router.maybePop(),
         ),
       ),
-      body: ResponsiveBuilder(
-        builder: (context, deviceType) {
-          return _buildTransferForm(context, deviceType, isMobile);
-        },
-      ),
+      body: _buildTransferForm(context, isMobile),
     );
+
+    // Apply desktop constraint
+    if (deviceType == DeviceType.desktop) {
+      return DesktopConstrainedContent(child: content);
+    }
+
+    return content;
   }
 
   Widget _buildTransferForm(
     BuildContext context,
-    DeviceType deviceType,
     bool isMobile,
   ) {
     return SingleChildScrollView(

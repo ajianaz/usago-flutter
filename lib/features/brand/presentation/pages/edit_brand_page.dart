@@ -8,7 +8,7 @@ import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/widgets/bloc_responsive_layout.dart';
-import '../../../../shared/widgets/responsive_builder.dart';
+import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../../domain/entities/brand.dart';
 import '../bloc/brand_bloc.dart';
 import '../bloc/brand_state.dart';
@@ -30,17 +30,47 @@ class EditBrandPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: getIt<BrandBloc>(),
-      child: EditBrandView(brandId: brandId),
+      child: BlocResponsiveLayout<BrandBloc, BrandState>(
+        builder: (context, bloc, state, deviceType) {
+          return EditBrandView(brandId: brandId, deviceType: deviceType);
+        },
+        listener: (context, state) {
+          if (state is BrandOperationSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.success,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+
+            // Navigate back to brand selection after successful update
+            Future.delayed(const Duration(seconds: 2), () {
+              context.router.maybePop();
+            });
+          } else if (state is BrandError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.error,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }
 
 class EditBrandView extends StatefulWidget {
   final String brandId;
+  final DeviceType deviceType;
 
   const EditBrandView({
     Key? key,
     required this.brandId,
+    required this.deviceType,
   }) : super(key: key);
 
   @override
@@ -64,30 +94,9 @@ class _EditBrandViewState extends State<EditBrandView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<BrandBloc, BrandState>(
-      listener: (context, state) {
-        if (state is BrandOperationSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.success,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-
-          // Navigate back to brand selection after successful update
-          Future.delayed(const Duration(seconds: 2), () {
-            context.router.maybePop();
-          });
-        } else if (state is BrandError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        } else if (state is BrandLoaded) {
+    return BlocBuilder<BrandBloc, BrandState>(
+      builder: (context, state) {
+        if (state is BrandLoaded) {
           // When brands are loaded, find our specific brand
           final brand = state.userBrands.firstWhere(
             (brand) => brand.id == widget.brandId,
@@ -100,18 +109,20 @@ class _EditBrandViewState extends State<EditBrandView> {
             _isLoading = false;
           });
         }
+
+        final content = _buildContent(context, state);
+
+        // Apply desktop constraint
+        if (widget.deviceType == DeviceType.desktop) {
+          return DesktopConstrainedContent(child: content);
+        }
+
+        return content;
       },
-      child: BlocBuilder<BrandBloc, BrandState>(
-        builder: (context, state) {
-          return _buildContent(context, state);
-        },
-      ),
     );
   }
 
   Widget _buildContent(BuildContext context, BrandState state) {
-    final isMobile = MediaQuery.of(context).size.width < 768;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -131,16 +142,12 @@ class _EditBrandViewState extends State<EditBrandView> {
           onPressed: () => context.router.maybePop(),
         ),
       ),
-      body: ResponsiveBuilder(
-        builder: (context, deviceType) {
-          return _buildForm(context, deviceType);
-        },
-      ),
+      body: _buildForm(context),
     );
   }
 
-  Widget _buildForm(BuildContext context, DeviceType deviceType) {
-    final isMobile = deviceType == DeviceType.mobile;
+  Widget _buildForm(BuildContext context) {
+    final isMobile = widget.deviceType == DeviceType.mobile;
 
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -240,7 +247,7 @@ class _EditBrandViewState extends State<EditBrandView> {
                       child: CircularProgressIndicator(),
                     ),
                   ] else if (_brand != null) ...[
-                    CreateBrandForm(brand: _brand!),
+                    CreateBrandForm(brand: _brand!, deviceType: widget.deviceType),
                   ] else ...[
                     const Center(
                       child: Text('Brand tidak ditemukan'),

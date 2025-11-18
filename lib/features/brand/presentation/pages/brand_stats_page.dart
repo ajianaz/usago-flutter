@@ -8,7 +8,7 @@ import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/widgets/bloc_responsive_layout.dart';
-import '../../../../shared/widgets/responsive_builder.dart';
+import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../../domain/entities/brand.dart';
 import '../bloc/brand_bloc.dart';
 import '../bloc/brand_event.dart';
@@ -51,7 +51,7 @@ class BrandStatsPage extends StatelessWidget {
     final isMobile = deviceType == DeviceType.mobile;
     final isTablet = deviceType == DeviceType.tablet;
 
-    return Scaffold(
+    final content = Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.textPrimary),
@@ -80,12 +80,15 @@ class BrandStatsPage extends StatelessWidget {
           ),
         ],
       ),
-      body: ResponsiveBuilder(
-        builder: (context, deviceType) {
-          return _buildStatsContent(context, deviceType, isMobile, isTablet);
-        },
-      ),
+      body: _buildStatsContent(context, deviceType, isMobile, isTablet),
     );
+
+    // Apply desktop constraint
+    if (deviceType == DeviceType.desktop) {
+      return DesktopConstrainedContent(child: content);
+    }
+
+    return content;
   }
 
   Widget _buildStatsContent(

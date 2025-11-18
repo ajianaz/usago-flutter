@@ -4,7 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import '../../../../core/constants/ui_constants.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_text_styles.dart';
-import '../../../../shared/widgets/responsive_builder.dart';
+import '../../../../shared/widgets/bloc_responsive_layout.dart';
+import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../domain/entities/brand.dart';
 import '../bloc/brand_bloc.dart';
@@ -22,12 +23,28 @@ class BrandSelectionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const BrandSelectionView();
+    return BlocResponsiveLayout<BrandBloc, BrandState>(
+      builder: (context, bloc, state, deviceType) {
+        return BrandSelectionView(deviceType: deviceType);
+      },
+      listener: (context, state) {
+        if (state is BrandError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      },
+    );
   }
 }
 
 class BrandSelectionView extends StatefulWidget {
-  const BrandSelectionView({Key? key}) : super(key: key);
+  final DeviceType deviceType;
+
+  const BrandSelectionView({Key? key, required this.deviceType}) : super(key: key);
 
   @override
   State<BrandSelectionView> createState() => _BrandSelectionViewState();
@@ -81,51 +98,37 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<BrandBloc, BrandState>(
-        listener: (context, state) {
-          // Handle search state changes
-          if (state is BrandSearchLoaded) {
-            setState(() {
-              _isSearching = false;
-            });
-          }
-          if (state is BrandError) {
-            setState(() {
-              _isSearching = false;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.error,
-              ),
-            );
-          }
-        },
-        child: BlocBuilder<BrandBloc, BrandState>(
-          builder: (context, state) {
-            return ResponsiveBuilder(
-              builder: (context, deviceType) {
-                if (state is BrandLoading || state is BrandSearchLoading) {
-                  return _buildLoadingState(context, deviceType);
-                }
+    return BlocBuilder<BrandBloc, BrandState>(
+      builder: (context, state) {
+        // Handle search state changes
+        if (state is BrandSearchLoaded) {
+          setState(() {
+            _isSearching = false;
+          });
+        }
 
-                if (state is BrandLoaded) {
-                  return _buildContent(context, deviceType, state, null);
-                }
+        Widget content;
+        if (state is BrandLoading || state is BrandSearchLoading) {
+          content = _buildLoadingState(context);
+        } else if (state is BrandLoaded) {
+          content = _buildContent(context, state, null);
+        } else if (state is BrandSearchLoaded) {
+          content = _buildContent(context, null, state);
+        } else {
+          content = _buildEmptyState(context);
+        }
 
-                if (state is BrandSearchLoaded) {
-                  return _buildContent(context, deviceType, null, state);
-                }
+        // Apply desktop constraint
+        if (widget.deviceType == DeviceType.desktop) {
+          return DesktopConstrainedContent(child: content);
+        }
 
-                return _buildEmptyState(context, deviceType);
-              },
-            );
-          },
-         ),
+        return content;
+      },
     );
   }
 
-  Widget _buildLoadingState(BuildContext context, DeviceType deviceType) {
+  Widget _buildLoadingState(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -158,8 +161,8 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, DeviceType deviceType) {
-    final isMobile = deviceType == DeviceType.mobile;
+  Widget _buildEmptyState(BuildContext context) {
+    final isMobile = widget.deviceType == DeviceType.mobile;
 
     return Scaffold(
       appBar: AppBar(
@@ -235,11 +238,10 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
 
   Widget _buildContent(
     BuildContext context,
-    DeviceType deviceType,
     BrandLoaded? loadedState,
     BrandSearchLoaded? searchState,
   ) {
-    final isMobile = deviceType == DeviceType.mobile;
+    final isMobile = widget.deviceType == DeviceType.mobile;
     List<Brand> allBrands;
     Brand? activeBrand;
 
@@ -257,7 +259,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
     }
 
     if (allBrands.isEmpty && loadedState != null) {
-      return _buildEmptyState(context, deviceType);
+      return _buildEmptyState(context);
     }
 
     return Scaffold(
@@ -280,6 +282,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
                 context.read<BrandBloc>().add(SwitchBrandEvent(brand.id));
               },
               isCompact: true,
+              deviceType: widget.deviceType,
             ),
           ],
         ],
@@ -291,7 +294,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
 
           // Brand List
           Expanded(
-            child: _buildBrandList(context, deviceType, allBrands, activeBrand, isMobile),
+            child: _buildBrandList(context, allBrands, activeBrand, isMobile),
           ),
         ],
       ),
@@ -387,7 +390,6 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
 
   Widget _buildBrandList(
     BuildContext context,
-    DeviceType deviceType,
     List<Brand> brands,
     Brand? activeBrand,
     bool isMobile,
@@ -434,6 +436,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
               _navigateToBrandTransfer(context, brand);
             },
             showOptions: true,
+            deviceType: widget.deviceType,
           );
         },
       ),
