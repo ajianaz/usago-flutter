@@ -134,7 +134,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: Text(context.t.authForgotPassword),
+      title: Text(context.t.auth.forgot_password),
       centerTitle: true,
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -181,7 +181,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: AnimatedToast(
-          message: context.t.passwordResetEmailSent(email),
+          message: context.t.messages.password_reset_email_sent,
           type: FeedbackType.success,
           duration: const Duration(seconds: 2),
         ),
@@ -341,7 +341,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                     return FadeTransition(
                       opacity: _staggeredAnimations[1],
                       child: Text(
-                        context.t.authForgotPassword,
+                        context.t.auth.forgot_password,
                         style: context.textTheme.headlineMedium?.copyWith(
                           fontSize: context.responsiveFontSize(24),
                           fontWeight: FontWeight.bold,
@@ -358,7 +358,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                     return FadeTransition(
                       opacity: _staggeredAnimations[2],
                       child: Text(
-                        context.t.forgotPasswordDescription,
+                        context.t.auth.forgot_password_description,
                         style: context.textTheme.bodyMedium?.copyWith(
                           fontSize: context.responsiveFontSize(16),
                         ),
@@ -385,15 +385,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
           AnimatedTextField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
-            labelText: context.t.authEmail,
-            hintText: context.t.enterYourEmail,
+            labelText: context.t.auth.email,
+            hintText: context.t.auth.enter_your_email,
             prefixIcon: const Icon(FontAwesomeIcons.envelope),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.t.validationRequired;
+                return context.t.validation.required;
               }
               if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                return context.t.validationEmailInvalid;
+                return context.t.validation.email_invalid;
               }
               return null;
             },
@@ -403,7 +403,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
 
           // Submit Button
           AnimatedButton(
-            text: context.t.sendResetLink,
+            text: context.t.auth.send_reset_link,
             onPressed: _isSubmitting ? null : () => _submitForm(authBloc),
             isLoading: _isSubmitting,
             isFullWidth: true,
@@ -418,12 +418,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(context.t.rememberPassword),
+        Text(context.t.auth.remember_password),
         TextButton(
           onPressed: () {
             context.pop();
           },
-          child: Text(context.t.backToLogin),
+          child: Text(context.t.auth.back_to_login),
         ),
       ],
     );

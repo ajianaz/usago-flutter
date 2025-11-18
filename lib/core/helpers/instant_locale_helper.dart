@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/locale_service.dart';
 import '../di/injection_container.dart';
 import 'dart:async';
+import '../../i18n/translations.g.dart';
 
 /// Helper for instant locale switching without delay
 /// Uses a combination of ValueNotifier and immediate state updates
@@ -14,14 +15,17 @@ class InstantLocaleHelper {
 
   InstantLocaleHelper._();
 
-  final ValueNotifier<Locale> _localeNotifier = ValueNotifier<Locale>(const Locale('en'));
+  final ValueNotifier<AppLocale> _localeNotifier = ValueNotifier<AppLocale>(AppLocale.en);
   final LocaleService _localeService = getIt<LocaleService>();
 
   /// Get current locale
-  Locale get currentLocale => _localeNotifier.value;
+  AppLocale get currentLocale => _localeNotifier.value;
+
+  /// Get current locale as Flutter Locale for UI
+  Locale get currentFlutterLocale => _localeNotifier.value.flutterLocale;
 
   /// Get locale notifier for listening to changes
-  ValueNotifier<Locale> get localeNotifier => _localeNotifier;
+  ValueNotifier<AppLocale> get localeNotifier => _localeNotifier;
 
   /// Initialize locale helper with saved locale
   Future<void> initialize() async {
@@ -30,7 +34,7 @@ class InstantLocaleHelper {
   }
 
   /// Change locale instantly without delay
-  Future<void> changeLocale(Locale locale) async {
+  Future<void> changeLocale(AppLocale locale) async {
     // Update UI immediately
     _localeNotifier.value = locale;
 
@@ -40,14 +44,14 @@ class InstantLocaleHelper {
 
   /// Toggle between English and Indonesian instantly
   Future<void> toggleLanguage() async {
-    final newLocale = _localeNotifier.value.languageCode == 'en'
-        ? const Locale('id')
-        : const Locale('en');
+    final newLocale = _localeNotifier.value == AppLocale.en
+        ? AppLocale.id
+        : AppLocale.en;
     await changeLocale(newLocale);
   }
 
   /// Get locale display name
-  String getLocaleDisplayName(Locale locale) {
+  String getLocaleDisplayName(AppLocale locale) {
     return _localeService.getLocaleDisplayName(locale);
   }
 

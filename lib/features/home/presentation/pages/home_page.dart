@@ -3,10 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/di/injection_container.dart';
-import '../../../../i18n/app_localizations.g.dart';
 import '../../../../shared/themes/app_colors.dart';
-import '../../../../shared/themes/app_spacing.dart';
-import '../../../../shared/themes/app_text_styles.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
@@ -18,7 +15,6 @@ import '../widgets/feature_grid.dart';
 import '../../../../core/extensions/context_extension.dart';
 import '../../../../shared/widgets/language_switcher.dart';
 import '../../../../shared/widgets/theme_switcher.dart';
-import '../../../../app/router.dart';
 
 /// Home page
 /// Main dashboard after user login
@@ -60,7 +56,7 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizationsExtension(context).t.authLogin,
+          context.t.auth.login,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         centerTitle: true,
@@ -133,14 +129,14 @@ class _HomeViewState extends State<HomeView> {
 
                   // Welcome Section
                   Text(
-                    AppLocalizationsExtension(context).t.authWelcomeBack,
+                    context.t.auth.welcome_back,
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
 
                   const SizedBox(height: 8),
 
                   Text(
-                    AppLocalizationsExtension(context).t.authSignInToContinue,
+                    context.t.auth.sign_in_to_continue,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
 

@@ -47,6 +47,7 @@ messages:
   network_error: Error jaringan. Periksa koneksi Anda.
   unknown_error: Terjadi error yang tidak diketahui
   password_reset_email_sent: Email reset kata sandi telah dikirim ke {email}
+  passwordResetEmailSent(email): Email reset kata sandi telah dikirim ke {email}
 
 # Common
 common:
@@ -172,7 +173,7 @@ brand:
   cancel_invitation_dialog_message: Apakah Anda yakin ingin membatalkan undangan ke {email}?
 
   # Status labels
-  k_new: BARU
+  new: BARU
   active: Aktif
   brand_active: Brand Aktif
   joined: 'Bergabung: {date}'

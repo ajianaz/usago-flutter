@@ -4,18 +4,40 @@ targets:
       slang_build_runner:
         options:
           base_locale: en
+          fallback_strategy: base_locale
           input_directory: lib/i18n
           input_file_pattern: .i18n.yaml
           output_directory: lib/i18n
-          output_localization_file: strings.g.dart
-          output_class_name: AppLocalizations
-          namespaces: true
-          translation_class_visibility: private
+          output_file_name: translations.g.dart
+          lazy: true
+          locale_handling: true
+          flutter_integration: true
+          namespaces: false
+          translate_var: t
           enum_name: AppLocale
-          enum_output_directory: lib/i18n
+          class_name: Translations
+          translation_class_visibility: private
           key_case: snake
-          key_map_case: snake
+          key_map_case: camel
+          param_case: pascal
+          sanitization:
+            enabled: true
+            prefix: k
+            case: camel
           string_interpolation: dart
+          flat_map: false
+          translation_overrides: false
+          timestamp: true
+          statistics: true
+          maps:
+            - error.codes
+            - category
+            - iconNames
           pluralization:
             auto: plural
-            parameter: count
+            default_parameter: n
+          autodoc:
+            enabled: true
+            locales:
+              - en
+              - id

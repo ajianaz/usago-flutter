@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../i18n/app_localizations.g.dart';
+import '../../i18n/translations.g.dart';
 import '../../shared/widgets/responsive_builder.dart';
 
 /// Extension methods on BuildContext
@@ -43,7 +43,7 @@ extension ContextExtension on BuildContext {
   ColorScheme get colorScheme => Theme.of(this).colorScheme;
 
   /// Get localizations using Slang extension
-  AppLocalizations get t => AppLocalizationsExtension(this).t;
+  Translations get t => Translations.of(this);
 
   /// Show snackbar
   void showSnackBar(

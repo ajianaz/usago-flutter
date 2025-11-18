@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:usago/core/extensions/context_extension.dart';
 import '../../../../core/constants/ui_constants.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_text_styles.dart';
@@ -132,7 +133,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Pilih Brand',
+          context.t.brand.brand_selection,
           style: AppTextStyles.headline5Dynamic(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -167,7 +168,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Pilih Brand',
+          context.t.brand.brand_selection,
           style: AppTextStyles.headline5Dynamic(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -205,7 +206,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
                   ),
                   const SizedBox(height: UIConstants.spacingDefault),
                   Text(
-                    'Belum ada brand',
+                    context.t.brand.no_brands_available,
                     style: AppTextStyles.headline6Dynamic(context).copyWith(
                       color: AppColors.getTextSecondary(context),
                     ),
@@ -213,7 +214,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
                   ),
                   const SizedBox(height: UIConstants.paddingSmall),
                   Text(
-                    'Buat brand pertama untuk memulai bisnis Anda',
+                    context.t.brand.no_brands_message,
                     style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                       color: AppColors.getTextSecondary(context),
                     ),
@@ -265,7 +266,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _isSearching ? 'Hasil Pencarian' : 'Pilih Brand',
+          _isSearching ? context.t.brand.search_results : context.t.brand.brand_selection,
           style: AppTextStyles.headline5Dynamic(context).copyWith(
             fontWeight: FontWeight.bold,
           ),

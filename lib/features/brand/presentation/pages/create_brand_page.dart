@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:usago/core/extensions/context_extension.dart';
 import '../../../../core/constants/ui_constants.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
@@ -80,7 +80,7 @@ class _CreateBrandViewState extends State<CreateBrandView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Buat Brand Baru',
+          context.t.brand.create_brand,
           style: AppTextStyles.headline5Dynamic(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -138,7 +138,7 @@ class _CreateBrandViewState extends State<CreateBrandView> {
                   ),
                   const SizedBox(height: UIConstants.spacingDefault),
                   Text(
-                    'Buat Brand Baru',
+                    context.t.brand.create_brand,
                     style: AppTextStyles.headline3Dynamic(context).copyWith(
                       color: AppColors.getTextPrimary(context),
                       fontWeight: FontWeight.bold,
@@ -146,7 +146,7 @@ class _CreateBrandViewState extends State<CreateBrandView> {
                   ),
                   const SizedBox(height: UIConstants.paddingSmall),
                   Text(
-                    'Lengkapi data brand Anda dan mulai beroperasi',
+                    context.t.brand.brand_description,
                     style: AppTextStyles.bodyLargeDynamic(context).copyWith(
                       color: AppColors.getTextPrimary(context).withValues(alpha: 0.9),
                     ),
@@ -179,7 +179,7 @@ class _CreateBrandViewState extends State<CreateBrandView> {
                 children: [
                   // Form Title
                   Text(
-                    'Informasi Brand',
+                    context.t.brand.brand_info,
                     style: AppTextStyles.headline4Dynamic(context).copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -188,7 +188,7 @@ class _CreateBrandViewState extends State<CreateBrandView> {
 
                   // Form Description
                   Text(
-                    'Isi form berikut dengan data yang diperlukan untuk membuat brand baru. Pastikan semua informasi yang ditandai dengan benar.',
+                    context.t.brand.brand_description,
                     style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                       color: AppColors.getTextSecondary(context),
                     ),

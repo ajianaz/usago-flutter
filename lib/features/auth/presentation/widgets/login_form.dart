@@ -64,8 +64,8 @@ class _LoginFormState extends State<LoginForm> {
           AnimatedTextField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
-            labelText: context.t.authEmail,
-            hintText: context.t.enterYourEmail,
+            labelText: context.t.auth.email,
+            hintText: context.t.auth.enter_your_email,
             prefixIcon: Icon(
               FontAwesomeIcons.envelope,
               size: context.responsiveValue(
@@ -76,10 +76,10 @@ class _LoginFormState extends State<LoginForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.t.validationRequired;
+                return context.t.validation.required;
               }
               if (!value.isValidEmail) {
-                return context.t.validationEmailInvalid;
+                return context.t.validation.email_invalid;
               }
               return null;
             },
@@ -91,8 +91,8 @@ class _LoginFormState extends State<LoginForm> {
           AnimatedTextField(
             controller: _passwordController,
             obscureText: _obscurePassword,
-            labelText: context.t.authPassword,
-            hintText: context.t.enterYourPassword,
+            labelText: context.t.auth.password,
+            hintText: context.t.auth.enter_your_password,
             prefixIcon: Icon(
               FontAwesomeIcons.lock,
               size: context.responsiveValue(
@@ -114,10 +114,10 @@ class _LoginFormState extends State<LoginForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.t.validationRequired;
+                return context.t.validation.required;
               }
               if (value.length < 6) {
-                return context.t.validationPasswordTooShort;
+                return context.t.validation.password_too_short;
               }
               return null;
             },
@@ -129,7 +129,7 @@ class _LoginFormState extends State<LoginForm> {
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
               return AnimatedButton(
-                text: context.t.authLogin,
+                text: context.t.auth.login,
                 isLoading: state is AuthLoading,
                 onPressed: _submitForm,
                 isFullWidth: true,
@@ -146,7 +146,7 @@ class _LoginFormState extends State<LoginForm> {
               context.router.pushNamed('/forgot-password');
             },
             child: Text(
-              context.t.authForgotPassword,
+              context.t.auth.forgot_password,
               style: TextStyle(
                 fontSize: context.responsiveFontSize(14),
               ),

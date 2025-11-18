@@ -56,8 +56,8 @@ class _RegisterFormState extends State<RegisterForm> {
         children: [
           AnimatedTextField(
             controller: _nameController,
-            labelText: context.t.name,
-            hintText: context.t.enterYourName,
+            labelText: context.t.auth.name,
+            hintText: context.t.auth.enter_your_name,
             prefixIcon: Icon(
               FontAwesomeIcons.user,
               size: context.responsiveValue(
@@ -68,7 +68,7 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.t.validationRequired;
+                return context.t.validation.required;
               }
               return null;
             },
@@ -78,8 +78,8 @@ class _RegisterFormState extends State<RegisterForm> {
 
           AnimatedTextField(
             controller: _emailController,
-            labelText: context.t.authEmail,
-            hintText: context.t.enterYourEmail,
+            labelText: context.t.auth.email,
+            hintText: context.t.auth.enter_your_email,
             prefixIcon: Icon(
               FontAwesomeIcons.envelope,
               size: context.responsiveValue(
@@ -91,10 +91,10 @@ class _RegisterFormState extends State<RegisterForm> {
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.t.validationRequired;
+                return context.t.validation.required;
               }
               if (!value.isValidEmail) {
-                return context.t.validationEmailInvalid;
+                return context.t.validation.email_invalid;
               }
               return null;
             },
@@ -105,8 +105,8 @@ class _RegisterFormState extends State<RegisterForm> {
           AnimatedTextField(
             controller: _passwordController,
             obscureText: _obscurePassword,
-            labelText: context.t.authPassword,
-            hintText: context.t.enterYourPassword,
+            labelText: context.t.auth.password,
+            hintText: context.t.auth.enter_your_password,
             prefixIcon: Icon(
               FontAwesomeIcons.lock,
               size: context.responsiveValue(
@@ -132,10 +132,10 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.t.validationRequired;
+                return context.t.validation.required;
               }
               if (value.length < 6) {
-                return context.t.validationPasswordTooShort;
+                return context.t.validation.password_too_short;
               }
               return null;
             },
@@ -146,8 +146,8 @@ class _RegisterFormState extends State<RegisterForm> {
           AnimatedTextField(
             controller: _confirmPasswordController,
             obscureText: _obscureConfirmPassword,
-            labelText: context.t.confirmPassword,
-            hintText: context.t.confirmYourPassword,
+            labelText: context.t.auth.confirm_password,
+            hintText: context.t.auth.confirm_your_password,
             prefixIcon: Icon(
               FontAwesomeIcons.lock,
               size: context.responsiveValue(
@@ -173,10 +173,10 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.t.validationRequired;
+                return context.t.validation.required;
               }
               if (value != _passwordController.text) {
-                return context.t.passwordsDoNotMatch;
+                return context.t.auth.passwords_do_not_match;
               }
               return null;
             },
@@ -187,7 +187,7 @@ class _RegisterFormState extends State<RegisterForm> {
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
               return AnimatedButton(
-                text: context.t.authRegister,
+                text: context.t.auth.register,
                 isLoading: state is AuthLoading,
                 isFullWidth: true,
                 onPressed: _submitForm,

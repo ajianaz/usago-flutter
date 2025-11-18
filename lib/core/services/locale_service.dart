@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:usago/i18n/translations.g.dart';
 import '../utils/logger.dart';
 
 /// Service for managing app locale and language settings
@@ -15,7 +16,7 @@ class LocaleService {
         _logger = logger;
 
   /// Get current locale from device settings or saved preference
-  Locale getCurrentLocale() {
+  AppLocale getCurrentLocale() {
     // Try to get saved locale first
     final savedLocale = getSavedLocale();
     if (savedLocale != null) {
@@ -27,24 +28,22 @@ class LocaleService {
 
     // Check if device locale is supported
     if (isLocaleSupported(deviceLocale)) {
-      return deviceLocale;
+      return AppLocaleUtils.parseLocaleParts(
+        languageCode: deviceLocale.languageCode,
+        countryCode: deviceLocale.countryCode,
+      );
     }
 
     // Fall back to default locale
-    return const Locale('en');
+    return AppLocale.en;
   }
 
   /// Get saved locale from preferences
-  Locale? getSavedLocale() {
+  AppLocale? getSavedLocale() {
     try {
       final localeCode = _prefs.getString(_localeKey);
       if (localeCode != null) {
-        final parts = localeCode.split('_');
-        if (parts.length == 2) {
-          return Locale(parts[0], parts[1]);
-        } else {
-          return Locale(localeCode);
-        }
+        return AppLocaleUtils.parse(localeCode);
       }
     } catch (e) {
       _logger.error('Failed to get saved locale', e);
@@ -53,9 +52,9 @@ class LocaleService {
   }
 
   /// Save locale to preferences
-  Future<void> saveLocale(Locale locale) async {
+  Future<void> saveLocale(AppLocale locale) async {
     try {
-      await _prefs.setString(_localeKey, locale.toString());
+      await _prefs.setString(_localeKey, locale.languageCode);
       _logger.info('Locale saved: $locale');
     } catch (e) {
       _logger.error('Failed to save locale', e);
@@ -68,49 +67,37 @@ class LocaleService {
   }
 
   /// Change app locale
-  Future<void> changeLocale(Locale locale) async {
-    if (!isLocaleSupported(locale)) {
-      _logger.warning('Locale not supported: $locale');
-      return;
-    }
-
+  Future<void> changeLocale(AppLocale locale) async {
     await saveLocale(locale);
 
-    // Update locale (simplified implementation)
-    _logger.info('Locale changed to: $locale');
+    // Update locale using slang
+    await LocaleSettings.setLocale(locale);
 
     _logger.info('Locale changed to: $locale');
   }
 
   /// Get all supported locales
   List<Locale> getSupportedLocales() {
-    return [
-      const Locale('en'),
-      const Locale('id'),
-    ];
+    return AppLocaleUtils.supportedLocales;
   }
 
   /// Get locale display name
-  String getLocaleDisplayName(Locale locale) {
-    switch (locale.languageCode) {
-      case 'en':
+  String getLocaleDisplayName(AppLocale locale) {
+    switch (locale) {
+      case AppLocale.en:
         return 'English';
-      case 'id':
+      case AppLocale.id:
         return 'Bahasa Indonesia';
-      default:
-        return locale.toString();
     }
   }
 
   /// Get locale display name in native language
-  String getLocaleDisplayNameNative(Locale locale) {
-    switch (locale.languageCode) {
-      case 'en':
+  String getLocaleDisplayNameNative(AppLocale locale) {
+    switch (locale) {
+      case AppLocale.en:
         return 'English';
-      case 'id':
+      case AppLocale.id:
         return 'Bahasa Indonesia';
-      default:
-        return locale.toString();
     }
   }
 
@@ -119,14 +106,16 @@ class LocaleService {
     final currentLocale = getCurrentLocale();
     _logger.info('Initializing locale service with locale: $currentLocale');
 
-    // Initialize locale (simplified implementation)
+    // Initialize locale using slang
+    await LocaleSettings.setLocale(currentLocale);
+
     _logger.info('Locale service initialized with locale: $currentLocale');
     _logger.info('Locale service initialized successfully');
   }
 
   /// Reset to default locale
   Future<void> resetToDefault() async {
-    await changeLocale(const Locale('en'));
+    await changeLocale(AppLocale.en);
   }
 
   /// Get current locale code

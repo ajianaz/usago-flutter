@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/helpers/instant_locale_helper.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../i18n/translations.g.dart';
 
 /// Language switcher widget with no delay
 /// Uses InstantLocaleHelper for immediate language updates
@@ -22,24 +23,24 @@ class _LanguageSwitcherState extends State<LanguageSwitcher> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<Locale>(
+    return ValueListenableBuilder<AppLocale>(
       valueListenable: _localeHelper.localeNotifier,
       builder: (context, currentLocale, child) {
         final supportedLocales = _localeHelper.getSupportedLocales();
 
-        return PopupMenuButton<Locale>(
+        return PopupMenuButton<AppLocale>(
           icon: const FaIcon(FontAwesomeIcons.language, size: 20),
           tooltip: 'Change Language',
-          onSelected: (Locale locale) {
+          onSelected: (AppLocale locale) {
             _localeHelper.changeLocale(locale);
             _showLanguageChangedSnackBar(context, locale);
           },
           itemBuilder: (BuildContext context) {
-            return supportedLocales.map((Locale locale) {
-              final isSelected = currentLocale.languageCode == locale.languageCode;
+            return AppLocale.values.map((AppLocale locale) {
+              final isSelected = currentLocale == locale;
               final displayName = _localeHelper.getLocaleDisplayName(locale);
 
-              return PopupMenuItem<Locale>(
+              return PopupMenuItem<AppLocale>(
                 value: locale,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -68,7 +69,7 @@ class _LanguageSwitcherState extends State<LanguageSwitcher> {
     );
   }
 
-  void _showLanguageChangedSnackBar(BuildContext context, Locale locale) {
+  void _showLanguageChangedSnackBar(BuildContext context, AppLocale locale) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Language changed to ${_localeHelper.getLocaleDisplayName(locale)}'),

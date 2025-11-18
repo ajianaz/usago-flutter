@@ -128,7 +128,7 @@ class _RegisterPageState extends State<RegisterPage>
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: Text(context.t.authRegister),
+      title: Text(context.t.auth.register),
       centerTitle: true,
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -320,7 +320,7 @@ class _RegisterPageState extends State<RegisterPage>
                     return FadeTransition(
                       opacity: _staggeredAnimations[1],
                       child: Text(
-                        context.t.authCreateAccount,
+                        context.t.auth.create_account,
                         style: context.textTheme.headlineMedium?.copyWith(
                           fontSize: context.responsiveFontSize(24),
                           fontWeight: FontWeight.bold,
@@ -337,7 +337,7 @@ class _RegisterPageState extends State<RegisterPage>
                     return FadeTransition(
                       opacity: _staggeredAnimations[2],
                       child: Text(
-                        context.t.authSignUpToContinue,
+                        context.t.auth.sign_up_to_continue,
                         style: context.textTheme.bodyMedium?.copyWith(
                           fontSize: context.responsiveFontSize(16),
                         ),
@@ -358,12 +358,12 @@ class _RegisterPageState extends State<RegisterPage>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(context.t.authAlreadyHaveAccount),
+        Text(context.t.auth.already_have_account),
         TextButton(
           onPressed: () {
             context.router.pushNamed('/login');
           },
-          child: Text(context.t.authLogin),
+          child: Text(context.t.auth.login),
         ),
       ],
     );

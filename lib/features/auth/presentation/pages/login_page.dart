@@ -128,7 +128,7 @@ class _LoginPageState extends State<LoginPage>
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: Text(context.t.authLogin),
+      title: Text(context.t.auth.login),
       centerTitle: true,
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -337,7 +337,7 @@ class _LoginPageState extends State<LoginPage>
                     return FadeTransition(
                       opacity: _staggeredAnimations[1],
                       child: Text(
-                        context.t.authWelcomeBack,
+                        context.t.auth.welcome_back,
                         style: context.textTheme.headlineMedium?.copyWith(
                           fontSize: context.responsiveFontSize(24),
                           fontWeight: FontWeight.bold,
@@ -354,7 +354,7 @@ class _LoginPageState extends State<LoginPage>
                     return FadeTransition(
                       opacity: _staggeredAnimations[2],
                       child: Text(
-                        context.t.authSignInToContinue,
+                        context.t.auth.sign_in_to_continue,
                         style: context.textTheme.bodyMedium?.copyWith(
                           fontSize: context.responsiveFontSize(16),
                         ),
@@ -375,12 +375,12 @@ class _LoginPageState extends State<LoginPage>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(context.t.authDontHaveAccount),
+        Text(context.t.auth.dont_have_account),
         TextButton(
           onPressed: () {
             context.router.pushNamed('/register');
           },
-          child: Text(context.t.authRegister),
+          child: Text(context.t.auth.register),
         ),
       ],
     );
