@@ -4,6 +4,24 @@
 
 Aplikasi Usago menggunakan **Slang** package untuk localization, bukan Flutter localization standar. Ini mengubah cara kerja localization!
 
+## 📁 Struktur Direktori
+
+```
+lib/
+├── i18n/
+│   ├── i18n.yaml              # Konfigurasi Slang
+│   ├── en.i18n.yaml          # Terjemahan Bahasa Inggris
+│   ├── id.i18n.yaml          # Terjemahan Bahasa Indonesia
+│   └── app_localizations.g.dart # Generated code (jangan edit)
+├── core/
+│   ├── services/
+│   │   └── locale_service.dart # Manajemen locale
+│   └── helpers/
+│       └── instant_locale_helper.dart # Instant locale switching
+└── app/
+    └── app.dart               # Konfigurasi MaterialApp dengan localization
+```
+
 ## 🔍 Cara Kerja Slang
 
 Slang memiliki sistem yang berbeda dari Flutter localization standar:
@@ -53,15 +71,44 @@ Widget build(BuildContext context) {
 ```
 
 ### 3. Perbaiki App Level Localization
-Pastikan `MaterialApp.router` menggunakan locale dari `InstantLocaleHelper`:
+Pastikan `MaterialApp.router` menggunakan locale dari `InstantLocaleHelper` dan `AppLocalizationsDelegate`:
 
 ```dart
 // Di app.dart - SUDAH BENAR
+class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+  const AppLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) {
+    return ['en', 'id'].contains(locale.languageCode);
+  }
+
+  @override
+  Future<AppLocalizations> load(Locale locale) async {
+    if (locale.languageCode == 'id') {
+      return const AppLocalizationsId();
+    }
+    return const AppLocalizations();
+  }
+
+  @override
+  bool shouldReload(LocalizationsDelegate<AppLocalizations> old) {
+    return true; // Selalu reload untuk support instant locale changes
+  }
+}
+
+// Di MaterialApp.router
 ValueListenableBuilder<Locale>(
   valueListenable: InstantLocaleHelper.instance.localeNotifier,
   builder: (context, locale, child) {
     return MaterialApp.router(
       locale: locale, // ← Ini kuncinya untuk Slang
+      localizationsDelegates: const [
+        AppLocalizationsDelegate(), // Custom delegate
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       // ...
     );
   },
@@ -88,7 +135,7 @@ Hapus semua `ValueListenableBuilder` yang tidak diperlukan.
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:slang_flutter/slang_flutter.dart';
+import '../../../../i18n/app_localizations.g.dart';
 
 class NewPage extends StatelessWidget {
   const NewPage({Key? key}) : super(key: key);
@@ -128,8 +175,8 @@ class NewPage extends StatelessWidget {
 ### 1. ContextExtension
 ```dart
 // Hapus method trKey() dan trReactive()
-// Tambahkan import slang_flutter
-import 'package:slang_flutter/slang_flutter.dart';
+// Tambahkan import app_localizations
+import 'package:usago/i18n/app_localizations.g.dart';
 
 extension ContextExtension on BuildContext {
   // Hapus method yang tidak diperlukan
@@ -142,6 +189,9 @@ extension ContextExtension on BuildContext {
 // Ganti semua context.trKey() menjadi context.t
 Text(context.trKey('authLogin')) → Text(context.t.authLogin)
 Text(context.trKey('authForgotPassword')) → Text(context.t.authForgotPassword)
+
+// Import yang diperlukan
+import 'package:usago/i18n/app_localizations.g.dart';
 ```
 
 ### 3. Hapus ValueListenableBuilder
@@ -182,7 +232,14 @@ Widget build(BuildContext context) {
 
 ---
 
-**Panduan Version:** 1.0
-**Terakhir Diperbarui:** 2025-11-13
+**Panduan Version:** 2.0
+**Terakhir Diperbarui:** 2025-11-18
 **Author:** Kilo Code
-**Status:** ✅ SOLUSI SLANG
+**Status:** ✅ SOLUSI SLANG (Updated)
+
+## 📖 Dokumentasi Lengkap
+
+Untuk panduan lengkap implementasi i18n di project Usago, lihat:
+- [Internationalization Guide](./internationalization_guide.md) - Dokumentasi lengkap
+- [Testing Guidelines](./internationalization_guide.md#-testing-i18n-functionality) - Panduan testing
+- [Maintenance Workflow](./internationalization_guide.md#-maintenance-workflow) - Workflow maintenance
