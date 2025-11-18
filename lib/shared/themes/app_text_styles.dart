@@ -29,7 +29,7 @@ class AppTextStyles {
   static const double lineHeightNormal = 1.5;
   static const double lineHeightLoose = 1.4;
 
-  // Headline Styles
+  // Headline Styles (Static for backward compatibility)
   static TextStyle get headline1 => TextStyle(
         fontSize: fontSizeHeadline1,
         fontWeight: FontWeight.bold,
@@ -72,7 +72,7 @@ class AppTextStyles {
         height: lineHeightTight,
       );
 
-  // Body Text Styles
+  // Body Text Styles (Static for backward compatibility)
   static TextStyle get bodyLarge => TextStyle(
         fontSize: fontSizeBodyLarge,
         fontWeight: FontWeight.normal,
@@ -94,7 +94,7 @@ class AppTextStyles {
         height: lineHeightNormal,
       );
 
-  // Button Text Styles
+  // Button Text Styles (Static for backward compatibility)
   static TextStyle get buttonLarge => TextStyle(
         fontSize: fontSizeButtonLarge,
         fontWeight: FontWeight.w600,
@@ -116,7 +116,7 @@ class AppTextStyles {
         height: lineHeightTight,
       );
 
-  // Caption Styles
+  // Caption Styles (Static for backward compatibility)
   static TextStyle get caption => TextStyle(
         fontSize: fontSizeCaption,
         fontWeight: FontWeight.normal,
@@ -131,7 +131,7 @@ class AppTextStyles {
         height: lineHeightLoose,
       );
 
-  // Input Field Styles
+  // Input Field Styles (Static for backward compatibility)
   static TextStyle get inputLabel => TextStyle(
         fontSize: fontSizeInputLabel,
         fontWeight: FontWeight.w500,
@@ -153,7 +153,7 @@ class AppTextStyles {
         height: lineHeightTight,
       );
 
-  // Link Styles
+  // Link Styles (Static for backward compatibility)
   static TextStyle get link => TextStyle(
         fontSize: fontSizeLink,
         fontWeight: FontWeight.w600,
@@ -162,7 +162,7 @@ class AppTextStyles {
         decoration: TextDecoration.underline,
       );
 
-  // Error Styles
+  // Error Styles (Static for backward compatibility)
   static TextStyle get error => TextStyle(
         fontSize: fontSizeError,
         fontWeight: FontWeight.normal,
@@ -170,11 +170,192 @@ class AppTextStyles {
         height: lineHeightLoose,
       );
 
-  // Success Styles
+  // Success Styles (Static for backward compatibility)
   static TextStyle get success => TextStyle(
         fontSize: fontSizeSuccess,
         fontWeight: FontWeight.normal,
         color: AppColors.success,
         height: lineHeightLoose,
       );
+
+  // Dynamic methods that adapt to theme brightness
+  static TextStyle headline1Dynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeHeadline1,
+        fontWeight: FontWeight.bold,
+        color: AppColors.getTextPrimary(context),
+        height: lineHeightTight,
+      );
+
+  static TextStyle headline2Dynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeHeadline2,
+        fontWeight: FontWeight.bold,
+        color: AppColors.getTextPrimary(context),
+        height: lineHeightTight,
+      );
+
+  static TextStyle headline3Dynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeHeadline3,
+        fontWeight: FontWeight.bold,
+        color: AppColors.getTextPrimary(context),
+        height: lineHeightTight,
+      );
+
+  static TextStyle headline4Dynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeHeadline4,
+        fontWeight: FontWeight.w600,
+        color: AppColors.getTextPrimary(context),
+        height: lineHeightTight,
+      );
+
+  static TextStyle headline5Dynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeHeadline5,
+        fontWeight: FontWeight.w600,
+        color: AppColors.getTextPrimary(context),
+        height: lineHeightTight,
+      );
+
+  static TextStyle headline6Dynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeHeadline6,
+        fontWeight: FontWeight.w600,
+        color: AppColors.getTextPrimary(context),
+        height: lineHeightTight,
+      );
+
+  // Dynamic Body Text Styles
+  static TextStyle bodyLargeDynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeBodyLarge,
+        fontWeight: FontWeight.normal,
+        color: AppColors.getTextPrimary(context),
+        height: lineHeightNormal,
+      );
+
+  static TextStyle bodyMediumDynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeBodyMedium,
+        fontWeight: FontWeight.normal,
+        color: AppColors.getTextPrimary(context),
+        height: lineHeightNormal,
+      );
+
+  static TextStyle bodySmallDynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeBodySmall,
+        fontWeight: FontWeight.normal,
+        color: AppColors.getTextPrimary(context),
+        height: lineHeightNormal,
+      );
+
+  // Dynamic Button Text Styles
+  static TextStyle buttonLargeDynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeButtonLarge,
+        fontWeight: FontWeight.w600,
+        color: AppColors.onPrimary,
+        height: lineHeightTight,
+      );
+
+  static TextStyle buttonMediumDynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeButtonMedium,
+        fontWeight: FontWeight.w600,
+        color: AppColors.onPrimary,
+        height: lineHeightTight,
+      );
+
+  static TextStyle buttonSmallDynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeButtonSmall,
+        fontWeight: FontWeight.w600,
+        color: AppColors.onPrimary,
+        height: lineHeightTight,
+      );
+
+  // Dynamic Caption Styles
+  static TextStyle captionDynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeCaption,
+        fontWeight: FontWeight.normal,
+        color: AppColors.getTextSecondary(context),
+        height: lineHeightLoose,
+      );
+
+  static TextStyle overlineDynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeOverline,
+        fontWeight: FontWeight.w500,
+        color: AppColors.getTextSecondary(context),
+        height: lineHeightLoose,
+      );
+
+  // Dynamic Input Field Styles
+  static TextStyle inputLabelDynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeInputLabel,
+        fontWeight: FontWeight.w500,
+        color: AppColors.getTextSecondary(context),
+        height: lineHeightTight,
+      );
+
+  static TextStyle inputTextDynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeInputText,
+        fontWeight: FontWeight.normal,
+        color: AppColors.getTextPrimary(context),
+        height: lineHeightTight,
+      );
+
+  static TextStyle inputHintDynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeInputHint,
+        fontWeight: FontWeight.normal,
+        color: AppColors.getTextDisabled(context),
+        height: lineHeightTight,
+      );
+
+  // Dynamic Link Styles
+  static TextStyle linkDynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeLink,
+        fontWeight: FontWeight.w600,
+        color: AppColors.primary,
+        height: lineHeightTight,
+        decoration: TextDecoration.underline,
+      );
+
+  // Dynamic Error Styles (Theme-independent)
+  static TextStyle errorDynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeError,
+        fontWeight: FontWeight.normal,
+        color: AppColors.error,
+        height: lineHeightLoose,
+      );
+
+  // Dynamic Success Styles (Theme-independent)
+  static TextStyle successDynamic(BuildContext context) => TextStyle(
+        fontSize: fontSizeSuccess,
+        fontWeight: FontWeight.normal,
+        color: AppColors.success,
+        height: lineHeightLoose,
+  );
+
+  // Helper method to get appropriate text style based on brightness
+  static TextStyle getTextStyleForBrightness({
+    required BuildContext context,
+    required TextStyle lightStyle,
+    required TextStyle darkStyle,
+  }) {
+    return Theme.of(context).brightness == Brightness.dark ? darkStyle : lightStyle;
+  }
+
+  // Helper method to get dynamic text style with context
+  static TextStyle getDynamicTextStyle(BuildContext context, TextStyle staticStyle) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    Color textColor;
+
+    // Determine the appropriate color based on the original style
+    if (staticStyle.color == AppColors.textPrimary ||
+        staticStyle.color == AppColors.lightTextPrimary) {
+      textColor = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+    } else if (staticStyle.color == AppColors.textSecondary ||
+               staticStyle.color == AppColors.lightTextSecondary) {
+      textColor = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+    } else if (staticStyle.color == AppColors.textDisabled ||
+               staticStyle.color == AppColors.lightTextDisabled) {
+      textColor = isDark ? AppColors.darkTextDisabled : AppColors.lightTextDisabled;
+    } else {
+      // Keep the original color if it's not a text color
+      textColor = staticStyle.color ?? AppColors.getTextPrimary(context);
+    }
+
+    return staticStyle.copyWith(color: textColor);
+  }
 }
