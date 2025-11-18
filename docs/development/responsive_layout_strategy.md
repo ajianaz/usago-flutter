@@ -6,14 +6,16 @@ This document outlines the mobile-first responsive layout strategy for the USAGO
 
 ## Core Principles
 
-### 1. Mobile-First Development
-- Design and optimize for mobile viewports first (< 600dp)
-- Enhance the experience for tablet viewports (600dp - 1200dp)
+### 1. Mobile-First Vertical Layout Development
+- Design and optimize for mobile viewports first (< 600dp) using vertical Column layouts
+- Tablet viewports (600dp - 1200dp) follow the SAME vertical Column layout as mobile
+- Tablet only enhances spacing, padding, and sizing - does NOT change layout structure
 - Constrain desktop viewports (≥ 1200dp) to tablet-portrait width (768px) and center horizontally
 
-### 2. Unified Design System
-- Desktop view directly mirrors the mobile and tablet experience
-- No special desktop layouts - just constrained and centered versions of tablet layouts
+### 2. Unified Vertical Design System
+- Mobile and tablet both use vertical Column layouts with identical structure
+- Desktop view directly mirrors the mobile and tablet vertical experience
+- No special desktop layouts - just constrained and centered versions of the vertical tablet layout
 - Consistent spacing, typography, and interaction patterns across all devices
 
 ### 3. BlocResponsiveLayout Foundation
@@ -142,7 +144,7 @@ Container(
 ### 4. Form Layouts
 
 ```dart
-// Forms should use single column on all devices
+// Forms should use single column on mobile AND tablet
 // Desktop gets constrained width instead of multi-column
 Widget _buildForm(BuildContext context, DeviceType deviceType) {
   final content = SingleChildScrollView(
@@ -150,7 +152,7 @@ Widget _buildForm(BuildContext context, DeviceType deviceType) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Form fields
+        // Form fields - same vertical layout for mobile AND tablet
       ],
     ),
   );
@@ -164,19 +166,19 @@ Widget _buildForm(BuildContext context, DeviceType deviceType) {
 ## Component Guidelines
 
 ### BrandCard Widget
-- Mobile: Compact layout with essential information
-- Tablet/Desktop: Same layout with slightly larger touch targets
-- Desktop: Constrained width within grid
+- Mobile: Compact vertical layout with essential information
+- Tablet: Same vertical layout with enhanced spacing and sizing
+- Desktop: Same vertical layout constrained to 768px maximum width
 
 ### BrandSelector Widget
-- Mobile: Bottom sheet or dropdown
-- Tablet/Desktop: Inline selector with enhanced visibility
-- Desktop: Constrained width when used in isolation
+- Mobile: Bottom sheet or dropdown with vertical layout
+- Tablet: Same vertical selector with enhanced spacing and sizing
+- Desktop: Same vertical layout constrained to 768px maximum width
 
 ### CreateBrandForm Widget
-- Single column layout on all devices
-- Enhanced spacing on tablet/desktop
-- Desktop: Constrained to 768px maximum width
+- Single column vertical layout on mobile AND tablet
+- Tablet only enhances spacing, padding, and sizing - maintains identical vertical structure
+- Desktop: Constrained vertical tablet layout to 768px maximum width
 
 ## Migration Strategy
 
@@ -214,11 +216,12 @@ Widget _buildForm(BuildContext context, DeviceType deviceType) {
 
 ## Common Pitfalls to Avoid
 
-1. **Don't create special desktop layouts** - Use constrained tablet layouts
-2. **Don't use hardcoded breakpoints** - Use the `DeviceType` enum
-3. **Don't forget to constrain desktop content** - Always apply 768px max width
-4. **Don't mix responsive patterns** - Standardize on `BlocResponsiveLayout`
-5. **Don't ignore accessibility** - Ensure touch targets work on all devices
+1. **Don't create special desktop layouts** - Use constrained vertical tablet layouts
+2. **Don't create horizontal tablet layouts** - Tablet must use the same vertical Column layout as mobile
+3. **Don't use hardcoded breakpoints** - Use the `DeviceType` enum
+4. **Don't forget to constrain desktop content** - Always apply 768px max width to vertical layout
+5. **Don't mix responsive patterns** - Standardize on `BlocResponsiveLayout`
+6. **Don't ignore accessibility** - Ensure touch targets work on all devices
 
 ## Code Examples
 
@@ -291,6 +294,12 @@ class _BrandSelectionView extends StatelessWidget {
 
 ## Conclusion
 
-This mobile-first responsive layout strategy ensures a consistent, optimized experience across all device types while minimizing development complexity. By constraining desktop to tablet-portrait width and centering content, we maintain design consistency without creating separate desktop layouts.
+This mobile-first vertical layout strategy ensures a consistent, optimized experience across all device types while minimizing development complexity. By using the same vertical Column layout for both mobile and tablet (with tablet only enhancing spacing and sizing), and constraining desktop to the tablet-portrait width, we maintain design consistency without creating separate layout structures.
 
-The key is to think mobile-first, enhance for tablet, and simply constrain for desktop - not create entirely new experiences.
+The key principles are:
+- Mobile and tablet both use vertical Column layouts with identical structure
+- Tablet only differs in enhanced spacing, padding, and sizing - never in layout structure
+- Desktop constrains the vertical tablet layout to 768px width and centers it
+- No horizontal Row layouts should be used for tablet auth pages or any other components
+
+This approach ensures future developers can implement responsive designs without special configuration - just follow the mobile-first vertical pattern and enhance spacing for tablet.
