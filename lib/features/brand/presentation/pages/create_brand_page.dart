@@ -79,7 +79,7 @@ class _CreateBrandViewState extends State<CreateBrandView> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: AppColors.surface,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
@@ -160,11 +160,11 @@ class _CreateBrandViewState extends State<CreateBrandView> {
               width: double.infinity,
               padding: EdgeInsets.all(isMobile ? UIConstants.paddingDefault : UIConstants.paddingExtraLarge),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(UIConstants.borderRadiusLarge),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.border.withValues(alpha: 0.12),
+                    color: Theme.of(context).shadowColor.withValues(alpha: 0.12),
                     blurRadius: UIConstants.elevationCard,
                     offset: const Offset(0, 2),
                   ),

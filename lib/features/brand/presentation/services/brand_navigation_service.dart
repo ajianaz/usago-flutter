@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import '../../../../app/router.dart';
+import '../../../../shared/themes/app_colors.dart';
 import '../../domain/entities/brand.dart';
 
 /// Navigation service for brand-related pages
@@ -12,7 +13,7 @@ class BrandNavigationService {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Navigating to stats for ${brand.name}'),
-        backgroundColor: const Color(0xFF2196F3), // Info color
+        backgroundColor: AppColors.info, // Info color
         duration: const Duration(seconds: 1),
       ),
     );
@@ -30,7 +31,7 @@ class BrandNavigationService {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Navigating to invitations for ${brand.name}'),
-        backgroundColor: const Color(0xFFFF9800), // Warning color
+        backgroundColor: AppColors.warning, // Warning color
         duration: const Duration(seconds: 1),
       ),
     );
@@ -48,7 +49,7 @@ class BrandNavigationService {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Navigating to transfer for ${brand.name}'),
-        backgroundColor: const Color(0xFF4CAF50), // Orange color
+        backgroundColor: AppColors.success, // Success color
         duration: const Duration(seconds: 1),
       ),
     );

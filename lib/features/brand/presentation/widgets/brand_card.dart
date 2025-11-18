@@ -48,7 +48,7 @@ class BrandCard extends StatelessWidget {
 
     return Card(
       elevation: isActive ? 8 : 2,
-      shadowColor: isActive ? AppColors.primary.withOpacity(0.3) : Colors.black12,
+      shadowColor: isActive ? AppColors.primary.withOpacity(0.3) : Theme.of(context).shadowColor.withValues(alpha: 0.12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(

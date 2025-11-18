@@ -510,7 +510,7 @@ class DropdownButtonHideUnderline<T> extends StatelessWidget {
       underline: Container(),
       isExpanded: true,
       style: AppTextStyles.bodyMedium,
-      dropdownColor: AppColors.surface,
+      dropdownColor: Theme.of(context).cardColor,
       icon: Icon(
         Icons.arrow_drop_down,
         color: AppColors.textSecondary,

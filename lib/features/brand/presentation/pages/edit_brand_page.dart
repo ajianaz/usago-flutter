@@ -207,7 +207,7 @@ class _EditBrandViewState extends State<EditBrandView> {
                 borderRadius: BorderRadius.circular(UIConstants.borderRadiusLarge),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black12,
+                    color: Theme.of(context).shadowColor.withValues(alpha: 0.12),
                     blurRadius: UIConstants.elevationCard,
                     offset: const Offset(0, 2),
                   ),
