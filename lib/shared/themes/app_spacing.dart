@@ -1,78 +1,86 @@
 import 'package:flutter/material.dart';
+import '../../core/constants/ui_constants.dart';
 
 class AppSpacing {
   // Base spacing unit
-  static const double xs = 4.0;
-  static const double sm = 8.0;
-  static const double md = 16.0;
-  static const double lg = 24.0;
-  static const double xl = 32.0;
-  static const double xxl = 48.0;
-  static const double xxxl = 64.0;
+  static double get xs => UIConstants.spacingTiny;
+  static double get sm => UIConstants.spacingSmall;
+  static double get md => UIConstants.spacingDefault;
+  static double get lg => UIConstants.spacingLarge;
+  static double get xl => UIConstants.spacingExtraLarge;
+  static double get xxl => 48.0;
+  static double get xxxl => 64.0;
 
   // Padding constants
-  static const EdgeInsets paddingAllXs = EdgeInsets.all(xs);
-  static const EdgeInsets paddingAllSm = EdgeInsets.all(sm);
-  static const EdgeInsets paddingAllMd = EdgeInsets.all(md);
-  static const EdgeInsets paddingAllLg = EdgeInsets.all(lg);
-  static const EdgeInsets paddingAllXl = EdgeInsets.all(xl);
+  static EdgeInsets get paddingAllXs => EdgeInsets.all(xs);
+  static EdgeInsets get paddingAllSm => EdgeInsets.all(sm);
+  static EdgeInsets get paddingAllMd => EdgeInsets.all(md);
+  static EdgeInsets get paddingAllLg => EdgeInsets.all(lg);
+  static EdgeInsets get paddingAllXl => EdgeInsets.all(xl);
 
   // Symmetric padding
-  static const EdgeInsets paddingVerticalSm = EdgeInsets.symmetric(vertical: sm);
-  static const EdgeInsets paddingVerticalMd = EdgeInsets.symmetric(vertical: md);
-  static const EdgeInsets paddingVerticalLg = EdgeInsets.symmetric(vertical: lg);
+  static EdgeInsets get paddingVerticalSm => EdgeInsets.symmetric(vertical: sm);
+  static EdgeInsets get paddingVerticalMd => EdgeInsets.symmetric(vertical: md);
+  static EdgeInsets get paddingVerticalLg => EdgeInsets.symmetric(vertical: lg);
 
-  static const EdgeInsets paddingHorizontalSm = EdgeInsets.symmetric(horizontal: sm);
-  static const EdgeInsets paddingHorizontalMd = EdgeInsets.symmetric(horizontal: md);
-  static const EdgeInsets paddingHorizontalLg = EdgeInsets.symmetric(horizontal: lg);
+  static EdgeInsets get paddingHorizontalSm =>
+      EdgeInsets.symmetric(horizontal: sm);
+  static EdgeInsets get paddingHorizontalMd =>
+      EdgeInsets.symmetric(horizontal: md);
+  static EdgeInsets get paddingHorizontalLg =>
+      EdgeInsets.symmetric(horizontal: lg);
 
   // Margin constants
-  static const EdgeInsets marginAllXs = EdgeInsets.all(xs);
-  static const EdgeInsets marginAllSm = EdgeInsets.all(sm);
-  static const EdgeInsets marginAllMd = EdgeInsets.all(md);
-  static const EdgeInsets marginAllLg = EdgeInsets.all(lg);
-  static const EdgeInsets marginAllXl = EdgeInsets.all(xl);
+  static EdgeInsets get marginAllXs => EdgeInsets.all(xs);
+  static EdgeInsets get marginAllSm => EdgeInsets.all(sm);
+  static EdgeInsets get marginAllMd => EdgeInsets.all(md);
+  static EdgeInsets get marginAllLg => EdgeInsets.all(lg);
+  static EdgeInsets get marginAllXl => EdgeInsets.all(xl);
 
   // Symmetric margin
-  static const EdgeInsets marginVerticalSm = EdgeInsets.symmetric(vertical: sm);
-  static const EdgeInsets marginVerticalMd = EdgeInsets.symmetric(vertical: md);
-  static const EdgeInsets marginVerticalLg = EdgeInsets.symmetric(vertical: lg);
+  static EdgeInsets get marginVerticalSm => EdgeInsets.symmetric(vertical: sm);
+  static EdgeInsets get marginVerticalMd => EdgeInsets.symmetric(vertical: md);
+  static EdgeInsets get marginVerticalLg => EdgeInsets.symmetric(vertical: lg);
 
-  static const EdgeInsets marginHorizontalSm = EdgeInsets.symmetric(horizontal: sm);
-  static const EdgeInsets marginHorizontalMd = EdgeInsets.symmetric(horizontal: md);
-  static const EdgeInsets marginHorizontalLg = EdgeInsets.symmetric(horizontal: lg);
+  static EdgeInsets get marginHorizontalSm =>
+      EdgeInsets.symmetric(horizontal: sm);
+  static EdgeInsets get marginHorizontalMd =>
+      EdgeInsets.symmetric(horizontal: md);
+  static EdgeInsets get marginHorizontalLg =>
+      EdgeInsets.symmetric(horizontal: lg);
 
   // Specific spacing combinations
-  static const EdgeInsets paddingCard = EdgeInsets.all(md);
-  static const EdgeInsets paddingScreen = EdgeInsets.all(lg);
-  static const EdgeInsets paddingSection = EdgeInsets.symmetric(vertical: lg, horizontal: md);
+  static EdgeInsets get paddingCard => EdgeInsets.all(md);
+  static EdgeInsets get paddingScreen => EdgeInsets.all(lg);
+  static EdgeInsets get paddingSection =>
+      EdgeInsets.symmetric(vertical: lg, horizontal: md);
 
-  static const EdgeInsets marginCard = EdgeInsets.all(sm);
-  static const EdgeInsets marginSection = EdgeInsets.symmetric(vertical: md);
-  static const EdgeInsets marginBetweenItems = EdgeInsets.only(bottom: md);
+  static EdgeInsets get marginCard => EdgeInsets.all(sm);
+  static EdgeInsets get marginSection => EdgeInsets.symmetric(vertical: md);
+  static EdgeInsets get marginBetweenItems => EdgeInsets.only(bottom: md);
 
   // Gap widgets
-  static const Widget gapXs = SizedBox(width: xs);
-  static const Widget gapSm = SizedBox(width: sm);
-  static const Widget gapMd = SizedBox(width: md);
-  static const Widget gapLg = SizedBox(width: lg);
-  static const Widget gapXl = SizedBox(width: xl);
+  static Widget get gapXs => SizedBox(width: xs);
+  static Widget get gapSm => SizedBox(width: sm);
+  static Widget get gapMd => SizedBox(width: md);
+  static Widget get gapLg => SizedBox(width: lg);
+  static Widget get gapXl => SizedBox(width: xl);
 
-  static const Widget verticalGapXs = SizedBox(height: xs);
-  static const Widget verticalGapSm = SizedBox(height: sm);
-  static const Widget verticalGapMd = SizedBox(height: md);
-  static const Widget verticalGapLg = SizedBox(height: lg);
-  static const Widget verticalGapXl = SizedBox(height: xl);
+  static Widget get verticalGapXs => SizedBox(height: xs);
+  static Widget get verticalGapSm => SizedBox(height: sm);
+  static Widget get verticalGapMd => SizedBox(height: md);
+  static Widget get verticalGapLg => SizedBox(height: lg);
+  static Widget get verticalGapXl => SizedBox(height: xl);
 
   // Border radius
-  static const BorderRadius radiusXs = BorderRadius.all(Radius.circular(xs));
-  static const BorderRadius radiusSm = BorderRadius.all(Radius.circular(sm));
-  static const BorderRadius radiusMd = BorderRadius.all(Radius.circular(md));
-  static const BorderRadius radiusLg = BorderRadius.all(Radius.circular(lg));
-  static const BorderRadius radiusXl = BorderRadius.all(Radius.circular(xl));
+  static BorderRadius get radiusXs => BorderRadius.all(Radius.circular(xs));
+  static BorderRadius get radiusSm => BorderRadius.all(Radius.circular(sm));
+  static BorderRadius get radiusMd => BorderRadius.all(Radius.circular(md));
+  static BorderRadius get radiusLg => BorderRadius.all(Radius.circular(lg));
+  static BorderRadius get radiusXl => BorderRadius.all(Radius.circular(xl));
 
   // Specific radius
-  static const BorderRadius radiusCard = BorderRadius.all(Radius.circular(md));
-  static const BorderRadius radiusButton = BorderRadius.all(Radius.circular(sm));
-  static const BorderRadius radiusInput = BorderRadius.all(Radius.circular(sm));
+  static BorderRadius get radiusCard => BorderRadius.all(Radius.circular(md));
+  static BorderRadius get radiusButton => BorderRadius.all(Radius.circular(sm));
+  static BorderRadius get radiusInput => BorderRadius.all(Radius.circular(sm));
 }
