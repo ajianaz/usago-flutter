@@ -1,0 +1,358 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../../../shared/themes/app_colors.dart';
+import '../../../../shared/themes/app_spacing.dart';
+import '../../../../shared/themes/app_text_styles.dart';
+import '../../../../shared/widgets/custom_button.dart';
+import '../../domain/entities/brand_invitation.dart';
+import '../bloc/brand_bloc.dart';
+import '../bloc/brand_event.dart';
+
+/// Invitation Card Widget
+/// Displays invitation details with appropriate actions based on invitation status and type
+class InvitationCard extends StatelessWidget {
+  final BrandInvitation invitation;
+  final bool isReceived; // true for received invitations, false for sent invitations
+  final VoidCallback? onTap;
+
+  const InvitationCard({
+    Key? key,
+    required this.invitation,
+    required this.isReceived,
+    this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header with brand name and status
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          invitation.brandName,
+                          style: AppTextStyles.headline6.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: AppSpacing.xs),
+                        Text(
+                          isReceived
+                              ? 'Dari: ${invitation.inviterName}'
+                              : 'Ke: ${invitation.inviteeEmail}',
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildStatusChip(context),
+                ],
+              ),
+              SizedBox(height: AppSpacing.sm),
+
+              // Role information
+              Row(
+                children: [
+                  Icon(
+                    FontAwesomeIcons.userTag,
+                    size: 16,
+                    color: AppColors.textSecondary,
+                  ),
+                  SizedBox(width: AppSpacing.xs),
+                  Text(
+                    'Peran: ${invitation.formattedRole}',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: AppSpacing.sm),
+
+              // Date information
+              Row(
+                children: [
+                  Icon(
+                    FontAwesomeIcons.calendar,
+                    size: 16,
+                    color: AppColors.textSecondary,
+                  ),
+                  SizedBox(width: AppSpacing.xs),
+                  Text(
+                    'Dikirim: ${invitation.createdDateFormatted}',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  if (invitation.expiresAt != null) ...[
+                    SizedBox(width: AppSpacing.sm),
+                    Text(
+                      '•',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    SizedBox(width: AppSpacing.sm),
+                    Text(
+                      'Kadaluarsa: ${invitation.expirationDateFormatted}',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: invitation.isExpired
+                            ? AppColors.error
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+
+              // Action buttons
+              if (invitation.isPending) ...[
+                SizedBox(height: AppSpacing.md),
+                _buildActionButtons(context),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusChip(BuildContext context) {
+    Color backgroundColor;
+    Color textColor;
+    IconData icon;
+
+    switch (invitation.status.toUpperCase()) {
+      case 'PENDING':
+        backgroundColor = AppColors.warning.withOpacity(0.1);
+        textColor = AppColors.warning;
+        icon = FontAwesomeIcons.clock;
+        break;
+      case 'ACCEPTED':
+        backgroundColor = AppColors.success.withOpacity(0.1);
+        textColor = AppColors.success;
+        icon = FontAwesomeIcons.checkCircle;
+        break;
+      case 'DECLINED':
+        backgroundColor = AppColors.error.withOpacity(0.1);
+        textColor = AppColors.error;
+        icon = FontAwesomeIcons.timesCircle;
+        break;
+      case 'EXPIRED':
+        backgroundColor = AppColors.textSecondary.withOpacity(0.1);
+        textColor = AppColors.textSecondary;
+        icon = FontAwesomeIcons.hourglassEnd;
+        break;
+      default:
+        backgroundColor = AppColors.surface;
+        textColor = AppColors.textSecondary;
+        icon = FontAwesomeIcons.questionCircle;
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 12,
+            color: textColor,
+          ),
+          SizedBox(width: AppSpacing.xs),
+          Text(
+            invitation.formattedStatus,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(BuildContext context) {
+    if (isReceived) {
+      // Actions for received invitations
+      return Row(
+        children: [
+          Expanded(
+            child: CustomButton(
+              text: 'Tolak',
+              onPressed: () => _showDeclineConfirmation(context),
+              isFullWidth: true,
+              variant: ButtonVariant.outline,
+            ),
+          ),
+          SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: CustomButton(
+              text: 'Terima',
+              onPressed: () => _showAcceptConfirmation(context),
+              isFullWidth: true,
+              variant: ButtonVariant.primary,
+            ),
+          ),
+        ],
+      );
+    } else {
+      // Actions for sent invitations
+      return Row(
+        children: [
+          Expanded(
+            child: CustomButton(
+              text: 'Batalkan',
+              onPressed: () => _showCancelConfirmation(context),
+              isFullWidth: true,
+              variant: ButtonVariant.outline,
+            ),
+          ),
+          SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: CustomButton(
+              text: 'Kirim Ulang',
+              onPressed: () => _resendInvitation(context),
+              isFullWidth: true,
+              variant: ButtonVariant.primary,
+            ),
+          ),
+        ],
+      );
+    }
+  }
+
+  void _showAcceptConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Terima Undangan'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Apakah Anda yakin ingin menerima undangan untuk bergabung dengan ${invitation.brandName}?'),
+            SizedBox(height: AppSpacing.sm),
+            Text(
+              'Anda akan ditambahkan ke brand dengan peran ${invitation.formattedRole}.',
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => context.router.maybePop(),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () {
+              context.router.maybePop();
+              // In a real app, you would get the token from the invitation or URL
+              context.read<BrandBloc>().add(
+                AcceptInvitationEvent(invitation.id, 'token_here'),
+              );
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.success,
+            ),
+            child: const Text('Terima'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeclineConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Tolak Undangan'),
+        content: Text('Apakah Anda yakin ingin menolak undangan dari ${invitation.brandName}?'),
+        actions: [
+          TextButton(
+            onPressed: () => context.router.maybePop(),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () {
+              context.router.maybePop();
+              context.read<BrandBloc>().add(
+                DeclineInvitationEvent(invitation.id),
+              );
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.error,
+            ),
+            child: const Text('Tolak'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCancelConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Batalkan Undangan'),
+        content: Text('Apakah Anda yakin ingin membatalkan undangan ke ${invitation.inviteeEmail}?'),
+        actions: [
+          TextButton(
+            onPressed: () => context.router.maybePop(),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () {
+              context.router.maybePop();
+              context.read<BrandBloc>().add(
+                CancelInvitationEvent(invitation.id),
+              );
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.error,
+            ),
+            child: const Text('Batalkan'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _resendInvitation(BuildContext context) {
+    context.read<BrandBloc>().add(
+      ResendInvitationEvent(invitation.id),
+    );
+  }
+}

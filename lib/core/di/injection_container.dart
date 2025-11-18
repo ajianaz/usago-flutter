@@ -6,6 +6,7 @@ import '../errors/error_handler.dart';
 import '../services/locale_service.dart';
 import '../../features/auth/di/auth_injection.dart';
 import '../../features/home/di/home_injection.dart';
+import '../../features/brand/di/brand_injection.dart';
 // import '../../features/profile/di/profile_injection.dart';
 // import '../../features/payment/di/payment_injection.dart';
 
@@ -20,8 +21,7 @@ Future<void> setupDependencies() async {
   // 2. Register feature-specific services
   setupAuthDependencies(getIt);
   setupHomeDependencies(getIt);
-  // setupProfileDependencies(getIt);
-  // setupPaymentDependencies(getIt);
+  setupBrandDependencies(getIt);
 }
 
 /// Setup core layer services

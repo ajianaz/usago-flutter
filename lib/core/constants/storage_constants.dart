@@ -23,6 +23,7 @@ class StorageConstants {
   static const String cachedWalletsKey = 'cached_wallets';
   static const String cachedCustomersKey = 'cached_customers';
   static const String cachedProductsKey = 'cached_products';
+  static const String cachedBrandInvitationsKey = 'cached_brand_invitations';
 
   // Settings Keys
   static const String themeKey = 'theme_mode';

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'responsive_builder.dart';
 
+// Export DeviceType for wider use
+export 'responsive_builder.dart' show DeviceType;
+
 /// BLoC-compatible responsive layout widget with listener support
 class BlocResponsiveLayout<T extends BlocBase<S>, S> extends StatelessWidget {
   final Widget Function(BuildContext context, T bloc, S state, DeviceType deviceType) builder;

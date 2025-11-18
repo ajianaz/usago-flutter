@@ -120,4 +120,70 @@ class UIConstants {
 
   /// Maximum width untuk content pada desktop
   static const double maxContentWidth = 1200.0;
+
+  // ==================== Font Sizes ====================
+
+  /// Font size untuk icon kecil (16.0)
+  static const double fontSizeSmall = 16.0;
+
+  /// Font size untuk icon default (20.0)
+  static const double fontSizeDefault = 20.0;
+
+  /// Font size untuk icon besar (24.0)
+  static const double fontSizeLarge = 24.0;
+
+  /// Font size untuk icon sangat besar (32.0)
+  static const double fontSizeExtraLarge = 32.0;
+
+  /// Font size untuk icon sangat sangat besar (48.0)
+  static const double fontSizeXXLarge = 48.0;
+
+  /// Font size untuk icon sangat sangat sangat besar (64.0)
+  static const double fontSizeXXXLarge = 64.0;
+
+  // ==================== Sizes ====================
+
+  /// Size untuk container kecil (60.0)
+  static const double containerSizeSmall = 60.0;
+
+  /// Size untuk avatar kecil (20.0)
+  static const double avatarSizeSmall = 20.0;
+
+  /// Size untuk avatar default (24.0)
+  static const double avatarSizeDefault = 24.0;
+
+  /// Size untuk container default (300.0)
+  static const double containerSizeDefault = 300.0;
+
+  /// Size untuk container besar (400.0)
+  static const double containerSizeLarge = 400.0;
+
+  // ==================== Width ====================
+
+  /// Width untuk container kecil (100.0)
+  static const double widthSmall = 100.0;
+
+  /// Width untuk container sedang (500.0)
+  static const double widthMedium = 500.0;
+
+  // ==================== Heights ====================
+
+  /// Height untuk container kecil (20.0)
+  static const double heightSmall = 20.0;
+
+  /// Height untuk container sedang (60.0)
+  static const double heightMedium = 60.0;
+
+  // ==================== Stroke Width ====================
+
+  /// Stroke width untuk indicator (3.0)
+  static const double strokeWidthIndicator = 3.0;
+
+  /// Stroke width untuk progress indicator (2.0)
+  static const double strokeWidthProgress = 2.0;
+
+  // ==================== Border Radius ====================
+
+  /// Border radius untuk bottom corners (16.0)
+  static const double borderRadiusBottom = 16.0;
 }
