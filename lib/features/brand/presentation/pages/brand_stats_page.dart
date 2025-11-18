@@ -54,7 +54,7 @@ class BrandStatsPage extends StatelessWidget {
     final content = Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back, color: AppColors.getTextPrimary(context)),
           onPressed: () {
             context.router.maybePop();
           },
@@ -62,7 +62,7 @@ class BrandStatsPage extends StatelessWidget {
         ),
         title: Text(
           'Statistik Brand',
-          style: AppTextStyles.headline5.copyWith(
+          style: AppTextStyles.headline5Dynamic(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -71,7 +71,7 @@ class BrandStatsPage extends StatelessWidget {
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: AppColors.textSecondary),
+            icon: Icon(Icons.refresh, color: AppColors.getTextSecondary(context)),
             onPressed: () {
               // Refresh statistics
               context.read<BrandBloc>().add(LoadUserBrandsEvent());
@@ -137,9 +137,9 @@ class BrandStatsPage extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.getSurface(context),
         borderRadius: BorderRadius.circular(UIConstants.borderRadiusLarge),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppColors.getBorder(context)),
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).shadowColor.withValues(alpha: 0.12),
@@ -157,7 +157,7 @@ class BrandStatsPage extends StatelessWidget {
                 width: UIConstants.containerSizeSmall,
                 height: UIConstants.containerSizeSmall,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(UIConstants.borderRadiusDefault),
                 ),
                 child: brand.logoUrl != null
@@ -166,7 +166,7 @@ class BrandStatsPage extends StatelessWidget {
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) => Icon(
                           Icons.business,
-                          color: AppColors.textSecondary,
+                          color: AppColors.getTextSecondary(context),
                         ),
                       )
                     : Icon(
@@ -182,7 +182,7 @@ class BrandStatsPage extends StatelessWidget {
                   children: [
                     Text(
                       brand.name,
-                      style: AppTextStyles.headline6.copyWith(
+                      style: AppTextStyles.headline6Dynamic(context).copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                       maxLines: 2,
@@ -191,16 +191,16 @@ class BrandStatsPage extends StatelessWidget {
                     SizedBox(height: AppSpacing.xs),
                     Text(
                       brand.formattedBusinessType,
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
+                      style: AppTextStyles.bodyMediumDynamic(context).copyWith(
+                        color: AppColors.getTextSecondary(context),
                       ),
                     ),
                     if (brand.description != null) ...[
                       SizedBox(height: AppSpacing.xs),
                       Text(
                         brand.description!,
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
+                        style: AppTextStyles.bodySmallDynamic(context).copyWith(
+                          color: AppColors.getTextSecondary(context),
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -216,6 +216,7 @@ class BrandStatsPage extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildStatItem(
+                  context,
                   'Dibuat',
                   brand.joinDateFormatted,
                   Icons.calendar_today,
@@ -224,6 +225,7 @@ class BrandStatsPage extends StatelessWidget {
               ),
               Expanded(
                 child: _buildStatItem(
+                  context,
                   'Status',
                   brand.formattedSubscriptionStatus,
                   brand.isSubscriptionActive ? Icons.check_circle : Icons.pending,
@@ -238,6 +240,7 @@ class BrandStatsPage extends StatelessWidget {
   }
 
   Widget _buildStatItem(
+    BuildContext context,
     String label,
     String value,
     IconData icon,
@@ -256,8 +259,8 @@ class BrandStatsPage extends StatelessWidget {
             SizedBox(width: AppSpacing.xs),
             Text(
               label,
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.textSecondary,
+              style: AppTextStyles.bodySmallDynamic(context).copyWith(
+                color: AppColors.getTextSecondary(context),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -266,7 +269,7 @@ class BrandStatsPage extends StatelessWidget {
         SizedBox(height: AppSpacing.xs),
         Text(
           value,
-          style: AppTextStyles.bodyLarge.copyWith(
+          style: AppTextStyles.bodyLargeDynamic(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -386,9 +389,9 @@ class BrandStatsPage extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.getSurface(context),
         borderRadius: BorderRadius.circular(UIConstants.borderRadiusLarge),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppColors.getBorder(context)),
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).shadowColor.withValues(alpha: 0.12),
@@ -405,7 +408,7 @@ class BrandStatsPage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(AppSpacing.sm),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(UIConstants.borderRadiusDefault),
                 ),
                 child: Icon(
@@ -421,7 +424,7 @@ class BrandStatsPage extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: AppTextStyles.headline6.copyWith(
+                      style: AppTextStyles.headline6Dynamic(context).copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -429,8 +432,8 @@ class BrandStatsPage extends StatelessWidget {
                       SizedBox(height: AppSpacing.xs),
                       Text(
                         subtitle!,
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
+                        style: AppTextStyles.bodySmallDynamic(context).copyWith(
+                          color: AppColors.getTextSecondary(context),
                         ),
                       ),
                     ],
@@ -445,7 +448,7 @@ class BrandStatsPage extends StatelessWidget {
             children: [
               Text(
                 value,
-                style: AppTextStyles.headline4.copyWith(
+                style: AppTextStyles.headline4Dynamic(context).copyWith(
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
@@ -461,7 +464,7 @@ class BrandStatsPage extends StatelessWidget {
                     SizedBox(width: AppSpacing.xs),
                     Text(
                       '${changeType == 'increase' ? '+' : '-'}${changePercent!.toStringAsFixed(1)}%',
-                      style: AppTextStyles.bodySmall.copyWith(
+                      style: AppTextStyles.bodySmallDynamic(context).copyWith(
                         color: changeType == 'increase' ? AppColors.success : AppColors.error,
                         fontWeight: FontWeight.w600,
                       ),

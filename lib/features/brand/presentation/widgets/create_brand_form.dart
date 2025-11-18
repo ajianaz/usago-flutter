@@ -187,7 +187,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                 children: [
                   Text(
                     _isEditMode ? 'Edit Brand' : 'Buat Brand Baru',
-                    style: AppTextStyles.headline4.copyWith(
+                    style: AppTextStyles.headline4Dynamic(context).copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -196,8 +196,8 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                     _isEditMode
                         ? 'Perbarui data brand Anda'
                         : 'Lengkapi data brand Anda dan mulai beroperasi',
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
+                    style: AppTextStyles.bodyMediumDynamic(context).copyWith(
+                      color: AppColors.getTextSecondary(context),
                     ),
                   ),
                 ],
@@ -245,14 +245,14 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                       prefixIcon: Icon(
                         Icons.link,
                         size: 20,
-                        color: AppColors.textSecondary,
+                        color: AppColors.getTextSecondary(context),
                       ),
                       suffixIcon: !_isEditMode && _autoGenerateSlug
                           ? IconButton(
                               icon: Icon(
                                 Icons.lock_open,
                                 size: 20,
-                                color: AppColors.textSecondary,
+                                color: AppColors.getTextSecondary(context),
                               ),
                               onPressed: _toggleAutoGenerateSlug,
                               tooltip: 'Enable manual slug input',
@@ -301,7 +301,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                               if (states.contains(WidgetState.selected)) {
                                 return AppColors.primary;
                               }
-                              return AppColors.border;
+                              return AppColors.getBorder(context);
                             }),
                             checkColor: AppColors.onPrimary,
                           ),
@@ -309,8 +309,8 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                           Expanded(
                             child: Text(
                               'Auto-generate dari nama',
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
+                              style: AppTextStyles.bodySmallDynamic(context).copyWith(
+                                color: AppColors.getTextSecondary(context),
                               ),
                             ),
                           ),
@@ -356,7 +356,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                     // Business Type Dropdown
                     Text(
                       'Tipe Bisnis',
-                      style: AppTextStyles.bodyMedium.copyWith(
+                      style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -366,7 +366,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                       padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                       decoration: BoxDecoration(
                         borderRadius: AppSpacing.radiusSm,
-                        border: Border.all(color: AppColors.border),
+                        border: Border.all(color: AppColors.getBorder(context)),
                       ),
                       child: DropdownButtonHideUnderline(
                         items: _businessTypes.map((type) {
@@ -374,7 +374,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                             value: type['value'],
                             child: Text(
                               type['label']!,
-                              style: AppTextStyles.bodyMedium,
+                              style: AppTextStyles.bodyMediumDynamic(context),
                             ),
                           );
                         }).toList(),
@@ -392,7 +392,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                     // Timezone Dropdown
                     Text(
                       'Zona Waktu',
-                      style: AppTextStyles.bodyMedium.copyWith(
+                      style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -402,7 +402,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                       padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                       decoration: BoxDecoration(
                         borderRadius: AppSpacing.radiusSm,
-                        border: Border.all(color: AppColors.border),
+                        border: Border.all(color: AppColors.getBorder(context)),
                       ),
                       child: DropdownButtonHideUnderline(
                         items: _timezones.map((timezone) {
@@ -410,7 +410,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                             value: timezone['value'],
                             child: Text(
                               timezone['label']!,
-                              style: AppTextStyles.bodyMedium,
+                              style: AppTextStyles.bodyMediumDynamic(context),
                             ),
                           );
                         }).toList(),
@@ -428,7 +428,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                     // Currency Dropdown
                     Text(
                       'Mata Uang',
-                      style: AppTextStyles.bodyMedium.copyWith(
+                      style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -438,7 +438,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                       padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                       decoration: BoxDecoration(
                         borderRadius: AppSpacing.radiusSm,
-                        border: Border.all(color: AppColors.border),
+                        border: Border.all(color: AppColors.getBorder(context)),
                       ),
                       child: DropdownButtonHideUnderline(
                         items: _currencies.map((currency) {
@@ -446,7 +446,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                             value: currency['value'],
                             child: Text(
                               currency['label']!,
-                              style: AppTextStyles.bodyMedium,
+                              style: AppTextStyles.bodyMediumDynamic(context),
                             ),
                           );
                         }).toList(),
@@ -507,11 +507,11 @@ class DropdownButtonHideUnderline<T> extends StatelessWidget {
       items: items,
       underline: Container(),
       isExpanded: true,
-      style: AppTextStyles.bodyMedium,
-      dropdownColor: Theme.of(context).cardColor,
+      style: AppTextStyles.bodyMediumDynamic(context),
+      dropdownColor: AppColors.getSurface(context),
       icon: Icon(
         Icons.arrow_drop_down,
-        color: AppColors.textSecondary,
+        color: AppColors.getTextSecondary(context),
       ),
     );
   }

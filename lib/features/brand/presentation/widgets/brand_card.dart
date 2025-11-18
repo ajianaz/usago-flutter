@@ -50,7 +50,7 @@ class BrandCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: isActive ? AppColors.primary : AppColors.border,
+          color: isActive ? AppColors.primary : AppColors.getBorder(context),
           width: isActive ? 2 : 1,
         ),
       ),
@@ -62,8 +62,8 @@ class BrandCard extends StatelessWidget {
           gradient: isActive
             ? LinearGradient(
                 colors: [
-                  AppColors.primary.withOpacity(0.05),
-                  AppColors.primary.withOpacity(0.02),
+                  AppColors.primary.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.1 : 0.05),
+                  AppColors.primary.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.05 : 0.02),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -119,8 +119,8 @@ class BrandCard extends StatelessWidget {
       height: logoSize,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: AppColors.getSurface(context),
+        border: Border.all(color: AppColors.getBorder(context)),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
@@ -148,7 +148,7 @@ class BrandCard extends StatelessWidget {
       child: Center(
         child: Text(
           brand.name.isNotEmpty ? brand.name[0].toUpperCase() : 'B',
-          style: AppTextStyles.headline4.copyWith(
+          style: AppTextStyles.headline4Dynamic(context).copyWith(
             color: AppColors.onPrimary,
             fontWeight: FontWeight.bold,
           ),
@@ -168,8 +168,8 @@ class BrandCard extends StatelessWidget {
             Expanded(
               child: Text(
                 brand.displayName,
-                style: AppTextStyles.headline5.copyWith(
-                  color: isActive ? AppColors.primary : AppColors.textPrimary,
+                style: AppTextStyles.headline5Dynamic(context).copyWith(
+                  color: isActive ? AppColors.primary : AppColors.getTextPrimary(context),
                   fontWeight: FontWeight.bold,
                 ),
                 maxLines: isMobile ? 1 : 2,
@@ -186,7 +186,7 @@ class BrandCard extends StatelessWidget {
                 ),
                 child: Text(
                   'BARU',
-                  style: AppTextStyles.caption.copyWith(
+                  style: AppTextStyles.captionDynamic(context).copyWith(
                     color: AppColors.onSuccess,
                     fontWeight: FontWeight.w600,
                   ),
@@ -209,7 +209,7 @@ class BrandCard extends StatelessWidget {
               ),
               child: Text(
                 brand.formattedBusinessType,
-                style: AppTextStyles.caption.copyWith(
+                style: AppTextStyles.captionDynamic(context).copyWith(
                   color: AppColors.primary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -224,7 +224,7 @@ class BrandCard extends StatelessWidget {
               ),
               child: Text(
                 '${brand.formattedSubscriptionTier} • ${brand.formattedSubscriptionStatus}',
-                style: AppTextStyles.caption.copyWith(
+                style: AppTextStyles.captionDynamic(context).copyWith(
                   color: _getSubscriptionStatusColor(),
                   fontWeight: FontWeight.w600,
                 ),
@@ -239,8 +239,8 @@ class BrandCard extends StatelessWidget {
         if (brand.description != null && brand.description!.isNotEmpty) ...[
           Text(
             brand.description!,
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.textSecondary,
+            style: AppTextStyles.bodySmallDynamic(context).copyWith(
+              color: AppColors.getTextSecondary(context),
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -251,8 +251,8 @@ class BrandCard extends StatelessWidget {
         // Join Date
         Text(
           'Bergabung: ${brand.joinDateFormatted}',
-          style: AppTextStyles.caption.copyWith(
-            color: AppColors.textSecondary,
+          style: AppTextStyles.captionDynamic(context).copyWith(
+            color: AppColors.getTextSecondary(context),
           ),
         ),
 
@@ -269,7 +269,7 @@ class BrandCard extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 'Brand Aktif',
-                style: AppTextStyles.caption.copyWith(
+                style: AppTextStyles.captionDynamic(context).copyWith(
                   color: AppColors.success,
                   fontWeight: FontWeight.w600,
                 ),
@@ -338,10 +338,10 @@ class BrandCard extends StatelessWidget {
         width: buttonSize,
         height: buttonSize,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
           borderRadius: BorderRadius.circular(UIConstants.borderRadiusDefault),
           border: Border.all(
-            color: color.withOpacity(0.3),
+            color: color.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.4 : 0.3),
             width: 1,
           ),
         ),
@@ -356,7 +356,7 @@ class BrandCard extends StatelessWidget {
             const SizedBox(height: UIConstants.spacingTiny),
             Text(
               label,
-              style: AppTextStyles.caption.copyWith(
+              style: AppTextStyles.captionDynamic(context).copyWith(
                 color: color,
                 fontWeight: FontWeight.w600,
                 fontSize: fontSize * 0.7,
@@ -375,7 +375,7 @@ class BrandCard extends StatelessWidget {
     return PopupMenuButton<String>(
       icon: Icon(
         Icons.more_vert,
-        color: AppColors.textSecondary,
+        color: AppColors.getTextSecondary(context),
         size: 20,
       ),
       onSelected: (value) {
@@ -410,7 +410,7 @@ class BrandCard extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 'Lihat Statistik',
-                style: AppTextStyles.bodyMedium,
+                style: AppTextStyles.bodyMediumDynamic(context),
               ),
             ],
           ),
@@ -427,7 +427,7 @@ class BrandCard extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 'Kelola Undangan',
-                style: AppTextStyles.bodyMedium,
+                style: AppTextStyles.bodyMediumDynamic(context),
               ),
             ],
           ),
@@ -444,7 +444,7 @@ class BrandCard extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 'Transfer Brand',
-                style: AppTextStyles.bodyMedium,
+                style: AppTextStyles.bodyMediumDynamic(context),
               ),
             ],
           ),
@@ -462,7 +462,7 @@ class BrandCard extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 'Edit',
-                style: AppTextStyles.bodyMedium,
+                style: AppTextStyles.bodyMediumDynamic(context),
               ),
             ],
           ),
@@ -479,7 +479,7 @@ class BrandCard extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 'Hapus',
-                style: AppTextStyles.bodyMedium.copyWith(
+                style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                   color: AppColors.error,
                 ),
               ),

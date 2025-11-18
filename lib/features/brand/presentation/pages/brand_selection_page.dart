@@ -133,7 +133,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
       appBar: AppBar(
         title: Text(
           'Pilih Brand',
-          style: AppTextStyles.headline5.copyWith(
+          style: AppTextStyles.headline5Dynamic(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -151,8 +151,8 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
             SizedBox(height: UIConstants.spacingDefault),
             Text(
               'Memuat brands...',
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+              style: AppTextStyles.bodyMediumDynamic(context).copyWith(
+                color: AppColors.getTextSecondary(context),
               ),
             ),
           ],
@@ -168,7 +168,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
       appBar: AppBar(
         title: Text(
           'Pilih Brand',
-          style: AppTextStyles.headline5.copyWith(
+          style: AppTextStyles.headline5Dynamic(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -184,9 +184,9 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
               width: isMobile ? double.infinity : 400,
               padding: EdgeInsets.all(isMobile ? UIConstants.paddingDefault : UIConstants.paddingExtraLarge),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: AppColors.getSurface(context),
                 borderRadius: BorderRadius.circular(UIConstants.borderRadiusLarge),
-                border: Border.all(color: AppColors.border),
+                border: Border.all(color: AppColors.getBorder(context)),
                 boxShadow: [
                   BoxShadow(
                     color: Theme.of(context).shadowColor.withValues(alpha: 0.12),
@@ -201,21 +201,21 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
                   Icon(
                     Icons.business_outlined,
                     size: UIConstants.fontSizeXXXLarge,
-                    color: AppColors.textSecondary,
+                    color: AppColors.getTextSecondary(context),
                   ),
                   const SizedBox(height: UIConstants.spacingDefault),
                   Text(
                     'Belum ada brand',
-                    style: AppTextStyles.headline6.copyWith(
-                      color: AppColors.textSecondary,
+                    style: AppTextStyles.headline6Dynamic(context).copyWith(
+                      color: AppColors.getTextSecondary(context),
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: UIConstants.paddingSmall),
                   Text(
                     'Buat brand pertama untuk memulai bisnis Anda',
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
+                    style: AppTextStyles.bodyMediumDynamic(context).copyWith(
+                      color: AppColors.getTextSecondary(context),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -266,7 +266,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
       appBar: AppBar(
         title: Text(
           _isSearching ? 'Hasil Pencarian' : 'Pilih Brand',
-          style: AppTextStyles.headline5.copyWith(
+          style: AppTextStyles.headline5Dynamic(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -319,16 +319,20 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: AppColors.getSurface(context),
                 borderRadius: BorderRadius.circular(UIConstants.borderRadiusDefault),
-                border: Border.all(color: AppColors.border),
+                border: Border.all(color: AppColors.getBorder(context)),
               ),
               child: TextField(
                 controller: _searchController,
                 focusNode: _focusNode,
+                style: AppTextStyles.bodyMediumDynamic(context),
                 decoration: InputDecoration(
                   hintText: 'Cari brand...',
-                  prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
+                  hintStyle: AppTextStyles.bodyMediumDynamic(context).copyWith(
+                    color: AppColors.getTextDisabled(context),
+                  ),
+                  prefixIcon: Icon(Icons.search, color: AppColors.getTextSecondary(context)),
                   suffixIcon: _isSearching
                       ? SizedBox(
                           width: UIConstants.avatarSizeSmall,
@@ -339,7 +343,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
                           ),
                         )
                       : IconButton(
-                          icon: Icon(Icons.clear, color: AppColors.textSecondary),
+                          icon: Icon(Icons.clear, color: AppColors.getTextSecondary(context)),
                           onPressed: _clearSearch,
                         ),
                   border: InputBorder.none,
@@ -353,26 +357,27 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: UIConstants.paddingSmall),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: AppColors.getSurface(context),
               borderRadius: BorderRadius.circular(UIConstants.borderRadiusDefault),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: AppColors.getBorder(context)),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: _selectedBusinessType,
                 isExpanded: false,
+                dropdownColor: AppColors.getSurface(context),
                 hint: Text(
                   'Tipe',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textSecondary,
+                  style: AppTextStyles.bodyMediumDynamic(context).copyWith(
+                    color: AppColors.getTextSecondary(context),
                   ),
                 ),
                 items: [
-                  DropdownMenuItem(value: 'SEMUA', child: Text('Semua')),
-                  DropdownMenuItem(value: 'SERVICE', child: Text('Layanan')),
-                  DropdownMenuItem(value: 'RETAIL', child: Text('Ritel')),
-                  DropdownMenuItem(value: 'MANUFACTURING', child: Text('Manufaktur')),
-                  DropdownMenuItem(value: 'OTHER', child: Text('Lainnya')),
+                  DropdownMenuItem(value: 'SEMUA', child: Text('Semua', style: AppTextStyles.bodyMediumDynamic(context))),
+                  DropdownMenuItem(value: 'SERVICE', child: Text('Layanan', style: AppTextStyles.bodyMediumDynamic(context))),
+                  DropdownMenuItem(value: 'RETAIL', child: Text('Ritel', style: AppTextStyles.bodyMediumDynamic(context))),
+                  DropdownMenuItem(value: 'MANUFACTURING', child: Text('Manufaktur', style: AppTextStyles.bodyMediumDynamic(context))),
+                  DropdownMenuItem(value: 'OTHER', child: Text('Lainnya', style: AppTextStyles.bodyMediumDynamic(context))),
                 ],
                 onChanged: (value) {
                   setState(() {
@@ -447,16 +452,16 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Edit Brand'),
+        title: Text('Edit Brand', style: AppTextStyles.headline6Dynamic(context)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Apakah Anda ingin mengedit brand ini?'),
+            Text('Apakah Anda ingin mengedit brand ini?', style: AppTextStyles.bodyMediumDynamic(context)),
             const SizedBox(height: UIConstants.paddingSmall),
             Text(
               '${brand.name}',
-              style: AppTextStyles.bodyMedium.copyWith(
+              style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -465,7 +470,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
         actions: [
           TextButton(
             onPressed: () => context.router.maybePop(),
-            child: Text('Batal'),
+            child: Text('Batal', style: AppTextStyles.buttonMediumDynamic(context)),
           ),
           TextButton(
             onPressed: () {
@@ -474,7 +479,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
               // The brand will be fetched on the edit page
               context.router.pushNamed('/edit-brand/${brand.id}');
             },
-            child: Text('Edit'),
+            child: Text('Edit', style: AppTextStyles.buttonMediumDynamic(context)),
           ),
         ],
       ),
@@ -485,24 +490,24 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Hapus Brand'),
+        title: Text('Hapus Brand', style: AppTextStyles.headline6Dynamic(context)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Apakah Anda yakin ingin menghapus brand ini?'),
+            Text('Apakah Anda yakin ingin menghapus brand ini?', style: AppTextStyles.bodyMediumDynamic(context)),
             const SizedBox(height: UIConstants.paddingSmall),
             Text(
               '${brand.name}',
-              style: AppTextStyles.bodyMedium.copyWith(
+              style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: UIConstants.paddingSmall),
             Text(
               'Tindakan ini tidak dapat dibatalkan.',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.textSecondary,
+              style: AppTextStyles.bodySmallDynamic(context).copyWith(
+                color: AppColors.getTextSecondary(context),
               ),
             ),
           ],
@@ -510,7 +515,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
         actions: [
           TextButton(
             onPressed: () => context.router.maybePop(),
-            child: Text('Batal'),
+            child: Text('Batal', style: AppTextStyles.buttonMediumDynamic(context)),
           ),
           TextButton(
             onPressed: () {
@@ -520,7 +525,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
             style: TextButton.styleFrom(
               foregroundColor: AppColors.error,
             ),
-            child: Text('Hapus'),
+            child: Text('Hapus', style: AppTextStyles.buttonMediumDynamic(context)),
           ),
         ],
       ),

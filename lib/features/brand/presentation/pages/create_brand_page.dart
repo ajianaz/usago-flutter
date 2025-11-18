@@ -81,7 +81,7 @@ class _CreateBrandViewState extends State<CreateBrandView> {
       appBar: AppBar(
         title: Text(
           'Buat Brand Baru',
-          style: AppTextStyles.headline5.copyWith(
+          style: AppTextStyles.headline5Dynamic(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -89,9 +89,9 @@ class _CreateBrandViewState extends State<CreateBrandView> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back,
-            color: AppColors.textPrimary,
+            color: AppColors.getTextPrimary(context),
           ),
           onPressed: () => context.router.maybePop(),
         ),
@@ -117,8 +117,8 @@ class _CreateBrandViewState extends State<CreateBrandView> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppColors.primary.withValues(alpha: 0.1),
-                    AppColors.primary.withValues(alpha: 0.05),
+                    AppColors.primary.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
+                    AppColors.primary.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.1 : 0.05),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -133,22 +133,22 @@ class _CreateBrandViewState extends State<CreateBrandView> {
                 children: [
                   FaIcon(
                     FontAwesomeIcons.building,
-                    color: AppColors.onPrimary,
+                    color: AppColors.getTextPrimary(context),
                     size: UIConstants.fontSizeXXLarge,
                   ),
                   const SizedBox(height: UIConstants.spacingDefault),
                   Text(
                     'Buat Brand Baru',
-                    style: AppTextStyles.headline3.copyWith(
-                      color: AppColors.onPrimary,
+                    style: AppTextStyles.headline3Dynamic(context).copyWith(
+                      color: AppColors.getTextPrimary(context),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: UIConstants.paddingSmall),
                   Text(
                     'Lengkapi data brand Anda dan mulai beroperasi',
-                    style: AppTextStyles.bodyLarge.copyWith(
-                      color: AppColors.onPrimary.withValues(alpha: 0.9),
+                    style: AppTextStyles.bodyLargeDynamic(context).copyWith(
+                      color: AppColors.getTextPrimary(context).withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -163,8 +163,9 @@ class _CreateBrandViewState extends State<CreateBrandView> {
               width: double.infinity,
               padding: EdgeInsets.all(isMobile ? UIConstants.paddingDefault : UIConstants.paddingExtraLarge),
               decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
+                color: AppColors.getSurface(context),
                 borderRadius: BorderRadius.circular(UIConstants.borderRadiusLarge),
+                border: Border.all(color: AppColors.getBorder(context)),
                 boxShadow: [
                   BoxShadow(
                     color: Theme.of(context).shadowColor.withValues(alpha: 0.12),
@@ -179,7 +180,7 @@ class _CreateBrandViewState extends State<CreateBrandView> {
                   // Form Title
                   Text(
                     'Informasi Brand',
-                    style: AppTextStyles.headline4.copyWith(
+                    style: AppTextStyles.headline4Dynamic(context).copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -188,8 +189,8 @@ class _CreateBrandViewState extends State<CreateBrandView> {
                   // Form Description
                   Text(
                     'Isi form berikut dengan data yang diperlukan untuk membuat brand baru. Pastikan semua informasi yang ditandai dengan benar.',
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
+                    style: AppTextStyles.bodyMediumDynamic(context).copyWith(
+                      color: AppColors.getTextSecondary(context),
                     ),
                   ),
                   SizedBox(height: AppSpacing.lg),
