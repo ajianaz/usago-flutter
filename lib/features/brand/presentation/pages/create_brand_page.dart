@@ -156,8 +156,7 @@ class _CreateBrandViewState extends State<CreateBrandView> {
           ],
 
           // Form Section
-          Expanded(
-            child: Container(
+          Container(
               width: double.infinity,
               padding: EdgeInsets.all(isMobile ? UIConstants.paddingDefault : UIConstants.paddingExtraLarge),
               decoration: BoxDecoration(
@@ -197,7 +196,6 @@ class _CreateBrandViewState extends State<CreateBrandView> {
                 ],
               ),
             ),
-          ),
 
           // Bottom spacing for mobile
           if (isMobile) ...[
