@@ -140,6 +140,7 @@ class _TranslationsHomeId extends TranslationsHomeEn {
 	final TranslationsId _root; // ignore: unused_field
 
 	// Translations
+	@override String get title => 'Beranda';
 	@override String get welcome_message => 'Apa yang ingin Anda lakukan hari ini? 🎯';
 	@override String get select_feature => 'Pilih fitur yang tersedia di bawah ini';
 	@override String get error_occurred => 'Terjadi kesalahan';

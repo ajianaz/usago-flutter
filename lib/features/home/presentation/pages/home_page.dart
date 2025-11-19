@@ -16,6 +16,7 @@ import '../widgets/feature_grid.dart';
 import '../../../../core/extensions/context_extension.dart';
 import '../../../../shared/widgets/language_switcher.dart';
 import '../../../../shared/widgets/theme_switcher.dart';
+import '../../../../app/router.dart';
 
 /// Home page
 /// Main dashboard after user login
@@ -42,14 +43,59 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
+  bool _isFirstLoad = true;
+  bool _hasNavigatedAway = false;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     // Load home data when page initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<HomeBloc>().add(const LoadHomeData());
+      if (_isFirstLoad) {
+        context.read<HomeBloc>().add(const LoadHomeData());
+        _isFirstLoad = false;
+      }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // This is called when the widget's dependencies change
+    // We can use this to detect when we return to the page
+    if (!_isFirstLoad && _hasNavigatedAway) {
+      // We've navigated away and are now returning
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _refreshHomeData();
+        _hasNavigatedAway = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // Handle app lifecycle changes (e.g., when app comes to foreground)
+    if (state == AppLifecycleState.resumed && mounted) {
+      // Refresh data when app is resumed
+      _refreshHomeData();
+    }
+  }
+
+  void _refreshHomeData() {
+    // Only refresh if not already loading
+    final currentState = context.read<HomeBloc>().state;
+    if (currentState is! HomeLoading) {
+      context.read<HomeBloc>().add(const RefreshHomeData());
+    }
   }
 
   @override
@@ -57,7 +103,7 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          context.t.auth.login,
+          context.t.home.title,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         centerTitle: true,
@@ -115,9 +161,11 @@ class _HomeViewState extends State<HomeView> {
                             user: authState is AuthSuccess ? authState.user : null,
                             userDashboard: homeState is HomeLoaded ? homeState.userDashboard : null,
                             onProfileTap: () {
+                              _hasNavigatedAway = true;
                               context.router.pushNamed('/profile');
                             },
                             onNotificationTap: () {
+                              _hasNavigatedAway = true;
                               context.router.pushNamed('/notifications');
                             },
                           );
@@ -156,7 +204,7 @@ class _HomeViewState extends State<HomeView> {
                         return FeatureGrid(
                           menuItems: homeState.filteredMenuItems,
                           onMenuTap: (menuItem) {
-                            context.read<HomeBloc>().add(NavigateToMenu(menuItem));
+                            _hasNavigatedAway = true;
                             context.router.pushNamed(menuItem.route);
                           },
                         );

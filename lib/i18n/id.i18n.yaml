@@ -62,6 +62,7 @@ common:
 
 # Home
 home:
+  title: Beranda
   welcome_message: Apa yang ingin Anda lakukan hari ini? 🎯
   select_feature: Pilih fitur yang tersedia di bawah ini
   error_occurred: Terjadi kesalahan

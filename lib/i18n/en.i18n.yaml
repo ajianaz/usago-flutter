@@ -62,6 +62,7 @@ common:
 
 # Home
 home:
+  title: Home
   welcome_message: What would you like to do today? 🎯
   select_feature: Select the available features below
   error_occurred: An error occurred

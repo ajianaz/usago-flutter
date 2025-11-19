@@ -327,6 +327,11 @@ class TranslationsHomeEn {
 
 	// Translations
 
+	/// en: 'Home'
+	///
+	/// id: 'Beranda'
+	String get title => 'Home';
+
 	/// en: 'What would you like to do today? 🎯'
 	///
 	/// id: 'Apa yang ingin Anda lakukan hari ini? 🎯'

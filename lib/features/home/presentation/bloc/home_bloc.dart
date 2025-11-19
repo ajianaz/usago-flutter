@@ -71,10 +71,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     NavigateToMenu event,
     Emitter<HomeState> emit,
   ) {
-    emit(HomeNavigation(
-      route: event.menuItem.route,
-      menuItem: event.menuItem,
-    ));
+    // Don't change state when navigating - keep the current HomeLoaded state
+    // This prevents cards from disappearing when returning from navigation
+    // The navigation is handled by the router, not by changing bloc state
   }
 
   Future<void> _onTrackMenuUsage(

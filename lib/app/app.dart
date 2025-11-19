@@ -40,7 +40,9 @@ class MyApp extends StatelessWidget {
                   theme: AppTheme.lightTheme,
                   darkTheme: AppTheme.darkTheme,
                   themeMode: themeMode,
-                  routerConfig: appRouter.config(),
+                  routerConfig: appRouter.config(
+                    navigatorObservers: () => [routerObserver],
+                  ),
                   debugShowCheckedModeBanner: false,
                   locale: locale.flutterLocale,
                   supportedLocales: AppLocaleUtils.supportedLocales,
