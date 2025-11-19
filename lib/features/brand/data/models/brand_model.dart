@@ -21,6 +21,7 @@ class BrandModel extends Brand {
     required super.currency,
     required super.subscriptionTier,
     required super.subscriptionStatus,
+    super.subscriptionExpiresAt,
     required super.createdAt,
     required super.updatedAt,
   });
@@ -47,6 +48,7 @@ class BrandModel extends Brand {
         currency: currency,
         subscriptionTier: subscriptionTier,
         subscriptionStatus: subscriptionStatus,
+        subscriptionExpiresAt: subscriptionExpiresAt,
         createdAt: createdAt,
         updatedAt: updatedAt,
       );
@@ -66,6 +68,7 @@ class BrandModel extends Brand {
         currency: brand.currency,
         subscriptionTier: brand.subscriptionTier,
         subscriptionStatus: brand.subscriptionStatus,
+        subscriptionExpiresAt: brand.subscriptionExpiresAt,
         createdAt: brand.createdAt,
         updatedAt: brand.updatedAt,
       );
@@ -82,6 +85,7 @@ class BrandModel extends Brand {
         currency: '',
         subscriptionTier: '',
         subscriptionStatus: '',
+        subscriptionExpiresAt: null,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );

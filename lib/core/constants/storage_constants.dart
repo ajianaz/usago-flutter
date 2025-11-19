@@ -9,6 +9,11 @@ class StorageConstants {
   // User Context Keys
   static const String activeBrandKey = 'active_brand';
   static const String activeBranchKey = 'active_branch';
+  static const String activeBrandIdKey = 'active_brand_id';
+  static const String activeBranchIdKey = 'active_branch_id';
+  static const String userIdKey = 'user_id';
+  static const String userEmailKey = 'user_email';
+  static const String userNameKey = 'user_name';
   static const String userRoleKey = 'user_role';
   static const String permissionsKey = 'user_permissions';
 

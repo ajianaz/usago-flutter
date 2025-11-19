@@ -55,6 +55,15 @@ abstract interface class BrandRemoteDataSource {
   /// Get all invitations for a specific brand from remote API
   Future<Either<Failure, List<BrandInvitation>>> getBrandInvitations(String brandId);
 
+  /// Get all invitations for the current user (both sent and received) from remote API
+  Future<Either<Failure, List<BrandInvitation>>> getUserInvitations();
+
+  /// Cancel a sent invitation via remote API
+  Future<Either<Failure, void>> cancelInvitation(String invitationId);
+
+  /// Resend an invitation via remote API
+  Future<Either<Failure, void>> resendInvitation(String invitationId);
+
   /// Get brand statistics from remote API
   Future<Either<Failure, Map<String, dynamic>>> getBrandStats(String brandId);
 }

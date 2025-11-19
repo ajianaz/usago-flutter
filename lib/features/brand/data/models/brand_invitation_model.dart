@@ -5,7 +5,9 @@ part 'brand_invitation_model.g.dart';
 
 /// Brand Invitation model for API serialization/deserialization
 /// Extends the BrandInvitation entity with JSON capabilities
-@JsonSerializable()
+@JsonSerializable(
+  includeIfNull: false,
+)
 class BrandInvitationModel extends BrandInvitation {
   const BrandInvitationModel({
     required super.id,
@@ -16,14 +18,52 @@ class BrandInvitationModel extends BrandInvitation {
     required super.inviteeEmail,
     required super.role,
     required super.status,
+    @JsonKey(defaultValue: []) final super.branchIds,
     super.expiresAt,
     required super.createdAt,
     super.updatedAt,
   });
 
   /// Create BrandInvitationModel from JSON
-  factory BrandInvitationModel.fromJson(Map<String, dynamic> json) =>
-      _$BrandInvitationModelFromJson(json);
+  factory BrandInvitationModel.fromJson(Map<String, dynamic> json) {
+    // Handle both 'id' and 'invitationId' for backward compatibility
+    final id = json['id'] ?? json['invitationId'] ?? '';
+
+    // Handle missing fields with defaults
+    final inviterId = json['inviterId'] ?? '';
+    final inviteeEmail = json['inviteeEmail'] ?? json['email'] ?? '';
+    final status = json['status'] ?? 'PENDING';
+    final updatedAt = json['updatedAt'] != null
+        ? DateTime.parse(json['updatedAt'])
+        : null;
+
+    // Handle branchIds as List<String> with default empty list
+    List<String> branchIds = [];
+    if (json['branchIds'] != null) {
+      if (json['branchIds'] is List) {
+        branchIds = List<String>.from(json['branchIds']);
+      }
+    }
+
+    return BrandInvitationModel(
+      id: id,
+      brandId: json['brandId'] ?? '',
+      brandName: json['brandName'] ?? '',
+      inviterId: inviterId,
+      inviterName: json['inviterName'] ?? '',
+      inviteeEmail: inviteeEmail,
+      role: json['role'] ?? '',
+      status: status,
+      branchIds: branchIds,
+      expiresAt: json['expiresAt'] != null
+          ? DateTime.parse(json['expiresAt'])
+          : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
+      updatedAt: updatedAt,
+    );
+  }
 
   /// Convert BrandInvitationModel to JSON
   Map<String, dynamic> toJson() => _$BrandInvitationModelToJson(this);
@@ -38,6 +78,7 @@ class BrandInvitationModel extends BrandInvitation {
         inviteeEmail: inviteeEmail,
         role: role,
         status: status,
+        branchIds: branchIds,
         expiresAt: expiresAt,
         createdAt: createdAt,
         updatedAt: updatedAt,
@@ -54,6 +95,7 @@ class BrandInvitationModel extends BrandInvitation {
         inviteeEmail: invitation.inviteeEmail,
         role: invitation.role,
         status: invitation.status,
+        branchIds: invitation.branchIds,
         expiresAt: invitation.expiresAt,
         createdAt: invitation.createdAt,
         updatedAt: invitation.updatedAt,
@@ -69,6 +111,7 @@ class BrandInvitationModel extends BrandInvitation {
         inviteeEmail: '',
         role: '',
         status: '',
+        branchIds: const [],
         createdAt: DateTime.now(),
       );
 

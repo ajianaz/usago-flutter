@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/widgets.dart';
+import '../../../../i18n/translations.g.dart';
 
 /// User dashboard entity for home page statistics and info
 class UserDashboard extends Equatable {
@@ -63,22 +65,34 @@ class UserDashboard extends Equatable {
   }
 
   /// Get display name for user role
-  String get roleDisplayName {
-    switch (userRole?.toLowerCase()) {
-      case 'owner':
-        return 'Pemilik';
-      case 'admin':
-        return 'Administrator';
-      case 'manager':
-        return 'Manajer';
-      case 'staff':
-        return 'Staff';
-      case 'cashier':
-        return 'Kasir';
-      case 'accountant':
-        return 'Akuntan';
-      case 'viewer':
-        return 'Viewer';
+  String roleDisplayName(BuildContext context) {
+    final t = Translations.of(context);
+    switch (userRole?.toUpperCase()) {
+      case 'BRAND_OWNER':
+        return t.brand.brand_owner;
+      case 'BRANCH_MANAGER':
+        return t.brand.branch_manager;
+      case 'BRANCH_ADMIN':
+        return t.brand.branch_admin;
+      case 'BRANCH_STAFF':
+        return t.brand.branch_staff;
+      case 'CROSS_BRANCH_VIEWER':
+        return t.brand.cross_branch_viewer;
+      // Legacy values for backward compatibility
+      case 'OWNER':
+        return t.brand.role_owner;
+      case 'ADMIN':
+        return t.brand.role_admin;
+      case 'MANAGER':
+        return t.brand.role_manager;
+      case 'STAFF':
+        return t.brand.role_employee; // Using employee as closest match
+      case 'CASHIER':
+        return 'Kasir'; // No direct translation, using hardcoded
+      case 'ACCOUNTANT':
+        return 'Akuntan'; // No direct translation, using hardcoded
+      case 'VIEWER':
+        return t.brand.cross_branch_viewer; // Using closest match
       default:
         return userRole ?? 'Unknown';
     }
@@ -101,10 +115,10 @@ class UserDashboard extends Equatable {
   }
 
   /// Get user's full display info
-  String get userDisplayInfo {
+  String userDisplayInfo(BuildContext context) {
     final parts = <String>[];
     if (userName.isNotEmpty) parts.add(userName);
-    if (roleDisplayName != 'Unknown') parts.add(roleDisplayName);
+    if (roleDisplayName(context) != 'Unknown') parts.add(roleDisplayName(context));
     if (branchName != null) parts.add(branchName!);
 
     return parts.join(' • ');

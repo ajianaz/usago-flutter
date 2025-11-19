@@ -17,6 +17,10 @@ BrandInvitationModel _$BrandInvitationModelFromJson(
       inviteeEmail: json['inviteeEmail'] as String,
       role: json['role'] as String,
       status: json['status'] as String,
+      branchIds: (json['branchIds'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
       expiresAt: json['expiresAt'] == null
           ? null
           : DateTime.parse(json['expiresAt'] as String),
@@ -37,7 +41,10 @@ Map<String, dynamic> _$BrandInvitationModelToJson(
       'inviteeEmail': instance.inviteeEmail,
       'role': instance.role,
       'status': instance.status,
-      'expiresAt': instance.expiresAt?.toIso8601String(),
+      'branchIds': instance.branchIds,
+      if (instance.expiresAt?.toIso8601String() case final value?)
+        'expiresAt': value,
       'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt?.toIso8601String(),
+      if (instance.updatedAt?.toIso8601String() case final value?)
+        'updatedAt': value,
     };

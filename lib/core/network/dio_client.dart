@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_constants.dart';
 import '../utils/logger.dart';
+import '../context/context_manager.dart';
 
 class DioClient {
   late Dio _dio;
@@ -181,6 +182,21 @@ class AuthInterceptor extends Interceptor {
 
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
+    }
+
+    // Add context headers
+    final contextManager = ContextManager();
+    final context = contextManager.currentContext;
+
+    if (context != null) {
+      options.headers['X-Active-Brand-ID'] = context.activeBrand?.id ?? '';
+      options.headers['X-Active-Branch-ID'] = context.activeBranch?.id ?? '';
+      options.headers['X-User-Role'] = context.role.name;
+    } else {
+      // Handle case where context is null with default values
+      options.headers['X-Active-Brand-ID'] = '';
+      options.headers['X-Active-Branch-ID'] = '';
+      options.headers['X-User-Role'] = '';
     }
 
     handler.next(options);

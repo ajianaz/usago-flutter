@@ -32,6 +32,7 @@ class _InviteUserFormState extends State<InviteUserForm> {
   final _emailController = TextEditingController();
   final _messageController = TextEditingController();
   String _selectedRole = 'BRAND_ADMIN';
+  List<String> _selectedBranchIds = [];
   bool _isLoading = false;
 
   // Available roles for brand invitations
@@ -140,6 +141,54 @@ class _InviteUserFormState extends State<InviteUserForm> {
           ),
           SizedBox(height: AppSpacing.lg),
 
+          // Branch Selection (Optional)
+          if (_selectedRole == 'BRANCH_MANAGER' || _selectedRole == 'BRANCH_ADMIN' || _selectedRole == 'BRANCH_STAFF') ...[
+            Text(
+              context.t.brand.role_label,
+              style: AppTextStyles.bodyLarge.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(height: AppSpacing.sm),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Pilih cabang untuk pengguna ini (opsional)',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  // TODO: Implement branch selection UI when branch data is available
+                  // For now, we'll show a placeholder
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(AppSpacing.sm),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      'Fitur pemilihan cabang akan segera hadir',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: AppSpacing.lg),
+          ],
+
           // Message Field (Optional)
           Text(
             '${context.t.brand.message_optional}',
@@ -200,6 +249,7 @@ class _InviteUserFormState extends State<InviteUserForm> {
       final invitationData = {
         'email': _emailController.text.trim(),
         'role': _selectedRole,
+        'branchIds': _selectedBranchIds.isEmpty ? null : _selectedBranchIds,
         'message': _messageController.text.trim().isEmpty
             ? null
             : _messageController.text.trim(),

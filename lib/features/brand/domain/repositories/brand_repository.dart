@@ -55,6 +55,15 @@ abstract class BrandRepository {
   /// Get all invitations for a specific brand
   Future<Either<Failure, List<BrandInvitation>>> getBrandInvitations(String brandId);
 
+  /// Get all invitations for the current user (both sent and received)
+  Future<Either<Failure, List<BrandInvitation>>> getUserInvitations();
+
+  /// Cancel a sent invitation
+  Future<Either<Failure, void>> cancelInvitation(String invitationId);
+
+  /// Resend an invitation
+  Future<Either<Failure, void>> resendInvitation(String invitationId);
+
   /// Get brand statistics
   Future<Either<Failure, Map<String, dynamic>>> getBrandStats(String brandId);
 

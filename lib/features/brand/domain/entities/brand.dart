@@ -16,6 +16,7 @@ class Brand extends Equatable {
   final String currency;
   final String subscriptionTier;
   final String subscriptionStatus;
+  final DateTime? subscriptionExpiresAt;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -33,6 +34,7 @@ class Brand extends Equatable {
     required this.currency,
     required this.subscriptionTier,
     required this.subscriptionStatus,
+    this.subscriptionExpiresAt,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -52,6 +54,7 @@ class Brand extends Equatable {
     String? currency,
     String? subscriptionTier,
     String? subscriptionStatus,
+    DateTime? subscriptionExpiresAt,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -69,6 +72,7 @@ class Brand extends Equatable {
       currency: currency ?? this.currency,
       subscriptionTier: subscriptionTier ?? this.subscriptionTier,
       subscriptionStatus: subscriptionStatus ?? this.subscriptionStatus,
+      subscriptionExpiresAt: subscriptionExpiresAt ?? this.subscriptionExpiresAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -82,6 +86,12 @@ class Brand extends Equatable {
 
   /// Check if subscription is active
   bool get isSubscriptionActive => subscriptionStatus.toUpperCase() == 'ACTIVE';
+
+  /// Check if subscription is expired
+  bool get isSubscriptionExpired {
+    if (subscriptionExpiresAt == null) return false;
+    return DateTime.now().isAfter(subscriptionExpiresAt!);
+  }
 
   /// Get formatted business type
   String get formattedBusinessType {
@@ -129,6 +139,22 @@ class Brand extends Equatable {
     }
   }
 
+  /// Get formatted subscription expiration date
+  String get formattedSubscriptionExpiresAt {
+    if (subscriptionExpiresAt == null) return 'Tidak ada kedaluwarsa';
+
+    final months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+    ];
+
+    final day = subscriptionExpiresAt!.day.toString().padLeft(2, '0');
+    final month = months[subscriptionExpiresAt!.month - 1];
+    final year = subscriptionExpiresAt!.year;
+
+    return '$day $month $year';
+  }
+
   /// Get brand's join date formatted
   String get joinDateFormatted {
     final months = [
@@ -165,12 +191,13 @@ class Brand extends Equatable {
         currency,
         subscriptionTier,
         subscriptionStatus,
+        subscriptionExpiresAt,
         createdAt,
         updatedAt,
       ];
 
   @override
   String toString() {
-    return 'Brand(id: $id, name: $name, slug: $slug, businessType: $businessType)';
+    return 'Brand(id: $id, name: $name, slug: $slug, businessType: $businessType, subscriptionTier: $subscriptionTier, subscriptionStatus: $subscriptionStatus, subscriptionExpiresAt: $subscriptionExpiresAt)';
   }
 }

@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/widgets.dart';
+import '../../../../i18n/translations.g.dart';
 
 /// Brand Invitation entity representing an invitation to join a brand
 class BrandInvitation extends Equatable {
@@ -10,6 +12,7 @@ class BrandInvitation extends Equatable {
   final String inviteeEmail;
   final String role;
   final String status;
+  final List<String> branchIds;
   final DateTime? expiresAt;
   final DateTime createdAt;
   final DateTime? updatedAt;
@@ -23,6 +26,7 @@ class BrandInvitation extends Equatable {
     required this.inviteeEmail,
     required this.role,
     required this.status,
+    this.branchIds = const [],
     this.expiresAt,
     required this.createdAt,
     this.updatedAt,
@@ -38,6 +42,7 @@ class BrandInvitation extends Equatable {
     String? inviteeEmail,
     String? role,
     String? status,
+    List<String>? branchIds,
     DateTime? expiresAt,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -51,6 +56,7 @@ class BrandInvitation extends Equatable {
       inviteeEmail: inviteeEmail ?? this.inviteeEmail,
       role: role ?? this.role,
       status: status ?? this.status,
+      branchIds: branchIds ?? this.branchIds,
       expiresAt: expiresAt ?? this.expiresAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -73,16 +79,19 @@ class BrandInvitation extends Equatable {
   }
 
   /// Get formatted role
-  String get formattedRole {
+  String formattedRole(BuildContext context) {
+    final t = Translations.of(context);
     switch (role.toUpperCase()) {
-      case 'OWNER':
-        return 'Pemilik';
-      case 'ADMIN':
-        return 'Admin';
-      case 'MANAGER':
-        return 'Manajer';
-      case 'EMPLOYEE':
-        return 'Karyawan';
+      case 'BRAND_OWNER':
+        return t.brand.brand_owner;
+      case 'BRANCH_MANAGER':
+        return t.brand.branch_manager;
+      case 'BRANCH_ADMIN':
+        return t.brand.branch_admin;
+      case 'BRANCH_STAFF':
+        return t.brand.branch_staff;
+      case 'CROSS_BRANCH_VIEWER':
+        return t.brand.cross_branch_viewer;
       default:
         return role;
     }
@@ -144,6 +153,7 @@ class BrandInvitation extends Equatable {
         inviteeEmail,
         role,
         status,
+        branchIds,
         expiresAt,
         createdAt,
         updatedAt,

@@ -84,7 +84,7 @@ class InvitationCard extends StatelessWidget {
                   ),
                   SizedBox(width: AppSpacing.xs),
                   Text(
-                    '${context.t.brand.role_label}: ${invitation.formattedRole}',
+                    '${context.t.brand.role_label}: ${invitation.formattedRole(context)}',
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -92,6 +92,27 @@ class InvitationCard extends StatelessWidget {
                 ],
               ),
               SizedBox(height: AppSpacing.sm),
+
+              // Branch information (if available)
+              if (invitation.branchIds.isNotEmpty) ...[
+                Row(
+                  children: [
+                    Icon(
+                      FontAwesomeIcons.codeBranch,
+                      size: 16,
+                      color: AppColors.textSecondary,
+                    ),
+                    SizedBox(width: AppSpacing.xs),
+                    Text(
+                      'Cabang: ${invitation.branchIds.length} cabang',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: AppSpacing.sm),
+              ],
 
               // Date information
               Row(
@@ -265,7 +286,7 @@ class InvitationCard extends StatelessWidget {
             Text(context.t.brand.accept_invitation_dialog_message.replaceAll('{brandName}', invitation.brandName)),
             SizedBox(height: AppSpacing.sm),
             Text(
-              context.t.brand.accept_invitation_role_info.replaceAll('{role}', invitation.formattedRole),
+              context.t.brand.accept_invitation_role_info.replaceAll('{role}', invitation.formattedRole(context)),
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
               ),

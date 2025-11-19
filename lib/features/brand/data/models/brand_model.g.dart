@@ -20,6 +20,9 @@ BrandModel _$BrandModelFromJson(Map<String, dynamic> json) => BrandModel(
       currency: json['currency'] as String,
       subscriptionTier: json['subscriptionTier'] as String,
       subscriptionStatus: json['subscriptionStatus'] as String,
+      subscriptionExpiresAt: json['subscriptionExpiresAt'] == null
+          ? null
+          : DateTime.parse(json['subscriptionExpiresAt'] as String),
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
@@ -39,6 +42,8 @@ Map<String, dynamic> _$BrandModelToJson(BrandModel instance) =>
       'currency': instance.currency,
       'subscriptionTier': instance.subscriptionTier,
       'subscriptionStatus': instance.subscriptionStatus,
+      'subscriptionExpiresAt':
+          instance.subscriptionExpiresAt?.toIso8601String(),
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
     };

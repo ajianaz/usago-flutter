@@ -237,55 +237,47 @@ class BrandBloc extends Bloc<BrandEvent, BrandState> {
 Future<void> _onLoadUserInvitationsEvent(LoadUserInvitationsEvent event, Emitter<BrandState> emit) async {
   emit(const BrandLoading());
 
-  // For now, we'll use a placeholder implementation
-  // In a real app, this would call repository methods to get user invitations
-  final sentInvitations = <BrandInvitation>[];
-  final receivedInvitations = <BrandInvitation>[];
-
-  emit(BrandInvitationsLoaded(
-    sentInvitations: sentInvitations,
-    receivedInvitations: receivedInvitations,
-  ));
+  // TODO: This method requires getUserInvitations() to be implemented in the repository
+  // For now, emit an error state until the repository method is implemented
+  emit(const BrandError('getUserInvitations() method not implemented in repository'));
 }
 
 Future<void> _onGetReceivedInvitationsEvent(GetReceivedInvitationsEvent event, Emitter<BrandState> emit) async {
   emit(const BrandLoading());
 
-  // For now, we'll use a placeholder implementation
-  // In a real app, this would call repository method to get received invitations
-  final invitations = <BrandInvitation>[];
-
-  emit(ReceivedInvitationsLoaded(invitations));
+  // TODO: This method requires getUserInvitations() to be implemented in the repository
+  // For now, emit an error state until the repository method is implemented
+  emit(const BrandError('getUserInvitations() method not implemented in repository'));
 }
 
 Future<void> _onGetSentInvitationsEvent(GetSentInvitationsEvent event, Emitter<BrandState> emit) async {
   emit(const BrandLoading());
 
-  // For now, we'll use a placeholder implementation
-  // In a real app, this would call repository method to get sent invitations
-  final invitations = <BrandInvitation>[];
-
-  emit(SentInvitationsLoaded(invitations));
+  // TODO: This method requires getUserInvitations() to be implemented in the repository
+  // For now, emit an error state until the repository method is implemented
+  emit(const BrandError('getUserInvitations() method not implemented in repository'));
 }
 
 Future<void> _onCancelInvitationEvent(CancelInvitationEvent event, Emitter<BrandState> emit) async {
   emit(const BrandLoading());
 
-  // For now, we'll use a placeholder implementation
-  // In a real app, this would call repository method to cancel invitation
-  await Future.delayed(const Duration(seconds: 1));
+  final result = await _brandRepository.cancelInvitation(event.invitationId);
 
-  emit(const BrandOperationSuccess('Invitation cancelled'));
+  emit(result.fold(
+    (failure) => BrandError(failure.message),
+    (_) => const BrandOperationSuccess('Invitation cancelled'),
+  ));
 }
 
 Future<void> _onResendInvitationEvent(ResendInvitationEvent event, Emitter<BrandState> emit) async {
   emit(const BrandLoading());
 
-  // For now, we'll use a placeholder implementation
-  // In a real app, this would call repository method to resend invitation
-  await Future.delayed(const Duration(seconds: 1));
+  final result = await _brandRepository.resendInvitation(event.invitationId);
 
-  emit(const BrandOperationSuccess('Invitation resent'));
+  emit(result.fold(
+    (failure) => BrandError(failure.message),
+    (_) => const BrandOperationSuccess('Invitation resent'),
+  ));
 }
 
 Future<void> _onSearchBrandsEvent(SearchBrandsEvent event, Emitter<BrandState> emit) async {

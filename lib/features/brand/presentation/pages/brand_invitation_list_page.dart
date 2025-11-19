@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/constants/ui_constants.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../shared/themes/app_colors.dart';
@@ -391,8 +390,10 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
                 isReceived ? context.t.brand.from_label : context.t.brand.to_label,
                 isReceived ? invitation.inviterName : invitation.inviteeEmail,
               ),
-              _buildDetailRow(context.t.brand.role_label, invitation.formattedRole),
+              _buildDetailRow(context.t.brand.role_label, invitation.formattedRole(context)),
               _buildDetailRow(context.t.brand.status, invitation.formattedStatus),
+              if (invitation.branchIds.isNotEmpty)
+                _buildDetailRow('Cabang', '${invitation.branchIds.length} cabang'),
               _buildDetailRow(context.t.brand.sent_label, invitation.createdDateFormatted),
               if (invitation.expirationDateFormatted != null)
                 _buildDetailRow(context.t.brand.expires_label, invitation.expirationDateFormatted!),

@@ -628,4 +628,78 @@ class BrandRepositoryImpl implements BrandRepository {
       ));
     }
   }
+
+  @override
+  Future<Either<Failure, List<BrandInvitation>>> getUserInvitations() async {
+    try {
+      final result = await _remoteDataSource.getUserInvitations();
+
+      return result.fold(
+        (failure) {
+          _logger.error('Failed to get user invitations: ${failure.message}', failure);
+          return Left(failure);
+        },
+        (invitations) async {
+          // Cache the invitations
+          await _localDataSource.cacheBrandInvitations(invitations);
+          _logger.info('Successfully retrieved ${invitations.length} user invitations');
+          return Right(invitations);
+        },
+      );
+    } catch (e) {
+      _logger.error('Unexpected error in getUserInvitations', e);
+      return Left(ServerFailure(
+        message: 'An unexpected error occurred',
+        originalError: e,
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> cancelInvitation(String invitationId) async {
+    try {
+      final result = await _remoteDataSource.cancelInvitation(invitationId);
+
+      return result.fold(
+        (failure) {
+          _logger.error('Failed to cancel invitation: ${failure.message}', failure);
+          return Left(failure);
+        },
+        (_) async {
+          _logger.info('Successfully cancelled invitation: $invitationId');
+          return const Right(null);
+        },
+      );
+    } catch (e) {
+      _logger.error('Unexpected error in cancelInvitation', e);
+      return Left(ServerFailure(
+        message: 'An unexpected error occurred',
+        originalError: e,
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> resendInvitation(String invitationId) async {
+    try {
+      final result = await _remoteDataSource.resendInvitation(invitationId);
+
+      return result.fold(
+        (failure) {
+          _logger.error('Failed to resend invitation: ${failure.message}', failure);
+          return Left(failure);
+        },
+        (_) async {
+          _logger.info('Successfully resent invitation: $invitationId');
+          return const Right(null);
+        },
+      );
+    } catch (e) {
+      _logger.error('Unexpected error in resendInvitation', e);
+      return Left(ServerFailure(
+        message: 'An unexpected error occurred',
+        originalError: e,
+      ));
+    }
+  }
 }

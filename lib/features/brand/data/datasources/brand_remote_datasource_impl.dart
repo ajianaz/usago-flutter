@@ -413,4 +413,80 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
       ));
     }
   }
+
+  @override
+  Future<Either<Failure, List<BrandInvitation>>> getUserInvitations() async {
+    try {
+      final response = await _dioClient.get(BrandEndpoints.getUserInvitations);
+
+      final List<dynamic> dataList = response['data'] ?? [];
+      final List<BrandInvitation> invitations = dataList
+          .map((json) => BrandInvitationModel.fromJson(json).toEntity())
+          .toList();
+
+      _logger.info('Successfully fetched ${invitations.length} user invitations');
+      return Right(invitations);
+    } on DioException catch (e) {
+      _logger.error('Dio error in getUserInvitations: $e');
+      return Left(ServerFailure(
+        message: e.message ?? 'Network error occurred',
+        statusCode: e.response?.statusCode,
+        originalError: e,
+      ));
+    } catch (e) {
+      _logger.error('Unexpected error in getUserInvitations: $e');
+      return Left(ServerFailure(
+        message: e.toString(),
+        originalError: e,
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> cancelInvitation(String invitationId) async {
+    try {
+      final endpoint = BrandEndpoints.cancelInvitation.replaceAll('{invitationId}', invitationId);
+      await _dioClient.delete(endpoint);
+
+      _logger.info('Successfully cancelled invitation: $invitationId');
+      return const Right(null);
+    } on DioException catch (e) {
+      _logger.error('Dio error in cancelInvitation: $e');
+      return Left(ServerFailure(
+        message: e.message ?? 'Network error occurred',
+        statusCode: e.response?.statusCode,
+        originalError: e,
+      ));
+    } catch (e) {
+      _logger.error('Unexpected error in cancelInvitation: $e');
+      return Left(ServerFailure(
+        message: e.toString(),
+        originalError: e,
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> resendInvitation(String invitationId) async {
+    try {
+      final endpoint = BrandEndpoints.resendInvitation.replaceAll('{invitationId}', invitationId);
+      await _dioClient.post(endpoint);
+
+      _logger.info('Successfully resent invitation: $invitationId');
+      return const Right(null);
+    } on DioException catch (e) {
+      _logger.error('Dio error in resendInvitation: $e');
+      return Left(ServerFailure(
+        message: e.message ?? 'Network error occurred',
+        statusCode: e.response?.statusCode,
+        originalError: e,
+      ));
+    } catch (e) {
+      _logger.error('Unexpected error in resendInvitation: $e');
+      return Left(ServerFailure(
+        message: e.toString(),
+        originalError: e,
+      ));
+    }
+  }
 }

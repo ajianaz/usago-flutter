@@ -99,7 +99,7 @@ class UserHeader extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (userDashboard?.roleDisplayName != null) ...[
+                    if (userDashboard?.userRole != null) ...[
                       AppSpacing.verticalGapXs,
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -111,7 +111,7 @@ class UserHeader extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          userDashboard!.roleDisplayName,
+                          userDashboard!.roleDisplayName(context),
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.onPrimary,
                             fontWeight: FontWeight.w600,
