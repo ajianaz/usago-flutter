@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/constants/ui_constants.dart';
+import '../../../../i18n/translations.g.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/widgets/responsive_builder.dart';
@@ -185,7 +186,7 @@ class BrandCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'BARU',
+                  context.t.brand.kNew,
                   style: AppTextStyles.captionDynamic(context).copyWith(
                     color: AppColors.onSuccess,
                     fontWeight: FontWeight.w600,
@@ -250,7 +251,7 @@ class BrandCard extends StatelessWidget {
 
         // Join Date
         Text(
-          'Bergabung: ${brand.joinDateFormatted}',
+          context.t.brand.joined.replaceFirst('{date}', brand.joinDateFormatted),
           style: AppTextStyles.captionDynamic(context).copyWith(
             color: AppColors.getTextSecondary(context),
           ),
@@ -268,7 +269,7 @@ class BrandCard extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                'Brand Aktif',
+                context.t.brand.brand_active,
                 style: AppTextStyles.captionDynamic(context).copyWith(
                   color: AppColors.success,
                   fontWeight: FontWeight.w600,
@@ -287,7 +288,7 @@ class BrandCard extends StatelessWidget {
       children: [
         _buildActionButton(
           context,
-          'Statistik',
+          context.t.brand.statistics,
           FontAwesomeIcons.chartLine,
           AppColors.info,
           () {
@@ -297,7 +298,7 @@ class BrandCard extends StatelessWidget {
         ),
         _buildActionButton(
           context,
-          'Undangan',
+          context.t.brand.invitations,
           FontAwesomeIcons.envelope,
           AppColors.warning,
           () {
@@ -307,7 +308,7 @@ class BrandCard extends StatelessWidget {
         ),
         _buildActionButton(
           context,
-          'Transfer',
+          context.t.brand.transfer,
           FontAwesomeIcons.rightLeft,
           AppColors.secondary,
           () {
@@ -409,7 +410,7 @@ class BrandCard extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                'Lihat Statistik',
+                context.t.brand.view_statistics,
                 style: AppTextStyles.bodyMediumDynamic(context),
               ),
             ],
@@ -426,7 +427,7 @@ class BrandCard extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                'Kelola Undangan',
+                context.t.brand.manage_invitations,
                 style: AppTextStyles.bodyMediumDynamic(context),
               ),
             ],
@@ -443,7 +444,7 @@ class BrandCard extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                'Transfer Brand',
+                context.t.brand.transfer_brand,
                 style: AppTextStyles.bodyMediumDynamic(context),
               ),
             ],
@@ -461,7 +462,7 @@ class BrandCard extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                'Edit',
+                context.t.common.edit,
                 style: AppTextStyles.bodyMediumDynamic(context),
               ),
             ],
@@ -478,7 +479,7 @@ class BrandCard extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                'Hapus',
+                context.t.common.delete,
                 style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                   color: AppColors.error,
                 ),

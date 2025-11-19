@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../../../i18n/translations.g.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../domain/entities/menu_item.dart';
@@ -21,10 +22,11 @@ class FeatureGrid extends StatelessWidget {
     this.category,
   }) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
     if (menuItems.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(context);
     }
 
     return Column(
@@ -34,7 +36,7 @@ class FeatureGrid extends StatelessWidget {
           Padding(
             padding: AppSpacing.paddingHorizontalMd,
             child: Text(
-              _getCategoryDisplayName(category!),
+              _getCategoryDisplayName(context, category!),
               style: AppTextStyles.headline6,
             ),
           ),
@@ -62,7 +64,7 @@ class FeatureGrid extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Container(
       padding: AppSpacing.paddingAllLg,
       child: Column(
@@ -76,8 +78,8 @@ class FeatureGrid extends StatelessWidget {
           AppSpacing.verticalGapMd,
           Text(
             category != null
-                ? 'Tidak ada menu dalam kategori ${_getCategoryDisplayName(category!)}'
-                : 'Tidak ada menu tersedia',
+                ? context.t.home.no_menu_in_category.replaceFirst('{category}', _getCategoryDisplayName(context, category!))
+                : context.t.home.no_menu_available,
             style: AppTextStyles.bodyLarge.copyWith(
               color: Colors.grey[600],
             ),
@@ -85,7 +87,7 @@ class FeatureGrid extends StatelessWidget {
           ),
           AppSpacing.verticalGapSm,
           Text(
-            'Hubungi administrator untuk mengakses fitur ini',
+            context.t.home.contact_admin,
             style: AppTextStyles.bodyMedium.copyWith(
               color: Colors.grey[500],
             ),
@@ -96,18 +98,18 @@ class FeatureGrid extends StatelessWidget {
     );
   }
 
-  String _getCategoryDisplayName(String category) {
+  String _getCategoryDisplayName(BuildContext context, String category) {
     switch (category.toLowerCase()) {
       case 'management':
-        return 'Manajemen';
+        return context.t.home.management;
       case 'operations':
-        return 'Operasional';
+        return context.t.home.operations;
       case 'reports':
-        return 'Laporan';
+        return context.t.home.reports;
       case 'settings':
-        return 'Pengaturan';
+        return context.t.home.settings;
       case 'all':
-        return 'Semua Menu';
+        return context.t.home.all_menu;
       default:
         return category;
     }

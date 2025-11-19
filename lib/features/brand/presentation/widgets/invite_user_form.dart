@@ -11,6 +11,7 @@ import '../../domain/entities/brand.dart';
 import '../bloc/brand_bloc.dart';
 import '../bloc/brand_event.dart';
 import '../bloc/brand_state.dart';
+import '../../../../i18n/translations.g.dart';
 
 /// Invite User Form Widget
 /// Form to invite users to a brand with role selection
@@ -34,14 +35,16 @@ class _InviteUserFormState extends State<InviteUserForm> {
   bool _isLoading = false;
 
   // Available roles for brand invitations
-  final List<Map<String, String>> _availableRoles = [
-    {'value': 'BRAND_OWNER', 'label': 'Pemilik Brand'},
-    {'value': 'BRAND_ADMIN', 'label': 'Admin Brand'},
-    {'value': 'BRANCH_MANAGER', 'label': 'Manajer Cabang'},
-    {'value': 'BRANCH_ADMIN', 'label': 'Admin Cabang'},
-    {'value': 'BRANCH_STAFF', 'label': 'Staf Cabang'},
-    {'value': 'CROSS_BRANCH_VIEWER', 'label': 'Penonton Lintas Cabang'},
-  ];
+  List<Map<String, String>> _availableRoles(BuildContext context) {
+    return [
+      {'value': 'BRAND_OWNER', 'label': context.t.brand.brand_owner},
+      {'value': 'BRAND_ADMIN', 'label': context.t.brand.brand_admin},
+      {'value': 'BRANCH_MANAGER', 'label': context.t.brand.branch_manager},
+      {'value': 'BRANCH_ADMIN', 'label': context.t.brand.branch_admin},
+      {'value': 'BRANCH_STAFF', 'label': context.t.brand.branch_staff},
+      {'value': 'CROSS_BRANCH_VIEWER', 'label': context.t.brand.cross_branch_viewer},
+    ];
+  }
 
   @override
   void dispose() {
@@ -59,7 +62,7 @@ class _InviteUserFormState extends State<InviteUserForm> {
         children: [
           // Email Field
           Text(
-            'Email Pengguna',
+            context.t.brand.user_email_label,
             style: AppTextStyles.bodyLarge.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -67,16 +70,16 @@ class _InviteUserFormState extends State<InviteUserForm> {
           SizedBox(height: AppSpacing.sm),
           AnimatedTextField(
             controller: _emailController,
-            labelText: 'Masukkan email pengguna yang ingin diundang',
-            hintText: 'contoh: user@example.com',
+            labelText: context.t.brand.user_email_hint,
+            hintText: context.t.brand.user_email_example,
             prefixIcon: Icon(FontAwesomeIcons.envelope, size: 20),
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
-                return 'Email wajib diisi';
+                return context.t.brand.email_required;
               }
               if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
-                return 'Format email tidak valid';
+                return context.t.brand.email_invalid;
               }
               return null;
             },
@@ -85,7 +88,7 @@ class _InviteUserFormState extends State<InviteUserForm> {
 
           // Role Selection
           Text(
-            'Peran Pengguna',
+            context.t.brand.user_role_label,
             style: AppTextStyles.bodyLarge.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -103,12 +106,12 @@ class _InviteUserFormState extends State<InviteUserForm> {
                 value: _selectedRole,
                 isExpanded: true,
                 hint: Text(
-                  'Pilih peran',
+                  context.t.brand.select_role_hint,
                   style: AppTextStyles.bodyMedium.copyWith(
                     color: AppColors.textSecondary,
                   ),
                 ),
-                items: _availableRoles.map((role) {
+                items: _availableRoles(context).map((role) {
                   return DropdownMenuItem<String>(
                     value: role['value'],
                     child: Row(
@@ -139,7 +142,7 @@ class _InviteUserFormState extends State<InviteUserForm> {
 
           // Message Field (Optional)
           Text(
-            'Pesan (Opsional)',
+            '${context.t.brand.message_optional}',
             style: AppTextStyles.bodyLarge.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -147,8 +150,8 @@ class _InviteUserFormState extends State<InviteUserForm> {
           SizedBox(height: AppSpacing.sm),
           AnimatedTextField(
             controller: _messageController,
-            labelText: 'Pesan personal untuk pengguna (opsional)',
-            hintText: 'Tambahkan pesan personal jika diperlukan',
+            labelText: context.t.brand.personal_message_hint,
+            hintText: context.t.brand.personal_message_explanation,
             prefixIcon: Icon(FontAwesomeIcons.message, size: 20),
             maxLines: 3,
             textInputAction: TextInputAction.done,
@@ -157,7 +160,7 @@ class _InviteUserFormState extends State<InviteUserForm> {
 
           // Submit Button
           CustomButton(
-            text: 'Kirim Undangan',
+            text: context.t.brand.send_invitation,
             onPressed: _isLoading ? null : _submitForm,
             isLoading: _isLoading,
             isFullWidth: true,

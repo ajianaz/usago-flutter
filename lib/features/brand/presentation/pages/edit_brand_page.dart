@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/constants/ui_constants.dart';
 import '../../../../core/di/injection_container.dart';
+import '../../../../i18n/translations.g.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
@@ -126,7 +127,7 @@ class _EditBrandViewState extends State<EditBrandView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Edit Brand',
+          context.t.brand.edit_brand,
           style: AppTextStyles.headline5.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -184,7 +185,7 @@ class _EditBrandViewState extends State<EditBrandView> {
                   ),
                   const SizedBox(height: UIConstants.spacingDefault),
                   Text(
-                    'Edit Brand',
+                    context.t.brand.edit_brand,
                     style: AppTextStyles.headline3.copyWith(
                       color: AppColors.onPrimary,
                       fontWeight: FontWeight.bold,
@@ -192,7 +193,7 @@ class _EditBrandViewState extends State<EditBrandView> {
                   ),
                   const SizedBox(height: UIConstants.paddingSmall),
                   Text(
-                    'Perbarui data brand yang ada sesuai kebutuhan Anda',
+                    context.t.brand.edit_brand_description,
                     style: AppTextStyles.bodyLarge.copyWith(
                       color: AppColors.onPrimary.withOpacity(0.9),
                     ),
@@ -225,7 +226,7 @@ class _EditBrandViewState extends State<EditBrandView> {
                 children: [
                   // Form Title
                   Text(
-                    'Informasi Brand',
+                    context.t.brand.brand_info,
                     style: AppTextStyles.headline4.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -234,7 +235,7 @@ class _EditBrandViewState extends State<EditBrandView> {
 
                   // Form Description
                   Text(
-                    'Perbarui informasi brand di bawah ini. Pastikan semua data yang diperlukan sudah benar.',
+                    context.t.brand.brand_info_description,
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -249,8 +250,8 @@ class _EditBrandViewState extends State<EditBrandView> {
                   ] else if (_brand != null) ...[
                     CreateBrandForm(brand: _brand!, deviceType: widget.deviceType),
                   ] else ...[
-                    const Center(
-                      child: Text('Brand tidak ditemukan'),
+                    Center(
+                      child: Text(context.t.brand.brand_not_found),
                     ),
                   ],
                 ],

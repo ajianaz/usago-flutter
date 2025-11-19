@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../i18n/translations.g.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/widgets/responsive_builder.dart';
@@ -53,7 +54,7 @@ class BrandSelector extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Text(
-            'Tidak ada brand tersedia',
+            context.t.brand.no_brands_available_selector,
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textSecondary,
             ),
@@ -93,7 +94,7 @@ class BrandSelector extends StatelessWidget {
                       if (brand.isSubscriptionActive) ...[
                         const SizedBox(height: 2),
                         Text(
-                          'Aktif',
+                          context.t.brand.active,
                           style: AppTextStyles.caption.copyWith(
                             color: AppColors.success,
                             fontWeight: FontWeight.w600,
@@ -159,7 +160,7 @@ class BrandSelector extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'Pilih Brand',
+                      context.t.brand.select_brand,
                       style: AppTextStyles.headline6.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -167,7 +168,7 @@ class BrandSelector extends StatelessWidget {
                     const Spacer(),
                     if (currentBrand != null) ...[
                       Text(
-                        'Saat ini:',
+                        context.t.brand.currently,
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.textSecondary,
                         ),
@@ -252,7 +253,7 @@ class BrandSelector extends StatelessWidget {
                               if (brand.isSubscriptionActive) ...[
                                 const SizedBox(height: 2),
                                 Text(
-                                  'Aktif',
+                                  context.t.brand.active,
                                   style: AppTextStyles.caption.copyWith(
                                     color: AppColors.success,
                                     fontWeight: FontWeight.w600,

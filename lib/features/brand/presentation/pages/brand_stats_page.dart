@@ -22,9 +22,9 @@ class BrandStatsPage extends StatelessWidget {
   final Brand brand;
 
   const BrandStatsPage({
-    Key? key,
+    super.key,
     required this.brand,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +158,7 @@ class BrandStatsPage extends StatelessWidget {
                 width: UIConstants.containerSizeSmall,
                 height: UIConstants.containerSizeSmall,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
+                  color: AppColors.primary.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(UIConstants.borderRadiusDefault),
                 ),
                 child: brand.logoUrl != null
@@ -288,7 +288,7 @@ class BrandStatsPage extends StatelessWidget {
       isMobile,
       subtitle: context.t.brand.active_users.replaceAll('{count}', '892'),
       changePercent: 12.5,
-      changeType: 'increase',
+      changeType: context.t.brand.increase_label,
     );
   }
 
@@ -302,7 +302,7 @@ class BrandStatsPage extends StatelessWidget {
       isMobile,
       subtitle: context.t.brand.total_branches.replaceAll('{count}', '23'),
       changePercent: -8.3,
-      changeType: 'decrease',
+      changeType: context.t.brand.decrease_label,
     );
   }
 
@@ -316,7 +316,7 @@ class BrandStatsPage extends StatelessWidget {
       isMobile,
       subtitle: context.t.brand.revenue_target.replaceAll('{amount}', 'Rp 50M'),
       changePercent: 9.6,
-      changeType: 'increase',
+      changeType: context.t.brand.increase_label,
     );
   }
 
@@ -330,7 +330,7 @@ class BrandStatsPage extends StatelessWidget {
       isMobile,
       subtitle: context.t.brand.compare_last_month,
       changePercent: 5.2,
-      changeType: 'increase',
+      changeType: context.t.brand.increase_label,
     );
   }
 
@@ -358,7 +358,7 @@ class BrandStatsPage extends StatelessWidget {
       isMobile,
       subtitle: context.t.brand.daily_average.replaceAll('{count}', '49'),
       changePercent: 15.3,
-      changeType: 'increase',
+      changeType: context.t.brand.increase_label,
     );
   }
 
@@ -372,7 +372,7 @@ class BrandStatsPage extends StatelessWidget {
       isMobile,
       subtitle: context.t.brand.very_good,
       changePercent: 2.1,
-      changeType: 'increase',
+      changeType: context.t.brand.increase_label,
     );
   }
 
@@ -409,7 +409,7 @@ class BrandStatsPage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(AppSpacing.sm),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
+                  color: color.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(UIConstants.borderRadiusDefault),
                 ),
                 child: Icon(
@@ -432,7 +432,7 @@ class BrandStatsPage extends StatelessWidget {
                     if (subtitle != null) ...[
                       SizedBox(height: AppSpacing.xs),
                       Text(
-                        subtitle!,
+                        subtitle,
                         style: AppTextStyles.bodySmallDynamic(context).copyWith(
                           color: AppColors.getTextSecondary(context),
                         ),
@@ -458,15 +458,15 @@ class BrandStatsPage extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      changeType == 'increase' ? Icons.trending_up : Icons.trending_down,
+                      changeType == context.t.brand.increase_label ? Icons.trending_up : Icons.trending_down,
                       size: UIConstants.fontSizeSmall,
-                      color: changeType == 'increase' ? AppColors.success : AppColors.error,
+                      color: changeType == context.t.brand.increase_label ? AppColors.success : AppColors.error,
                     ),
                     SizedBox(width: AppSpacing.xs),
                     Text(
-                      '${changeType == 'increase' ? '+' : '-'}${changePercent!.toStringAsFixed(1)}%',
+                      context.t.brand.percent_change.replaceAll('{sign}', changeType == context.t.brand.increase_label ? '+' : '-').replaceAll('{percent}', changePercent.toStringAsFixed(1)),
                       style: AppTextStyles.bodySmallDynamic(context).copyWith(
-                        color: changeType == 'increase' ? AppColors.success : AppColors.error,
+                        color: changeType == context.t.brand.increase_label ? AppColors.success : AppColors.error,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

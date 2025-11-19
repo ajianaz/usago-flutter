@@ -9,6 +9,7 @@ import '../../../../shared/widgets/custom_button.dart';
 import '../../domain/entities/brand_invitation.dart';
 import '../bloc/brand_bloc.dart';
 import '../bloc/brand_event.dart';
+import '../../../../i18n/translations.g.dart';
 
 /// Invitation Card Widget
 /// Displays invitation details with appropriate actions based on invitation status and type
@@ -59,8 +60,8 @@ class InvitationCard extends StatelessWidget {
                         SizedBox(height: AppSpacing.xs),
                         Text(
                           isReceived
-                              ? 'Dari: ${invitation.inviterName}'
-                              : 'Ke: ${invitation.inviteeEmail}',
+                              ? '${context.t.brand.from_label}: ${invitation.inviterName}'
+                              : '${context.t.brand.to_label}: ${invitation.inviteeEmail}',
                           style: AppTextStyles.bodyMedium.copyWith(
                             color: AppColors.textSecondary,
                           ),
@@ -83,7 +84,7 @@ class InvitationCard extends StatelessWidget {
                   ),
                   SizedBox(width: AppSpacing.xs),
                   Text(
-                    'Peran: ${invitation.formattedRole}',
+                    '${context.t.brand.role_label}: ${invitation.formattedRole}',
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -102,7 +103,7 @@ class InvitationCard extends StatelessWidget {
                   ),
                   SizedBox(width: AppSpacing.xs),
                   Text(
-                    'Dikirim: ${invitation.createdDateFormatted}',
+                    '${context.t.brand.sent_label}: ${invitation.createdDateFormatted}',
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -117,7 +118,7 @@ class InvitationCard extends StatelessWidget {
                     ),
                     SizedBox(width: AppSpacing.sm),
                     Text(
-                      'Kadaluarsa: ${invitation.expirationDateFormatted}',
+                      '${context.t.brand.expires_label}: ${invitation.expirationDateFormatted}',
                       style: AppTextStyles.bodySmall.copyWith(
                         color: invitation.isExpired
                             ? AppColors.error
@@ -209,7 +210,7 @@ class InvitationCard extends StatelessWidget {
         children: [
           Expanded(
             child: CustomButton(
-              text: 'Tolak',
+              text: context.t.brand.decline,
               onPressed: () => _showDeclineConfirmation(context),
               isFullWidth: true,
               variant: ButtonVariant.outline,
@@ -218,7 +219,7 @@ class InvitationCard extends StatelessWidget {
           SizedBox(width: AppSpacing.sm),
           Expanded(
             child: CustomButton(
-              text: 'Terima',
+              text: context.t.brand.accept,
               onPressed: () => _showAcceptConfirmation(context),
               isFullWidth: true,
               variant: ButtonVariant.primary,
@@ -232,7 +233,7 @@ class InvitationCard extends StatelessWidget {
         children: [
           Expanded(
             child: CustomButton(
-              text: 'Batalkan',
+              text: context.t.brand.cancel,
               onPressed: () => _showCancelConfirmation(context),
               isFullWidth: true,
               variant: ButtonVariant.outline,
@@ -241,7 +242,7 @@ class InvitationCard extends StatelessWidget {
           SizedBox(width: AppSpacing.sm),
           Expanded(
             child: CustomButton(
-              text: 'Kirim Ulang',
+              text: context.t.brand.resend,
               onPressed: () => _resendInvitation(context),
               isFullWidth: true,
               variant: ButtonVariant.primary,
@@ -256,15 +257,15 @@ class InvitationCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Terima Undangan'),
+        title: Text(context.t.brand.accept_invitation_dialog_title),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Apakah Anda yakin ingin menerima undangan untuk bergabung dengan ${invitation.brandName}?'),
+            Text(context.t.brand.accept_invitation_dialog_message.replaceAll('{brandName}', invitation.brandName)),
             SizedBox(height: AppSpacing.sm),
             Text(
-              'Anda akan ditambahkan ke brand dengan peran ${invitation.formattedRole}.',
+              context.t.brand.accept_invitation_role_info.replaceAll('{role}', invitation.formattedRole),
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -274,7 +275,7 @@ class InvitationCard extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => context.router.maybePop(),
-            child: const Text('Batal'),
+            child: Text(context.t.common.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -287,7 +288,7 @@ class InvitationCard extends StatelessWidget {
             style: TextButton.styleFrom(
               foregroundColor: AppColors.success,
             ),
-            child: const Text('Terima'),
+            child: Text(context.t.brand.accept),
           ),
         ],
       ),
@@ -298,12 +299,12 @@ class InvitationCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Tolak Undangan'),
-        content: Text('Apakah Anda yakin ingin menolak undangan dari ${invitation.brandName}?'),
+        title: Text(context.t.brand.decline_invitation_dialog_title),
+        content: Text(context.t.brand.decline_invitation_dialog_message.replaceAll('{brandName}', invitation.brandName)),
         actions: [
           TextButton(
             onPressed: () => context.router.maybePop(),
-            child: const Text('Batal'),
+            child: Text(context.t.common.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -315,7 +316,7 @@ class InvitationCard extends StatelessWidget {
             style: TextButton.styleFrom(
               foregroundColor: AppColors.error,
             ),
-            child: const Text('Tolak'),
+            child: Text(context.t.brand.decline),
           ),
         ],
       ),
@@ -326,12 +327,12 @@ class InvitationCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Batalkan Undangan'),
-        content: Text('Apakah Anda yakin ingin membatalkan undangan ke ${invitation.inviteeEmail}?'),
+        title: Text(context.t.brand.cancel_invitation_dialog_title),
+        content: Text(context.t.brand.cancel_invitation_dialog_message.replaceAll('{email}', invitation.inviteeEmail)),
         actions: [
           TextButton(
             onPressed: () => context.router.maybePop(),
-            child: const Text('Batal'),
+            child: Text(context.t.common.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -343,7 +344,7 @@ class InvitationCard extends StatelessWidget {
             style: TextButton.styleFrom(
               foregroundColor: AppColors.error,
             ),
-            child: const Text('Batalkan'),
+            child: Text(context.t.brand.cancel),
           ),
         ],
       ),

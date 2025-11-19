@@ -98,32 +98,32 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
   }
 
   // Business type options
-  final List<Map<String, String>> _businessTypes = [
-    {'value': 'SERVICE', 'label': 'Service'},
-    {'value': 'RETAIL', 'label': 'Retail'},
-    {'value': 'MANUFACTURING', 'label': 'Manufacturing'},
-    {'value': 'OTHER', 'label': 'Other'},
+  List<Map<String, String>> get _businessTypes => [
+    {'value': 'SERVICE', 'label': context.t.brand.service},
+    {'value': 'RETAIL', 'label': context.t.brand.retail},
+    {'value': 'MANUFACTURING', 'label': context.t.brand.manufacturing},
+    {'value': 'OTHER', 'label': context.t.brand.other},
   ];
 
   // Timezone options
-  final List<Map<String, String>> _timezones = [
-    {'value': 'Asia/Jakarta', 'label': 'Asia/Jakarta (WIB)'},
-    {'value': 'Asia/Singapore', 'label': 'Asia/Singapore (SGT)'},
-    {'value': 'Asia/Bangkok', 'label': 'Asia/Bangkok (ICT)'},
-    {'value': 'Asia/Kuala_Lumpur', 'label': 'Asia/Kuala Lumpur (MYT)'},
-    {'value': 'Asia/Manila', 'label': 'Asia/Manila (PHT)'},
-    {'value': 'UTC', 'label': 'UTC'},
+  List<Map<String, String>> get _timezones => [
+    {'value': 'Asia/Jakarta', 'label': context.t.brand.timezone_jakarta},
+    {'value': 'Asia/Singapore', 'label': context.t.brand.timezone_singapore},
+    {'value': 'Asia/Bangkok', 'label': context.t.brand.timezone_bangkok},
+    {'value': 'Asia/Kuala_Lumpur', 'label': context.t.brand.timezone_kuala_lumpur},
+    {'value': 'Asia/Manila', 'label': context.t.brand.timezone_manila},
+    {'value': 'UTC', 'label': context.t.brand.timezone_utc},
   ];
 
   // Currency options
-  final List<Map<String, String>> _currencies = [
-    {'value': 'IDR', 'label': 'Indonesian Rupiah (IDR)'},
-    {'value': 'USD', 'label': 'US Dollar (USD)'},
-    {'value': 'EUR', 'label': 'Euro (EUR)'},
-    {'value': 'SGD', 'label': 'Singapore Dollar (SGD)'},
-    {'value': 'MYR', 'label': 'Malaysian Ringgit (MYR)'},
-    {'value': 'THB', 'label': 'Thai Baht (THB)'},
-    {'value': 'PHP', 'label': 'Philippine Peso (PHP)'},
+  List<Map<String, String>> get _currencies => [
+    {'value': 'IDR', 'label': context.t.brand.currency_idr},
+    {'value': 'USD', 'label': context.t.brand.currency_usd},
+    {'value': 'EUR', 'label': context.t.brand.currency_eur},
+    {'value': 'SGD', 'label': context.t.brand.currency_sgd},
+    {'value': 'MYR', 'label': context.t.brand.currency_myr},
+    {'value': 'THB', 'label': context.t.brand.currency_thb},
+    {'value': 'PHP', 'label': context.t.brand.currency_php},
   ];
 
   @override
