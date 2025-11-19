@@ -149,21 +149,36 @@ class LogInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    _logger.debug('REQUEST: ${options.method} ${options.path}');
+    _logger.debug('=== REQUEST START ===');
+    _logger.debug('METHOD: ${options.method}');
+    _logger.debug('URL: ${options.baseUrl}${options.path}');
+    _logger.debug('HEADERS: ${options.headers}');
     _logger.debug('DATA: ${options.data}');
+    _logger.debug('QUERY PARAMS: ${options.queryParameters}');
+    _logger.debug('=== REQUEST END ===');
     handler.next(options);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    _logger.debug('RESPONSE: ${response.statusCode} ${response.requestOptions.path}');
+    _logger.debug('=== RESPONSE START ===');
+    _logger.debug('STATUS: ${response.statusCode}');
+    _logger.debug('URL: ${response.requestOptions.baseUrl}${response.requestOptions.path}');
+    _logger.debug('HEADERS: ${response.headers}');
     _logger.debug('DATA: ${response.data}');
+    _logger.debug('=== RESPONSE END ===');
     handler.next(response);
   }
 
   @override
   void onError(DioException error, ErrorInterceptorHandler handler) {
-    _logger.error('NETWORK ERROR: ${error.message}', error);
+    _logger.error('=== ERROR START ===');
+    _logger.error('TYPE: ${error.type}');
+    _logger.error('MESSAGE: ${error.message}');
+    _logger.error('URL: ${error.requestOptions.baseUrl}${error.requestOptions.path}');
+    _logger.error('STATUS: ${error.response?.statusCode}');
+    _logger.error('RESPONSE: ${error.response?.data}');
+    _logger.error('=== ERROR END ===');
     handler.next(error);
   }
 }
@@ -171,20 +186,36 @@ class LogInterceptor extends Interceptor {
 class AuthInterceptor extends Interceptor {
   final AppLogger _logger;
   bool _isRefreshing = false;
+  String? _cachedToken;
 
-  AuthInterceptor({required AppLogger logger}) : _logger = logger;
+  AuthInterceptor({required AppLogger logger}) : _logger = logger {
+    // Load token synchronously at initialization
+    _loadToken();
+  }
+
+  Future<void> _loadToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _cachedToken = prefs.getString(AppConstants.bearerTokenKey);
+    } catch (error) {
+      _logger.error('Error loading token', error);
+      _cachedToken = null;
+    }
+  }
+
+  Future<void> _refreshCachedToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _cachedToken = prefs.getString(AppConstants.bearerTokenKey);
+    } catch (error) {
+      _logger.error('Error refreshing cached token', error);
+      _cachedToken = null;
+    }
+  }
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    // Add auth token if available
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(AppConstants.bearerTokenKey);
-
-    if (token != null) {
-      options.headers['Authorization'] = 'Bearer $token';
-    }
-
-    // Add context headers
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    // Add context headers first (synchronous)
     final contextManager = ContextManager();
     final context = contextManager.currentContext;
 
@@ -197,6 +228,11 @@ class AuthInterceptor extends Interceptor {
       options.headers['X-Active-Brand-ID'] = '';
       options.headers['X-Active-Branch-ID'] = '';
       options.headers['X-User-Role'] = '';
+    }
+
+    // Add auth token synchronously from cache
+    if (_cachedToken != null) {
+      options.headers['Authorization'] = 'Bearer $_cachedToken';
     }
 
     handler.next(options);
@@ -237,6 +273,9 @@ class AuthInterceptor extends Interceptor {
           // Save new token
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString(AppConstants.bearerTokenKey, newToken.first);
+
+          // Update cached token for immediate use
+          _cachedToken = newToken.first;
           _logger.info('Token refreshed and saved');
 
           // Update original request with new token
