@@ -15,7 +15,6 @@ import '../bloc/brand_list/brand_list_event.dart';
 import '../bloc/brand_list/brand_list_state.dart';
 import '../bloc/brand_switching/brand_switching_bloc.dart';
 import '../bloc/brand_switching/brand_switching_event.dart';
-import '../bloc/brand_switching/brand_switching_state.dart';
 import '../widgets/brand_card.dart';
 import '../widgets/brand_card_skeleton.dart';
 import '../widgets/brand_selector.dart';

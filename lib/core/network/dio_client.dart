@@ -17,6 +17,8 @@ class DioClient {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
+      // Ensure Dio handles JSON serialization automatically
+      responseType: ResponseType.json,
     ));
 
     // Add interceptors

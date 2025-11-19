@@ -131,6 +131,7 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
   @override
   Future<Either<Failure, Brand>> createBrand(Map<String, dynamic> brandData) async {
     try {
+      // Send data as Map object, let Dio handle JSON serialization
       final response = await _dioClient.post(
         BrandEndpoints.createBrand,
         data: brandData,
@@ -159,6 +160,7 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
   @override
   Future<Either<Failure, Brand>> updateBrand(String id, Map<String, dynamic> brandData) async {
     try {
+      // Send data as Map object, let Dio handle JSON serialization
       final endpoint = BrandEndpoints.updateBrand.replaceAll('{id}', id);
       final response = await _dioClient.put(
         endpoint,
@@ -212,6 +214,7 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
   @override
   Future<Either<Failure, Brand>> switchActiveBrand(String brandId) async {
     try {
+      // Send data as Map object, let Dio handle JSON serialization
       final response = await _dioClient.post(
         BrandEndpoints.switchActiveBrand,
         data: {'brandId': brandId},
@@ -244,6 +247,7 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
     String confirmationCode,
   ) async {
     try {
+      // Send data as Map object, let Dio handle JSON serialization
       final endpoint = BrandEndpoints.transferOwnership.replaceAll('{id}', brandId);
       await _dioClient.post(
         endpoint,
@@ -277,6 +281,7 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
     Map<String, dynamic> invitationData,
   ) async {
     try {
+      // Send data as Map object, let Dio handle JSON serialization
       final endpoint = BrandEndpoints.inviteUser.replaceAll('{id}', brandId);
       final response = await _dioClient.post(
         endpoint,
@@ -309,6 +314,7 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
     String token,
   ) async {
     try {
+      // Send data as Map object, let Dio handle JSON serialization
       await _dioClient.post(
         BrandEndpoints.acceptInvitation,
         data: {
