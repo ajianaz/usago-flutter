@@ -1,7 +1,4 @@
 import 'package:get_it/get_it.dart';
-import '../../../../core/di/injection_container.dart';
-import '../../../../core/network/dio_client.dart';
-import '../../../../core/utils/logger.dart';
 import '../data/datasources/home_remote_datasource.dart';
 import '../data/datasources/home_remote_datasource_impl.dart';
 import '../domain/repositories/home_repository.dart';
@@ -15,7 +12,6 @@ Future<void> setupHomeDependencies(GetIt getIt) async {
   // Data sources
   getIt.registerLazySingleton<HomeRemoteDataSource>(
     () => HomeRemoteDataSourceImpl(
-      dioClient: getIt(),
       logger: getIt(),
     ),
   );

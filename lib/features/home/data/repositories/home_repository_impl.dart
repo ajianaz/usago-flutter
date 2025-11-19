@@ -1,8 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import '../../../../core/errors/failure.dart';
 import '../datasources/home_remote_datasource.dart';
-import '../models/menu_item_model.dart';
-import '../models/user_dashboard_model.dart';
 import '../../domain/entities/menu_item.dart';
 import '../../domain/entities/user_dashboard.dart';
 import '../../domain/repositories/home_repository.dart';

@@ -1,12 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/brand.dart';
-import '../../domain/entities/brand_invitation.dart';
 import '../../domain/repositories/brand_repository.dart';
 import 'brand_event.dart';
 import 'brand_state.dart';
 
 /// Brand BLoC
 /// Handles all brand state management
+/// @deprecated Gunakan BLoCs baru yang lebih fokus:
+/// - BrandManagementBloc untuk CRUD operations
+/// - BrandListBloc untuk load user brands, accessible brands, active brand
+/// - BrandSearchBloc untuk search functionality, filter, pagination
+/// - BrandSwitchingBloc untuk switch active brand, handle switching flow
+/// - BrandInvitationBloc untuk invitation CRUD, accept/reject invitations
+///
+/// Lihat README_BLOC_MIGRATION.md untuk panduan migrasi
 class BrandBloc extends Bloc<BrandEvent, BrandState> {
   final BrandRepository _brandRepository;
 
@@ -36,7 +43,10 @@ class BrandBloc extends Bloc<BrandEvent, BrandState> {
     on<SearchBrandsEvent>(_onSearchBrandsEvent);
     on<ClearBrandSearchEvent>(_onClearBrandSearchEvent);
 
-    // Load user brands on initialization
+    // Auto-load user brands when BrandBloc is initialized
+    // This ensures data is available as soon as the bloc is created
+    // Following Clean Architecture principles, the business logic
+    // is handled in the bloc, not in the UI layer
     add(LoadUserBrandsEvent());
   }
 

@@ -11,9 +11,10 @@ import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../../../shared/widgets/animated_text_field.dart';
 import '../../domain/entities/brand.dart';
-import '../bloc/brand_bloc.dart';
-import '../bloc/brand_event.dart';
-import '../bloc/brand_state.dart';
+import '../bloc/brand_management/brand_management_bloc.dart';
+import '../bloc/brand_management/brand_management_event.dart';
+import '../bloc/brand_management/brand_management_state.dart';
+import '../helpers/brand_extension.dart';
 import '../../../../i18n/translations.g.dart';
 
 /// Brand Ownership Transfer Page
@@ -49,35 +50,44 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocResponsiveLayout<BrandBloc, BrandState>(
-      builder: (context, bloc, state, deviceType) {
-        return _buildContent(context, deviceType);
-      },
-      listener: (context, state) {
-        if (state is BrandOperationSuccess) {
-          setState(() {
-            _isLoading = false;
-            _confirmationSent = true;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.success,
-            ),
-          );
-        }
-        if (state is BrandError) {
-          setState(() {
-            _isLoading = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-            ),
-          );
-        }
-      },
+    return BlocProvider(
+      create: (context) => context.read<BrandManagementBloc>(),
+      child: BlocResponsiveLayout<BrandManagementBloc, BrandManagementState>(
+        builder: (context, bloc, state, deviceType) {
+          return _buildContent(context, deviceType);
+        },
+        listener: (context, state) {
+          if (state is TransferOwnershipSuccess) {
+            setState(() {
+              _isLoading = false;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.success,
+              ),
+            );
+            // Navigate back after successful transfer
+            context.router.maybePop();
+          }
+          if (state is TransferOwnershipError) {
+            setState(() {
+              _isLoading = false;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.error,
+              ),
+            );
+          }
+          if (state is TransferOwnershipInProgress) {
+            setState(() {
+              _isLoading = true;
+            });
+          }
+        },
+      ),
     );
   }
 
@@ -88,7 +98,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
       appBar: AppBar(
         title: Text(
           context.t.brand.transfer_ownership,
-          style: AppTextStyles.headline5.copyWith(
+          style: AppTextStyles.headline5Dynamic(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -134,7 +144,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
               border: Border.all(color: AppColors.border),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).shadowColor.withValues(alpha: 0.12),
+                  color: Theme.of(context).shadowColor.withOpacity(0.12),
                   blurRadius: UIConstants.elevationCard,
                   offset: const Offset(0, 2),
                 ),
@@ -147,7 +157,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                 children: [
                   Text(
                     context.t.brand.detail_transfer,
-                    style: AppTextStyles.headline6.copyWith(
+                    style: AppTextStyles.headline6Dynamic(context).copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -160,7 +170,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                   // New Owner Email
                   Text(
                     context.t.brand.new_owner_email,
-                    style: AppTextStyles.bodyLarge.copyWith(
+                    style: AppTextStyles.bodyLargeDynamic(context).copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -187,7 +197,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                   if (_confirmationSent) ...[
                     Text(
                       context.t.brand.confirmation_code,
-                      style: AppTextStyles.bodyLarge.copyWith(
+                      style: AppTextStyles.bodyLargeDynamic(context).copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -213,7 +223,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                     // Optional Message
                     Text(
                       context.t.brand.message_optional,
-                      style: AppTextStyles.bodyLarge.copyWith(
+                      style: AppTextStyles.bodyLargeDynamic(context).copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -300,7 +310,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                   children: [
                     Text(
                       context.t.brand.transfer_ownership_warning,
-                      style: AppTextStyles.headline6.copyWith(
+                      style: AppTextStyles.headline6Dynamic(context).copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.warning,
                       ),
@@ -308,7 +318,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                     SizedBox(height: AppSpacing.sm),
                     Text(
                       context.t.brand.transfer_warning_message,
-                      style: AppTextStyles.bodyMedium.copyWith(
+                      style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                         color: AppColors.onWarning,
                       ),
                     ),
@@ -336,7 +346,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
             width: UIConstants.containerSizeSmall,
             height: UIConstants.containerSizeSmall,
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: AppColors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(UIConstants.borderRadiusDefault),
             ),
             child: widget.brand.logoUrl != null
@@ -361,21 +371,21 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
               children: [
                 Text(
                   widget.brand.name,
-                  style: AppTextStyles.headline6.copyWith(
+                  style: AppTextStyles.headline6Dynamic(context).copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: AppSpacing.xs),
                 Text(
                   context.t.brand.brand_id_label.replaceAll('{id}', widget.brand.id),
-                  style: AppTextStyles.bodySmall.copyWith(
+                  style: AppTextStyles.bodySmallDynamic(context).copyWith(
                     color: AppColors.textSecondary,
                   ),
                 ),
                 SizedBox(height: AppSpacing.xs),
                 Text(
-                  widget.brand.formattedBusinessType,
-                  style: AppTextStyles.bodySmall.copyWith(
+                  widget.brand.displayBusinessType(context),
+                  style: AppTextStyles.bodySmallDynamic(context).copyWith(
                     color: AppColors.textSecondary,
                   ),
                 ),
@@ -420,12 +430,16 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
 
       final newOwnerEmail = _emailController.text.trim();
       final confirmationCode = _confirmationCodeController.text.trim();
+      final message = _messageController.text.trim().isEmpty
+          ? null
+          : _messageController.text.trim();
 
-      context.read<BrandBloc>().add(
+      context.read<BrandManagementBloc>().add(
         TransferOwnershipEvent(
-          widget.brand.id,
-          newOwnerEmail,
-          confirmationCode,
+          brandId: widget.brand.id,
+          newOwnerEmail: newOwnerEmail,
+          confirmationCode: confirmationCode,
+          message: message,
         ),
       );
     }

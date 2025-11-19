@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../i18n/translations.g.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/widgets/responsive_builder.dart';
 import '../../domain/entities/brand.dart';
-import '../bloc/brand_bloc.dart';
+import '../helpers/index.dart'; // Import formatter helpers
 
 /// Brand Selector Widget for switching between brands
 class BrandSelector extends StatelessWidget {
@@ -245,7 +244,7 @@ class BrandSelector extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                brand.formattedBusinessType,
+                                brand.displayBusinessType(context),
                                 style: AppTextStyles.bodySmall.copyWith(
                                   color: AppColors.textSecondary,
                                 ),

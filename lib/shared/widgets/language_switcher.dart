@@ -26,8 +26,6 @@ class _LanguageSwitcherState extends State<LanguageSwitcher> {
     return ValueListenableBuilder<AppLocale>(
       valueListenable: _localeHelper.localeNotifier,
       builder: (context, currentLocale, child) {
-        final supportedLocales = _localeHelper.getSupportedLocales();
-
         return PopupMenuButton<AppLocale>(
           icon: const FaIcon(FontAwesomeIcons.language, size: 20),
           tooltip: 'Change Language',

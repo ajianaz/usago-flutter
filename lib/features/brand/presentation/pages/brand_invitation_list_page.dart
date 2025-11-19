@@ -10,11 +10,12 @@ import '../../../../shared/widgets/bloc_responsive_layout.dart';
 import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../../domain/entities/brand.dart';
 import '../../domain/entities/brand_invitation.dart';
-import '../bloc/brand_bloc.dart';
-import '../bloc/brand_event.dart';
-import '../bloc/brand_state.dart';
+import '../bloc/brand_invitation/brand_invitation_bloc.dart';
+import '../bloc/brand_invitation/brand_invitation_event.dart';
+import '../bloc/brand_invitation/brand_invitation_state.dart';
 import '../widgets/invitation_card.dart';
 import '../widgets/invite_user_form.dart';
+import '../helpers/index.dart'; // Import formatter helpers
 import '../../../../i18n/translations.g.dart';
 
 /// Brand Invitation List Page
@@ -30,14 +31,14 @@ class BrandInvitationListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: getIt<BrandBloc>(),
-      child: BlocResponsiveLayout<BrandBloc, BrandState>(
+    return BlocProvider(
+      create: (context) => context.read<BrandInvitationBloc>(),
+      child: BlocResponsiveLayout<BrandInvitationBloc, BrandInvitationState>(
         builder: (context, bloc, state, deviceType) {
           return BrandInvitationListView(brand: brand, deviceType: deviceType);
         },
         listener: (context, state) {
-          if (state is BrandOperationSuccess) {
+          if (state is BrandInvitationCreated) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -45,7 +46,23 @@ class BrandInvitationListPage extends StatelessWidget {
                 behavior: SnackBarBehavior.floating,
               ),
             );
-          } else if (state is BrandError) {
+          } else if (state is BrandInvitationAccepted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.success,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          } else if (state is BrandInvitationRejected) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.success,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          } else if (state is BrandInvitationError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -85,7 +102,7 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
 
     // Load invitations when page initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BrandBloc>().add(const LoadUserInvitationsEvent());
+      context.read<BrandInvitationBloc>().add(LoadInvitationsEvent(brandId: widget.brand.id));
     });
   }
 
@@ -181,9 +198,9 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
   Widget _buildReceivedInvitations(BuildContext context) {
     final isMobile = widget.deviceType == DeviceType.mobile;
 
-    return BlocBuilder<BrandBloc, BrandState>(
+    return BlocBuilder<BrandInvitationBloc, BrandInvitationState>(
       builder: (context, state) {
-        if (state is BrandLoading) {
+        if (state is BrandInvitationLoading) {
           return const Center(
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
@@ -191,7 +208,7 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
           );
         }
 
-        if (state is ReceivedInvitationsLoaded) {
+        if (state is BrandInvitationsLoaded) {
           final invitations = state.invitations;
 
           if (invitations.isEmpty) {
@@ -205,7 +222,7 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
 
           return RefreshIndicator(
             onRefresh: () async {
-              context.read<BrandBloc>().add(const GetReceivedInvitationsEvent());
+              context.read<BrandInvitationBloc>().add(RefreshInvitationsEvent(brandId: widget.brand.id));
             },
             child: _buildInvitationList(
               context,
@@ -228,9 +245,9 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
   Widget _buildSentInvitations(BuildContext context) {
     final isMobile = widget.deviceType == DeviceType.mobile;
 
-    return BlocBuilder<BrandBloc, BrandState>(
+    return BlocBuilder<BrandInvitationBloc, BrandInvitationState>(
       builder: (context, state) {
-        if (state is BrandLoading) {
+        if (state is BrandInvitationLoading) {
           return const Center(
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
@@ -238,7 +255,7 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
           );
         }
 
-        if (state is SentInvitationsLoaded) {
+        if (state is BrandInvitationsLoaded) {
           final invitations = state.invitations;
 
           if (invitations.isEmpty) {
@@ -252,7 +269,7 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
 
           return RefreshIndicator(
             onRefresh: () async {
-              context.read<BrandBloc>().add(const GetSentInvitationsEvent());
+              context.read<BrandInvitationBloc>().add(RefreshInvitationsEvent(brandId: widget.brand.id));
             },
             child: _buildInvitationList(
               context,
@@ -390,13 +407,13 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
                 isReceived ? context.t.brand.from_label : context.t.brand.to_label,
                 isReceived ? invitation.inviterName : invitation.inviteeEmail,
               ),
-              _buildDetailRow(context.t.brand.role_label, invitation.formattedRole(context)),
-              _buildDetailRow(context.t.brand.status, invitation.formattedStatus),
+              _buildDetailRow(context.t.brand.role_label, invitation.displayRole(context)),
+              _buildDetailRow(context.t.brand.status, invitation.displayStatus(context)),
               if (invitation.branchIds.isNotEmpty)
                 _buildDetailRow('Cabang', '${invitation.branchIds.length} cabang'),
-              _buildDetailRow(context.t.brand.sent_label, invitation.createdDateFormatted),
-              if (invitation.expirationDateFormatted != null)
-                _buildDetailRow(context.t.brand.expires_label, invitation.expirationDateFormatted!),
+              _buildDetailRow(context.t.brand.sent_label, invitation.displayCreatedDate(context)),
+              if (invitation.displayExpirationDate(context) != null)
+                _buildDetailRow(context.t.brand.expires_label, invitation.displayExpirationDate(context)!),
             ],
           ),
         ),

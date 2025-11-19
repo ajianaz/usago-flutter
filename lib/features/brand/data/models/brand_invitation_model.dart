@@ -18,7 +18,7 @@ class BrandInvitationModel extends BrandInvitation {
     required super.inviteeEmail,
     required super.role,
     required super.status,
-    @JsonKey(defaultValue: []) final super.branchIds,
+    @JsonKey(defaultValue: []) super.branchIds,
     super.expiresAt,
     required super.createdAt,
     super.updatedAt,

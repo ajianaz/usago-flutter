@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/entities/menu_item.dart';
 import '../../domain/usecases/get_menu_items_usecase.dart';
 import '../../domain/usecases/get_user_dashboard_usecase.dart';
 import 'home_event.dart';

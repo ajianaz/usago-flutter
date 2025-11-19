@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
@@ -10,7 +9,6 @@ import '../../../../shared/widgets/custom_button.dart';
 import '../../domain/entities/brand.dart';
 import '../bloc/brand_bloc.dart';
 import '../bloc/brand_event.dart';
-import '../bloc/brand_state.dart';
 import '../../../../i18n/translations.g.dart';
 
 /// Invite User Form Widget

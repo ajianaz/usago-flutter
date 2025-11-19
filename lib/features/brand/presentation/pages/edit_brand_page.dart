@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/constants/ui_constants.dart';
-import '../../../../core/di/injection_container.dart';
 import '../../../../i18n/translations.g.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
@@ -11,9 +10,11 @@ import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/widgets/bloc_responsive_layout.dart';
 import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../../domain/entities/brand.dart';
-import '../bloc/brand_bloc.dart';
-import '../bloc/brand_state.dart';
-import '../bloc/brand_event.dart';
+import '../bloc/brand_management/brand_management_bloc.dart';
+import '../bloc/brand_management/brand_management_state.dart';
+import '../bloc/brand_list/brand_list_bloc.dart';
+import '../bloc/brand_list/brand_list_state.dart';
+import '../bloc/brand_list/brand_list_event.dart';
 import '../widgets/create_brand_form.dart';
 
 /// Edit Brand Page
@@ -29,17 +30,20 @@ class EditBrandPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: getIt<BrandBloc>(),
-      child: BlocResponsiveLayout<BrandBloc, BrandState>(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => context.read<BrandManagementBloc>()),
+        BlocProvider(create: (context) => context.read<BrandListBloc>()),
+      ],
+      child: BlocResponsiveLayout<BrandManagementBloc, BrandManagementState>(
         builder: (context, bloc, state, deviceType) {
           return EditBrandView(brandId: brandId, deviceType: deviceType);
         },
         listener: (context, state) {
-          if (state is BrandOperationSuccess) {
+          if (state is BrandManagementUpdated) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text('Brand berhasil diperbarui'),
                 backgroundColor: AppColors.success,
                 behavior: SnackBarBehavior.floating,
               ),
@@ -49,7 +53,7 @@ class EditBrandPage extends StatelessWidget {
             Future.delayed(const Duration(seconds: 2), () {
               context.router.maybePop();
             });
-          } else if (state is BrandError) {
+          } else if (state is BrandManagementError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -90,14 +94,14 @@ class _EditBrandViewState extends State<EditBrandView> {
 
   void _loadBrand() async {
     // Load brand data by ID
-    context.read<BrandBloc>().add(GetBrandByIdEvent(widget.brandId));
+    context.read<BrandListBloc>().add(const LoadAllBrandDataEvent());
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BrandBloc, BrandState>(
+    return BlocBuilder<BrandListBloc, BrandListState>(
       builder: (context, state) {
-        if (state is BrandLoaded) {
+        if (state is BrandListLoaded) {
           // When brands are loaded, find our specific brand
           final brand = state.userBrands.firstWhere(
             (brand) => brand.id == widget.brandId,
@@ -123,7 +127,7 @@ class _EditBrandViewState extends State<EditBrandView> {
     );
   }
 
-  Widget _buildContent(BuildContext context, BrandState state) {
+  Widget _buildContent(BuildContext context, BrandListState state) {
     return Scaffold(
       appBar: AppBar(
         title: Text(

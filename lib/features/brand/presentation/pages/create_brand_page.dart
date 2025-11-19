@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/constants/ui_constants.dart';
@@ -8,8 +9,8 @@ import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/widgets/bloc_responsive_layout.dart';
 import '../../../../shared/widgets/desktop_constrained_content.dart';
-import '../bloc/brand_bloc.dart';
-import '../bloc/brand_state.dart';
+import '../bloc/brand_management/brand_management_bloc.dart';
+import '../bloc/brand_management/brand_management_state.dart';
 import '../widgets/create_brand_form.dart';
 
 /// Create Brand Page
@@ -20,36 +21,39 @@ class CreateBrandPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocResponsiveLayout<BrandBloc, BrandState>(
-      builder: (context, bloc, state, deviceType) {
-        return CreateBrandView(deviceType: deviceType);
-      },
-      listener: (context, state) {
-        if (state is BrandOperationSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.success,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+    return BlocProvider(
+      create: (context) => context.read<BrandManagementBloc>(),
+      child: BlocResponsiveLayout<BrandManagementBloc, BrandManagementState>(
+        builder: (context, bloc, state, deviceType) {
+          return CreateBrandView(deviceType: deviceType);
+        },
+        listener: (context, state) {
+          if (state is BrandManagementCreated) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.success,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
 
-          // Navigate back to brand selection after successful creation
-          Future.delayed(const Duration(seconds: 2), () {
-            if (context.mounted) {
-              context.router.maybePop();
-            }
-          });
-        } else if (state is BrandError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        }
-      },
+            // Navigate back to brand selection after successful creation
+            Future.delayed(const Duration(seconds: 2), () {
+              if (context.mounted) {
+                context.router.maybePop();
+              }
+            });
+          } else if (state is BrandManagementError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.error,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }

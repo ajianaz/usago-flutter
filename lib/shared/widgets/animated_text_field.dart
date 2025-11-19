@@ -57,7 +57,6 @@ class _AnimatedTextFieldState extends State<AnimatedTextField>
   late AnimationController _animationController;
   AnimationController? _shakeController;
   late Animation<double> _focusAnimation;
-  late Animation<double> _errorAnimation;
   late Animation<double> _shakeAnimation;
   late Animation<Color?> _borderColorAnimation;
   late Animation<double> _borderWidthAnimation;

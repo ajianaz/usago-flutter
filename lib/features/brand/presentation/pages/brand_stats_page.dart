@@ -3,16 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/constants/ui_constants.dart';
-import '../../../../core/di/injection_container.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/widgets/bloc_responsive_layout.dart';
 import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../../domain/entities/brand.dart';
-import '../bloc/brand_bloc.dart';
-import '../bloc/brand_event.dart';
-import '../bloc/brand_state.dart';
+import '../bloc/brand_list/brand_list_bloc.dart';
+import '../bloc/brand_list/brand_list_event.dart';
+import '../bloc/brand_list/brand_list_state.dart';
+import '../bloc/brand_management/brand_management_bloc.dart';
+import '../helpers/index.dart'; // Import formatter helpers
 import '../../../../i18n/translations.g.dart';
 
 /// Brand Statistics Page
@@ -28,14 +29,17 @@ class BrandStatsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: getIt<BrandBloc>(),
-      child: BlocResponsiveLayout<BrandBloc, BrandState>(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => context.read<BrandListBloc>()),
+        BlocProvider(create: (context) => context.read<BrandManagementBloc>()),
+      ],
+      child: BlocResponsiveLayout<BrandListBloc, BrandListState>(
         builder: (context, bloc, state, deviceType) {
           return _buildContent(context, deviceType);
         },
         listener: (context, state) {
-          if (state is BrandError) {
+          if (state is BrandListError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -75,7 +79,7 @@ class BrandStatsPage extends StatelessWidget {
             icon: Icon(Icons.refresh, color: AppColors.getTextSecondary(context)),
             onPressed: () {
               // Refresh statistics
-              context.read<BrandBloc>().add(LoadUserBrandsEvent());
+              context.read<BrandListBloc>().add(const LoadUserBrandsEvent());
             },
             tooltip: context.t.brand.refresh,
           ),
@@ -191,7 +195,7 @@ class BrandStatsPage extends StatelessWidget {
                     ),
                     SizedBox(height: AppSpacing.xs),
                     Text(
-                      brand.formattedBusinessType,
+                      brand.displayBusinessType(context),
                       style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                         color: AppColors.getTextSecondary(context),
                       ),
@@ -219,7 +223,7 @@ class BrandStatsPage extends StatelessWidget {
                 child: _buildStatItem(
                   context,
                   context.t.brand.created,
-                  brand.joinDateFormatted,
+                  brand.displayJoinDate(context),
                   Icons.calendar_today,
                   AppColors.info,
                 ),
@@ -228,7 +232,7 @@ class BrandStatsPage extends StatelessWidget {
                 child: _buildStatItem(
                   context,
                   context.t.brand.status,
-                  brand.formattedSubscriptionStatus,
+                  brand.displaySubscriptionStatus(context),
                   brand.isSubscriptionActive ? Icons.check_circle : Icons.pending,
                   brand.isSubscriptionActive ? AppColors.success : AppColors.warning,
                 ),

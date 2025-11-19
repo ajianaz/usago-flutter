@@ -1,1202 +1,617 @@
-# Brand Feature
+# Brand Feature Documentation
 
-## Overview
+## 📋 Overview
 
-Brand feature pada aplikasi mobile Usago menyediakan fungsionalitas lengkap untuk manajemen brand, termasuk CRUD operations, invitation system, dan brand switching. Fitur ini mengimplementasikan Clean Architecture dengan BLoC pattern untuk state management.
+Brand feature adalah implementasi Clean Architecture untuk mengelola brand dan invitation management dalam aplikasi mobile. Fitur ini menggunakan BLoC pattern untuk state management dan dependency injection dengan GetIt untuk manajemen dependencies.
 
-## Struktur File
+## 🏗️ Architecture
+
+### Clean Architecture Implementation
+
+Brand feature mengikuti prinsip Clean Architecture dengan tiga layer utama:
+
+1. **Domain Layer** - Business logic dan entities
+2. **Data Layer** - Repository implementation dan data sources
+3. **Presentation Layer** - UI components dan state management
+
+### Layer Dependencies
+
+```
+Presentation Layer
+       ↓
+   Domain Layer
+       ↓
+    Data Layer
+```
+
+## 📁 Folder Structure
 
 ```
 apps/mobile/lib/features/brand/
-├── domain/
-│   ├── entities/
+├── di/                              # Dependency Injection
+│   ├── brand_injection.dart         # Main DI configuration
+│   └── brand_injection_test.dart    # Test DI configuration
+├── domain/                          # Domain Layer
+│   ├── entities/                    # Pure domain entities
 │   │   ├── brand.dart              # Brand entity
-│   │   └── brand_invitation.dart   # BrandInvitation entity
-│   └── repositories/
-│       └── brand_repository.dart     # Abstract repository interface
-├── data/
-│   ├── datasources/
-│   │   ├── brand_remote_datasource.dart      # Abstract datasource interface
-│   │   └── brand_remote_datasource_impl.dart # Remote datasource implementation
-│   ├── models/
-│   │   ├── brand_model.dart               # Brand model for JSON serialization
-│   │   └── brand_invitation_model.dart    # BrandInvitation model for JSON serialization
-│   └── repositories/
-│       └── brand_repository_impl.dart     # Repository implementation
-├── presentation/
-│   ├── bloc/
-│   │   ├── brand_bloc.dart              # Brand BLoC for state management
-│   │   ├── brand_event.dart             # Brand events
-│   │   └── brand_state.dart            # Brand states
-│   ├── pages/
-│   │   ├── brand_selection_page.dart     # Brand selection page
-│   │   ├── create_brand_page.dart       # Create brand page
-│   │   ├── edit_brand_page.dart         # Edit brand page
-│   │   ├── brand_invitation_list_page.dart # Invitation list page
-│   │   ├── brand_stats_page.dart       # Brand statistics page
-│   │   └── brand_transfer_page.dart    # Brand transfer page
-│   └── widgets/
-│       ├── brand_card.dart              # Brand card widget
-│       ├── brand_selector.dart          # Brand selector widget
-│       ├── create_brand_form.dart       # Create brand form
-│       ├── invite_user_form.dart        # Invite user form
-│       ├── invitation_card.dart        # Invitation card widget
-│       └── brand_card_skeleton.dart    # Loading skeleton
-└── README.md                         # Dokumentasi ini
+│   │   └── brand_invitation.dart   # Brand invitation entity
+│   ├── repositories/               # Repository interfaces
+│   │   └── brand_repository.dart   # Brand repository interface
+│   └── usecases/                  # Use cases (business logic)
+│       ├── common/                # Common use case classes
+│       │   ├── usecase.dart       # Base use case
+│       │   └── params/            # Use case parameters
+│       ├── brand/                 # Brand-related use cases
+│       └── invitation/            # Invitation-related use cases
+├── data/                          # Data Layer
+│   ├── datasources/              # Data source implementations
+│   │   ├── brand_remote_datasource.dart     # Remote data source interface
+│   │   ├── brand_remote_datasource_impl.dart # Remote data source implementation
+│   │   ├── brand_local_datasource.dart      # Local data source interface
+│   │   └── brand_local_datasource_impl.dart # Local data source implementation
+│   └── repositories/             # Repository implementations
+│       └── brand_repository_impl.dart # Brand repository implementation
+├── presentation/                # Presentation Layer
+│   ├── bloc/                   # BLoC state management
+│   │   ├── brand_management/   # Brand CRUD operations
+│   │   ├── brand_list/         # Brand list management
+│   │   ├── brand_search/       # Search functionality
+│   │   ├── brand_switching/    # Brand switching
+│   │   ├── brand_invitation/   # Invitation management
+│   │   └── brand_bloc.dart     # Legacy BLoC (deprecated)
+│   ├── providers/              # BLoC providers
+│   │   └── brand_bloc_provider.dart # Multi-BLoC provider
+│   ├── helpers/               # UI helpers and formatters
+│   │   ├── brand_formatter.dart # Brand formatting utilities
+│   │   └── invitation_formatter.dart # Invitation formatting
+│   └── widgets/               # UI components
+│       ├── brand_card.dart     # Brand card component
+│       ├── brand_selector.dart # Brand selector
+│       └── ...                 # Other UI components
+└── README.md                  # This file
 ```
 
-## Entity Models
+## 🔧 Components
 
-### Brand
+### Domain Layer Components
 
-```dart
-class Brand extends Equatable {
-  final String id;
-  final String name;
-  final String slug;
-  final String ownerId;
-  final String? logoUrl;
-  final String businessType;
-  final String? industry;
-  final String? description;
-  final Map<String, dynamic> settings;
-  final String timezone;
-  final String currency;
-  final String subscriptionTier;
-  final String subscriptionStatus;
-  final DateTime? subscriptionExpiresAt;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+#### Entities
 
-  // Constructor, copyWith, getters, and props...
-}
-```
+**Brand Entity** ([`brand.dart`](domain/entities/brand.dart))
+- Pure domain entity tanpa UI logic
+- Berisi business rules untuk brand
+- Methods: `copyWith()`, `displayName`, `hasLogo`, `isSubscriptionActive`, dll.
 
-### BrandInvitation
+**BrandInvitation Entity** ([`brand_invitation.dart`](domain/entities/brand_invitation.dart))
+- Pure domain entity untuk invitation management
+- Berisi business rules untuk invitations
+- Methods: `copyWith()`, `isPending`, `isAccepted`, `isValidForBusiness`, dll.
 
-```dart
-class BrandInvitation extends Equatable {
-  final String id;
-  final String brandId;
-  final String brandName;
-  final String inviterId;
-  final String inviterName;
-  final String inviteeEmail;
-  final String role;
-  final String status;
-  final List<String> branchIds;
-  final DateTime? expiresAt;
-  final DateTime createdAt;
-  final DateTime? updatedAt;
+#### Use Cases
 
-  // Constructor, copyWith, getters, and props...
-}
-```
+**Brand Use Cases**
+- [`GetUserBrandsUseCase`](domain/usecases/brand/get_user_brands_usecase.dart) - Mendapatkan brands milik user
+- [`GetAccessibleBrandsUseCase`](domain/usecases/brand/get_accessible_brands_usecase.dart) - Mendapatkan brands yang dapat diakses
+- [`GetActiveBrandUseCase`](domain/usecases/brand/get_active_brand_usecase.dart) - Mendapatkan brand aktif
+- [`CreateBrandUseCase`](domain/usecases/brand/create_brand_usecase.dart) - Membuat brand baru
+- [`UpdateBrandUseCase`](domain/usecases/brand/update_brand_usecase.dart) - Update brand
+- [`DeleteBrandUseCase`](domain/usecases/brand/delete_brand_usecase.dart) - Hapus brand
 
-## Data Models
+**Invitation Use Cases**
+- [`GetBrandInvitationsUseCase`](domain/usecases/invitation/get_brand_invitations_usecase.dart) - Mendapatkan invitations
+- [`CreateBrandInvitationUseCase`](domain/usecases/invitation/create_brand_invitation_usecase.dart) - Membuat invitation
+- [`AcceptBrandInvitationUseCase`](domain/usecases/invitation/accept_brand_invitation_usecase.dart) - Menerima invitation
+- [`RejectBrandInvitationUseCase`](domain/usecases/invitation/reject_brand_invitation_usecase.dart) - Menolak invitation
+- [`RevokeBrandInvitationUseCase`](domain/usecases/invitation/revoke_brand_invitation_usecase.dart) - Membatalkan invitation
 
-### BrandModel
+#### Repository Interface
 
-```dart
-@JsonSerializable()
-class BrandModel extends Brand {
-  const BrandModel({
-    required super.id,
-    required super.name,
-    required super.slug,
-    required super.ownerId,
-    super.logoUrl,
-    required super.businessType,
-    super.industry,
-    super.description,
-    required super.settings,
-    required super.timezone,
-    required super.currency,
-    required super.subscriptionTier,
-    required super.subscriptionStatus,
-    super.subscriptionExpiresAt,
-    required super.createdAt,
-    required super.updatedAt,
-  });
+**BrandRepository** ([`brand_repository.dart`](domain/repositories/brand_repository.dart))
+- Interface untuk semua brand operations
+- Mendefinisikan contract untuk data layer
+- Menggunakan `Either<Failure, T>` untuk error handling
 
-  factory BrandModel.fromJson(Map<String, dynamic> json) =>
-      _$BrandModelFromJson(json);
+### Data Layer Components
 
-  Map<String, dynamic> toJson() => _$BrandModelToJson(this);
+#### Data Sources
 
-  Brand toEntity() => Brand(/* ... */);
-}
-```
+**BrandRemoteDataSource** ([`brand_remote_datasource.dart`](data/datasources/brand_remote_datasource.dart))
+- Interface untuk remote API operations
+- Methods untuk CRUD operations via API
 
-### BrandInvitationModel
+**BrandLocalDataSource** ([`brand_local_datasource.dart`](data/datasources/brand_local_datasource.dart))
+- Interface untuk local storage operations
+- Methods untuk caching dan offline support
 
-```dart
-@JsonSerializable(includeIfNull: false)
-class BrandInvitationModel extends BrandInvitation {
-  const BrandInvitationModel({
-    required super.id,
-    required super.brandId,
-    required super.brandName,
-    required super.inviterId,
-    required super.inviterName,
-    required super.inviteeEmail,
-    required super.role,
-    required super.status,
-    @JsonKey(defaultValue: []) final super.branchIds,
-    super.expiresAt,
-    required super.createdAt,
-    super.updatedAt,
-  });
+#### Repository Implementation
 
-  factory BrandInvitationModel.fromJson(Map<String, dynamic> json) {
-    // Handle backward compatibility and field mapping
-    final id = json['id'] ?? json['invitationId'] ?? '';
-    final inviterId = json['inviterId'] ?? '';
-    final inviteeEmail = json['inviteeEmail'] ?? json['email'] ?? '';
-    final status = json['status'] ?? 'PENDING';
+**BrandRepositoryImpl** ([`brand_repository_impl.dart`](data/repositories/brand_repository_impl.dart))
+- Concrete implementation dari BrandRepository
+- Menggabungkan remote dan local data sources
+- Menghandle error scenarios dan fallback logic
 
-    return BrandInvitationModel(/* ... */);
-  }
+### Presentation Layer Components
 
-  Map<String, dynamic> toJson() => _$BrandInvitationModelToJson(this);
+#### BLoCs
 
-  BrandInvitation toEntity() => BrandInvitation(/* ... */);
-}
-```
+**BrandManagementBloc** ([`brand_management_bloc.dart`](presentation/bloc/brand_management/brand_management_bloc.dart))
+- Bertanggung jawab untuk CRUD operations
+- Events: CreateBrandEvent, UpdateBrandEvent, DeleteBrandEvent
+- States: BrandManagementLoading, BrandManagementCreated, dll.
 
-## Repository Pattern
+**BrandListBloc** ([`brand_list_bloc.dart`](presentation/bloc/brand_list/brand_list_bloc.dart))
+- Bertanggung jawab untuk mengelola daftar brand
+- Events: LoadUserBrandsEvent, LoadAccessibleBrandsEvent, dll.
+- States: BrandListLoading, UserBrandsLoaded, dll.
 
-### Abstract Repository
+**BrandSearchBloc** ([`brand_search_bloc.dart`](presentation/bloc/brand_search/brand_search_bloc.dart))
+- Bertanggung jawab untuk fungsi pencarian
+- Events: SearchBrandsEvent, ClearSearchEvent, dll.
+- States: BrandSearchLoading, BrandSearchLoaded, dll.
+
+**BrandSwitchingBloc** ([`brand_switching_bloc.dart`](presentation/bloc/brand_switching/brand_switching_bloc.dart))
+- Bertanggung jawab untuk operasi switch active brand
+- Events: SwitchActiveBrandEvent, GetActiveBrandStatusEvent, dll.
+- States: BrandSwitchingLoading, BrandSwitchingSuccess, dll.
+
+**BrandInvitationBloc** ([`brand_invitation_bloc.dart`](presentation/bloc/brand_invitation/brand_invitation_bloc.dart))
+- Bertanggung jawab untuk operasi invitation
+- Events: LoadInvitationsEvent, CreateInvitationEvent, dll.
+- States: BrandInvitationLoading, BrandInvitationsLoaded, dll.
+
+#### Providers
+
+**BrandBlocProvider** ([`brand_bloc_provider.dart`](presentation/providers/brand_bloc_provider.dart))
+- MultiBlocProvider untuk semua brand BLoCs
+- Extensions untuk mudah mengakses BLoCs
+- Specific providers untuk optimasi performance
+
+#### Helpers
+
+**BrandFormatter** ([`brand_formatter.dart`](presentation/helpers/brand_formatter.dart))
+- Static methods untuk formatting brand data
+- Methods: `formatBusinessType()`, `formatSubscriptionTier()`, dll.
+
+## 🚀 Getting Started
+
+### Setup Dependencies
 
 ```dart
-abstract class BrandRepository {
-  Future<Either<Failure, List<Brand>>> getUserBrands();
-  Future<Either<Failure, List<Brand>>> getAccessibleBrands();
-  Future<Either<Failure, Brand>> getBrandById(String id);
-  Future<Either<Failure, Brand>> getBrandBySlug(String slug);
-  Future<Either<Failure, Brand>> createBrand(Map<String, dynamic> brandData);
-  Future<Either<Failure, Brand>> updateBrand(String id, Map<String, dynamic> brandData);
-  Future<Either<Failure, void>> deleteBrand(String id);
-  Future<Either<Failure, Brand>> switchActiveBrand(String brandId);
-  Future<Either<Failure, void>> transferOwnership(String brandId, String newOwnerId, String confirmationCode);
-  Future<Either<Failure, BrandInvitation>> inviteUser(String brandId, Map<String, dynamic> invitationData);
-  Future<Either<Failure, void>> acceptInvitation(String invitationId, String token);
-  Future<Either<Failure, void>> declineInvitation(String invitationId);
-  Future<Either<Failure, List<BrandInvitation>>> getBrandInvitations(String brandId);
-  Future<Either<Failure, List<BrandInvitation>>> getUserInvitations();
-  Future<Either<Failure, void>> cancelInvitation(String invitationId);
-  Future<Either<Failure, void>> resendInvitation(String invitationId);
-  Future<Either<Failure, Map<String, dynamic>>> getBrandStats(String brandId);
-  Future<Either<Failure, Brand?>> getActiveBrand();
-  // Cache and storage methods...
+// In main.dart
+import 'package:get_it/get_it.dart';
+import 'apps/mobile/lib/features/brand/di/brand_injection.dart';
+
+final getIt = GetIt.instance;
+
+void main() async {
+  // Initialize brand dependencies
+  await BrandInjection.init(getIt);
+
+  runApp(MyApp());
 }
 ```
 
-### Repository Implementation
+### Initialize Brand Feature
 
 ```dart
-class BrandRepositoryImpl implements BrandRepository {
-  final BrandRemoteDataSource _remoteDataSource;
-  final AppLogger _logger;
+// In app.dart
+import 'apps/mobile/lib/features/brand/presentation/providers/brand_bloc_provider.dart';
 
-  BrandRepositoryImpl(this._remoteDataSource, this._logger);
-
-  @override
-  Future<Either<Failure, List<Brand>>> getUserBrands() async {
-    try {
-      final brands = await _remoteDataSource.getUserBrands();
-      return Right(brands);
-    } catch (e) {
-      _logger.error('Failed to get user brands: $e');
-      return Left(ServerFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, Brand>> createBrand(Map<String, dynamic> brandData) async {
-    try {
-      final brand = await _remoteDataSource.createBrand(brandData);
-      return Right(brand);
-    } catch (e) {
-      _logger.error('Failed to create brand: $e');
-      return Left(ServerFailure(message: e.toString()));
-    }
-  }
-
-  // Other method implementations...
-}
-```
-
-## Remote Data Source
-
-### Abstract Interface
-
-```dart
-abstract class BrandRemoteDataSource {
-  Future<List<Brand>> getUserBrands();
-  Future<List<Brand>> getAccessibleBrands();
-  Future<Brand> getBrandById(String id);
-  Future<Brand> getBrandBySlug(String slug);
-  Future<Brand> createBrand(Map<String, dynamic> brandData);
-  Future<Brand> updateBrand(String id, Map<String, dynamic> brandData);
-  Future<void> deleteBrand(String id);
-  Future<Brand> switchActiveBrand(String brandId);
-  Future<void> transferOwnership(String brandId, String newOwnerId, String confirmationCode);
-  Future<BrandInvitation> inviteUser(String brandId, Map<String, dynamic> invitationData);
-  Future<void> acceptInvitation(String invitationId, String token);
-  Future<void> declineInvitation(String invitationId);
-  Future<List<BrandInvitation>> getBrandInvitations(String brandId);
-  Future<List<BrandInvitation>> getUserInvitations();
-  Future<void> cancelInvitation(String invitationId);
-  Future<void> resendInvitation(String invitationId);
-  Future<Map<String, dynamic>> getBrandStats(String brandId);
-}
-```
-
-### Implementation with Dio
-
-```dart
-class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
-  final DioClient _dioClient;
-  final AppLogger _logger;
-
-  BrandRemoteDataSourceImpl(DioClient dioClient, AppLogger logger)
-      : _dioClient = dioClient,
-        _logger = logger;
-
-  @override
-  Future<List<Brand>> getUserBrands() async {
-    try {
-      final response = await _dioClient.get(BrandEndpoints.getUserBrands);
-
-      final List<dynamic> dataList = response['data'] ?? [];
-      final List<Brand> brands = dataList
-          .map((json) => BrandModel.fromJson(json).toEntity())
-          .toList();
-
-      _logger.info('Successfully fetched ${brands.length} user brands');
-      return brands;
-    } on DioException catch (e) {
-      _logger.error('Dio error in getUserBrands: $e');
-      throw ServerFailure(
-        message: e.message ?? 'Network error occurred',
-        statusCode: e.response?.statusCode,
-        originalError: e,
-      );
-    } catch (e) {
-      _logger.error('Unexpected error in getUserBrands: $e');
-      throw ServerFailure(
-        message: e.toString(),
-        originalError: e,
-      );
-    }
-  }
-
-  @override
-  Future<Brand> createBrand(Map<String, dynamic> brandData) async {
-    try {
-      final response = await _dioClient.post(
-        BrandEndpoints.createBrand,
-        data: brandData,
-      );
-
-      final brand = BrandModel.fromJson(response['data']).toEntity();
-
-      _logger.info('Successfully created brand: ${brand.name}');
-      return brand;
-    } on DioException catch (e) {
-      _logger.error('Dio error in createBrand: $e');
-      throw ServerFailure(
-        message: e.message ?? 'Network error occurred',
-        statusCode: e.response?.statusCode,
-        originalError: e,
-      );
-    } catch (e) {
-      _logger.error('Unexpected error in createBrand: $e');
-      throw ServerFailure(
-        message: e.toString(),
-        originalError: e,
-      );
-    }
-  }
-
-  // Other method implementations...
-}
-```
-
-## BLoC State Management
-
-### Events
-
-```dart
-abstract class BrandEvent extends Equatable {
-  const BrandEvent();
-
-  @override
-  List<Object> get props => [];
-}
-
-class LoadUserBrandsEvent extends BrandEvent {}
-
-class CreateBrandEvent extends BrandEvent {
-  final Map<String, dynamic> brandData;
-
-  const CreateBrandEvent(this.brandData);
-
-  @override
-  List<Object> get props => [brandData];
-}
-
-class UpdateBrandEvent extends BrandEvent {
-  final String brandId;
-  final Map<String, dynamic> brandData;
-
-  const UpdateBrandEvent(this.brandId, this.brandData);
-
-  @override
-  List<Object> get props => [brandId, brandData];
-}
-
-class SwitchBrandEvent extends BrandEvent {
-  final String brandId;
-
-  const SwitchBrandEvent(this.brandId);
-
-  @override
-  List<Object> get props => [brandId];
-}
-
-class InviteUserEvent extends BrandEvent {
-  final String brandId;
-  final Map<String, dynamic> invitationData;
-
-  const InviteUserEvent(this.brandId, this.invitationData);
-
-  @override
-  List<Object> get props => [brandId, invitationData];
-}
-
-// Other events...
-```
-
-### States
-
-```dart
-abstract class BrandState extends Equatable {
-  const BrandState();
-
-  @override
-  List<Object> get props => [];
-}
-
-class BrandInitial extends BrandState {}
-
-class BrandLoading extends BrandState {}
-
-class BrandLoaded extends BrandState {
-  final List<Brand> userBrands;
-  final List<Brand> accessibleBrands;
-  final Brand? activeBrand;
-
-  const BrandLoaded({
-    required this.userBrands,
-    required this.accessibleBrands,
-    this.activeBrand,
-  });
-
-  @override
-  List<Object> get props => [userBrands, accessibleBrands, activeBrand];
-}
-
-class BrandOperationSuccess extends BrandState {
-  final String message;
-
-  const BrandOperationSuccess(this.message);
-
-  @override
-  List<Object> get props => [message];
-}
-
-class BrandError extends BrandState {
-  final String message;
-
-  const BrandError(this.message);
-
-  @override
-  List<Object> get props => [message];
-}
-```
-
-### BLoC Implementation
-
-```dart
-class BrandBloc extends Bloc<BrandEvent, BrandState> {
-  final BrandRepository _brandRepository;
-
-  BrandBloc({required BrandRepository brandRepository})
-      : _brandRepository = brandRepository,
-        super(const BrandInitial()) {
-    on<LoadUserBrandsEvent>(_onLoadUserBrandsEvent);
-    on<CreateBrandEvent>(_onCreateBrandEvent);
-    on<UpdateBrandEvent>(_onUpdateBrandEvent);
-    on<SwitchBrandEvent>(_onSwitchBrandEvent);
-    on<InviteUserEvent>(_onInviteUserEvent);
-    on<AcceptInvitationEvent>(_onAcceptInvitationEvent);
-    on<DeclineInvitationEvent>(_onDeclineInvitationEvent);
-    on<SearchBrandsEvent>(_onSearchBrandsEvent);
-    // Other event handlers...
-  }
-
-  Future<void> _onLoadUserBrandsEvent(LoadUserBrandsEvent event, Emitter<BrandState> emit) async {
-    emit(const BrandLoading());
-
-    final userBrandsResult = await _brandRepository.getUserBrands();
-    final accessibleBrandsResult = await _brandRepository.getAccessibleBrands();
-    final activeBrandResult = await _brandRepository.getActiveBrand();
-
-    final userBrands = userBrandsResult.fold((failure) => <Brand>[], (brands) => brands);
-    final accessibleBrands = accessibleBrandsResult.fold((failure) => <Brand>[], (brands) => brands);
-    final activeBrand = activeBrandResult.fold((failure) => null as Brand?, (brand) => brand);
-
-    if (userBrandsResult.isLeft() && accessibleBrandsResult.isLeft()) {
-      final failure = userBrandsResult.fold((failure) => failure, (_) => null as dynamic);
-      emit(BrandError(failure?.message ?? 'Failed to load brands'));
-    } else {
-      emit(BrandLoaded(
-        userBrands: userBrands,
-        accessibleBrands: accessibleBrands,
-        activeBrand: activeBrand,
-      ));
-    }
-  }
-
-  Future<void> _onCreateBrandEvent(CreateBrandEvent event, Emitter<BrandState> emit) async {
-    emit(const BrandLoading());
-
-    final result = await _brandRepository.createBrand(event.brandData);
-
-    emit(result.fold(
-      (failure) => BrandError(failure.message),
-      (brand) {
-        // Reload brands after successful creation
-        add(LoadUserBrandsEvent());
-        return BrandOperationSuccess('Brand created successfully');
-      },
-    ));
-  }
-
-  // Other event handlers...
-}
-```
-
-## UI Components
-
-### Brand Card Widget
-
-```dart
-class BrandCard extends StatelessWidget {
-  final Brand brand;
-  final VoidCallback? onTap;
-  final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
-  final bool showActions;
-
-  const BrandCard({
-    Key? key,
-    required this.brand,
-    this.onTap,
-    this.onEdit,
-    this.onDelete,
-    this.showActions = false,
-  }) : super(key: key);
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        leading: brand.hasLogo
-            ? Image.network(brand.logoUrl!)
-            : CircleAvatar(child: Text(brand.name[0])),
-        title: Text(brand.name),
-        subtitle: Text(brand.formattedBusinessType),
-        trailing: showActions
-            ? PopupMenuButton(
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 'edit',
-                    child: Text('Edit'),
-                    onTap: onEdit,
-                  ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Text('Delete'),
-                    onTap: onDelete,
-                  ),
-                ],
-              )
-            : null,
-        onTap: onTap,
+    return BrandBlocProvider(
+      child: MaterialApp(
+        // App configuration
       ),
     );
   }
 }
 ```
 
-### Brand Selector Widget
+### Basic Usage Examples
+
+#### Accessing Brand Management
 
 ```dart
-class BrandSelector extends StatelessWidget {
+class CreateBrandScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BrandBloc, BrandState>(
-      builder: (context, state) {
-        if (state is BrandLoaded) {
-          final userContext = context.watch<ContextBloc>().state;
-          final brands = state.userBrands;
-          final activeBrand = state.activeBrand;
+    return ElevatedButton(
+      onPressed: () {
+        context.brandManagement.add(
+          CreateBrandEvent(
+            name: 'My Brand',
+            businessType: 'Retail',
+            timezone: 'Asia/Jakarta',
+            currency: 'IDR',
+          ),
+        );
+      },
+      child: Text('Create Brand'),
+    );
+  }
+}
+```
 
-          return PopupMenuButton(
-            child: Row(
-              children: [
-                Text(activeBrand?.name ?? 'Select Brand'),
-                Icon(Icons.arrow_drop_down),
-              ],
-            ),
-            itemBuilder: (context) {
-              return brands.map((brand) {
-                return PopupMenuItem(
-                  value: brand,
-                  child: Text(brand.name),
-                  onTap: () => _selectBrand(context, brand),
-                );
-              }).toList();
+#### Watching Brand List
+
+```dart
+class BrandListScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<BrandListBloc, BrandListState>(
+      builder: (context, state) {
+        if (state is BrandListLoading) {
+          return CircularProgressIndicator();
+        } else if (state is UserBrandsLoaded) {
+          return ListView.builder(
+            itemCount: state.userBrands.length,
+            itemBuilder: (context, index) {
+              final brand = state.userBrands[index];
+              return BrandCard(brand: brand);
             },
           );
         }
-
         return Container();
       },
     );
   }
-
-  void _selectBrand(BuildContext context, Brand brand) {
-    context.read<BrandBloc>().add(SwitchBrandEvent(brand.id));
-  }
 }
 ```
 
-### Create Brand Form
+## 📖 Usage Examples
+
+### Multi-BLoC Provider Usage
 
 ```dart
-class CreateBrandForm extends StatefulWidget {
-  @override
-  _CreateBrandFormState createState() => _CreateBrandFormState();
-}
+// Using all BLoCs
+BrandBlocProvider(
+  child: YourWidget(),
+)
 
-class _CreateBrandFormState extends State<CreateBrandForm> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _slugController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _industryController = TextEditingController();
-  final _addressController = TextEditingController();
-  String _businessType = 'SERVICE';
+// Using specific BLoCs for performance
+BrandManagementBlocProvider(
+  child: YourWidget(),
+)
 
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: [
-          TextFormField(
-            controller: _nameController,
-            decoration: InputDecoration(labelText: 'Brand Name'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Brand name is required';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            controller: _slugController,
-            decoration: InputDecoration(labelText: 'Brand Slug'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Brand slug is required';
-              }
-              return null;
-            },
-          ),
-          DropdownButtonFormField(
-            value: _businessType,
-            decoration: InputDecoration(labelText: 'Business Type'),
-            items: ['SERVICE', 'RETAIL', 'MANUFACTURING', 'OTHER']
-                .map((type) => DropdownMenuItem(
-                      value: type,
-                      child: Text(type),
-                    ))
-                .toList(),
-            onChanged: (value) {
-              setState(() {
-                _businessType = value!;
-              });
-            },
-          ),
-          TextFormField(
-            controller: _descriptionController,
-            decoration: InputDecoration(labelText: 'Description'),
-            maxLines: 3,
-          ),
-          TextFormField(
-            controller: _industryController,
-            decoration: InputDecoration(labelText: 'Industry'),
-          ),
-          TextFormField(
-            controller: _addressController,
-            decoration: InputDecoration(labelText: 'Business Address'),
-          ),
-          SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _submitForm,
-            child: Text('Create Brand'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      final brandData = {
-        'name': _nameController.text,
-        'slug': _slugController.text,
-        'businessType': _businessType,
-        'industry': _industryController.text,
-        'description': _descriptionController.text,
-        'businessAddress': _addressController.text,
-        'timezone': 'Asia/Jakarta',
-        'currency': 'IDR',
-      };
-
-      context.read<BrandBloc>().add(CreateBrandEvent(brandData));
-    }
-  }
-}
-```
-
-## Context Headers Implementation
-
-### Dio Client with Context Headers
-
-```dart
-class AuthInterceptor extends Interceptor {
-  final AppLogger _logger;
-
-  AuthInterceptor({required AppLogger logger}) : _logger = logger;
-
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    // Add auth token if available
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(AppConstants.bearerTokenKey);
-
-    if (token != null) {
-      options.headers['Authorization'] = 'Bearer $token';
-    }
-
-    // Add context headers
-    final contextManager = ContextManager();
-    final context = contextManager.currentContext;
-
-    if (context != null) {
-      options.headers['X-Active-Brand-ID'] = context.activeBrand?.id ?? '';
-      options.headers['X-Active-Branch-ID'] = context.activeBranch?.id ?? '';
-      options.headers['X-User-Role'] = context.role.name;
-    } else {
-      // Handle case where context is null with default values
-      options.headers['X-Active-Brand-ID'] = '';
-      options.headers['X-Active-Branch-ID'] = '';
-      options.headers['X-User-Role'] = '';
-    }
-
-    handler.next(options);
-  }
-}
-```
-
-## Search Implementation
-
-### Search in BLoC
-
-```dart
-Future<void> _onSearchBrandsEvent(SearchBrandsEvent event, Emitter<BrandState> emit) async {
-  emit(const BrandSearchLoading());
-
-  // For now, we'll simulate search by filtering existing brands
-  final currentState = state;
-  if (currentState is BrandLoaded) {
-    final allBrands = <Brand>[...currentState.userBrands, ...currentState.accessibleBrands];
-
-    // Filter brands based on query
-    final filteredBrands = allBrands.where((brand) {
-      final nameMatch = brand.name.toLowerCase().contains(event.query.toLowerCase());
-      final slugMatch = brand.slug.toLowerCase().contains(event.query.toLowerCase());
-      final descriptionMatch = brand.description?.toLowerCase().contains(event.query.toLowerCase()) ?? false;
-
-      return nameMatch || slugMatch || descriptionMatch;
-    }).toList();
-
-    await Future.delayed(const Duration(milliseconds: 300)); // Simulate search delay
-
-    emit(BrandSearchLoaded(
-      searchResults: filteredBrands,
-      query: event.query,
-      filters: event.filters,
-    ));
-  } else {
-    // If no brands are loaded, return empty results
-    await Future.delayed(const Duration(milliseconds: 300));
-    emit(BrandSearchLoaded(
-      searchResults: [],
-      query: event.query,
-      filters: event.filters,
-    ));
-  }
-}
-```
-
-## Error Handling
-
-### Error Types
-
-```dart
-abstract class Failure extends Equatable {
-  final String message;
-  final int? statusCode;
-
-  const Failure({required this.message, this.statusCode});
-
-  @override
-  List<Object> get props => [message, statusCode];
-}
-
-class ServerFailure extends Failure {
-  final dynamic originalError;
-
-  const ServerFailure({
-    required String message,
-    int? statusCode,
-    this.originalError,
-  }) : super(message: message, statusCode: statusCode);
-}
-
-class NetworkFailure extends Failure {
-  const NetworkFailure({required String message}) : super(message: message);
-}
-
-class ValidationFailure extends Failure {
-  final Map<String, String> fieldErrors;
-
-  const ValidationFailure({
-    required String message,
-    required this.fieldErrors,
-  }) : super(message: message);
-}
-```
-
-### Error Handling in UI
-
-```dart
-BlocBuilder<BrandBloc, BrandState>(
-  builder: (context, state) {
-    if (state is BrandError) {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.error, size: 64, color: Colors.red),
-              SizedBox(height: 16),
-              Text(
-                'Error: ${state.message}',
-                style: TextStyle(fontSize: 18),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => context.read<BrandBloc>().add(LoadUserBrandsEvent()),
-                child: Text('Retry'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    if (state is BrandLoading) {
-      return Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
-    // Other states...
-  },
+BrandInvitationBlocProvider(
+  child: YourWidget(),
 )
 ```
 
-## Usage Examples
-
-### Dependency Injection
+### Context Extensions
 
 ```dart
-// In injection_container.dart
-final sl = GetIt.instance;
-
-Future<void> init() async {
-  // External
-  final dio = Dio(BaseOptions(baseUrl: AppConstants.apiBaseUrl));
-  final sharedPreferences = await SharedPreferences.getInstance();
-
-  // Core
-  sl.registerLazySingleton(() => dio);
-  sl.registerLazySingleton(() => sharedPreferences);
-  sl.registerLazySingleton(() => DioClient(dio: dio));
-  sl.registerLazySingleton(() => AppLogger());
-  sl.registerLazySingleton(() => ContextManager());
-
-  // Features - Brand
-  sl.registerLazySingleton<BrandRemoteDataSource>(
-    () => BrandRemoteDataSourceImpl(sl<DioClient>(), sl<AppLogger>()),
-  );
-
-  sl.registerLazySingleton<BrandRepository>(
-    () => BrandRepositoryImpl(sl<BrandRemoteDataSource>(), sl<AppLogger>()),
-  );
-
-  sl.registerFactory<BrandBloc>(
-    () => BrandBloc(brandRepository: sl<BrandRepository>()),
-  );
-}
+// Access BLoCs with extensions
+context.brandManagement.add(CreateBrandEvent(...));
+context.watchBrandList
+context.brandSearch.add(SearchBrandsEvent(...))
+context.brandSwitching.add(SwitchActiveBrandEvent(...))
+context.brandInvitation.add(CreateInvitationEvent(...))
 ```
 
-### Using Brand BLoC in UI
+### Formatters Usage
 
 ```dart
-class BrandListPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Brands'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CreateBrandPage()),
-              );
-            },
-          ),
-        ],
-      ),
-      body: BlocBuilder<BrandBloc, BrandState>(
-        builder: (context, state) {
-          if (state is BrandInitial) {
-            context.read<BrandBloc>().add(LoadUserBrandsEvent());
-            return Center(child: CircularProgressIndicator());
-          }
+// Format business type
+final formattedType = BrandFormatter.formatBusinessType('RETAIL', context);
 
-          if (state is BrandLoading) {
-            return Center(child: CircularProgressIndicator());
-          }
+// Format subscription status
+final formattedStatus = BrandFormatter.formatSubscriptionStatus('ACTIVE', context);
 
-          if (state is BrandLoaded) {
-            final brands = state.userBrands;
-
-            if (brands.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.business, size: 64, color: Colors.grey),
-                    SizedBox(height: 16),
-                    Text(
-                      'No brands found',
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
-                    ),
-                    SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => CreateBrandPage()),
-                        );
-                      },
-                      child: Text('Create Your First Brand'),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            return ListView.builder(
-              itemCount: brands.length,
-              itemBuilder: (context, index) {
-                final brand = brands[index];
-                return BrandCard(
-                  brand: brand,
-                  onTap: () {
-                    // Navigate to brand details
-                  },
-                  showActions: true,
-                  onEdit: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditBrandPage(brand: brand),
-                      ),
-                    );
-                  },
-                  onDelete: () {
-                    _showDeleteConfirmation(context, brand);
-                  },
-                );
-              },
-            );
-          }
-
-          if (state is BrandError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error, size: 64, color: Colors.red),
-                  SizedBox(height: 16),
-                  Text(
-                    'Error: ${state.message}',
-                    style: TextStyle(fontSize: 18),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => context.read<BrandBloc>().add(LoadUserBrandsEvent()),
-                    child: Text('Retry'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return Container();
-        },
-      ),
-    );
-  }
-
-  void _showDeleteConfirmation(BuildContext context, Brand brand) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Delete Brand'),
-        content: Text('Are you sure you want to delete ${brand.name}?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.read<BrandBloc>().add(DeleteBrandEvent(brand.id));
-            },
-            child: Text('Delete'),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// Check if brand is new
+final isNew = BrandFormatter.isNewBrand(brand.createdAt);
 ```
 
-## Testing
-
-### Unit Tests
+### Error Handling Patterns
 
 ```dart
-// brand_repository_test.dart
-void main() {
-  group('BrandRepository', () {
-    late BrandRepositoryImpl repository;
-    late MockBrandRemoteDataSource mockDataSource;
-    late MockAppLogger mockLogger;
-
-    setUp(() {
-      mockDataSource = MockBrandRemoteDataSource();
-      mockLogger = MockAppLogger();
-      repository = BrandRepositoryImpl(mockDataSource, mockLogger);
-    });
-
-    test('should return list of brands when getUserBrands is called', () async {
-      // Arrange
-      final testBrands = [testBrand, testBrand2];
-      when(mockDataSource.getUserBrands())
-          .thenAnswer((_) async => testBrands);
-
-      // Act
-      final result = await repository.getUserBrands();
-
-      // Assert
-      expect(result, isA<Right<Failure, List<Brand>>>());
-      result.fold(
-        (failure) => fail('Expected success'),
-        (brands) => expect(brands, testBrands),
+BlocListener<BrandManagementBloc, BrandManagementState>(
+  listener: (context, state) {
+    if (state is BrandManagementError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(state.message)),
       );
-    });
-
-    test('should return ServerFailure when getUserBrands throws exception', () async {
-      // Arrange
-      when(mockDataSource.getUserBrands())
-          .thenThrow(ServerException('Server error'));
-
-      // Act
-      final result = await repository.getUserBrands();
-
-      // Assert
-      expect(result, isA<Left<Failure, List<Brand>>>());
-      result.fold(
-        (failure) => expect(failure, isA<ServerFailure>()),
-        (brands) => fail('Expected failure'),
+    } else if (state is BrandManagementCreated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(state.message)),
       );
-    });
-  });
-}
-```
-
-### Widget Tests
-
-```dart
-// brand_card_test.dart
-void main() {
-  group('BrandCard', () {
-    testWidgets('should display brand information correctly', (WidgetTester tester) async {
-      // Arrange
-      final brand = Brand(
-        id: '1',
-        name: 'Test Brand',
-        slug: 'test-brand',
-        ownerId: 'user-1',
-        businessType: 'SERVICE',
-        settings: {},
-        timezone: 'Asia/Jakarta',
-        currency: 'IDR',
-        subscriptionTier: 'FREE',
-        subscriptionStatus: 'ACTIVE',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
-
-      // Act
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BrandCard(brand: brand),
-          ),
-        ),
-      );
-
-      // Assert
-      expect(find.text('Test Brand'), findsOneWidget);
-      expect(find.text('Layanan'), findsOneWidget); // formatted business type
-    });
-  });
-}
-```
-
-## Performance Considerations
-
-### Pagination
-
-```dart
-// Implement pagination for large brand lists
-class BrandPaginationController {
-  final ScrollController scrollController = ScrollController();
-  final List<Brand> brands = [];
-  bool isLoading = false;
-  int currentPage = 1;
-  final int pageSize = 20;
-  bool hasMore = true;
-
-  void loadMoreBrands() {
-    if (isLoading || !hasMore) return;
-
-    isLoading = true;
-    // Fetch next page
-    // Add to brands list
-    isLoading = false;
-    currentPage++;
-  }
-
-  void reset() {
-    brands.clear();
-    currentPage = 1;
-    hasMore = true;
-    isLoading = false;
-  }
-}
-```
-
-### Caching
-
-```dart
-// Implement caching for brand data
-class BrandCache {
-  static const String _cacheKey = 'cached_brands';
-  static const Duration _cacheExpiry = Duration(hours: 1);
-
-  static Future<void> cacheBrands(List<Brand> brands) async {
-    final prefs = await SharedPreferences.getInstance();
-    final cacheData = {
-      'brands': brands.map((b) => BrandModel.fromEntity(b).toJson()).toList(),
-      'timestamp': DateTime.now().millisecondsSinceEpoch,
-    };
-    await prefs.setString(_cacheKey, jsonEncode(cacheData));
-  }
-
-  static Future<List<Brand>?> getCachedBrands() async {
-    final prefs = await SharedPreferences.getInstance();
-    final cacheString = prefs.getString(_cacheKey);
-
-    if (cacheString == null) return null;
-
-    final cacheData = jsonDecode(cacheString);
-    final timestamp = cacheData['timestamp'];
-    final cacheAge = DateTime.now().millisecondsSinceEpoch - timestamp;
-
-    if (cacheAge > _cacheExpiry.inMilliseconds) {
-      await prefs.remove(_cacheKey);
-      return null;
     }
+  },
+  child: YourWidget(),
+)
+```
 
-    final brandsJson = cacheData['brands'] as List;
-    return brandsJson.map((json) => BrandModel.fromJson(json).toEntity()).toList();
-  }
+## 🧪 Testing
+
+### Test Setup
+
+```dart
+// In test file
+import 'package:get_it/get_it.dart';
+import 'apps/mobile/lib/features/brand/di/brand_injection.dart';
+
+void main() {
+  setUp(() async {
+    final getIt = GetIt.asNewInstance();
+    await BrandInjectionTest.initTest(getIt);
+  });
 }
 ```
 
-## Related Documentation
+### Test Helpers
 
-- [Brand API Documentation](../../../../docs/06-Data-API/06-Brand-API-Documentation.md) - Complete API documentation
-- [Mobile Flow Context Management](../../../../docs/12-Final-Implementation-Roadmap/mobile-docs/02-Mobile-Flow-Context-Management.md) - Context management
-- [API Endpoints Structure](../../../../docs/12-Final-Implementation-Roadmap/mobile-docs/01-API-Endpoints-Structure.md) - API endpoints
-- [Core Network Client](../core/network/dio_client.dart) - HTTP client implementation
-- [Context Manager](../core/context/context_manager.dart) - Context management
+```dart
+// Create mock entities
+final brand = BrandTestHelper.createMockBrand();
+final invitation = BrandTestHelper.createMockInvitation();
 
----
+// Create test widget
+final testWidget = BrandTestHelper.createTestWidget(
+  child: YourTestWidget(),
+  brandManagementBloc: mockBloc,
+);
+```
 
-**Last Updated**: November 19, 2025
-**Maintainer**: Mobile Development Team
-**Version**: 1.0.0
+### BLoC Testing
+
+```dart
+group('BrandManagementBloc', () {
+  late BrandManagementBloc bloc;
+  late MockCreateBrandUseCase mockCreateBrandUseCase;
+
+  setUp(() {
+    mockCreateBrandUseCase = MockCreateBrandUseCase();
+    bloc = BrandManagementBloc(
+      createBrandUseCase: mockCreateBrandUseCase,
+      updateBrandUseCase: mockUpdateBrandUseCase,
+      deleteBrandUseCase: mockDeleteBrandUseCase,
+    );
+  });
+
+  test('should emit BrandManagementCreated when CreateBrandEvent is added', () async {
+    // Arrange
+    final brand = Brand(/* ... */);
+    when(mockCreateBrandUseCase(any))
+        .thenAnswer((_) async => Right(brand));
+
+    // Act
+    bloc.add(CreateBrandEvent(/* ... */));
+
+    // Assert
+    await expectLater(
+      bloc.stream,
+      emitsInOrder([
+        BrandManagementLoading(),
+        BrandManagementCreated(brand: brand, message: any),
+      ]),
+    );
+  });
+});
+```
+
+## 🔄 Migration Guide
+
+### From Legacy BrandBloc
+
+1. **Identify current BrandBloc usage**
+   ```dart
+   // Old way
+   context.read<BrandBloc>().add(LoadBrandsEvent());
+   ```
+
+2. **Replace with appropriate new BLoCs**
+   ```dart
+   // New way
+   context.brandList.add(LoadUserBrandsEvent());
+   ```
+
+3. **Update provider wrapping**
+   ```dart
+   // Old way
+   BlocProvider(
+     create: (context) => BrandBloc(),
+     child: YourWidget(),
+   )
+
+   // New way
+   BrandBlocProvider(
+     child: YourWidget(),
+   )
+   ```
+
+### From UI Logic in Domain
+
+1. **Identify UI logic in entities**
+   ```dart
+   // Old way - UI logic in domain entity
+   class Brand {
+     String get formattedBusinessType {
+       // UI formatting logic
+     }
+   }
+   ```
+
+2. **Move to formatters/helpers**
+   ```dart
+   // New way - UI logic in presentation layer
+   class BrandFormatter {
+     static String formatBusinessType(String businessType, BuildContext context) {
+       // UI formatting logic
+     }
+   }
+   ```
+
+3. **Update UI components**
+   ```dart
+   // Old way
+   Text(brand.formattedBusinessType)
+
+   // New way
+   Text(BrandFormatter.formatBusinessType(brand.businessType, context))
+   ```
+
+### Migration Checklist
+
+- [ ] Identify BrandBloc usage in codebase
+- [ ] Replace with appropriate new BLoCs
+- [ ] Update dependency injection setup
+- [ ] Move UI logic from domain to presentation
+- [ ] Update UI components to use formatters
+- [ ] Update tests to use new BLoCs
+- [ ] Verify functionality works correctly
+- [ ] Update documentation
+
+## 📚 Best Practices
+
+### Clean Architecture Principles
+
+1. **Domain Layer Purity**
+   - Entities tidak boleh memiliki dependencies ke framework
+   - Use cases hanya berisi business logic
+   - Repository interfaces hanya mendefinisikan contract
+
+2. **Dependency Rules**
+   - Inner layers tidak boleh depend pada outer layers
+   - Gunakan dependency inversion principle
+   - Use constructor injection untuk dependencies
+
+3. **Layer Separation**
+   - Jangan skip layers (misal: presentation langsung ke data source)
+   - Setiap layer memiliki responsibility yang jelas
+   - Gunakan interfaces untuk abstraksi
+
+### BLoC Patterns
+
+1. **Single Responsibility**
+   - Satu BLoC untuk satu domain concern
+   - Events dan states yang spesifik
+   - Avoid bloated BLoCs
+
+2. **Event/State Design**
+   - Events untuk actions
+   - States untuk UI representation
+   - Include relevant data in states
+
+3. **Error Handling**
+   - Handle errors di BLoC level
+   - Provide user-friendly error messages
+   - Include error codes for debugging
+
+### Performance Optimization
+
+1. **Lazy Loading**
+   - Gunakan LazySingleton untuk heavy objects
+   - Load data hanya saat dibutuhkan
+   - Implement caching strategies
+
+2. **Memory Management**
+   - Gunakan Factory pattern untuk BLoCs
+   - Proper cleanup di dispose
+   - Avoid memory leaks
+
+3. **UI Optimization**
+   - Gunakan SpecificBrandBlocProvider untuk BLoCs yang dibutuhkan saja
+   - Implement pagination untuk large data sets
+   - Use const constructors untuk widgets
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+1. **GetIt Conflicts**
+   ```dart
+   // Problem: Import conflicts
+   import 'package:get_it/get_it.dart' as get_it1;
+   import 'package:get_it/get_it.dart' as get_it2;
+
+   // Solution: Use aliases
+   import 'package:get_it/get_it.dart';
+   final getIt = GetIt.instance;
+   ```
+
+2. **BLoC Not Found**
+   ```dart
+   // Problem: BLoC not found in widget tree
+   context.read<BrandManagementBloc>()
+
+   // Solution: Ensure provider is in widget tree
+   BrandBlocProvider(
+     child: YourWidget(),
+   )
+   ```
+
+3. **Memory Leaks**
+   ```dart
+   // Problem: BLoC not disposed properly
+   BlocProvider(create: (context) => BrandBloc())
+
+   // Solution: Use factory pattern
+   getIt.registerFactory<BrandManagementBloc>(() => BrandManagementBloc(...));
+   ```
+
+4. **Test Failures**
+   ```dart
+   // Problem: Mocks not registered
+   final bloc = BrandManagementBloc(useCase: mockUseCase);
+
+   // Solution: Register mocks properly
+   await BrandInjectionTest.setupTestEnvironment(
+     getIt,
+     brandRepository: mockRepository,
+   );
+   ```
+
+### Debug Tips
+
+```dart
+// Check registered dependencies
+print(getIt.allReadySync());
+
+// Reset dependencies for testing
+await BrandInjection.reset(getIt);
+
+// Check specific dependency
+final bloc = getIt.isRegistered<BrandManagementBloc>()
+    ? getIt<BrandManagementBloc>()
+    : null;
+
+// Debug BLoC states
+BlocListener<BrandManagementBloc, BrandManagementState>(
+  listener: (context, state) {
+    print('BrandManagementState: $state');
+  },
+  child: YourWidget(),
+)
+```
+
+## 📝 Changelog
+
+### Version 2.0.0 - Clean Architecture Refactor
+
+#### Breaking Changes
+- Replaced single `BrandBloc` with multiple focused BLoCs
+- Moved UI logic from domain entities to presentation layer
+- Updated dependency injection configuration
+- Changed provider structure
+
+#### New Features
+- Clean Architecture implementation
+- Multiple BLoCs for different concerns
+- Improved error handling
+- Better testability
+- Enhanced performance with specific providers
+
+#### Migration Required
+- All `BrandBloc` usage needs to be updated to new BLoCs
+- UI components using entity methods need to use formatters
+- Provider wrapping needs to be updated
+- Tests need to be updated for new structure
+
+### Version 1.0.0 - Initial Implementation
+
+- Basic brand management functionality
+- Single BrandBloc for all operations
+- Simple state management
+- Basic CRUD operations

@@ -197,7 +197,6 @@ class AppUtils {
       hash = str.codeUnitAt(i) + ((hash << 5) - hash);
     }
 
-    final hue = hash.abs() % 360;
     return HSLColor.fromAHSL(1.0, 0.7, 0.6, 1.0).toColor();
   }
 

@@ -1,20 +1,16 @@
 import 'package:fpdart/fpdart.dart';
 import '../../../../core/errors/failure.dart';
-import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
 import '../models/menu_item_model.dart';
 import '../models/user_dashboard_model.dart';
 import 'home_remote_datasource.dart';
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
-  final DioClient _dioClient;
   final AppLogger _logger;
 
   HomeRemoteDataSourceImpl({
-    required DioClient dioClient,
     required AppLogger logger,
-  }) : _dioClient = dioClient,
-       _logger = logger;
+  }) : _logger = logger;
 
   @override
   Future<Either<Failure, List<MenuItemModel>>> getMenuItems() async {

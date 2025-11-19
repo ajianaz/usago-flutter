@@ -7,8 +7,9 @@ import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../domain/entities/brand_invitation.dart';
-import '../bloc/brand_bloc.dart';
-import '../bloc/brand_event.dart';
+import '../bloc/brand_invitation/brand_invitation_bloc.dart';
+import '../bloc/brand_invitation/brand_invitation_event.dart';
+import '../helpers/index.dart'; // Import formatter helpers
 import '../../../../i18n/translations.g.dart';
 
 /// Invitation Card Widget
@@ -84,7 +85,7 @@ class InvitationCard extends StatelessWidget {
                   ),
                   SizedBox(width: AppSpacing.xs),
                   Text(
-                    '${context.t.brand.role_label}: ${invitation.formattedRole(context)}',
+                    '${context.t.brand.role_label}: ${invitation.displayRole(context)}',
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -124,7 +125,7 @@ class InvitationCard extends StatelessWidget {
                   ),
                   SizedBox(width: AppSpacing.xs),
                   Text(
-                    '${context.t.brand.sent_label}: ${invitation.createdDateFormatted}',
+                    '${context.t.brand.sent_label}: ${invitation.displayCreatedDate(context)}',
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -139,7 +140,7 @@ class InvitationCard extends StatelessWidget {
                     ),
                     SizedBox(width: AppSpacing.sm),
                     Text(
-                      '${context.t.brand.expires_label}: ${invitation.expirationDateFormatted}',
+                      '${context.t.brand.expires_label}: ${invitation.displayExpirationDate(context)}',
                       style: AppTextStyles.bodySmall.copyWith(
                         color: invitation.isExpired
                             ? AppColors.error
@@ -213,7 +214,7 @@ class InvitationCard extends StatelessWidget {
           ),
           SizedBox(width: AppSpacing.xs),
           Text(
-            invitation.formattedStatus,
+            invitation.displayStatus(context),
             style: AppTextStyles.bodySmall.copyWith(
               color: textColor,
               fontWeight: FontWeight.w600,
@@ -286,7 +287,7 @@ class InvitationCard extends StatelessWidget {
             Text(context.t.brand.accept_invitation_dialog_message.replaceAll('{brandName}', invitation.brandName)),
             SizedBox(height: AppSpacing.sm),
             Text(
-              context.t.brand.accept_invitation_role_info.replaceAll('{role}', invitation.formattedRole(context)),
+              context.t.brand.accept_invitation_role_info.replaceAll('{role}', invitation.displayRole(context)),
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -302,8 +303,8 @@ class InvitationCard extends StatelessWidget {
             onPressed: () {
               context.router.maybePop();
               // In a real app, you would get the token from the invitation or URL
-              context.read<BrandBloc>().add(
-                AcceptInvitationEvent(invitation.id, 'token_here'),
+              context.read<BrandInvitationBloc>().add(
+                AcceptInvitationEvent(invitationId: invitation.id, token: 'token_here'),
               );
             },
             style: TextButton.styleFrom(
@@ -330,8 +331,8 @@ class InvitationCard extends StatelessWidget {
           TextButton(
             onPressed: () {
               context.router.maybePop();
-              context.read<BrandBloc>().add(
-                DeclineInvitationEvent(invitation.id),
+              context.read<BrandInvitationBloc>().add(
+                RejectInvitationEvent(invitationId: invitation.id),
               );
             },
             style: TextButton.styleFrom(
@@ -358,8 +359,8 @@ class InvitationCard extends StatelessWidget {
           TextButton(
             onPressed: () {
               context.router.maybePop();
-              context.read<BrandBloc>().add(
-                CancelInvitationEvent(invitation.id),
+              context.read<BrandInvitationBloc>().add(
+                RevokeInvitationEvent(invitationId: invitation.id),
               );
             },
             style: TextButton.styleFrom(
@@ -373,8 +374,8 @@ class InvitationCard extends StatelessWidget {
   }
 
   void _resendInvitation(BuildContext context) {
-    context.read<BrandBloc>().add(
-      ResendInvitationEvent(invitation.id),
+    context.read<BrandInvitationBloc>().add(
+      ResendInvitationEvent(invitationId: invitation.id),
     );
   }
 }

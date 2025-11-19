@@ -1,6 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/widgets.dart';
-import '../../../../i18n/translations.g.dart';
 
 /// Brand Invitation entity representing an invitation to join a brand
 class BrandInvitation extends Equatable {
@@ -78,70 +76,8 @@ class BrandInvitation extends Equatable {
     return DateTime.now().isAfter(expiresAt!);
   }
 
-  /// Get formatted role
-  String formattedRole(BuildContext context) {
-    final t = Translations.of(context);
-    switch (role.toUpperCase()) {
-      case 'BRAND_OWNER':
-        return t.brand.brand_owner;
-      case 'BRANCH_MANAGER':
-        return t.brand.branch_manager;
-      case 'BRANCH_ADMIN':
-        return t.brand.branch_admin;
-      case 'BRANCH_STAFF':
-        return t.brand.branch_staff;
-      case 'CROSS_BRANCH_VIEWER':
-        return t.brand.cross_branch_viewer;
-      default:
-        return role;
-    }
-  }
-
-  /// Get formatted status
-  String get formattedStatus {
-    switch (status.toUpperCase()) {
-      case 'PENDING':
-        return 'Menunggu';
-      case 'ACCEPTED':
-        return 'Diterima';
-      case 'DECLINED':
-        return 'Ditolak';
-      case 'EXPIRED':
-        return 'Kadaluarsa';
-      default:
-        return status;
-    }
-  }
-
-  /// Get formatted created date
-  String get createdDateFormatted {
-    final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-
-    final day = createdAt.day.toString().padLeft(2, '0');
-    final month = months[createdAt.month - 1];
-    final year = createdAt.year;
-
-    return '$day $month $year';
-  }
-
-  /// Get formatted expiration date
-  String? get expirationDateFormatted {
-    if (expiresAt == null) return null;
-
-    final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-
-    final day = expiresAt!.day.toString().padLeft(2, '0');
-    final month = months[expiresAt!.month - 1];
-    final year = expiresAt!.year;
-
-    return '$day $month $year';
-  }
+  /// Pure business logic: Check if invitation is valid for business operations
+  bool get isValidForBusiness => !isExpired && isPending;
 
   @override
   List<Object?> get props => [

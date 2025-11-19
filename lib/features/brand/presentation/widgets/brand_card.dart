@@ -7,6 +7,7 @@ import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/utils/animation_utils.dart';
 import '../../../../shared/widgets/responsive_builder.dart';
+import '../helpers/index.dart'; // Import formatter helpers
 import '../../domain/entities/brand.dart';
 // Import routes will be handled by the parent component
 
@@ -253,7 +254,7 @@ class BrandCard extends StatelessWidget {
                 ),
               ),
               child: Text(
-                brand.formattedBusinessType,
+                brand.displayBusinessType(context),
                 style: AppTextStyles.captionDynamic(context).copyWith(
                   color: AppColors.primary,
                   fontWeight: FontWeight.w600,
@@ -272,7 +273,7 @@ class BrandCard extends StatelessWidget {
                 ),
               ),
               child: Text(
-                '${brand.formattedSubscriptionTier} • ${brand.formattedSubscriptionStatus}',
+                '${brand.displaySubscriptionTier(context)} • ${brand.displaySubscriptionStatus(context)}',
                 style: AppTextStyles.captionDynamic(context).copyWith(
                   color: _getSubscriptionStatusColor(),
                   fontWeight: FontWeight.w600,
@@ -299,7 +300,7 @@ class BrandCard extends StatelessWidget {
 
         // Join Date
         Text(
-          context.t.brand.joined.replaceFirst('{date}', brand.joinDateFormatted),
+          context.t.brand.joined.replaceFirst('{date}', brand.displayJoinDate(context)),
           style: AppTextStyles.captionDynamic(context).copyWith(
             color: AppColors.getTextSecondary(context),
           ),

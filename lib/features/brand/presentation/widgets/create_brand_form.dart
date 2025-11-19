@@ -8,9 +8,9 @@ import '../../../../shared/widgets/animated_button.dart';
 import '../../../../shared/widgets/animated_text_field.dart';
 import '../../../../shared/widgets/responsive_builder.dart';
 import '../../domain/entities/brand.dart';
-import '../bloc/brand_bloc.dart';
-import '../bloc/brand_state.dart';
-import '../bloc/brand_event.dart';
+import '../bloc/brand_management/brand_management_bloc.dart';
+import '../bloc/brand_management/brand_management_state.dart';
+import '../bloc/brand_management/brand_management_event.dart';
 
 /// Brand Form Widget
 /// Handles brand creation and editing with validation and auto-slug generation
@@ -183,21 +183,25 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
 
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
-      final brandData = {
-        'name': _nameController.text.trim(),
-        'slug': _slugController.text.trim(),
-        'description': _descriptionController.text.trim(),
-        'industry': _industryController.text.trim(),
-        'business_type': _selectedBusinessType,
-        'timezone': _selectedTimezone,
-        'currency': _selectedCurrency,
-        'settings': {},
-      };
-
       if (_isEditMode) {
-        context.read<BrandBloc>().add(UpdateBrandEvent(widget.brand!.id, brandData));
+        context.read<BrandManagementBloc>().add(UpdateBrandEvent(
+          brandId: widget.brand!.id,
+          name: _nameController.text.trim(),
+          businessType: _selectedBusinessType,
+          industry: _industryController.text.trim().isEmpty ? null : _industryController.text.trim(),
+          description: _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
+          timezone: _selectedTimezone,
+          currency: _selectedCurrency,
+        ));
       } else {
-        context.read<BrandBloc>().add(CreateBrandEvent(brandData));
+        context.read<BrandManagementBloc>().add(CreateBrandEvent(
+          name: _nameController.text.trim(),
+          businessType: _selectedBusinessType,
+          industry: _industryController.text.trim().isEmpty ? null : _industryController.text.trim(),
+          description: _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
+          timezone: _selectedTimezone,
+          currency: _selectedCurrency,
+        ));
       }
     }
   }
@@ -210,17 +214,27 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
   Widget _buildForm(BuildContext context, DeviceType deviceType) {
     final isMobile = deviceType == DeviceType.mobile;
 
-    return BlocListener<BrandBloc, BrandState>(
+    return BlocListener<BrandManagementBloc, BrandManagementState>(
       listener: (context, state) {
-        if (state is BrandOperationSuccess) {
+        if (state is BrandManagementCreated) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text('Brand berhasil dibuat'),
               backgroundColor: AppColors.success,
               behavior: SnackBarBehavior.floating,
             ),
           );
-        } else if (state is BrandError) {
+          Navigator.of(context).pop();
+        } else if (state is BrandManagementUpdated) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Brand berhasil diperbarui'),
+              backgroundColor: AppColors.success,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+          Navigator.of(context).pop();
+        } else if (state is BrandManagementError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
@@ -519,11 +533,11 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                     SizedBox(height: AppSpacing.xl),
 
                     // Submit Button
-                    BlocBuilder<BrandBloc, BrandState>(
+                    BlocBuilder<BrandManagementBloc, BrandManagementState>(
                       builder: (context, state) {
                         return AnimatedButton(
                           text: _isEditMode ? context.t.brand.update_brand_btn : context.t.brand.create_brand_btn,
-                          isLoading: state is BrandLoading,
+                          isLoading: state is BrandManagementLoading,
                           onPressed: _submitForm,
                           isFullWidth: true,
                           size: AnimatedButtonSize.large,

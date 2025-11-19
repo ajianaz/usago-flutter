@@ -1,6 +1,5 @@
 // File: lib/shared/widgets/desktop_constrained_content.dart
 import 'package:flutter/material.dart';
-import 'responsive_builder.dart';
 
 /// Desktop Constrained Content Widget
 ///

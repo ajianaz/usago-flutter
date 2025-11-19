@@ -10,9 +10,12 @@ import '../../../../shared/widgets/bloc_responsive_layout.dart';
 import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../domain/entities/brand.dart';
-import '../bloc/brand_bloc.dart';
-import '../bloc/brand_event.dart';
-import '../bloc/brand_state.dart';
+import '../bloc/brand_list/brand_list_bloc.dart';
+import '../bloc/brand_list/brand_list_event.dart';
+import '../bloc/brand_list/brand_list_state.dart';
+import '../bloc/brand_switching/brand_switching_bloc.dart';
+import '../bloc/brand_switching/brand_switching_event.dart';
+import '../bloc/brand_switching/brand_switching_state.dart';
 import '../widgets/brand_card.dart';
 import '../widgets/brand_card_skeleton.dart';
 import '../widgets/brand_selector.dart';
@@ -28,20 +31,26 @@ class BrandSelectionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocResponsiveLayout<BrandBloc, BrandState>(
-      builder: (context, bloc, state, deviceType) {
-        return BrandSelectionView(deviceType: deviceType);
-      },
-      listener: (context, state) {
-        if (state is BrandError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-            ),
-          );
-        }
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => context.read<BrandListBloc>()),
+        BlocProvider(create: (context) => context.read<BrandSwitchingBloc>()),
+      ],
+      child: BlocResponsiveLayout<BrandListBloc, BrandListState>(
+        builder: (context, bloc, state, deviceType) {
+          return BrandSelectionView(deviceType: deviceType);
+        },
+        listener: (context, state) {
+          if (state is BrandListError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.error,
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }
@@ -74,6 +83,11 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
       duration: AnimationUtils.durationNormal,
       vsync: this,
     );
+
+    // Load data saat page diinisialisasi
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BrandListBloc>().add(const LoadAllBrandDataEvent());
+    });
   }
 
   @override
@@ -98,7 +112,10 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
       setState(() {
         _isSearching = true;
       });
-      context.read<BrandBloc>().add(SearchBrandsEvent(query));
+      context.read<BrandListBloc>().add(FilterBrandsEvent(
+        query: query,
+        businessType: _selectedBusinessType == 'ALL' ? null : _selectedBusinessType,
+      ));
     }
   }
 
@@ -107,27 +124,22 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
       _isSearching = false;
       _searchController.clear();
     });
-    context.read<BrandBloc>().add(const ClearBrandSearchEvent());
+    context.read<BrandListBloc>().add(const ClearBrandFilterEvent());
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BrandBloc, BrandState>(
+    return BlocBuilder<BrandListBloc, BrandListState>(
       builder: (context, state) {
-        // Handle search state changes
-        if (state is BrandSearchLoaded) {
-          setState(() {
-            _isSearching = false;
-          });
-        }
-
         Widget content;
-        if (state is BrandLoading || state is BrandSearchLoading) {
+        if (state is BrandListLoading) {
           content = _buildLoadingState(context);
-        } else if (state is BrandLoaded) {
-          content = _buildContent(context, state, null);
-        } else if (state is BrandSearchLoaded) {
-          content = _buildContent(context, null, state);
+        } else if (state is BrandListLoaded) {
+          content = _buildContent(context, state);
+        } else if (state is BrandListEmpty) {
+          content = _buildEmptyState(context, state.message);
+        } else if (state is BrandListError) {
+          content = _buildErrorState(context, state.message);
         } else {
           content = _buildEmptyState(context);
         }
@@ -224,7 +236,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget _buildEmptyState(BuildContext context, [String? message]) {
     final isMobile = widget.deviceType == DeviceType.mobile;
 
     return Scaffold(
@@ -278,7 +290,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
                     ),
                     AppSpacing.verticalGapLg,
                     Text(
-                      context.t.brand.no_brands_available,
+                      message ?? context.t.brand.no_brands_available,
                       style: AppTextStyles.headline6Dynamic(context).copyWith(
                         color: AppColors.getTextPrimary(context),
                         fontWeight: FontWeight.bold,
@@ -341,30 +353,103 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
     );
   }
 
+  Widget _buildErrorState(BuildContext context, String message) {
+    final isMobile = widget.deviceType == DeviceType.mobile;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          context.t.brand.brand_selection,
+          style: AppTextStyles.headline5Dynamic(context).copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: Center(
+        child: Padding(
+          padding: AppSpacing.paddingAllLg,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: isMobile ? double.infinity : 400,
+                padding: AppSpacing.paddingAllXl,
+                decoration: BoxDecoration(
+                  color: AppColors.getSurface(context),
+                  borderRadius: AppSpacing.radiusLg,
+                  border: Border.all(color: AppColors.getBorder(context)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).shadowColor.withValues(alpha: 0.12),
+                      blurRadius: UIConstants.elevationCard,
+                      offset: const Offset(0, 4),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: AppSpacing.paddingAllLg,
+                      decoration: BoxDecoration(
+                        color: AppColors.error.withOpacity(0.1),
+                        borderRadius: AppSpacing.radiusXl,
+                      ),
+                      child: Icon(
+                        Icons.error_outline,
+                        size: 80,
+                        color: AppColors.error,
+                      ),
+                    ),
+                    AppSpacing.verticalGapLg,
+                    Text(
+                      'Terjadi Kesalahan',
+                      style: AppTextStyles.headline6Dynamic(context).copyWith(
+                        color: AppColors.getTextPrimary(context),
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    AppSpacing.verticalGapSm,
+                    Text(
+                      message,
+                      style: AppTextStyles.bodyMediumDynamic(context).copyWith(
+                        color: AppColors.getTextSecondary(context),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    AppSpacing.verticalGapMd,
+                    CustomButton(
+                      text: 'Coba Lagi',
+                      onPressed: () {
+                        context.read<BrandListBloc>().add(const LoadAllBrandDataEvent());
+                      },
+                      isFullWidth: !isMobile,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildContent(
     BuildContext context,
-    BrandLoaded? loadedState,
-    BrandSearchLoaded? searchState,
+    BrandListLoaded state,
   ) {
     final isMobile = widget.deviceType == DeviceType.mobile;
-    List<Brand> allBrands;
-    Brand? activeBrand;
+    final allBrands = state.allFilteredBrands;
+    final activeBrand = state.activeBrand;
 
-    if (loadedState != null) {
-      final userBrands = loadedState.userBrands;
-      final accessibleBrands = loadedState.accessibleBrands;
-      activeBrand = loadedState.activeBrand;
-      allBrands = <Brand>[...userBrands, ...accessibleBrands];
-    } else if (searchState != null) {
-      allBrands = searchState.searchResults;
-      activeBrand = null; // Don't show active brand in search results
-    } else {
-      allBrands = [];
-      activeBrand = null;
-    }
-
-    if (allBrands.isEmpty && loadedState != null) {
-      return _buildEmptyState(context);
+    if (allBrands.isEmpty) {
+      return _buildEmptyState(context, 'Tidak ada brand ditemukan');
     }
 
     return Scaffold(
@@ -379,12 +464,12 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
-          if (!isMobile && loadedState != null) ...[
+          if (!isMobile) ...[
             BrandSelector(
               currentBrand: activeBrand,
               availableBrands: allBrands,
               onBrandSelected: (brand) {
-                context.read<BrandBloc>().add(SwitchBrandEvent(brand.id));
+                context.read<BrandSwitchingBloc>().add(SwitchActiveBrandEvent(brandId: brand.id));
               },
               isCompact: true,
               deviceType: widget.deviceType,
@@ -395,7 +480,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
       body: Column(
         children: [
           // Search Bar
-          if (loadedState != null) _buildSearchBar(context, isMobile),
+          _buildSearchBar(context, isMobile),
 
           // Brand List
           Expanded(
@@ -403,7 +488,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
           ),
         ],
       ),
-      floatingActionButton: loadedState != null ? FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
           context.router.push(const CreateBrandRoute());
         },
@@ -412,7 +497,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
           Icons.add,
           color: AppColors.onPrimary,
         ),
-      ) : null,
+      ),
     );
   }
 
@@ -642,7 +727,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
 
     return RefreshIndicator(
       onRefresh: () async {
-        context.read<BrandBloc>().add(LoadUserBrandsEvent());
+        context.read<BrandListBloc>().add(const RefreshBrandListEvent());
       },
       child: GridView.builder(
         padding: AppSpacing.paddingAllMd,
@@ -668,7 +753,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
                     brand: brand,
                     isActive: isActive,
                     onTap: () {
-                      context.read<BrandBloc>().add(SwitchBrandEvent(brand.id));
+                      context.read<BrandSwitchingBloc>().add(SwitchActiveBrandEvent(brandId: brand.id));
                     },
                     onEdit: () {
                       _showEditBrandDialog(context, brand);
@@ -769,7 +854,8 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
           TextButton(
             onPressed: () {
               context.router.maybePop();
-              context.read<BrandBloc>().add(DeleteBrandEvent(brand.id));
+              // TODO: Implement delete with BrandManagementBloc
+              // context.read<BrandManagementBloc>().add(DeleteBrandEvent(brand.id));
             },
             style: TextButton.styleFrom(
               foregroundColor: AppColors.error,

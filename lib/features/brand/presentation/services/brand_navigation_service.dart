@@ -7,6 +7,21 @@ import '../../domain/entities/brand.dart';
 /// Navigation service for brand-related pages
 /// This service handles navigation between brand pages with proper parameter passing
 class BrandNavigationService {
+  /// Navigate to brand selection page
+  static void navigateToBrandSelection(BuildContext context) {
+    AutoRouter.of(context).push(const BrandSelectionRoute());
+  }
+
+  /// Navigate to create brand page
+  static void navigateToCreateBrand(BuildContext context) {
+    AutoRouter.of(context).push(const CreateBrandRoute());
+  }
+
+  /// Navigate to edit brand page
+  static void navigateToEditBrand(BuildContext context, Brand brand) {
+    AutoRouter.of(context).push(EditBrandRoute(brandId: brand.id));
+  }
+
   /// Navigate to brand statistics page
   static void navigateToStats(BuildContext context, Brand brand) {
     // Show feedback to user

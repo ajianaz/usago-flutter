@@ -143,13 +143,6 @@ class ContextManager {
         role: userRole,
       );
 
-      // Get active brand and branch from local storage
-      final activeBrandId = prefs.getString(StorageConstants.activeBrandIdKey);
-      final activeBranchId = prefs.getString(StorageConstants.activeBranchIdKey);
-
-      Brand? activeBrand;
-      Branch? activeBranch;
-
       // For now, we'll use empty lists and null values
       // In a real implementation, these would be fetched from API
       final brands = <Brand>[];

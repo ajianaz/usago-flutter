@@ -93,84 +93,9 @@ class Brand extends Equatable {
     return DateTime.now().isAfter(subscriptionExpiresAt!);
   }
 
-  /// Get formatted business type
-  String get formattedBusinessType {
-    switch (businessType.toUpperCase()) {
-      case 'SERVICE':
-        return 'Layanan';
-      case 'RETAIL':
-        return 'Ritel';
-      case 'MANUFACTURING':
-        return 'Manufaktur';
-      case 'OTHER':
-        return 'Lainnya';
-      default:
-        return businessType;
-    }
-  }
-
-  /// Get formatted subscription tier
-  String get formattedSubscriptionTier {
-    switch (subscriptionTier.toUpperCase()) {
-      case 'BASIC':
-        return 'Dasar';
-      case 'PRO':
-        return 'Pro';
-      case 'ENTERPRISE':
-        return 'Enterprise';
-      default:
-        return subscriptionTier;
-    }
-  }
-
-  /// Get formatted subscription status
-  String get formattedSubscriptionStatus {
-    switch (subscriptionStatus.toUpperCase()) {
-      case 'ACTIVE':
-        return 'Aktif';
-      case 'INACTIVE':
-        return 'Tidak Aktif';
-      case 'SUSPENDED':
-        return 'Ditangguhkan';
-      case 'CANCELLED':
-        return 'Dibatalkan';
-      default:
-        return subscriptionStatus;
-    }
-  }
-
-  /// Get formatted subscription expiration date
-  String get formattedSubscriptionExpiresAt {
-    if (subscriptionExpiresAt == null) return 'Tidak ada kedaluwarsa';
-
-    final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
-    ];
-
-    final day = subscriptionExpiresAt!.day.toString().padLeft(2, '0');
-    final month = months[subscriptionExpiresAt!.month - 1];
-    final year = subscriptionExpiresAt!.year;
-
-    return '$day $month $year';
-  }
-
-  /// Get brand's join date formatted
-  String get joinDateFormatted {
-    final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-
-    final day = createdAt.day.toString().padLeft(2, '0');
-    final month = months[createdAt.month - 1];
-    final year = createdAt.year;
-
-    return '$day $month $year';
-  }
-
-  /// Check if brand is newly created (less than 7 days)
-  bool get isNewBrand {
+  /// Pure business logic: Check if brand is newly created (less than 7 days)
+  /// Note: This can be used in business rules, not for UI display
+  bool get isNewlyCreated {
     final now = DateTime.now();
     final difference = now.difference(createdAt);
     return difference.inDays < 7;

@@ -203,16 +203,6 @@ class AuthInterceptor extends Interceptor {
     }
   }
 
-  Future<void> _refreshCachedToken() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      _cachedToken = prefs.getString(AppConstants.bearerTokenKey);
-    } catch (error) {
-      _logger.error('Error refreshing cached token', error);
-      _cachedToken = null;
-    }
-  }
-
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     // Add context headers first (synchronous)
