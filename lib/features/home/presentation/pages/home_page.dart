@@ -16,7 +16,6 @@ import '../widgets/feature_grid.dart';
 import '../../../../core/extensions/context_extension.dart';
 import '../../../../shared/widgets/language_switcher.dart';
 import '../../../../shared/widgets/theme_switcher.dart';
-import '../../../../app/router.dart';
 
 /// Home page
 /// Main dashboard after user login
@@ -172,21 +171,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                         },
                       );
                     },
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Welcome Section
-                  Text(
-                    context.t.auth.welcome_back,
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Text(
-                    context.t.auth.sign_in_to_continue,
-                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
 
                   const SizedBox(height: 24),
