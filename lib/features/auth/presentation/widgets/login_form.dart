@@ -11,6 +11,7 @@ import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import '../../../../core/extensions/string_extension.dart';
 import '../../../../core/extensions/context_extension.dart';
+import '../../../../i18n/translations.g.dart';
 
 /// Login form widget
 /// Handles user input for login

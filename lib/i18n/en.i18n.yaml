@@ -294,3 +294,204 @@ brand:
   back: Back
   refresh: Refresh
   brand_not_found: Brand not found
+
+  # Additional hardcoded strings from brand feature
+  # Navigation and feedback messages
+  navigating_to_stats: 'Navigating to stats for {brandName}'
+  navigating_to_invitations: 'Navigating to invitations for {brandName}'
+  navigating_to_transfer: 'Navigating to transfer for {brandName}'
+
+  # Loading messages
+  loading_brand_details: Loading brand details...
+
+  # Form validation messages (additional)
+  brand_name_hint: Enter brand name
+  slug_hint: URL-friendly identifier
+  description_hint: Brief brand description (optional)
+  industry_hint: Brand industry (optional)
+  new_owner_email_hint: Enter new owner email
+  confirmation_code_hint: Enter confirmation code
+  email_example: 'example: user@example.com'
+  message_hint: Message for new owner
+  message_explanation: Add an explanation message if needed
+  user_email_hint: Enter email of user to invite
+  user_email_example: 'example: user@example.com'
+  personal_message_hint: Personal message for user (optional)
+  personal_message_explanation: Add a personal message if needed
+  select_role_hint: Select role
+
+  # Business type labels (hardcoded in dropdown)
+  business_type_service: Service
+  business_type_retail: Retail
+  business_type_manufacturing: Manufacturing
+  business_type_other: Other
+
+  # Subscription tier labels
+  subscription_tier_basic: Basic
+  subscription_tier_pro: Pro
+  subscription_tier_enterprise: Enterprise
+
+  # Subscription status labels
+  subscription_status_active: Active
+  subscription_status_inactive: Inactive
+  subscription_status_suspended: Suspended
+  subscription_status_cancelled: Cancelled
+
+  # Invitation role labels
+  role_owner: Owner
+  role_admin: Admin
+  role_manager: Manager
+  role_employee: Employee
+
+  # Form field labels (additional)
+  email_label: Email
+  confirmation_code_label: Confirmation Code
+  six_digit_code_label: 6-digit code
+  user_email_label: User Email
+  user_role_label: User Role
+  optional_label: (Optional)
+
+  # Button labels (additional)
+  back_button: Back
+  refresh_button: Refresh
+  edit_button: Edit
+  delete_button: Delete
+  close_button: Close
+  cancel_button: Cancel
+  accept_button: Accept
+  decline_button: Decline
+  resend_button: Resend
+
+  # Dialog titles and messages (additional)
+  brand_details_title: Brand Details
+  invitation_details_title: Invitation Details
+  confirm_edit_brand: Are you sure you want to edit this brand?
+  confirm_delete_brand: Are you sure you want to delete this brand?
+  confirm_accept_invitation: Are you sure you want to accept the invitation to join {brandName}?
+  confirm_decline_invitation: Are you sure you want to decline the invitation from {brandName}?
+  confirm_cancel_invitation: Are you sure you want to cancel the invitation to {email}?
+
+  # Status and labels (additional)
+  new_label: NEW
+  active_label: Active
+  created_label: Created
+  joined_label: 'Joined: {date}'
+
+  # Statistics labels (additional)
+  total_users_label: Total Users
+  active_branches_label: Active Branches
+  monthly_revenue_label: Monthly Revenue
+  growth_label: Growth
+  invitations_sent_label: Invitations Sent
+  weekly_activity_label: Weekly Activity
+  performance_score_label: Performance Score
+  active_users_label: 'Active: {count}'
+  total_branches_label: 'Total: {count}'
+  revenue_target_label: 'Target: {amount}'
+  compare_last_month_label: Compare last month
+  pending_invitations_label: '{pending} pending, {accepted} accepted'
+  daily_average_label: 'Average: {count}/day'
+  very_good_label: Very Good
+
+  # Search and filter labels
+  search_hint: Search brand...
+  search_results_label: Search Results
+  type_label: Type
+  all_label: All
+  no_brands_available_label: No brands available
+  no_brands_message_label: Create your first brand to start your business
+  create_new_brand_label: Create New Brand
+
+  # Brand card actions (additional)
+  statistics_label: Statistics
+  invitations_label: Invitations
+  transfer_label: Transfer
+  view_statistics_label: View Statistics
+  manage_invitations_label: Manage Invitations
+  transfer_brand_label: Transfer Brand
+
+  # Invitation management (additional)
+  received_label: Received
+  no_received_invitations_label: No received invitations
+  no_sent_invitations_label: No sent invitations
+  failed_to_load_invitations_label: Failed to load invitations
+  failed_to_load_received_invitations_label: An error occurred while loading received invitations. Please try again.
+  failed_to_load_sent_invitations_label: An error occurred while loading sent invitations. Please try again.
+  invitation_details_label: Invitation Details
+  invite_new_user_label: Invite New User
+
+  # Invitation status (additional)
+  pending_label: Pending
+  accepted_label: Accepted
+  declined_label: Declined
+  expired_label: Expired
+
+  # User roles (additional)
+  brand_owner_label: Brand Owner
+  brand_admin_label: Brand Admin
+  branch_manager_label: Branch Manager
+  branch_admin_label: Branch Admin
+  branch_staff_label: Branch Staff
+  cross_branch_viewer_label: Cross Branch Viewer
+
+  # Transfer form (additional)
+  transfer_ownership_warning_label: Ownership Transfer Warning
+  transfer_warning_message_label: This action cannot be undone and will permanently change the brand ownership. Make sure you enter the correct email and the new owner has approved this transfer.
+  new_owner_email_label: New Owner Email
+  message_optional_label: Message (Optional)
+  message_for_new_owner_label: Message for new owner
+  add_explanation_message_label: Add an explanation message if needed
+  detail_transfer_label: Detail Transfer
+
+  # Brand selector (additional)
+  no_brands_available_selector_label: No brands available
+  select_brand_label: Select Brand
+  currently_label: 'Currently:'
+
+  # Success messages
+  brand_switched_success: 'Switched to {brandName}'
+  user_invited_success: User invited successfully
+  invitation_accepted_success: Invitation accepted successfully
+  invitation_declined_success: Invitation declined
+  brand_found_success: 'Brand found: {brandName}'
+  invitations_loaded_success: 'Loaded {count} invitations'
+  ownership_transferred_success: Ownership transferred successfully
+  invitation_cancelled_success: Invitation cancelled
+  invitation_resent_success: Invitation resent
+
+  # Error messages
+  failed_to_load_brands: Failed to load brands
+  brand_creation_failed: Brand creation failed
+  brand_update_failed: Brand update failed
+  brand_deletion_failed: Brand deletion failed
+  invitation_send_failed: Failed to send invitation
+  transfer_failed: Ownership transfer failed
+
+  # Month abbreviations
+  month_jan: Jan
+  month_feb: Feb
+  month_mar: Mar
+  month_apr: Apr
+  month_may: May
+  month_jun: Jun
+  month_jul: Jul
+  month_aug: Aug
+  month_sep: Sep
+  month_oct: Oct
+  month_nov: Nov
+  month_dec: Dec
+
+  # Change indicators
+  increase_label: increase
+  decrease_label: decrease
+  percent_change: '{sign}{percent}%'
+
+  # Page descriptions
+  edit_brand_description: Update existing brand data as needed
+  create_brand_description: Complete your brand data and start operating
+  brand_info_description: Update the brand information below. Make sure all required data is correct.
+
+  # Tooltip labels
+  back_tooltip: Back
+  refresh_tooltip: Refresh
+  enable_manual_slug_tooltip: Enable manual slug input

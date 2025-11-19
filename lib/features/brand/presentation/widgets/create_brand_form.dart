@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../i18n/translations.g.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/themes/app_spacing.dart';
@@ -40,12 +41,68 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
   bool _autoGenerateSlug = true;
   bool get _isEditMode => widget.brand != null;
 
+  // Helper methods to get translated labels
+  String _getBusinessTypeLabel(String value) {
+    switch (value) {
+      case 'SERVICE':
+        return context.t.brand.service;
+      case 'RETAIL':
+        return context.t.brand.retail;
+      case 'MANUFACTURING':
+        return context.t.brand.manufacturing;
+      case 'OTHER':
+        return context.t.brand.other;
+      default:
+        return value;
+    }
+  }
+
+  String _getTimezoneLabel(String value) {
+    switch (value) {
+      case 'Asia/Jakarta':
+        return context.t.brand.timezone_jakarta;
+      case 'Asia/Singapore':
+        return context.t.brand.timezone_singapore;
+      case 'Asia/Bangkok':
+        return context.t.brand.timezone_bangkok;
+      case 'Asia/Kuala_Lumpur':
+        return context.t.brand.timezone_kuala_lumpur;
+      case 'Asia/Manila':
+        return context.t.brand.timezone_manila;
+      case 'UTC':
+        return context.t.brand.timezone_utc;
+      default:
+        return value;
+    }
+  }
+
+  String _getCurrencyLabel(String value) {
+    switch (value) {
+      case 'IDR':
+        return context.t.brand.currency_idr;
+      case 'USD':
+        return context.t.brand.currency_usd;
+      case 'EUR':
+        return context.t.brand.currency_eur;
+      case 'SGD':
+        return context.t.brand.currency_sgd;
+      case 'MYR':
+        return context.t.brand.currency_myr;
+      case 'THB':
+        return context.t.brand.currency_thb;
+      case 'PHP':
+        return context.t.brand.currency_php;
+      default:
+        return value;
+    }
+  }
+
   // Business type options
   final List<Map<String, String>> _businessTypes = [
-    {'value': 'SERVICE', 'label': 'Layanan'},
-    {'value': 'RETAIL', 'label': 'Ritel'},
-    {'value': 'MANUFACTURING', 'label': 'Manufaktur'},
-    {'value': 'OTHER', 'label': 'Lainnya'},
+    {'value': 'SERVICE', 'label': 'Service'},
+    {'value': 'RETAIL', 'label': 'Retail'},
+    {'value': 'MANUFACTURING', 'label': 'Manufacturing'},
+    {'value': 'OTHER', 'label': 'Other'},
   ];
 
   // Timezone options
@@ -60,7 +117,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
 
   // Currency options
   final List<Map<String, String>> _currencies = [
-    {'value': 'IDR', 'label': 'Rupiah Indonesia (IDR)'},
+    {'value': 'IDR', 'label': 'Indonesian Rupiah (IDR)'},
     {'value': 'USD', 'label': 'US Dollar (USD)'},
     {'value': 'EUR', 'label': 'Euro (EUR)'},
     {'value': 'SGD', 'label': 'Singapore Dollar (SGD)'},
@@ -186,7 +243,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _isEditMode ? 'Edit Brand' : 'Buat Brand Baru',
+                    _isEditMode ? context.t.brand.edit_brand : context.t.brand.create_brand,
                     style: AppTextStyles.headline4Dynamic(context).copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -194,8 +251,8 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                   const SizedBox(height: 8),
                   Text(
                     _isEditMode
-                        ? 'Perbarui data brand Anda'
-                        : 'Lengkapi data brand Anda dan mulai beroperasi',
+                        ? context.t.brand.edit_brand_description
+                        : context.t.brand.create_brand_description,
                     style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                       color: AppColors.getTextSecondary(context),
                     ),
@@ -216,18 +273,18 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                     // Brand Name
                     AnimatedTextField(
                       controller: _nameController,
-                      labelText: 'Nama Brand',
-                      hintText: 'Masukkan nama brand',
+                      labelText: context.t.brand.brand_name,
+                      hintText: context.t.brand.enter_brand_name,
                       keyboardType: TextInputType.text,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Nama brand wajib diisi';
+                          return context.t.brand.brand_name_required;
                         }
                         if (value.trim().length < 3) {
-                          return 'Nama brand minimal 3 karakter';
+                          return context.t.brand.brand_name_min_length;
                         }
                         if (value.trim().length > 50) {
-                          return 'Nama brand maksimal 50 karakter';
+                          return context.t.brand.brand_name_max_length;
                         }
                         return null;
                       },
@@ -238,8 +295,8 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                     // Slug Field
                     AnimatedTextField(
                       controller: _slugController,
-                      labelText: 'Slug',
-                      hintText: 'URL-friendly identifier',
+                      labelText: context.t.brand.slug,
+                      hintText: context.t.brand.url_friendly_identifier,
                       keyboardType: TextInputType.text,
                       enabled: !_autoGenerateSlug || _isEditMode,
                       prefixIcon: Icon(
@@ -255,7 +312,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                                 color: AppColors.getTextSecondary(context),
                               ),
                               onPressed: _toggleAutoGenerateSlug,
-                              tooltip: 'Enable manual slug input',
+                              tooltip: context.t.brand.enable_manual_slug_input,
                             )
                           : (!_isEditMode ? IconButton(
                               icon: Icon(
@@ -264,21 +321,21 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                                 color: AppColors.primary,
                               ),
                               onPressed: _toggleAutoGenerateSlug,
-                              tooltip: 'Auto-generate from name',
+                              tooltip: context.t.brand.auto_generate_from_name_tooltip,
                             ) : null),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Slug wajib diisi';
+                          return context.t.brand.slug_required;
                         }
                         if (value.trim().length < 3) {
-                          return 'Slug minimal 3 karakter';
+                          return context.t.brand.slug_min_length;
                         }
                         if (value.trim().length > 50) {
-                          return 'Slug maksimal 50 karakter';
+                          return context.t.brand.slug_max_length;
                         }
                         // Check if slug contains only valid characters
                         if (!RegExp(r'^[a-z0-9-]+$').hasMatch(value.trim())) {
-                          return 'Slug hanya boleh mengandung huruf kecil, angka, dan strip (-)';
+                          return context.t.brand.slug_invalid_characters;
                         }
                         return null;
                       },
@@ -308,7 +365,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'Auto-generate dari nama',
+                              context.t.brand.auto_generate_from_name,
                               style: AppTextStyles.bodySmallDynamic(context).copyWith(
                                 color: AppColors.getTextSecondary(context),
                               ),
@@ -323,13 +380,13 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                     // Description
                     AnimatedTextField(
                       controller: _descriptionController,
-                      labelText: 'Deskripsi',
-                      hintText: 'Deskripsi singkat brand (opsional)',
+                      labelText: context.t.brand.description,
+                      hintText: context.t.brand.brand_description,
                       keyboardType: TextInputType.multiline,
                       maxLines: 3,
                       validator: (value) {
                         if (value != null && value.trim().length > 500) {
-                          return 'Deskripsi maksimal 500 karakter';
+                          return context.t.brand.description_max_length;
                         }
                         return null;
                       },
@@ -340,12 +397,12 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                     // Industry
                     AnimatedTextField(
                       controller: _industryController,
-                      labelText: 'Industri',
-                      hintText: 'Industri brand (opsional)',
+                      labelText: context.t.brand.industry,
+                      hintText: context.t.brand.brand_industry,
                       keyboardType: TextInputType.text,
                       validator: (value) {
                         if (value != null && value.trim().length > 100) {
-                          return 'Industri maksimal 100 karakter';
+                          return context.t.brand.industry_max_length;
                         }
                         return null;
                       },
@@ -355,7 +412,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
 
                     // Business Type Dropdown
                     Text(
-                      'Tipe Bisnis',
+                      context.t.brand.business_type,
                       style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -371,9 +428,9 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                       child: DropdownButtonHideUnderline(
                         items: _businessTypes.map((type) {
                           return DropdownMenuItem<String>(
-                            value: type['value'],
+                            value: type['value']!,
                             child: Text(
-                              type['label']!,
+                              _getBusinessTypeLabel(type['value']!),
                               style: AppTextStyles.bodyMediumDynamic(context),
                             ),
                           );
@@ -391,7 +448,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
 
                     // Timezone Dropdown
                     Text(
-                      'Zona Waktu',
+                      context.t.brand.timezone,
                       style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -407,9 +464,9 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                       child: DropdownButtonHideUnderline(
                         items: _timezones.map((timezone) {
                           return DropdownMenuItem<String>(
-                            value: timezone['value'],
+                            value: timezone['value']!,
                             child: Text(
-                              timezone['label']!,
+                              _getTimezoneLabel(timezone['value']!),
                               style: AppTextStyles.bodyMediumDynamic(context),
                             ),
                           );
@@ -427,7 +484,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
 
                     // Currency Dropdown
                     Text(
-                      'Mata Uang',
+                      context.t.brand.currency,
                       style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -443,9 +500,9 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                       child: DropdownButtonHideUnderline(
                         items: _currencies.map((currency) {
                           return DropdownMenuItem<String>(
-                            value: currency['value'],
+                            value: currency['value']!,
                             child: Text(
-                              currency['label']!,
+                              _getCurrencyLabel(currency['value']!),
                               style: AppTextStyles.bodyMediumDynamic(context),
                             ),
                           );
@@ -465,7 +522,7 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
                     BlocBuilder<BrandBloc, BrandState>(
                       builder: (context, state) {
                         return AnimatedButton(
-                          text: _isEditMode ? 'Perbarui Brand' : 'Buat Brand',
+                          text: _isEditMode ? context.t.brand.update_brand_btn : context.t.brand.create_brand_btn,
                           isLoading: state is BrandLoading,
                           onPressed: _submitForm,
                           isFullWidth: true,

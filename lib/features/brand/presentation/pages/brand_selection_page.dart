@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:usago/core/extensions/context_extension.dart';
 import '../../../../core/constants/ui_constants.dart';
 import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_text_styles.dart';
@@ -15,12 +14,14 @@ import '../bloc/brand_state.dart';
 import '../widgets/brand_card.dart';
 import '../widgets/brand_selector.dart';
 import '../services/brand_navigation_service.dart';
+import '../../../../app/router.dart';
+import '../../../../i18n/translations.g.dart';
 
 /// Brand Selection Page
 /// Allows users to select from available brands or create new ones
 @RoutePage()
 class BrandSelectionPage extends StatelessWidget {
-  const BrandSelectionPage({Key? key}) : super(key: key);
+  const BrandSelectionPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +46,7 @@ class BrandSelectionPage extends StatelessWidget {
 class BrandSelectionView extends StatefulWidget {
   final DeviceType deviceType;
 
-  const BrandSelectionView({Key? key, required this.deviceType}) : super(key: key);
+  const BrandSelectionView({super.key, required this.deviceType});
 
   @override
   State<BrandSelectionView> createState() => _BrandSelectionViewState();
@@ -54,8 +55,7 @@ class BrandSelectionView extends StatefulWidget {
 class _BrandSelectionViewState extends State<BrandSelectionView> {
   final _searchController = TextEditingController();
   final _focusNode = FocusNode();
-  String _selectedBusinessType = 'SEMUA';
-  String _selectedSortBy = 'NAMA';
+  String _selectedBusinessType = 'ALL';
   bool _isSearching = false;
 
   @override
@@ -151,7 +151,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
             ),
             SizedBox(height: UIConstants.spacingDefault),
             Text(
-              'Memuat brands...',
+              context.t.brand.loading_brands,
               style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                 color: AppColors.getTextSecondary(context),
               ),
@@ -225,9 +225,9 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
             ),
             const SizedBox(height: UIConstants.spacingLarge),
             CustomButton(
-              text: 'Buat Brand Baru',
+              text: context.t.brand.create_new_brand,
               onPressed: () {
-                context.router.pushNamed('/create-brand');
+                context.router.push(const CreateBrandRoute());
               },
               isFullWidth: !isMobile,
             ),
@@ -301,7 +301,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
       ),
       floatingActionButton: loadedState != null ? FloatingActionButton(
         onPressed: () {
-          context.router.pushNamed('/create-brand');
+          context.router.push(const CreateBrandRoute());
         },
         backgroundColor: AppColors.primary,
         child: Icon(
@@ -329,7 +329,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
                 focusNode: _focusNode,
                 style: AppTextStyles.bodyMediumDynamic(context),
                 decoration: InputDecoration(
-                  hintText: 'Cari brand...',
+                  hintText: context.t.brand.search_brand,
                   hintStyle: AppTextStyles.bodyMediumDynamic(context).copyWith(
                     color: AppColors.getTextDisabled(context),
                   ),
@@ -368,17 +368,17 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
                 isExpanded: false,
                 dropdownColor: AppColors.getSurface(context),
                 hint: Text(
-                  'Tipe',
+                  context.t.brand.type,
                   style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                     color: AppColors.getTextSecondary(context),
                   ),
                 ),
                 items: [
-                  DropdownMenuItem(value: 'SEMUA', child: Text('Semua', style: AppTextStyles.bodyMediumDynamic(context))),
-                  DropdownMenuItem(value: 'SERVICE', child: Text('Layanan', style: AppTextStyles.bodyMediumDynamic(context))),
-                  DropdownMenuItem(value: 'RETAIL', child: Text('Ritel', style: AppTextStyles.bodyMediumDynamic(context))),
-                  DropdownMenuItem(value: 'MANUFACTURING', child: Text('Manufaktur', style: AppTextStyles.bodyMediumDynamic(context))),
-                  DropdownMenuItem(value: 'OTHER', child: Text('Lainnya', style: AppTextStyles.bodyMediumDynamic(context))),
+                  DropdownMenuItem(value: 'ALL', child: Text(context.t.brand.all, style: AppTextStyles.bodyMediumDynamic(context))),
+                  DropdownMenuItem(value: 'SERVICE', child: Text(context.t.brand.service, style: AppTextStyles.bodyMediumDynamic(context))),
+                  DropdownMenuItem(value: 'RETAIL', child: Text(context.t.brand.retail, style: AppTextStyles.bodyMediumDynamic(context))),
+                  DropdownMenuItem(value: 'MANUFACTURING', child: Text(context.t.brand.manufacturing, style: AppTextStyles.bodyMediumDynamic(context))),
+                  DropdownMenuItem(value: 'OTHER', child: Text(context.t.brand.other, style: AppTextStyles.bodyMediumDynamic(context))),
                 ],
                 onChanged: (value) {
                   setState(() {
@@ -453,15 +453,15 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Edit Brand', style: AppTextStyles.headline6Dynamic(context)),
+        title: Text(context.t.brand.edit_brand_dialog_title, style: AppTextStyles.headline6Dynamic(context)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Apakah Anda ingin mengedit brand ini?', style: AppTextStyles.bodyMediumDynamic(context)),
+            Text(context.t.brand.edit_brand_dialog_message, style: AppTextStyles.bodyMediumDynamic(context)),
             const SizedBox(height: UIConstants.paddingSmall),
             Text(
-              '${brand.name}',
+              brand.name,
               style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                 fontWeight: FontWeight.w600,
               ),
@@ -471,16 +471,16 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
         actions: [
           TextButton(
             onPressed: () => context.router.maybePop(),
-            child: Text('Batal', style: AppTextStyles.buttonMediumDynamic(context)),
+            child: Text(context.t.common.cancel, style: AppTextStyles.buttonMediumDynamic(context)),
           ),
           TextButton(
             onPressed: () {
               context.router.maybePop();
               // Navigate to edit brand page with brand ID
               // The brand will be fetched on the edit page
-              context.router.pushNamed('/edit-brand/${brand.id}');
+              context.router.push(EditBrandRoute(brandId: brand.id));
             },
-            child: Text('Edit', style: AppTextStyles.buttonMediumDynamic(context)),
+            child: Text(context.t.common.edit, style: AppTextStyles.buttonMediumDynamic(context)),
           ),
         ],
       ),
@@ -491,22 +491,22 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Hapus Brand', style: AppTextStyles.headline6Dynamic(context)),
+        title: Text(context.t.brand.delete_brand_dialog_title, style: AppTextStyles.headline6Dynamic(context)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Apakah Anda yakin ingin menghapus brand ini?', style: AppTextStyles.bodyMediumDynamic(context)),
+            Text(context.t.brand.delete_brand_dialog_message, style: AppTextStyles.bodyMediumDynamic(context)),
             const SizedBox(height: UIConstants.paddingSmall),
             Text(
-              '${brand.name}',
+              brand.name,
               style: AppTextStyles.bodyMediumDynamic(context).copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: UIConstants.paddingSmall),
             Text(
-              'Tindakan ini tidak dapat dibatalkan.',
+              context.t.brand.delete_brand_warning,
               style: AppTextStyles.bodySmallDynamic(context).copyWith(
                 color: AppColors.getTextSecondary(context),
               ),
@@ -516,7 +516,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
         actions: [
           TextButton(
             onPressed: () => context.router.maybePop(),
-            child: Text('Batal', style: AppTextStyles.buttonMediumDynamic(context)),
+            child: Text(context.t.common.cancel, style: AppTextStyles.buttonMediumDynamic(context)),
           ),
           TextButton(
             onPressed: () {
@@ -526,7 +526,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
             style: TextButton.styleFrom(
               foregroundColor: AppColors.error,
             ),
-            child: Text('Hapus', style: AppTextStyles.buttonMediumDynamic(context)),
+            child: Text(context.t.common.delete, style: AppTextStyles.buttonMediumDynamic(context)),
           ),
         ],
       ),

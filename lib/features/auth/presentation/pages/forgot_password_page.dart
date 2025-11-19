@@ -15,6 +15,7 @@ import '../../../../shared/utils/animation_utils.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
+import '../../../../i18n/translations.g.dart';
 
 /// Forgot Password Page
 /// Handles password reset requests with responsive design

@@ -270,3 +270,205 @@ brand:
   back: Kembali
   refresh: Refresh
   brand_not_found: Brand tidak ditemukan
+
+  # Additional hardcoded strings from brand feature
+  # Navigation and feedback messages
+  navigating_to_stats: 'Menavigasi ke statistik untuk {brandName}'
+  navigating_to_invitations: 'Menavigasi ke undangan untuk {brandName}'
+  navigating_to_transfer: 'Menavigasi ke transfer untuk {brandName}'
+
+  # Loading messages
+  loading_brand_details: Memuat detail brand...
+
+  # Form validation messages (additional)
+  brand_name_hint: Masukkan nama brand
+  slug_hint: URL-friendly identifier
+  description_hint: Deskripsi singkat brand (opsional)
+  industry_hint: Industri brand (opsional)
+  new_owner_email_hint: Masukkan email pemilik baru
+  confirmation_code_hint: Masukkan kode konfirmasi
+  email_example: 'contoh: user@example.com'
+  message_hint: Pesan untuk pemilik baru
+  message_explanation: Tambahkan pesan penjelasan jika diperlukan
+  user_email_hint: Masukkan email pengguna yang ingin diundang
+  user_email_example: 'contoh: user@example.com'
+  personal_message_hint: Pesan personal untuk pengguna (opsional)
+  personal_message_explanation: Tambahkan pesan personal jika diperlukan
+  select_role_hint: Pilih peran
+
+  # Business type labels (hardcoded in dropdown)
+  business_type_service: Layanan
+  business_type_retail: Ritel
+  business_type_manufacturing: Manufaktur
+  business_type_other: Lainnya
+
+  # Subscription tier labels
+  subscription_tier_basic: Dasar
+  subscription_tier_pro: Pro
+  subscription_tier_enterprise: Enterprise
+
+  # Subscription status labels
+  subscription_status_active: Aktif
+  subscription_status_inactive: Tidak Aktif
+  subscription_status_suspended: Ditangguhkan
+  subscription_status_cancelled: Dibatalkan
+
+  # Invitation role labels
+  role_owner: Pemilik
+  role_admin: Admin
+  role_manager: Manajer
+  role_employee: Karyawan
+
+  # Form field labels (additional)
+  email_label: Email
+  confirmation_code_label: Kode Konfirmasi
+  six_digit_code_label: Kode 6 digit
+  user_email_label: Email Pengguna
+  user_role_label: Peran Pengguna
+  optional_label: (Opsional)
+
+  # Button labels (additional)
+  back_button: Kembali
+  refresh_button: Refresh
+  edit_button: Edit
+  delete_button: Hapus
+  close_button: Tutup
+  cancel_button: Batal
+  accept_button: Terima
+  decline_button: Tolak
+  resend_button: Kirim Ulang
+
+  # Dialog titles and messages (additional)
+  brand_details_title: Detail Brand
+  invitation_details_title: Detail Undangan
+  confirm_edit_brand: Apakah Anda ingin mengedit brand ini?
+  confirm_delete_brand: Apakah Anda yakin ingin menghapus brand ini?
+  confirm_accept_invitation: Apakah Anda yakin ingin menerima undangan untuk bergabung dengan {brandName}?
+  confirm_decline_invitation: Apakah Anda yakin ingin menolak undangan dari {brandName}?
+  confirm_cancel_invitation: Apakah Anda yakin ingin membatalkan undangan ke {email}?
+
+  # Status and labels
+  new_label: BARU
+  active_label: Aktif
+  created_label: Dibuat
+  joined_label: 'Bergabung: {date}'
+  status_label: Status
+
+  # Statistics labels (additional)
+  total_users_label: Total Pengguna
+  active_branches_label: Cabang Aktif
+  monthly_revenue_label: Pendapatan Bulanan
+  growth_label: Pertumbuhan
+  invitations_sent_label: Undangan Terkirim
+  weekly_activity_label: Aktivitas Mingguan
+  performance_score_label: Skor Kinerja
+  active_users_label: 'Aktif: {count}'
+  total_branches_label: 'Total: {count}'
+  revenue_target_label: 'Target: {amount}'
+  compare_last_month_label: Banding bulan lalu
+  pending_invitations_label: '{pending} tertunda, {accepted} diterima'
+  daily_average_label: 'Rata-rata: {count}/hari'
+  very_good_label: Sangat Baik
+
+  # Search and filter labels
+  search_hint: Cari brand...
+  search_results_label: Hasil Pencarian
+  type_label: Tipe
+  all_label: Semua
+  no_brands_available_label: Tidak ada brand tersedia
+  no_brands_message_label: Buat brand pertama untuk memulai bisnis Anda
+  create_new_brand_label: Buat Brand Baru
+
+  # Brand card actions
+  statistics_label: Statistik
+  invitations_label: Undangan
+  transfer_label: Transfer
+  view_statistics_label: Lihat Statistik
+  manage_invitations_label: Kelola Undangan
+  transfer_brand_label: Transfer Brand
+
+  # Invitation management
+  received_label: Diterima
+  no_received_invitations_label: Tidak ada undangan yang diterima
+  no_sent_invitations_label: Tidak ada undangan terkirim
+  failed_to_load_invitations_label: Gagal memuat undangan
+  failed_to_load_received_invitations_label: Terjadi kesalahan saat memuat undangan yang diterima. Silakan coba lagi.
+  failed_to_load_sent_invitations_label: Terjadi kesalahan saat memuat undangan terkirim. Silakan coba lagi.
+  invitation_details_label: Detail Undangan
+  invite_new_user_label: Undang Pengguna Baru
+
+  # Invitation status
+  pending_label: Pending
+  accepted_label: Diterima
+  declined_label: Ditolak
+  expired_label: Kadaluarsa
+
+  # User roles
+  brand_owner_label: Pemilik Brand
+  brand_admin_label: Admin Brand
+  branch_manager_label: Manajer Cabang
+  branch_admin_label: Admin Cabang
+  branch_staff_label: Staf Cabang
+  cross_branch_viewer_label: Penonton Lintas Cabang
+
+  # Transfer form
+  transfer_ownership_warning_label: Peringatan Transfer Kepemilikanan
+  transfer_warning_message_label: Tindakan ini tidak dapat dibatalkan dan akan mengubah kepemilikanan brand secara permanen. Pastikan Anda memasukkan email yang benar dan pemilik baru telah menyetujui transfer ini.
+  new_owner_email_label: Email Pemilik Baru
+  message_optional_label: Pesan (Opsional)
+  message_for_new_owner_label: Pesan untuk pemilik baru
+  add_explanation_message_label: Tambahkan pesan penjelasan jika diperlukan
+  detail_transfer_label: Detail Transfer
+
+  # Brand selector
+  no_brands_available_selector_label: Tidak ada brand tersedia
+  select_brand_label: Pilih Brand
+  currently_label: 'Saat ini:'
+
+  # Success messages
+  brand_switched_success: 'Beralih ke {brandName}'
+  user_invited_success: Pengguna berhasil diundang
+  invitation_accepted_success: Undangan berhasil diterima
+  invitation_declined_success: Undangan ditolak
+  brand_found_success: 'Brand ditemukan: {brandName}'
+  invitations_loaded_success: '{count} undangan dimuat'
+  ownership_transferred_success: Kepemilikanan berhasil ditransfer
+  invitation_cancelled_success: Undangan dibatalkan
+  invitation_resent_success: Undangan dikirim ulang
+
+  # Error messages
+  failed_to_load_brands: Gagal memuat brands
+  brand_creation_failed: Pembuatan brand gagal
+  brand_update_failed: Pembaruan brand gagal
+  brand_deletion_failed: Penghapusan brand gagal
+  invitation_send_failed: Gagal mengirim undangan
+  transfer_failed: Transfer kepemilikanan gagal
+
+  # Month abbreviations
+  month_jan: Jan
+  month_feb: Feb
+  month_mar: Mar
+  month_apr: Apr
+  month_may: Mei
+  month_jun: Jun
+  month_jul: Jul
+  month_aug: Agu
+  month_sep: Sep
+  month_oct: Okt
+  month_nov: Nov
+  month_des: Des
+
+  # Change indicators
+  increase_label: kenaikan
+  decrease_label: penurunan
+  percent_change: '{sign}{percent}%'
+
+  # Page descriptions
+  edit_brand_description: Perbarui data brand yang ada sesuai kebutuhan
+  create_brand_description: Lengkapi data brand Anda dan mulai beroperasi
+  brand_info_description: Perbarui informasi brand di bawah ini. Pastikan semua data yang diperlukan sudah benar.
+
+  # Tooltip labels
+  back_tooltip: Kembali
+  refresh_tooltip: Refresh
+  enable_manual_slug_tooltip: Enable manual slug input

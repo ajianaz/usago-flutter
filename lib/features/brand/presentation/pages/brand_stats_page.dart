@@ -13,6 +13,7 @@ import '../../domain/entities/brand.dart';
 import '../bloc/brand_bloc.dart';
 import '../bloc/brand_event.dart';
 import '../bloc/brand_state.dart';
+import '../../../../i18n/translations.g.dart';
 
 /// Brand Statistics Page
 /// Displays comprehensive statistics and analytics for a brand
@@ -58,10 +59,10 @@ class BrandStatsPage extends StatelessWidget {
           onPressed: () {
             context.router.maybePop();
           },
-          tooltip: 'Kembali',
+          tooltip: context.t.brand.back,
         ),
         title: Text(
-          'Statistik Brand',
+          context.t.brand.brand_stats,
           style: AppTextStyles.headline5Dynamic(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -76,7 +77,7 @@ class BrandStatsPage extends StatelessWidget {
               // Refresh statistics
               context.read<BrandBloc>().add(LoadUserBrandsEvent());
             },
-            tooltip: 'Refresh',
+            tooltip: context.t.brand.refresh,
           ),
         ],
       ),
@@ -217,7 +218,7 @@ class BrandStatsPage extends StatelessWidget {
               Expanded(
                 child: _buildStatItem(
                   context,
-                  'Dibuat',
+                  context.t.brand.created,
                   brand.joinDateFormatted,
                   Icons.calendar_today,
                   AppColors.info,
@@ -226,7 +227,7 @@ class BrandStatsPage extends StatelessWidget {
               Expanded(
                 child: _buildStatItem(
                   context,
-                  'Status',
+                  context.t.brand.status,
                   brand.formattedSubscriptionStatus,
                   brand.isSubscriptionActive ? Icons.check_circle : Icons.pending,
                   brand.isSubscriptionActive ? AppColors.success : AppColors.warning,
@@ -280,12 +281,12 @@ class BrandStatsPage extends StatelessWidget {
   Widget _buildTotalUsersCard(BuildContext context, bool isMobile) {
     return _buildStatsCard(
       context,
-      'Total Pengguna',
+      context.t.brand.total_users,
       '1,234',
       Icons.people,
       AppColors.primary,
       isMobile,
-      subtitle: 'Aktif: 892',
+      subtitle: context.t.brand.active_users.replaceAll('{count}', '892'),
       changePercent: 12.5,
       changeType: 'increase',
     );
@@ -294,12 +295,12 @@ class BrandStatsPage extends StatelessWidget {
   Widget _buildActiveBranchesCard(BuildContext context, bool isMobile) {
     return _buildStatsCard(
       context,
-      'Cabang Aktif',
+      context.t.brand.active_branches,
       '15',
       Icons.store,
       AppColors.secondary,
       isMobile,
-      subtitle: 'Total: 23',
+      subtitle: context.t.brand.total_branches.replaceAll('{count}', '23'),
       changePercent: -8.3,
       changeType: 'decrease',
     );
@@ -308,12 +309,12 @@ class BrandStatsPage extends StatelessWidget {
   Widget _buildRevenueCard(BuildContext context, bool isMobile) {
     return _buildStatsCard(
       context,
-      'Pendapatan Bulan Ini',
+      context.t.brand.monthly_revenue,
       'Rp 45.2M',
       Icons.attach_money,
       AppColors.success,
       isMobile,
-      subtitle: 'Target: Rp 50M',
+      subtitle: context.t.brand.revenue_target.replaceAll('{amount}', 'Rp 50M'),
       changePercent: 9.6,
       changeType: 'increase',
     );
@@ -322,12 +323,12 @@ class BrandStatsPage extends StatelessWidget {
   Widget _buildGrowthCard(BuildContext context, bool isMobile) {
     return _buildStatsCard(
       context,
-      'Pertumbuhan',
+      context.t.brand.growth,
       '23.4%',
       Icons.trending_up,
       AppColors.info,
       isMobile,
-      subtitle: 'Banding bulan lalu',
+      subtitle: context.t.brand.compare_last_month,
       changePercent: 5.2,
       changeType: 'increase',
     );
@@ -336,12 +337,12 @@ class BrandStatsPage extends StatelessWidget {
   Widget _buildInvitationsCard(BuildContext context, bool isMobile) {
     return _buildStatsCard(
       context,
-      'Undangan Terkirim',
+      context.t.brand.invitations_sent,
       '8',
       Icons.mail,
       AppColors.warning,
       isMobile,
-      subtitle: '5 tertunda, 3 diterima',
+      subtitle: context.t.brand.pending_invitations.replaceAll('{pending}', '5').replaceAll('{accepted}', '3'),
       changePercent: null,
       changeType: null,
     );
@@ -350,12 +351,12 @@ class BrandStatsPage extends StatelessWidget {
   Widget _buildActivityCard(BuildContext context, bool isMobile) {
     return _buildStatsCard(
       context,
-      'Aktivitas Minggu Ini',
+      context.t.brand.weekly_activity,
       '342',
       FontAwesomeIcons.chartLine,
       AppColors.primary,
       isMobile,
-      subtitle: 'Rata-rata: 49/hari',
+      subtitle: context.t.brand.daily_average.replaceAll('{count}', '49'),
       changePercent: 15.3,
       changeType: 'increase',
     );
@@ -364,12 +365,12 @@ class BrandStatsPage extends StatelessWidget {
   Widget _buildPerformanceCard(BuildContext context, bool isMobile) {
     return _buildStatsCard(
       context,
-      'Skor Kinerja',
+      context.t.brand.performance_score,
       '87.5',
       Icons.speed,
       AppColors.secondary,
       isMobile,
-      subtitle: 'Sangat Baik',
+      subtitle: context.t.brand.very_good,
       changePercent: 2.1,
       changeType: 'increase',
     );

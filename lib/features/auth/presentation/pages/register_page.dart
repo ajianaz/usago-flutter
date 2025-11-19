@@ -14,6 +14,7 @@ import '../../../../shared/utils/animation_utils.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/register_form.dart';
+import '../../../../i18n/translations.g.dart';
 
 /// Register Page
 /// Handles user registration with responsive design

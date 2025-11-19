@@ -10,6 +10,7 @@ import '../bloc/auth_state.dart';
 import '../../../../core/extensions/string_extension.dart';
 import '../../../../core/extensions/context_extension.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../../../i18n/translations.g.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({Key? key}) : super(key: key);

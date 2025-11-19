@@ -1248,4 +1248,752 @@ class TranslationsBrandEn {
 	///
 	/// id: 'Brand tidak ditemukan'
 	String get brand_not_found => 'Brand not found';
+
+	/// en: 'Navigating to stats for {brandName}'
+	///
+	/// id: 'Menavigasi ke statistik untuk {brandName}'
+	String get navigating_to_stats => 'Navigating to stats for {brandName}';
+
+	/// en: 'Navigating to invitations for {brandName}'
+	///
+	/// id: 'Menavigasi ke undangan untuk {brandName}'
+	String get navigating_to_invitations => 'Navigating to invitations for {brandName}';
+
+	/// en: 'Navigating to transfer for {brandName}'
+	///
+	/// id: 'Menavigasi ke transfer untuk {brandName}'
+	String get navigating_to_transfer => 'Navigating to transfer for {brandName}';
+
+	/// en: 'Loading brand details...'
+	///
+	/// id: 'Memuat detail brand...'
+	String get loading_brand_details => 'Loading brand details...';
+
+	/// en: 'Enter brand name'
+	///
+	/// id: 'Masukkan nama brand'
+	String get brand_name_hint => 'Enter brand name';
+
+	/// en: 'URL-friendly identifier'
+	///
+	/// id: 'URL-friendly identifier'
+	String get slug_hint => 'URL-friendly identifier';
+
+	/// en: 'Brief brand description (optional)'
+	///
+	/// id: 'Deskripsi singkat brand (opsional)'
+	String get description_hint => 'Brief brand description (optional)';
+
+	/// en: 'Brand industry (optional)'
+	///
+	/// id: 'Industri brand (opsional)'
+	String get industry_hint => 'Brand industry (optional)';
+
+	/// en: 'Enter new owner email'
+	///
+	/// id: 'Masukkan email pemilik baru'
+	String get new_owner_email_hint => 'Enter new owner email';
+
+	/// en: 'Enter confirmation code'
+	///
+	/// id: 'Masukkan kode konfirmasi'
+	String get confirmation_code_hint => 'Enter confirmation code';
+
+	/// en: 'example: user@example.com'
+	///
+	/// id: 'contoh: user@example.com'
+	String get email_example => 'example: user@example.com';
+
+	/// en: 'Message for new owner'
+	///
+	/// id: 'Pesan untuk pemilik baru'
+	String get message_hint => 'Message for new owner';
+
+	/// en: 'Add an explanation message if needed'
+	///
+	/// id: 'Tambahkan pesan penjelasan jika diperlukan'
+	String get message_explanation => 'Add an explanation message if needed';
+
+	/// en: 'Enter email of user to invite'
+	///
+	/// id: 'Masukkan email pengguna yang ingin diundang'
+	String get user_email_hint => 'Enter email of user to invite';
+
+	/// en: 'example: user@example.com'
+	///
+	/// id: 'contoh: user@example.com'
+	String get user_email_example => 'example: user@example.com';
+
+	/// en: 'Personal message for user (optional)'
+	///
+	/// id: 'Pesan personal untuk pengguna (opsional)'
+	String get personal_message_hint => 'Personal message for user (optional)';
+
+	/// en: 'Add a personal message if needed'
+	///
+	/// id: 'Tambahkan pesan personal jika diperlukan'
+	String get personal_message_explanation => 'Add a personal message if needed';
+
+	/// en: 'Select role'
+	///
+	/// id: 'Pilih peran'
+	String get select_role_hint => 'Select role';
+
+	/// en: 'Service'
+	///
+	/// id: 'Layanan'
+	String get business_type_service => 'Service';
+
+	/// en: 'Retail'
+	///
+	/// id: 'Ritel'
+	String get business_type_retail => 'Retail';
+
+	/// en: 'Manufacturing'
+	///
+	/// id: 'Manufaktur'
+	String get business_type_manufacturing => 'Manufacturing';
+
+	/// en: 'Other'
+	///
+	/// id: 'Lainnya'
+	String get business_type_other => 'Other';
+
+	/// en: 'Basic'
+	///
+	/// id: 'Dasar'
+	String get subscription_tier_basic => 'Basic';
+
+	/// en: 'Pro'
+	///
+	/// id: 'Pro'
+	String get subscription_tier_pro => 'Pro';
+
+	/// en: 'Enterprise'
+	///
+	/// id: 'Enterprise'
+	String get subscription_tier_enterprise => 'Enterprise';
+
+	/// en: 'Active'
+	///
+	/// id: 'Aktif'
+	String get subscription_status_active => 'Active';
+
+	/// en: 'Inactive'
+	///
+	/// id: 'Tidak Aktif'
+	String get subscription_status_inactive => 'Inactive';
+
+	/// en: 'Suspended'
+	///
+	/// id: 'Ditangguhkan'
+	String get subscription_status_suspended => 'Suspended';
+
+	/// en: 'Cancelled'
+	///
+	/// id: 'Dibatalkan'
+	String get subscription_status_cancelled => 'Cancelled';
+
+	/// en: 'Owner'
+	///
+	/// id: 'Pemilik'
+	String get role_owner => 'Owner';
+
+	/// en: 'Admin'
+	///
+	/// id: 'Admin'
+	String get role_admin => 'Admin';
+
+	/// en: 'Manager'
+	///
+	/// id: 'Manajer'
+	String get role_manager => 'Manager';
+
+	/// en: 'Employee'
+	///
+	/// id: 'Karyawan'
+	String get role_employee => 'Employee';
+
+	/// en: 'Email'
+	///
+	/// id: 'Email'
+	String get email_label => 'Email';
+
+	/// en: 'Confirmation Code'
+	///
+	/// id: 'Kode Konfirmasi'
+	String get confirmation_code_label => 'Confirmation Code';
+
+	/// en: '6-digit code'
+	///
+	/// id: 'Kode 6 digit'
+	String get six_digit_code_label => '6-digit code';
+
+	/// en: 'User Email'
+	///
+	/// id: 'Email Pengguna'
+	String get user_email_label => 'User Email';
+
+	/// en: 'User Role'
+	///
+	/// id: 'Peran Pengguna'
+	String get user_role_label => 'User Role';
+
+	/// en: '(Optional)'
+	///
+	/// id: '(Opsional)'
+	String get optional_label => '(Optional)';
+
+	/// en: 'Back'
+	///
+	/// id: 'Kembali'
+	String get back_button => 'Back';
+
+	/// en: 'Refresh'
+	///
+	/// id: 'Refresh'
+	String get refresh_button => 'Refresh';
+
+	/// en: 'Edit'
+	///
+	/// id: 'Edit'
+	String get edit_button => 'Edit';
+
+	/// en: 'Delete'
+	///
+	/// id: 'Hapus'
+	String get delete_button => 'Delete';
+
+	/// en: 'Close'
+	///
+	/// id: 'Tutup'
+	String get close_button => 'Close';
+
+	/// en: 'Cancel'
+	///
+	/// id: 'Batal'
+	String get cancel_button => 'Cancel';
+
+	/// en: 'Accept'
+	///
+	/// id: 'Terima'
+	String get accept_button => 'Accept';
+
+	/// en: 'Decline'
+	///
+	/// id: 'Tolak'
+	String get decline_button => 'Decline';
+
+	/// en: 'Resend'
+	///
+	/// id: 'Kirim Ulang'
+	String get resend_button => 'Resend';
+
+	/// en: 'Brand Details'
+	///
+	/// id: 'Detail Brand'
+	String get brand_details_title => 'Brand Details';
+
+	/// en: 'Invitation Details'
+	///
+	/// id: 'Detail Undangan'
+	String get invitation_details_title => 'Invitation Details';
+
+	/// en: 'Are you sure you want to edit this brand?'
+	///
+	/// id: 'Apakah Anda ingin mengedit brand ini?'
+	String get confirm_edit_brand => 'Are you sure you want to edit this brand?';
+
+	/// en: 'Are you sure you want to delete this brand?'
+	///
+	/// id: 'Apakah Anda yakin ingin menghapus brand ini?'
+	String get confirm_delete_brand => 'Are you sure you want to delete this brand?';
+
+	/// en: 'Are you sure you want to accept the invitation to join {brandName}?'
+	///
+	/// id: 'Apakah Anda yakin ingin menerima undangan untuk bergabung dengan {brandName}?'
+	String get confirm_accept_invitation => 'Are you sure you want to accept the invitation to join {brandName}?';
+
+	/// en: 'Are you sure you want to decline the invitation from {brandName}?'
+	///
+	/// id: 'Apakah Anda yakin ingin menolak undangan dari {brandName}?'
+	String get confirm_decline_invitation => 'Are you sure you want to decline the invitation from {brandName}?';
+
+	/// en: 'Are you sure you want to cancel the invitation to {email}?'
+	///
+	/// id: 'Apakah Anda yakin ingin membatalkan undangan ke {email}?'
+	String get confirm_cancel_invitation => 'Are you sure you want to cancel the invitation to {email}?';
+
+	/// en: 'NEW'
+	///
+	/// id: 'BARU'
+	String get new_label => 'NEW';
+
+	/// en: 'Active'
+	///
+	/// id: 'Aktif'
+	String get active_label => 'Active';
+
+	/// en: 'Created'
+	///
+	/// id: 'Dibuat'
+	String get created_label => 'Created';
+
+	/// en: 'Joined: {date}'
+	///
+	/// id: 'Bergabung: {date}'
+	String get joined_label => 'Joined: {date}';
+
+	/// en: 'Total Users'
+	///
+	/// id: 'Total Pengguna'
+	String get total_users_label => 'Total Users';
+
+	/// en: 'Active Branches'
+	///
+	/// id: 'Cabang Aktif'
+	String get active_branches_label => 'Active Branches';
+
+	/// en: 'Monthly Revenue'
+	///
+	/// id: 'Pendapatan Bulanan'
+	String get monthly_revenue_label => 'Monthly Revenue';
+
+	/// en: 'Growth'
+	///
+	/// id: 'Pertumbuhan'
+	String get growth_label => 'Growth';
+
+	/// en: 'Invitations Sent'
+	///
+	/// id: 'Undangan Terkirim'
+	String get invitations_sent_label => 'Invitations Sent';
+
+	/// en: 'Weekly Activity'
+	///
+	/// id: 'Aktivitas Mingguan'
+	String get weekly_activity_label => 'Weekly Activity';
+
+	/// en: 'Performance Score'
+	///
+	/// id: 'Skor Kinerja'
+	String get performance_score_label => 'Performance Score';
+
+	/// en: 'Active: {count}'
+	///
+	/// id: 'Aktif: {count}'
+	String get active_users_label => 'Active: {count}';
+
+	/// en: 'Total: {count}'
+	///
+	/// id: 'Total: {count}'
+	String get total_branches_label => 'Total: {count}';
+
+	/// en: 'Target: {amount}'
+	///
+	/// id: 'Target: {amount}'
+	String get revenue_target_label => 'Target: {amount}';
+
+	/// en: 'Compare last month'
+	///
+	/// id: 'Banding bulan lalu'
+	String get compare_last_month_label => 'Compare last month';
+
+	/// en: '{pending} pending, {accepted} accepted'
+	///
+	/// id: '{pending} tertunda, {accepted} diterima'
+	String get pending_invitations_label => '{pending} pending, {accepted} accepted';
+
+	/// en: 'Average: {count}/day'
+	///
+	/// id: 'Rata-rata: {count}/hari'
+	String get daily_average_label => 'Average: {count}/day';
+
+	/// en: 'Very Good'
+	///
+	/// id: 'Sangat Baik'
+	String get very_good_label => 'Very Good';
+
+	/// en: 'Search brand...'
+	///
+	/// id: 'Cari brand...'
+	String get search_hint => 'Search brand...';
+
+	/// en: 'Search Results'
+	///
+	/// id: 'Hasil Pencarian'
+	String get search_results_label => 'Search Results';
+
+	/// en: 'Type'
+	///
+	/// id: 'Tipe'
+	String get type_label => 'Type';
+
+	/// en: 'All'
+	///
+	/// id: 'Semua'
+	String get all_label => 'All';
+
+	/// en: 'No brands available'
+	///
+	/// id: 'Tidak ada brand tersedia'
+	String get no_brands_available_label => 'No brands available';
+
+	/// en: 'Create your first brand to start your business'
+	///
+	/// id: 'Buat brand pertama untuk memulai bisnis Anda'
+	String get no_brands_message_label => 'Create your first brand to start your business';
+
+	/// en: 'Create New Brand'
+	///
+	/// id: 'Buat Brand Baru'
+	String get create_new_brand_label => 'Create New Brand';
+
+	/// en: 'Statistics'
+	///
+	/// id: 'Statistik'
+	String get statistics_label => 'Statistics';
+
+	/// en: 'Invitations'
+	///
+	/// id: 'Undangan'
+	String get invitations_label => 'Invitations';
+
+	/// en: 'Transfer'
+	///
+	/// id: 'Transfer'
+	String get transfer_label => 'Transfer';
+
+	/// en: 'View Statistics'
+	///
+	/// id: 'Lihat Statistik'
+	String get view_statistics_label => 'View Statistics';
+
+	/// en: 'Manage Invitations'
+	///
+	/// id: 'Kelola Undangan'
+	String get manage_invitations_label => 'Manage Invitations';
+
+	/// en: 'Transfer Brand'
+	///
+	/// id: 'Transfer Brand'
+	String get transfer_brand_label => 'Transfer Brand';
+
+	/// en: 'Received'
+	///
+	/// id: 'Diterima'
+	String get received_label => 'Received';
+
+	/// en: 'No received invitations'
+	///
+	/// id: 'Tidak ada undangan yang diterima'
+	String get no_received_invitations_label => 'No received invitations';
+
+	/// en: 'No sent invitations'
+	///
+	/// id: 'Tidak ada undangan terkirim'
+	String get no_sent_invitations_label => 'No sent invitations';
+
+	/// en: 'Failed to load invitations'
+	///
+	/// id: 'Gagal memuat undangan'
+	String get failed_to_load_invitations_label => 'Failed to load invitations';
+
+	/// en: 'An error occurred while loading received invitations. Please try again.'
+	///
+	/// id: 'Terjadi kesalahan saat memuat undangan yang diterima. Silakan coba lagi.'
+	String get failed_to_load_received_invitations_label => 'An error occurred while loading received invitations. Please try again.';
+
+	/// en: 'An error occurred while loading sent invitations. Please try again.'
+	///
+	/// id: 'Terjadi kesalahan saat memuat undangan terkirim. Silakan coba lagi.'
+	String get failed_to_load_sent_invitations_label => 'An error occurred while loading sent invitations. Please try again.';
+
+	/// en: 'Invitation Details'
+	///
+	/// id: 'Detail Undangan'
+	String get invitation_details_label => 'Invitation Details';
+
+	/// en: 'Invite New User'
+	///
+	/// id: 'Undang Pengguna Baru'
+	String get invite_new_user_label => 'Invite New User';
+
+	/// en: 'Pending'
+	///
+	/// id: 'Pending'
+	String get pending_label => 'Pending';
+
+	/// en: 'Accepted'
+	///
+	/// id: 'Diterima'
+	String get accepted_label => 'Accepted';
+
+	/// en: 'Declined'
+	///
+	/// id: 'Ditolak'
+	String get declined_label => 'Declined';
+
+	/// en: 'Expired'
+	///
+	/// id: 'Kadaluarsa'
+	String get expired_label => 'Expired';
+
+	/// en: 'Brand Owner'
+	///
+	/// id: 'Pemilik Brand'
+	String get brand_owner_label => 'Brand Owner';
+
+	/// en: 'Brand Admin'
+	///
+	/// id: 'Admin Brand'
+	String get brand_admin_label => 'Brand Admin';
+
+	/// en: 'Branch Manager'
+	///
+	/// id: 'Manajer Cabang'
+	String get branch_manager_label => 'Branch Manager';
+
+	/// en: 'Branch Admin'
+	///
+	/// id: 'Admin Cabang'
+	String get branch_admin_label => 'Branch Admin';
+
+	/// en: 'Branch Staff'
+	///
+	/// id: 'Staf Cabang'
+	String get branch_staff_label => 'Branch Staff';
+
+	/// en: 'Cross Branch Viewer'
+	///
+	/// id: 'Penonton Lintas Cabang'
+	String get cross_branch_viewer_label => 'Cross Branch Viewer';
+
+	/// en: 'Ownership Transfer Warning'
+	///
+	/// id: 'Peringatan Transfer Kepemilikanan'
+	String get transfer_ownership_warning_label => 'Ownership Transfer Warning';
+
+	/// en: 'This action cannot be undone and will permanently change the brand ownership. Make sure you enter the correct email and the new owner has approved this transfer.'
+	///
+	/// id: 'Tindakan ini tidak dapat dibatalkan dan akan mengubah kepemilikanan brand secara permanen. Pastikan Anda memasukkan email yang benar dan pemilik baru telah menyetujui transfer ini.'
+	String get transfer_warning_message_label => 'This action cannot be undone and will permanently change the brand ownership. Make sure you enter the correct email and the new owner has approved this transfer.';
+
+	/// en: 'New Owner Email'
+	///
+	/// id: 'Email Pemilik Baru'
+	String get new_owner_email_label => 'New Owner Email';
+
+	/// en: 'Message (Optional)'
+	///
+	/// id: 'Pesan (Opsional)'
+	String get message_optional_label => 'Message (Optional)';
+
+	/// en: 'Message for new owner'
+	///
+	/// id: 'Pesan untuk pemilik baru'
+	String get message_for_new_owner_label => 'Message for new owner';
+
+	/// en: 'Add an explanation message if needed'
+	///
+	/// id: 'Tambahkan pesan penjelasan jika diperlukan'
+	String get add_explanation_message_label => 'Add an explanation message if needed';
+
+	/// en: 'Detail Transfer'
+	///
+	/// id: 'Detail Transfer'
+	String get detail_transfer_label => 'Detail Transfer';
+
+	/// en: 'No brands available'
+	///
+	/// id: 'Tidak ada brand tersedia'
+	String get no_brands_available_selector_label => 'No brands available';
+
+	/// en: 'Select Brand'
+	///
+	/// id: 'Pilih Brand'
+	String get select_brand_label => 'Select Brand';
+
+	/// en: 'Currently:'
+	///
+	/// id: 'Saat ini:'
+	String get currently_label => 'Currently:';
+
+	/// en: 'Switched to {brandName}'
+	///
+	/// id: 'Beralih ke {brandName}'
+	String get brand_switched_success => 'Switched to {brandName}';
+
+	/// en: 'User invited successfully'
+	///
+	/// id: 'Pengguna berhasil diundang'
+	String get user_invited_success => 'User invited successfully';
+
+	/// en: 'Invitation accepted successfully'
+	///
+	/// id: 'Undangan berhasil diterima'
+	String get invitation_accepted_success => 'Invitation accepted successfully';
+
+	/// en: 'Invitation declined'
+	///
+	/// id: 'Undangan ditolak'
+	String get invitation_declined_success => 'Invitation declined';
+
+	/// en: 'Brand found: {brandName}'
+	///
+	/// id: 'Brand ditemukan: {brandName}'
+	String get brand_found_success => 'Brand found: {brandName}';
+
+	/// en: 'Loaded {count} invitations'
+	///
+	/// id: '{count} undangan dimuat'
+	String get invitations_loaded_success => 'Loaded {count} invitations';
+
+	/// en: 'Ownership transferred successfully'
+	///
+	/// id: 'Kepemilikanan berhasil ditransfer'
+	String get ownership_transferred_success => 'Ownership transferred successfully';
+
+	/// en: 'Invitation cancelled'
+	///
+	/// id: 'Undangan dibatalkan'
+	String get invitation_cancelled_success => 'Invitation cancelled';
+
+	/// en: 'Invitation resent'
+	///
+	/// id: 'Undangan dikirim ulang'
+	String get invitation_resent_success => 'Invitation resent';
+
+	/// en: 'Failed to load brands'
+	///
+	/// id: 'Gagal memuat brands'
+	String get failed_to_load_brands => 'Failed to load brands';
+
+	/// en: 'Brand creation failed'
+	///
+	/// id: 'Pembuatan brand gagal'
+	String get brand_creation_failed => 'Brand creation failed';
+
+	/// en: 'Brand update failed'
+	///
+	/// id: 'Pembaruan brand gagal'
+	String get brand_update_failed => 'Brand update failed';
+
+	/// en: 'Brand deletion failed'
+	///
+	/// id: 'Penghapusan brand gagal'
+	String get brand_deletion_failed => 'Brand deletion failed';
+
+	/// en: 'Failed to send invitation'
+	///
+	/// id: 'Gagal mengirim undangan'
+	String get invitation_send_failed => 'Failed to send invitation';
+
+	/// en: 'Ownership transfer failed'
+	///
+	/// id: 'Transfer kepemilikanan gagal'
+	String get transfer_failed => 'Ownership transfer failed';
+
+	/// en: 'Jan'
+	///
+	/// id: 'Jan'
+	String get month_jan => 'Jan';
+
+	/// en: 'Feb'
+	///
+	/// id: 'Feb'
+	String get month_feb => 'Feb';
+
+	/// en: 'Mar'
+	///
+	/// id: 'Mar'
+	String get month_mar => 'Mar';
+
+	/// en: 'Apr'
+	///
+	/// id: 'Apr'
+	String get month_apr => 'Apr';
+
+	/// en: 'May'
+	///
+	/// id: 'Mei'
+	String get month_may => 'May';
+
+	/// en: 'Jun'
+	///
+	/// id: 'Jun'
+	String get month_jun => 'Jun';
+
+	/// en: 'Jul'
+	///
+	/// id: 'Jul'
+	String get month_jul => 'Jul';
+
+	/// en: 'Aug'
+	///
+	/// id: 'Agu'
+	String get month_aug => 'Aug';
+
+	/// en: 'Sep'
+	///
+	/// id: 'Sep'
+	String get month_sep => 'Sep';
+
+	/// en: 'Oct'
+	///
+	/// id: 'Okt'
+	String get month_oct => 'Oct';
+
+	/// en: 'Nov'
+	///
+	/// id: 'Nov'
+	String get month_nov => 'Nov';
+
+	/// en: 'Dec'
+	String get month_dec => 'Dec';
+
+	/// en: 'increase'
+	///
+	/// id: 'kenaikan'
+	String get increase_label => 'increase';
+
+	/// en: 'decrease'
+	///
+	/// id: 'penurunan'
+	String get decrease_label => 'decrease';
+
+	/// en: '{sign}{percent}%'
+	///
+	/// id: '{sign}{percent}%'
+	String get percent_change => '{sign}{percent}%';
+
+	/// en: 'Update existing brand data as needed'
+	///
+	/// id: 'Perbarui data brand yang ada sesuai kebutuhan'
+	String get edit_brand_description => 'Update existing brand data as needed';
+
+	/// en: 'Complete your brand data and start operating'
+	///
+	/// id: 'Lengkapi data brand Anda dan mulai beroperasi'
+	String get create_brand_description => 'Complete your brand data and start operating';
+
+	/// en: 'Update the brand information below. Make sure all required data is correct.'
+	///
+	/// id: 'Perbarui informasi brand di bawah ini. Pastikan semua data yang diperlukan sudah benar.'
+	String get brand_info_description => 'Update the brand information below. Make sure all required data is correct.';
+
+	/// en: 'Back'
+	///
+	/// id: 'Kembali'
+	String get back_tooltip => 'Back';
+
+	/// en: 'Refresh'
+	///
+	/// id: 'Refresh'
+	String get refresh_tooltip => 'Refresh';
+
+	/// en: 'Enable manual slug input'
+	///
+	/// id: 'Enable manual slug input'
+	String get enable_manual_slug_tooltip => 'Enable manual slug input';
 }

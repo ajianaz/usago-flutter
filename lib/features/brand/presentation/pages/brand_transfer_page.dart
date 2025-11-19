@@ -14,6 +14,7 @@ import '../../domain/entities/brand.dart';
 import '../bloc/brand_bloc.dart';
 import '../bloc/brand_event.dart';
 import '../bloc/brand_state.dart';
+import '../../../../i18n/translations.g.dart';
 
 /// Brand Ownership Transfer Page
 /// Allows brand owners to transfer ownership to another user
@@ -86,7 +87,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
     final content = Scaffold(
       appBar: AppBar(
         title: Text(
-          'Transfer Kepemilikanan Brand',
+          context.t.brand.transfer_ownership,
           style: AppTextStyles.headline5.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -145,7 +146,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Detail Transfer',
+                    context.t.brand.detail_transfer,
                     style: AppTextStyles.headline6.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -158,7 +159,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
 
                   // New Owner Email
                   Text(
-                    'Email Pemilik Baru',
+                    context.t.brand.new_owner_email,
                     style: AppTextStyles.bodyLarge.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -166,16 +167,16 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                   SizedBox(height: AppSpacing.sm),
                   AnimatedTextField(
                     controller: _emailController,
-                    labelText: 'Masukkan email pemilik baru',
-                    hintText: 'contoh: user@example.com',
+                    labelText: context.t.brand.enter_new_owner_email,
+                    hintText: context.t.brand.example_email,
                     prefixIcon: Icon(FontAwesomeIcons.envelope, size: UIConstants.fontSizeDefault),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Email wajib diisi';
+                        return context.t.brand.email_required;
                       }
                       if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$').hasMatch(value.trim())) {
-                        return 'Format email tidak valid';
+                        return context.t.brand.email_invalid;
                       }
                       return null;
                     },
@@ -185,7 +186,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                   // Confirmation Code (shown after sending confirmation)
                   if (_confirmationSent) ...[
                     Text(
-                      'Kode Konfirmasi',
+                      context.t.brand.confirmation_code,
                       style: AppTextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -193,16 +194,16 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                     SizedBox(height: AppSpacing.sm),
                     AnimatedTextField(
                       controller: _confirmationCodeController,
-                      labelText: 'Masukkan kode konfirmasi',
-                      hintText: 'Kode 6 digit',
+                      labelText: context.t.brand.enter_confirmation_code,
+                      hintText: context.t.brand.six_digit_code,
                       prefixIcon: Icon(FontAwesomeIcons.key, size: UIConstants.fontSizeDefault),
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Kode konfirmasi wajib diisi';
+                          return context.t.brand.confirmation_code_required;
                         }
                         if (value.length != 6) {
-                          return 'Kode konfirmasi harus 6 digit';
+                          return context.t.brand.confirmation_code_length;
                         }
                         return null;
                       },
@@ -211,7 +212,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
 
                     // Optional Message
                     Text(
-                      'Pesan (Opsional)',
+                      context.t.brand.message_optional,
                       style: AppTextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -219,8 +220,8 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                     SizedBox(height: AppSpacing.sm),
                     AnimatedTextField(
                       controller: _messageController,
-                      labelText: 'Pesan untuk pemilik baru',
-                      hintText: 'Tambahkan pesan penjelasan jika diperlukan',
+                      labelText: context.t.brand.message_for_new_owner,
+                      hintText: context.t.brand.add_explanation_message,
                       prefixIcon: Icon(FontAwesomeIcons.message, size: UIConstants.fontSizeDefault),
                       maxLines: 3,
                       textInputAction: TextInputAction.done,
@@ -234,7 +235,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                       children: [
                         Expanded(
                           child: CustomButton(
-                            text: 'Konfirmasi Transfer',
+                            text: context.t.brand.confirm_transfer,
                             onPressed: _isLoading ? null : _confirmTransfer,
                             isLoading: _isLoading,
                             isFullWidth: true,
@@ -245,7 +246,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                         SizedBox(width: AppSpacing.md),
                         Expanded(
                           child: CustomButton(
-                            text: 'Batal',
+                            text: context.t.common.cancel,
                             onPressed: () => context.router.maybePop(),
                             isFullWidth: true,
                             variant: ButtonVariant.outline,
@@ -256,7 +257,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                     ),
                   ] else ...[
                     CustomButton(
-                      text: 'Kirim Kode Konfirmasi',
+                      text: context.t.brand.send_confirmation_code,
                       onPressed: _isLoading ? null : _sendConfirmationCode,
                       isLoading: _isLoading,
                       isFullWidth: true,
@@ -298,7 +299,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Peringatan Transfer Kepemilikanan',
+                      context.t.brand.transfer_ownership_warning,
                       style: AppTextStyles.headline6.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.warning,
@@ -306,7 +307,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                     ),
                     SizedBox(height: AppSpacing.sm),
                     Text(
-                      'Tindakan ini tidak dapat dibatalkan dan akan mengubah kepemilikanan brand secara permanen. Pastikan Anda memasukkan email yang benar dan pemilik baru telah menyetujui transfer ini.',
+                      context.t.brand.transfer_warning_message,
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: AppColors.onWarning,
                       ),
@@ -366,7 +367,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
                 ),
                 SizedBox(height: AppSpacing.xs),
                 Text(
-                  'Brand ID: ${widget.brand.id}',
+                  context.t.brand.brand_id_label.replaceAll('{id}', widget.brand.id),
                   style: AppTextStyles.bodySmall.copyWith(
                     color: AppColors.textSecondary,
                   ),
@@ -403,7 +404,7 @@ class _BrandTransferPageState extends State<BrandTransferPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Kode konfirmasi telah dikirim ke email pemilik baru'),
+            content: Text(context.t.brand.confirmation_code_sent),
             backgroundColor: AppColors.success,
           ),
         );

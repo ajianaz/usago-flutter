@@ -14,6 +14,7 @@ import '../../../../shared/utils/animation_utils.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/login_form.dart';
+import '../../../../i18n/translations.g.dart';
 
 /// Login Page
 /// Handles user authentication with responsive design

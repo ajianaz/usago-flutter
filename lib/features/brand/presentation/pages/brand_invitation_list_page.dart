@@ -16,6 +16,7 @@ import '../bloc/brand_event.dart';
 import '../bloc/brand_state.dart';
 import '../widgets/invitation_card.dart';
 import '../widgets/invite_user_form.dart';
+import '../../../../i18n/translations.g.dart';
 
 /// Brand Invitation List Page
 /// Shows all invitations for a brand (sent and received)
@@ -113,7 +114,7 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Kelola Undangan',
+          context.t.brand.manage_invitations_page,
           style: AppTextStyles.headline5.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -136,7 +137,7 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
                 color: AppColors.textPrimary,
               ),
               onPressed: () => _showInviteUserDialog(context),
-              tooltip: 'Undang Pengguna Baru',
+              tooltip: context.t.brand.invite_new_user_tooltip,
             ),
           ],
         ],
@@ -146,14 +147,14 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
           labelStyle: AppTextStyles.bodyMedium,
           indicatorColor: AppColors.primary,
           indicatorWeight: UIConstants.strokeWidthIndicator,
-          tabs: const [
+          tabs: [
             Tab(
               icon: Icon(Icons.inbox),
-              text: 'Diterima',
+              text: context.t.brand.received,
             ),
             Tab(
               icon: Icon(Icons.send),
-              text: 'Terkirim',
+              text: context.t.brand.sent,
             ),
           ],
         ),
@@ -197,8 +198,8 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
           if (invitations.isEmpty) {
             return _buildEmptyState(
               context,
-              'Belum ada undangan yang diterima',
-              'Anda belum menerima undangan brand apa pun. Undangan yang diterima akan muncul di sini.',
+              context.t.brand.no_received_invitations,
+              context.t.brand.no_received_invitations_message,
               Icons.inbox,
             );
           }
@@ -217,8 +218,8 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
 
         return _buildEmptyState(
           context,
-          'Gagal memuat undangan',
-          'Terjadi kesalahan saat memuat undangan yang diterima. Silakan coba lagi.',
+          context.t.brand.failed_to_load_invitations,
+          context.t.brand.failed_to_load_received_invitations,
           Icons.error_outline,
         );
       },
@@ -244,8 +245,8 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
           if (invitations.isEmpty) {
             return _buildEmptyState(
               context,
-              'Belum ada undangan terkirim',
-              'Anda belum mengirim undangan brand apa pun. Undangan yang terkirim akan muncul di sini.',
+              context.t.brand.no_sent_invitations,
+              context.t.brand.no_sent_invitations_message,
               Icons.send,
             );
           }
@@ -264,8 +265,8 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
 
         return _buildEmptyState(
           context,
-          'Gagal memuat undangan',
-          'Terjadi kesalahan saat memuat undangan terkirim. Silakan coba lagi.',
+          context.t.brand.failed_to_load_invitations,
+          context.t.brand.failed_to_load_sent_invitations,
           Icons.error_outline,
         );
       },
@@ -379,29 +380,29 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Detail Undangan'),
+        title: Text(context.t.brand.invitation_details),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildDetailRow('Brand', invitation.brandName),
+              _buildDetailRow(context.t.brand.brand_label, invitation.brandName),
               _buildDetailRow(
-                isReceived ? 'Dari' : 'Ke',
+                isReceived ? context.t.brand.from_label : context.t.brand.to_label,
                 isReceived ? invitation.inviterName : invitation.inviteeEmail,
               ),
-              _buildDetailRow('Peran', invitation.formattedRole),
-              _buildDetailRow('Status', invitation.formattedStatus),
-              _buildDetailRow('Dikirim', invitation.createdDateFormatted),
+              _buildDetailRow(context.t.brand.role_label, invitation.formattedRole),
+              _buildDetailRow(context.t.brand.status, invitation.formattedStatus),
+              _buildDetailRow(context.t.brand.sent_label, invitation.createdDateFormatted),
               if (invitation.expirationDateFormatted != null)
-                _buildDetailRow('Kadaluarsa', invitation.expirationDateFormatted!),
+                _buildDetailRow(context.t.brand.expires_label, invitation.expirationDateFormatted!),
             ],
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => context.router.maybePop(),
-            child: const Text('Tutup'),
+            child: Text(context.t.brand.close_label),
           ),
         ],
       ),
@@ -453,7 +454,7 @@ class _BrandInvitationListViewState extends State<BrandInvitationListView>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Undang Pengguna Baru',
+                    context.t.brand.invite_new_user,
                     style: AppTextStyles.headline5.copyWith(
                       fontWeight: FontWeight.bold,
                     ),

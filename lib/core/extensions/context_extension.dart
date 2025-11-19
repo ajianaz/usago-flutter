@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../i18n/translations.g.dart';
 import '../../shared/widgets/responsive_builder.dart';
 
 /// Extension methods on BuildContext
@@ -41,9 +40,6 @@ extension ContextExtension on BuildContext {
 
   /// Get color scheme
   ColorScheme get colorScheme => Theme.of(this).colorScheme;
-
-  /// Get localizations using Slang extension
-  Translations get t => Translations.of(this);
 
   /// Show snackbar
   void showSnackBar(
