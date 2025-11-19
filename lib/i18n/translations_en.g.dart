@@ -161,39 +161,6 @@ class TranslationsAuthEn {
 	/// id: 'Konfirmasi kata sandi Anda'
 	String get confirm_your_password => 'Confirm your password';
 
-	/// en: 'Email'
-	String get auth_email => 'Email';
-
-	/// en: 'Password'
-	String get auth_password => 'Password';
-
-	/// en: 'Login'
-	String get auth_login => 'Login';
-
-	/// en: 'Register'
-	String get auth_register => 'Register';
-
-	/// en: 'Forgot Password?'
-	String get auth_forgot_password => 'Forgot Password?';
-
-	/// en: 'Don't have an account?'
-	String get auth_dont_have_account => 'Don\'t have an account?';
-
-	/// en: 'Welcome Back'
-	String get auth_welcome_back => 'Welcome Back';
-
-	/// en: 'Sign in to continue'
-	String get auth_sign_in_to_continue => 'Sign in to continue';
-
-	/// en: 'Create Account'
-	String get auth_create_account => 'Create Account';
-
-	/// en: 'Sign up to continue'
-	String get auth_sign_up_to_continue => 'Sign up to continue';
-
-	/// en: 'Already have an account?'
-	String get auth_already_have_account => 'Already have an account?';
-
 	/// en: 'Enter your email address and we'll send you a link to reset your password'
 	///
 	/// id: 'Masukkan alamat email Anda dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi Anda'
@@ -429,6 +396,96 @@ class TranslationsHomeEn {
 	///
 	/// id: 'Keluar'
 	String get logout => 'Logout';
+
+	/// en: 'Dashboard'
+	///
+	/// id: 'Dashboard'
+	String get menu_dashboard => 'Dashboard';
+
+	/// en: 'View overview and statistics'
+	///
+	/// id: 'Lihat overview dan statistik'
+	String get menu_dashboard_description => 'View overview and statistics';
+
+	/// en: 'Brand'
+	///
+	/// id: 'Brand'
+	String get menu_brand => 'Brand';
+
+	/// en: 'Manage brands and branches'
+	///
+	/// id: 'Kelola brand dan cabang'
+	String get menu_brand_description => 'Manage brands and branches';
+
+	/// en: 'Orders'
+	///
+	/// id: 'Pesanan'
+	String get menu_orders => 'Orders';
+
+	/// en: 'Manage customer orders'
+	///
+	/// id: 'Kelola pesanan customer'
+	String get menu_orders_description => 'Manage customer orders';
+
+	/// en: 'Products'
+	///
+	/// id: 'Produk'
+	String get menu_products => 'Products';
+
+	/// en: 'Manage products and inventory'
+	///
+	/// id: 'Kelola produk dan inventory'
+	String get menu_products_description => 'Manage products and inventory';
+
+	/// en: 'Customers'
+	///
+	/// id: 'Pelanggan'
+	String get menu_customers => 'Customers';
+
+	/// en: 'Manage customer data'
+	///
+	/// id: 'Kelola data pelanggan'
+	String get menu_customers_description => 'Manage customer data';
+
+	/// en: 'Reports'
+	///
+	/// id: 'Laporan'
+	String get menu_reports => 'Reports';
+
+	/// en: 'View sales reports'
+	///
+	/// id: 'Lihat laporan penjualan'
+	String get menu_reports_description => 'View sales reports';
+
+	/// en: 'Finance'
+	///
+	/// id: 'Keuangan'
+	String get menu_finance => 'Finance';
+
+	/// en: 'Manage finance and payments'
+	///
+	/// id: 'Kelola keuangan dan pembayaran'
+	String get menu_finance_description => 'Manage finance and payments';
+
+	/// en: 'Settings'
+	///
+	/// id: 'Pengaturan'
+	String get menu_settings => 'Settings';
+
+	/// en: 'System settings'
+	///
+	/// id: 'Pengaturan sistem'
+	String get menu_settings_description => 'System settings';
+
+	/// en: 'Notifications'
+	///
+	/// id: 'Notifikasi'
+	String get menu_notifications => 'Notifications';
+
+	/// en: 'Notification center'
+	///
+	/// id: 'Pusat notifikasi'
+	String get menu_notifications_description => 'Notification center';
 }
 
 // Path: brand

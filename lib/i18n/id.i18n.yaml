@@ -77,6 +77,26 @@ home:
   all_menu: Semua Menu
   logout: Keluar
 
+  # Menu items
+  menu_dashboard: Dashboard
+  menu_dashboard_description: Lihat overview dan statistik
+  menu_brand: Brand
+  menu_brand_description: Kelola brand dan cabang
+  menu_orders: Pesanan
+  menu_orders_description: Kelola pesanan customer
+  menu_products: Produk
+  menu_products_description: Kelola produk dan inventory
+  menu_customers: Pelanggan
+  menu_customers_description: Kelola data pelanggan
+  menu_reports: Laporan
+  menu_reports_description: Lihat laporan penjualan
+  menu_finance: Keuangan
+  menu_finance_description: Kelola keuangan dan pembayaran
+  menu_settings: Pengaturan
+  menu_settings_description: Pengaturan sistem
+  menu_notifications: Notifikasi
+  menu_notifications_description: Pusat notifikasi
+
 # Brand
 brand:
   # Page titles

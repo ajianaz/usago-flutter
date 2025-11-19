@@ -154,6 +154,24 @@ class _TranslationsHomeId extends TranslationsHomeEn {
 	@override String get settings => 'Pengaturan';
 	@override String get all_menu => 'Semua Menu';
 	@override String get logout => 'Keluar';
+	@override String get menu_dashboard => 'Dashboard';
+	@override String get menu_dashboard_description => 'Lihat overview dan statistik';
+	@override String get menu_brand => 'Brand';
+	@override String get menu_brand_description => 'Kelola brand dan cabang';
+	@override String get menu_orders => 'Pesanan';
+	@override String get menu_orders_description => 'Kelola pesanan customer';
+	@override String get menu_products => 'Produk';
+	@override String get menu_products_description => 'Kelola produk dan inventory';
+	@override String get menu_customers => 'Pelanggan';
+	@override String get menu_customers_description => 'Kelola data pelanggan';
+	@override String get menu_reports => 'Laporan';
+	@override String get menu_reports_description => 'Lihat laporan penjualan';
+	@override String get menu_finance => 'Keuangan';
+	@override String get menu_finance_description => 'Kelola keuangan dan pembayaran';
+	@override String get menu_settings => 'Pengaturan';
+	@override String get menu_settings_description => 'Pengaturan sistem';
+	@override String get menu_notifications => 'Notifikasi';
+	@override String get menu_notifications_description => 'Pusat notifikasi';
 }
 
 // Path: brand

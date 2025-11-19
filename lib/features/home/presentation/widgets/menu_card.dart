@@ -4,6 +4,7 @@ import '../../../../shared/themes/app_colors.dart';
 import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
 import '../../domain/entities/menu_item.dart';
+import '../../../../i18n/translations.g.dart';
 
 class MenuCard extends StatelessWidget {
   final MenuItem menuItem;
@@ -68,7 +69,7 @@ class MenuCard extends StatelessWidget {
               ),
               AppSpacing.verticalGapSm,
               Text(
-                menuItem.title,
+                _getTranslatedTitle(context),
                 style: AppTextStyles.buttonMedium.copyWith(
                   color: menuItem.isEnabled
                       ? AppColors.onPrimary
@@ -81,7 +82,7 @@ class MenuCard extends StatelessWidget {
               if (menuItem.description.isNotEmpty) ...[
                 AppSpacing.verticalGapXs,
                 Text(
-                  menuItem.description,
+                  _getTranslatedDescription(context),
                   style: AppTextStyles.bodySmall.copyWith(
                     color: menuItem.isEnabled
                         ? AppColors.onPrimary.withOpacity(0.8)
@@ -196,6 +197,64 @@ class MenuCard extends StatelessWidget {
         return FontAwesomeIcons.circlePause;
       default:
         return FontAwesomeIcons.cube;
+    }
+  }
+
+  /// Get translated title based on menu item ID
+  String _getTranslatedTitle(BuildContext context) {
+    final translations = context.t;
+
+    switch (menuItem.id) {
+      case '1':
+        return translations.home.menu_dashboard;
+      case '2':
+        return translations.home.menu_brand;
+      case '3':
+        return translations.home.menu_orders;
+      case '4':
+        return translations.home.menu_products;
+      case '5':
+        return translations.home.menu_customers;
+      case '6':
+        return translations.home.menu_reports;
+      case '7':
+        return translations.home.menu_finance;
+      case '8':
+        return translations.home.menu_settings;
+      case '9':
+        return translations.home.menu_notifications;
+      default:
+        // Fallback to original title if no translation found
+        return menuItem.title;
+    }
+  }
+
+  /// Get translated description based on menu item ID
+  String _getTranslatedDescription(BuildContext context) {
+    final translations = context.t;
+
+    switch (menuItem.id) {
+      case '1':
+        return translations.home.menu_dashboard_description;
+      case '2':
+        return translations.home.menu_brand_description;
+      case '3':
+        return translations.home.menu_orders_description;
+      case '4':
+        return translations.home.menu_products_description;
+      case '5':
+        return translations.home.menu_customers_description;
+      case '6':
+        return translations.home.menu_reports_description;
+      case '7':
+        return translations.home.menu_finance_description;
+      case '8':
+        return translations.home.menu_settings_description;
+      case '9':
+        return translations.home.menu_notifications_description;
+      default:
+        // Fallback to original description if no translation found
+        return menuItem.description;
     }
   }
 }

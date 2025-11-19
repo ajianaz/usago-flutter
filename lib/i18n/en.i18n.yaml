@@ -23,21 +23,7 @@ auth:
   enter_your_email: Enter your email
   enter_your_password: Enter your password
   confirm_your_password: Confirm your password
-  authEmail: Email
-  authPassword: Password
-  authLogin: Login
-  authRegister: Register
-  authForgotPassword: Forgot Password?
-  authDontHaveAccount: Don't have an account?
-  authWelcomeBack: Welcome Back
-  authSignInToContinue: Sign in to continue
-  authCreateAccount: Create Account
-  authSignUpToContinue: Sign up to continue
-  authAlreadyHaveAccount: Already have an account?
   forgot_password_description: Enter your email address and we'll send you a link to reset your password
-  sendResetLink: Send Reset Link
-  rememberPassword: Remember your password?
-  backToLogin: Back to Login
   send_reset_link: Send Reset Link
   remember_password: Remember your password?
   back_to_login: Back to Login
@@ -90,6 +76,26 @@ home:
   settings: Settings
   all_menu: All Menu
   logout: Logout
+
+  # Menu items
+  menu_dashboard: Dashboard
+  menu_dashboard_description: View overview and statistics
+  menu_brand: Brand
+  menu_brand_description: Manage brands and branches
+  menu_orders: Orders
+  menu_orders_description: Manage customer orders
+  menu_products: Products
+  menu_products_description: Manage products and inventory
+  menu_customers: Customers
+  menu_customers_description: Manage customer data
+  menu_reports: Reports
+  menu_reports_description: View sales reports
+  menu_finance: Finance
+  menu_finance_description: Manage finance and payments
+  menu_settings: Settings
+  menu_settings_description: System settings
+  menu_notifications: Notifications
+  menu_notifications_description: Notification center
 
 # Brand
 brand:
