@@ -3,7 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/constants/ui_constants.dart';
 import '../../../../i18n/translations.g.dart';
 import '../../../../shared/themes/app_colors.dart';
+import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
+import '../../../../shared/utils/animation_utils.dart';
 import '../../../../shared/widgets/responsive_builder.dart';
 import '../../domain/entities/brand.dart';
 // Import routes will be handled by the parent component
@@ -45,94 +47,125 @@ class BrandCard extends StatelessWidget {
     final cardWidth = isMobile ? double.infinity : 350.0;
     final cardHeight = isMobile ? 120.0 : 140.0;
 
-    return Card(
-      elevation: isActive ? 8 : 2,
-      shadowColor: isActive ? AppColors.primary.withOpacity(0.3) : Theme.of(context).shadowColor.withValues(alpha: 0.12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: isActive ? AppColors.primary : AppColors.getBorder(context),
-          width: isActive ? 2 : 1,
-        ),
-      ),
-      child: Container(
-        width: cardWidth,
-        height: cardHeight,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: isActive
-            ? LinearGradient(
-                colors: [
-                  AppColors.primary.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.1 : 0.05),
-                  AppColors.primary.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.05 : 0.02),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
-            : null,
-        ),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Main content row
-                Row(
-                  children: [
-                    // Brand Logo
-                    _buildLogo(context, isMobile),
-                    const SizedBox(width: 12),
+    return OptimizedAnimationBuilder(
+      duration: AnimationUtils.durationFast,
+      curve: AnimationUtils.curveEaseOut,
+      builder: (context, animation) {
+        return Transform.scale(
+          scale: 0.95 + (0.05 * animation.value),
+          child: Card(
+            elevation: isActive ? 8 : 2,
+            shadowColor: isActive
+              ? AppColors.primary.withOpacity(0.3)
+              : Theme.of(context).shadowColor.withValues(alpha: 0.12),
+            shape: RoundedRectangleBorder(
+              borderRadius: AppSpacing.radiusLg,
+              side: BorderSide(
+                color: isActive ? AppColors.primary : AppColors.getBorder(context),
+                width: isActive ? 2 : 1,
+              ),
+            ),
+            child: Container(
+              width: cardWidth,
+              height: cardHeight,
+              decoration: BoxDecoration(
+                borderRadius: AppSpacing.radiusLg,
+                gradient: isActive
+                  ? LinearGradient(
+                      colors: [
+                        AppColors.primary.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.1 : 0.05),
+                        AppColors.primary.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.05 : 0.02),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    )
+                  : null,
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onTap,
+                  borderRadius: AppSpacing.radiusLg,
+                  splashColor: AppColors.primary.withOpacity(0.1),
+                  highlightColor: AppColors.primary.withOpacity(0.05),
+                  child: Padding(
+                    padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Main content row
+                        Row(
+                          children: [
+                            // Brand Logo
+                            _buildLogo(context, isMobile),
+                            AppSpacing.gapMd,
 
-                    // Brand Information
-                    Expanded(
-                      child: _buildBrandInfo(context, isMobile),
+                            // Brand Information
+                            Expanded(
+                              child: _buildBrandInfo(context, isMobile),
+                            ),
+
+                            // Options Menu
+                            if (showOptions && !isMobile) ...[
+                              AppSpacing.gapSm,
+                              _buildOptionsMenu(context),
+                            ],
+                          ],
+                        ),
+
+                        // Quick Actions
+                        if (showOptions) ...[
+                          AppSpacing.verticalGapMd,
+                          _buildQuickActions(context, isMobile),
+                        ],
+                      ],
                     ),
-
-                    // Options Menu
-                    if (showOptions && !isMobile) ...[
-                      const SizedBox(width: 8),
-                      _buildOptionsMenu(context),
-                    ],
-                  ],
+                  ),
                 ),
-
-                // Quick Actions
-                if (showOptions) ...[
-                  const SizedBox(height: 12),
-                  _buildQuickActions(context, isMobile),
-                ],
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
   Widget _buildLogo(BuildContext context, bool isMobile) {
     final logoSize = isMobile ? 60.0 : 80.0;
 
-    return Container(
-      width: logoSize,
-      height: logoSize,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: AppColors.getSurface(context),
-        border: Border.all(color: AppColors.getBorder(context)),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: brand.hasLogo
-            ? Image.network(
-                brand.logoUrl!,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) => _buildLogoPlaceholder(context),
-                errorBuilder: (context, error, stackTrace) => _buildLogoPlaceholder(context),
-              )
-            : _buildLogoPlaceholder(context),
+    return Hero(
+      tag: 'brand-logo-${brand.id}',
+      child: Container(
+        width: logoSize,
+        height: logoSize,
+        decoration: BoxDecoration(
+          borderRadius: AppSpacing.radiusMd,
+          color: AppColors.getSurface(context),
+          border: Border.all(
+            color: isActive
+              ? AppColors.primary.withOpacity(0.3)
+              : AppColors.getBorder(context),
+            width: isActive ? 2 : 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: AppSpacing.radiusMd,
+          child: brand.hasLogo
+              ? Image.network(
+                  brand.logoUrl!,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) => _buildLogoPlaceholder(context),
+                  errorBuilder: (context, error, stackTrace) => _buildLogoPlaceholder(context),
+                )
+              : _buildLogoPlaceholder(context),
+        ),
       ),
     );
   }
@@ -178,12 +211,19 @@ class BrandCard extends StatelessWidget {
               ),
             ),
             if (brand.isNewBrand) ...[
-              const SizedBox(width: 8),
+              AppSpacing.gapSm,
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: AppColors.success,
                   borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.success.withOpacity(0.3),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
                 ),
                 child: Text(
                   context.t.brand.kNew,
@@ -197,7 +237,7 @@ class BrandCard extends StatelessWidget {
           ],
         ),
 
-        const SizedBox(height: 4),
+        AppSpacing.verticalGapXs,
 
         // Business Type and Subscription
         Row(
@@ -207,6 +247,10 @@ class BrandCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: AppColors.primary.withOpacity(0.2),
+                  width: 1,
+                ),
               ),
               child: Text(
                 brand.formattedBusinessType,
@@ -216,12 +260,16 @@ class BrandCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            AppSpacing.gapSm,
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: _getSubscriptionStatusColor().withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: _getSubscriptionStatusColor().withOpacity(0.2),
+                  width: 1,
+                ),
               ),
               child: Text(
                 '${brand.formattedSubscriptionTier} • ${brand.formattedSubscriptionStatus}',
@@ -234,7 +282,7 @@ class BrandCard extends StatelessWidget {
           ],
         ),
 
-        const SizedBox(height: 8),
+        AppSpacing.verticalGapSm,
 
         // Description
         if (brand.description != null && brand.description!.isNotEmpty) ...[
@@ -246,7 +294,7 @@ class BrandCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 8),
+          AppSpacing.verticalGapSm,
         ],
 
         // Join Date
@@ -259,7 +307,7 @@ class BrandCard extends StatelessWidget {
 
         // Active Indicator
         if (isActive) ...[
-          const SizedBox(height: 8),
+          AppSpacing.verticalGapSm,
           Row(
             children: [
               Icon(
@@ -267,7 +315,7 @@ class BrandCard extends StatelessWidget {
                 size: 16,
                 color: AppColors.success,
               ),
-              const SizedBox(width: 4),
+              AppSpacing.gapXs,
               Text(
                 context.t.brand.brand_active,
                 style: AppTextStyles.captionDynamic(context).copyWith(
@@ -332,43 +380,60 @@ class BrandCard extends StatelessWidget {
     final iconSize = isMobile ? UIConstants.fontSizeDefault : UIConstants.fontSizeLarge;
     final fontSize = isMobile ? UIConstants.fontSizeSmall : UIConstants.fontSizeDefault;
 
-    return InkWell(
-      onTap: onPressed,
-      borderRadius: BorderRadius.circular(UIConstants.borderRadiusDefault),
-      child: Container(
-        width: buttonSize,
-        height: buttonSize,
-        decoration: BoxDecoration(
-          color: color.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
-          borderRadius: BorderRadius.circular(UIConstants.borderRadiusDefault),
-          border: Border.all(
-            color: color.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.4 : 0.3),
-            width: 1,
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: color,
-              size: iconSize,
-            ),
-            const SizedBox(height: UIConstants.spacingTiny),
-            Text(
-              label,
-              style: AppTextStyles.captionDynamic(context).copyWith(
-                color: color,
-                fontWeight: FontWeight.w600,
-                fontSize: fontSize * 0.7,
+    return OptimizedAnimationBuilder(
+      duration: AnimationUtils.durationFast,
+      builder: (context, animation) {
+        return Transform.scale(
+          scale: 0.95 + (0.05 * animation.value),
+          child: InkWell(
+            onTap: onPressed,
+            borderRadius: AppSpacing.radiusButton,
+            splashColor: color.withOpacity(0.1),
+            highlightColor: color.withOpacity(0.05),
+            child: Container(
+              width: buttonSize,
+              height: buttonSize,
+              decoration: BoxDecoration(
+                color: color.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
+                borderRadius: AppSpacing.radiusButton,
+                border: Border.all(
+                  color: color.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.4 : 0.3),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    icon,
+                    color: color,
+                    size: iconSize,
+                  ),
+                  AppSpacing.verticalGapXs,
+                  Text(
+                    label,
+                    style: AppTextStyles.captionDynamic(context).copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w600,
+                      fontSize: fontSize * 0.7,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -408,7 +473,7 @@ class BrandCard extends StatelessWidget {
                 size: 18,
                 color: AppColors.info,
               ),
-              const SizedBox(width: 12),
+              AppSpacing.gapMd,
               Text(
                 context.t.brand.view_statistics,
                 style: AppTextStyles.bodyMediumDynamic(context),
@@ -425,7 +490,7 @@ class BrandCard extends StatelessWidget {
                 size: 18,
                 color: AppColors.warning,
               ),
-              const SizedBox(width: 12),
+              AppSpacing.gapMd,
               Text(
                 context.t.brand.manage_invitations,
                 style: AppTextStyles.bodyMediumDynamic(context),
@@ -442,7 +507,7 @@ class BrandCard extends StatelessWidget {
                 size: 18,
                 color: AppColors.secondary,
               ),
-              const SizedBox(width: 12),
+              AppSpacing.gapMd,
               Text(
                 context.t.brand.transfer_brand,
                 style: AppTextStyles.bodyMediumDynamic(context),
@@ -460,7 +525,7 @@ class BrandCard extends StatelessWidget {
                 size: 18,
                 color: AppColors.textSecondary,
               ),
-              const SizedBox(width: 12),
+              AppSpacing.gapMd,
               Text(
                 context.t.common.edit,
                 style: AppTextStyles.bodyMediumDynamic(context),
@@ -477,7 +542,7 @@ class BrandCard extends StatelessWidget {
                 size: 18,
                 color: AppColors.error,
               ),
-              const SizedBox(width: 12),
+              AppSpacing.gapMd,
               Text(
                 context.t.common.delete,
                 style: AppTextStyles.bodyMediumDynamic(context).copyWith(
@@ -504,28 +569,5 @@ class BrandCard extends StatelessWidget {
       default:
         return AppColors.textSecondary;
     }
-  }
-}
-
-/// Popup menu button for options
-class PopupMenuButton<T> extends StatelessWidget {
-  final Widget icon;
-  final List<PopupMenuEntry<T>> Function(BuildContext context) itemBuilder;
-  final Function(T value)? onSelected;
-
-  const PopupMenuButton({
-    Key? key,
-    required this.icon,
-    required this.itemBuilder,
-    this.onSelected,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<T>(
-      icon: icon,
-      onSelected: onSelected,
-      itemBuilder: itemBuilder,
-    );
   }
 }

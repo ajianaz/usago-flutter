@@ -284,6 +284,7 @@ class _TranslationsBrandId extends TranslationsBrandEn {
 	@override String get loading_brands => 'Memuat brands...';
 	@override String get no_brands_available => 'Belum ada brand';
 	@override String get no_brands_message => 'Buat brand pertama untuk memulai bisnis Anda';
+	@override String get create_first_brand_message => 'Mulai dengan membuat brand pertama Anda untuk mengelola bisnis secara efisien';
 	@override String get create_new_brand => 'Buat Brand Baru';
 	@override String get statistics => 'Statistik';
 	@override String get invitations => 'Undangan';

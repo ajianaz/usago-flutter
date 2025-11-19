@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
 import '../../../../core/constants/ui_constants.dart';
 import '../../../../shared/themes/app_colors.dart';
+import '../../../../shared/themes/app_spacing.dart';
 import '../../../../shared/themes/app_text_styles.dart';
+import '../../../../shared/utils/animation_utils.dart';
 import '../../../../shared/widgets/bloc_responsive_layout.dart';
 import '../../../../shared/widgets/desktop_constrained_content.dart';
 import '../../../../shared/widgets/custom_button.dart';
@@ -12,6 +14,7 @@ import '../bloc/brand_bloc.dart';
 import '../bloc/brand_event.dart';
 import '../bloc/brand_state.dart';
 import '../widgets/brand_card.dart';
+import '../widgets/brand_card_skeleton.dart';
 import '../widgets/brand_selector.dart';
 import '../services/brand_navigation_service.dart';
 import '../../../../app/router.dart';
@@ -52,22 +55,32 @@ class BrandSelectionView extends StatefulWidget {
   State<BrandSelectionView> createState() => _BrandSelectionViewState();
 }
 
-class _BrandSelectionViewState extends State<BrandSelectionView> {
+class _BrandSelectionViewState extends State<BrandSelectionView>
+    with TickerProviderStateMixin {
   final _searchController = TextEditingController();
   final _focusNode = FocusNode();
   String _selectedBusinessType = 'ALL';
   bool _isSearching = false;
+  late AnimationController _animationController;
+  late List<Animation<double>> _cardAnimations;
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+
+    // Initialize animation controller
+    _animationController = AnimationController(
+      duration: AnimationUtils.durationNormal,
+      vsync: this,
+    );
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     _focusNode.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -130,6 +143,10 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
   }
 
   Widget _buildLoadingState(BuildContext context) {
+    final isMobile = widget.deviceType == DeviceType.mobile;
+    final crossAxisCount = isMobile ? 2 : 3;
+    final childAspectRatio = isMobile ? 1.2 : 1.0;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -142,22 +159,67 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-            ),
-            SizedBox(height: UIConstants.spacingDefault),
-            Text(
-              context.t.brand.loading_brands,
-              style: AppTextStyles.bodyMediumDynamic(context).copyWith(
-                color: AppColors.getTextSecondary(context),
+      body: Column(
+        children: [
+          // Search bar skeleton
+          Container(
+            margin: AppSpacing.paddingAllMd,
+            child: Container(
+              height: 56.0,
+              decoration: BoxDecoration(
+                color: AppColors.getSurface(context),
+                borderRadius: AppSpacing.radiusLg,
+                border: Border.all(
+                  color: AppColors.getBorder(context),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  AppSpacing.gapMd,
+                  Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: AppColors.getTextSecondary(context).withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  AppSpacing.gapMd,
+                  Expanded(
+                    child: Container(
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: AppColors.getTextSecondary(context).withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
+                  AppSpacing.gapMd,
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+
+          // Grid of skeleton cards
+          Expanded(
+            child: GridView.builder(
+              padding: AppSpacing.paddingAllMd,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                mainAxisSpacing: AppSpacing.md,
+                crossAxisSpacing: AppSpacing.md,
+                childAspectRatio: childAspectRatio,
+              ),
+              itemCount: 6, // Show 6 skeleton cards
+              itemBuilder: (context, index) {
+                return BrandCardSkeleton(
+                  deviceType: widget.deviceType,
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -178,60 +240,102 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
         elevation: 0,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: isMobile ? double.infinity : 400,
-              padding: EdgeInsets.all(isMobile ? UIConstants.paddingDefault : UIConstants.paddingExtraLarge),
-              decoration: BoxDecoration(
-                color: AppColors.getSurface(context),
-                borderRadius: BorderRadius.circular(UIConstants.borderRadiusLarge),
-                border: Border.all(color: AppColors.getBorder(context)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(context).shadowColor.withValues(alpha: 0.12),
-                    blurRadius: UIConstants.elevationCard,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.business_outlined,
-                    size: UIConstants.fontSizeXXXLarge,
-                    color: AppColors.getTextSecondary(context),
-                  ),
-                  const SizedBox(height: UIConstants.spacingDefault),
-                  Text(
-                    context.t.brand.no_brands_available,
-                    style: AppTextStyles.headline6Dynamic(context).copyWith(
-                      color: AppColors.getTextSecondary(context),
+        child: Padding(
+          padding: AppSpacing.paddingAllLg,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: isMobile ? double.infinity : 400,
+                padding: AppSpacing.paddingAllXl,
+                decoration: BoxDecoration(
+                  color: AppColors.getSurface(context),
+                  borderRadius: AppSpacing.radiusLg,
+                  border: Border.all(color: AppColors.getBorder(context)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).shadowColor.withValues(alpha: 0.12),
+                      blurRadius: UIConstants.elevationCard,
+                      offset: const Offset(0, 4),
+                      spreadRadius: 0,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: UIConstants.paddingSmall),
-                  Text(
-                    context.t.brand.no_brands_message,
-                    style: AppTextStyles.bodyMediumDynamic(context).copyWith(
-                      color: AppColors.getTextSecondary(context),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: AppSpacing.paddingAllLg,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.1),
+                        borderRadius: AppSpacing.radiusXl,
+                      ),
+                      child: Icon(
+                        Icons.business_outlined,
+                        size: 80,
+                        color: AppColors.primary,
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                    AppSpacing.verticalGapLg,
+                    Text(
+                      context.t.brand.no_brands_available,
+                      style: AppTextStyles.headline6Dynamic(context).copyWith(
+                        color: AppColors.getTextPrimary(context),
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    AppSpacing.verticalGapSm,
+                    Text(
+                      context.t.brand.no_brands_message,
+                      style: AppTextStyles.bodyMediumDynamic(context).copyWith(
+                        color: AppColors.getTextSecondary(context),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    AppSpacing.verticalGapMd,
+                    Container(
+                      padding: AppSpacing.paddingAllMd,
+                      decoration: BoxDecoration(
+                        color: AppColors.info.withOpacity(0.1),
+                        borderRadius: AppSpacing.radiusMd,
+                        border: Border.all(
+                          color: AppColors.info.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.lightbulb_outline,
+                            color: AppColors.info,
+                            size: 20,
+                          ),
+                          AppSpacing.gapSm,
+                          Expanded(
+                            child: Text(
+                              context.t.brand.create_first_brand_message,
+                              style: AppTextStyles.bodySmallDynamic(context).copyWith(
+                                color: AppColors.getTextSecondary(context),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: UIConstants.spacingLarge),
-            CustomButton(
-              text: context.t.brand.create_new_brand,
-              onPressed: () {
-                context.router.push(const CreateBrandRoute());
-              },
-              isFullWidth: !isMobile,
-            ),
-          ],
+              AppSpacing.verticalGapLg,
+              CustomButton(
+                text: context.t.brand.create_new_brand,
+                onPressed: () {
+                  context.router.push(const CreateBrandRoute());
+                },
+                isFullWidth: !isMobile,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -314,15 +418,37 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
 
   Widget _buildSearchBar(BuildContext context, bool isMobile) {
     return Container(
-      margin: EdgeInsets.all(isMobile ? UIConstants.paddingSmall : UIConstants.paddingDefault),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
+      margin: AppSpacing.paddingAllMd,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+          color: AppColors.getSurface(context),
+          borderRadius: AppSpacing.radiusLg,
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).shadowColor.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Search Input
+            Container(
               decoration: BoxDecoration(
                 color: AppColors.getSurface(context),
-                borderRadius: BorderRadius.circular(UIConstants.borderRadiusDefault),
-                border: Border.all(color: AppColors.getBorder(context)),
+                borderRadius: BorderRadius.only(
+                  topLeft: AppSpacing.radiusLg.topLeft,
+                  topRight: AppSpacing.radiusLg.topRight,
+                ),
+                border: Border.all(
+                  color: _focusNode.hasFocus
+                    ? AppColors.primary.withOpacity(0.5)
+                    : AppColors.getBorder(context),
+                  width: _focusNode.hasFocus ? 2 : 1,
+                ),
               ),
               child: TextField(
                 controller: _searchController,
@@ -333,63 +459,164 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
                   hintStyle: AppTextStyles.bodyMediumDynamic(context).copyWith(
                     color: AppColors.getTextDisabled(context),
                   ),
-                  prefixIcon: Icon(Icons.search, color: AppColors.getTextSecondary(context)),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: _focusNode.hasFocus
+                      ? AppColors.primary
+                      : AppColors.getTextSecondary(context),
+                  ),
                   suffixIcon: _isSearching
-                      ? SizedBox(
-                          width: UIConstants.avatarSizeSmall,
-                          height: UIConstants.avatarSizeSmall,
+                      ? Padding(
+                          padding: AppSpacing.paddingAllMd,
                           child: CircularProgressIndicator(
                             strokeWidth: UIConstants.strokeWidthProgress,
                             valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                           ),
                         )
-                      : IconButton(
-                          icon: Icon(Icons.clear, color: AppColors.getTextSecondary(context)),
-                          onPressed: _clearSearch,
-                        ),
+                      : _searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: Icon(
+                                Icons.clear,
+                                color: AppColors.getTextSecondary(context),
+                              ),
+                              onPressed: _clearSearch,
+                            )
+                          : null,
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: UIConstants.paddingDefault, vertical: UIConstants.paddingSmall),
+                  contentPadding: AppSpacing.paddingAllMd,
                 ),
               ),
             ),
-          ),
-          SizedBox(width: UIConstants.paddingSmall),
-          // Business Type Filter
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: UIConstants.paddingSmall),
-            decoration: BoxDecoration(
-              color: AppColors.getSurface(context),
-              borderRadius: BorderRadius.circular(UIConstants.borderRadiusDefault),
-              border: Border.all(color: AppColors.getBorder(context)),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: _selectedBusinessType,
-                isExpanded: false,
-                dropdownColor: AppColors.getSurface(context),
-                hint: Text(
-                  context.t.brand.type,
-                  style: AppTextStyles.bodyMediumDynamic(context).copyWith(
+
+            // Filter Row
+            Container(
+              padding: AppSpacing.paddingHorizontalMd.copyWith(
+                bottom: AppSpacing.md,
+                top: AppSpacing.sm,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.getSurface(context),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: AppSpacing.radiusLg.bottomLeft,
+                  bottomRight: AppSpacing.radiusLg.bottomRight,
+                ),
+                border: Border.all(
+                  color: AppColors.getBorder(context),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.filter_list,
+                    size: 20,
                     color: AppColors.getTextSecondary(context),
                   ),
-                ),
-                items: [
-                  DropdownMenuItem(value: 'ALL', child: Text(context.t.brand.all, style: AppTextStyles.bodyMediumDynamic(context))),
-                  DropdownMenuItem(value: 'SERVICE', child: Text(context.t.brand.service, style: AppTextStyles.bodyMediumDynamic(context))),
-                  DropdownMenuItem(value: 'RETAIL', child: Text(context.t.brand.retail, style: AppTextStyles.bodyMediumDynamic(context))),
-                  DropdownMenuItem(value: 'MANUFACTURING', child: Text(context.t.brand.manufacturing, style: AppTextStyles.bodyMediumDynamic(context))),
-                  DropdownMenuItem(value: 'OTHER', child: Text(context.t.brand.other, style: AppTextStyles.bodyMediumDynamic(context))),
+                  AppSpacing.gapSm,
+                  Text(
+                    'Filter by type:',
+                    style: AppTextStyles.bodySmallDynamic(context).copyWith(
+                      color: AppColors.getTextSecondary(context),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  AppSpacing.gapMd,
+                  Expanded(
+                    child: Container(
+                      padding: AppSpacing.paddingHorizontalSm.copyWith(
+                        top: AppSpacing.xs,
+                        bottom: AppSpacing.xs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.08),
+                        borderRadius: AppSpacing.radiusSm,
+                        border: Border.all(
+                          color: AppColors.primary.withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _selectedBusinessType,
+                          isExpanded: true,
+                          dropdownColor: AppColors.getSurface(context),
+                          underline: const SizedBox(),
+                          icon: Icon(
+                            Icons.keyboard_arrow_down,
+                            color: AppColors.primary,
+                            size: 20,
+                          ),
+                          style: AppTextStyles.bodyMediumDynamic(context).copyWith(
+                            color: AppColors.getTextPrimary(context),
+                            fontWeight: FontWeight.w600,
+                          ),
+                          items: [
+                            DropdownMenuItem(
+                              value: 'ALL',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.apps, size: 16, color: AppColors.primary),
+                                  AppSpacing.gapSm,
+                                  Text(context.t.brand.all),
+                                ],
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'SERVICE',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.support_agent, size: 16, color: AppColors.primary),
+                                  AppSpacing.gapSm,
+                                  Text(context.t.brand.service),
+                                ],
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'RETAIL',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.shopping_cart, size: 16, color: AppColors.primary),
+                                  AppSpacing.gapSm,
+                                  Text(context.t.brand.retail),
+                                ],
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'MANUFACTURING',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.precision_manufacturing, size: 16, color: AppColors.primary),
+                                  AppSpacing.gapSm,
+                                  Text(context.t.brand.manufacturing),
+                                ],
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'OTHER',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.category, size: 16, color: AppColors.primary),
+                                  AppSpacing.gapSm,
+                                  Text(context.t.brand.other),
+                                ],
+                              ),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedBusinessType = value!;
+                            });
+                            _performSearch(_searchController.text);
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
-                onChanged: (value) {
-                  setState(() {
-                    _selectedBusinessType = value!;
-                  });
-                  _performSearch(_searchController.text);
-                },
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -403,16 +630,26 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
     final crossAxisCount = isMobile ? 2 : 3;
     final childAspectRatio = isMobile ? 1.2 : 1.0;
 
+    // Initialize animations for cards
+    _cardAnimations = AnimationUtils.createStaggeredAnimations(
+      controller: _animationController,
+      count: brands.length,
+      staggerDelay: const Duration(milliseconds: 50),
+    );
+
+    // Start the animation
+    _animationController.forward();
+
     return RefreshIndicator(
       onRefresh: () async {
         context.read<BrandBloc>().add(LoadUserBrandsEvent());
       },
       child: GridView.builder(
-        padding: EdgeInsets.all(isMobile ? UIConstants.paddingSmall : UIConstants.paddingDefault),
+        padding: AppSpacing.paddingAllMd,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,
-          mainAxisSpacing: isMobile ? UIConstants.paddingSmall : UIConstants.paddingDefault,
-          crossAxisSpacing: isMobile ? UIConstants.paddingSmall : UIConstants.paddingDefault,
+          mainAxisSpacing: AppSpacing.md,
+          crossAxisSpacing: AppSpacing.md,
           childAspectRatio: childAspectRatio,
         ),
         itemCount: brands.length,
@@ -420,29 +657,40 @@ class _BrandSelectionViewState extends State<BrandSelectionView> {
           final brand = brands[index];
           final isActive = activeBrand?.id == brand.id;
 
-          return BrandCard(
-            brand: brand,
-            isActive: isActive,
-            onTap: () {
-              context.read<BrandBloc>().add(SwitchBrandEvent(brand.id));
+          return AnimatedBuilder(
+            animation: _cardAnimations[index],
+            builder: (context, child) {
+              return Transform.scale(
+                scale: _cardAnimations[index].value,
+                child: Opacity(
+                  opacity: _cardAnimations[index].value,
+                  child: BrandCard(
+                    brand: brand,
+                    isActive: isActive,
+                    onTap: () {
+                      context.read<BrandBloc>().add(SwitchBrandEvent(brand.id));
+                    },
+                    onEdit: () {
+                      _showEditBrandDialog(context, brand);
+                    },
+                    onDelete: () {
+                      _showDeleteBrandDialog(context, brand);
+                    },
+                    onViewStats: () {
+                      _navigateToBrandStats(context, brand);
+                    },
+                    onViewInvitations: () {
+                      _navigateToBrandInvitations(context, brand);
+                    },
+                    onTransfer: () {
+                      _navigateToBrandTransfer(context, brand);
+                    },
+                    showOptions: true,
+                    deviceType: widget.deviceType,
+                  ),
+                ),
+              );
             },
-            onEdit: () {
-              _showEditBrandDialog(context, brand);
-            },
-            onDelete: () {
-              _showDeleteBrandDialog(context, brand);
-            },
-            onViewStats: () {
-              _navigateToBrandStats(context, brand);
-            },
-            onViewInvitations: () {
-              _navigateToBrandInvitations(context, brand);
-            },
-            onTransfer: () {
-              _navigateToBrandTransfer(context, brand);
-            },
-            showOptions: true,
-            deviceType: widget.deviceType,
           );
         },
       ),

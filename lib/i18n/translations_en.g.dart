@@ -1011,6 +1011,11 @@ class TranslationsBrandEn {
 	/// id: 'Buat brand pertama untuk memulai bisnis Anda'
 	String get no_brands_message => 'Create your first brand to start your business';
 
+	/// en: 'Start by creating your first brand to manage your business efficiently'
+	///
+	/// id: 'Mulai dengan membuat brand pertama Anda untuk mengelola bisnis secara efisien'
+	String get create_first_brand_message => 'Start by creating your first brand to manage your business efficiently';
+
 	/// en: 'Create New Brand'
 	///
 	/// id: 'Buat Brand Baru'

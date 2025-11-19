@@ -225,6 +225,7 @@ brand:
   loading_brands: Loading brands...
   no_brands_available: No brands available
   no_brands_message: Create your first brand to start your business
+  create_first_brand_message: Start by creating your first brand to manage your business efficiently
   create_new_brand: Create New Brand
 
   # Brand card actions
