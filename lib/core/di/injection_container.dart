@@ -4,6 +4,7 @@ import '../network/dio_client.dart';
 import '../utils/logger.dart';
 import '../errors/error_handler.dart';
 import '../services/locale_service.dart';
+import '../config/logging_config.dart';
 import '../../features/auth/di/auth_injection.dart';
 import '../../features/home/di/home_injection.dart';
 import '../../features/brand/di/brand_injection.dart';
@@ -15,6 +16,9 @@ final getIt = GetIt.instance;
 /// Setup all dependencies
 /// Call this in main() before runApp()
 Future<void> setupDependencies() async {
+  // 0. Initialize environment variables
+  await LoggingConfig.initialize();
+
   // 1. Register core/infrastructure services
   await _setupCoreServices();
 
@@ -31,11 +35,15 @@ Future<void> _setupCoreServices() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   getIt.registerSingleton(sharedPreferences);
 
+  // Register Logging Configuration
+  final loggingConfig = LoggingConfig.fromEnvironment();
+  getIt.registerSingleton(loggingConfig);
+
   // Register Dio HTTP client
   getIt.registerSingleton(DioClient());
 
-  // Register Logger
-  getIt.registerSingleton(AppLogger());
+  // Register Logger with configuration
+  getIt.registerSingleton(AppLogger(loggingConfig));
 
   // Register Error Handler
   getIt.registerSingleton(ErrorHandler());

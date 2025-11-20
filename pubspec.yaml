@@ -34,6 +34,9 @@ dependencies:
   hive: ^2.2.0
   hive_flutter: ^1.1.0
 
+  # Environment Variables
+  flutter_dotenv: ^6.0.0
+
   # Utilities
   logger: ^2.0.0
   fpdart: ^1.2.0
