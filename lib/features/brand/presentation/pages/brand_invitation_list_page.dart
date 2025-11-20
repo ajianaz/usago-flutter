@@ -12,6 +12,9 @@ import '../../domain/entities/brand_invitation.dart';
 import '../bloc/brand_invitation/brand_invitation_bloc.dart';
 import '../bloc/brand_invitation/brand_invitation_event.dart';
 import '../bloc/brand_invitation/brand_invitation_state.dart';
+import '../bloc/brand_list/brand_list_bloc.dart';
+import '../bloc/brand_list/brand_list_event.dart';
+import '../bloc/brand_list/brand_list_state.dart';
 import '../widgets/invitation_card.dart';
 import '../widgets/invite_user_form.dart';
 import '../helpers/index.dart'; // Import formatter helpers
@@ -30,47 +33,80 @@ class BrandInvitationListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => context.read<BrandInvitationBloc>(),
-      child: BlocResponsiveLayout<BrandInvitationBloc, BrandInvitationState>(
-        builder: (context, bloc, state, deviceType) {
-          return BrandInvitationListView(brand: brand, deviceType: deviceType);
-        },
-        listener: (context, state) {
-          if (state is BrandInvitationCreated) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.success,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          } else if (state is BrandInvitationAccepted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.success,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          } else if (state is BrandInvitationRejected) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.success,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          } else if (state is BrandInvitationError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.error,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          }
-        },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => context.read<BrandInvitationBloc>()),
+        BlocProvider(create: (context) => context.read<BrandListBloc>()),
+      ],
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<BrandInvitationBloc, BrandInvitationState>(
+            listener: (context, state) {
+              if (state is BrandInvitationCreated) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+                // Refresh brand list after invitation creation
+                context.read<BrandListBloc>().add(const LoadAllBrandDataEvent());
+              } else if (state is BrandInvitationAccepted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+                // Refresh brand list after accepting invitation
+                context.read<BrandListBloc>().add(const LoadAllBrandDataEvent());
+              } else if (state is BrandInvitationRejected) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              } else if (state is BrandInvitationRevoked) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              } else if (state is BrandInvitationError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.error,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
+          ),
+          BlocListener<BrandListBloc, BrandListState>(
+            listener: (context, state) {
+              if (state is BrandListError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.error,
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+        child: BlocResponsiveLayout<BrandInvitationBloc, BrandInvitationState>(
+          builder: (context, bloc, state, deviceType) {
+            return BrandInvitationListView(brand: brand, deviceType: deviceType);
+          },
+        ),
       ),
     );
   }

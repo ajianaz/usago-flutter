@@ -13,7 +13,6 @@ import '../presentation/bloc/brand_list/brand_list_bloc.dart';
 import '../presentation/bloc/brand_search/brand_search_bloc.dart';
 import '../presentation/bloc/brand_switching/brand_switching_bloc.dart';
 import '../presentation/bloc/brand_invitation/brand_invitation_bloc.dart';
-import '../presentation/bloc/brand_bloc.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/errors/error_handler.dart';
@@ -258,7 +257,6 @@ class BrandTestHelper {
   BrandSearchBloc,
   BrandSwitchingBloc,
   BrandInvitationBloc,
-  BrandBloc,
   AppLogger,
   DioClient,
   ErrorHandler,

@@ -99,31 +99,45 @@ class _EditBrandViewState extends State<EditBrandView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BrandListBloc, BrandListState>(
-      builder: (context, state) {
-        if (state is BrandListLoaded) {
-          // When brands are loaded, find our specific brand
-          final brand = state.userBrands.firstWhere(
-            (brand) => brand.id == widget.brandId,
-            orElse: () => state.accessibleBrands.firstWhere(
-              (brand) => brand.id == widget.brandId,
-            ),
-          );
-          setState(() {
-            _brand = brand;
-            _isLoading = false;
-          });
-        }
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<BrandListBloc, BrandListState>(
+          listener: (context, state) {
+            if (state is BrandListLoaded) {
+              // When brands are loaded, find our specific brand
+              final brand = state.userBrands.firstWhere(
+                (brand) => brand.id == widget.brandId,
+                orElse: () => state.accessibleBrands.firstWhere(
+                  (brand) => brand.id == widget.brandId,
+                ),
+              );
+              setState(() {
+                _brand = brand;
+                _isLoading = false;
+              });
+            } else if (state is BrandListError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: AppColors.error,
+                ),
+              );
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<BrandListBloc, BrandListState>(
+        builder: (context, state) {
+          final content = _buildContent(context, state);
 
-        final content = _buildContent(context, state);
+          // Apply desktop constraint
+          if (widget.deviceType == DeviceType.desktop) {
+            return DesktopConstrainedContent(child: content);
+          }
 
-        // Apply desktop constraint
-        if (widget.deviceType == DeviceType.desktop) {
-          return DesktopConstrainedContent(child: content);
-        }
-
-        return content;
-      },
+          return content;
+        },
+      ),
     );
   }
 

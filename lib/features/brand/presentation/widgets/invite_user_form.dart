@@ -7,8 +7,8 @@ import '../../../../shared/themes/app_text_styles.dart';
 import '../../../../shared/widgets/animated_text_field.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../domain/entities/brand.dart';
-import '../bloc/brand_bloc.dart';
-import '../bloc/brand_event.dart';
+import '../bloc/brand_invitation/brand_invitation_bloc.dart';
+import '../bloc/brand_invitation/brand_invitation_event.dart';
 import '../../../../i18n/translations.g.dart';
 
 /// Invite User Form Widget
@@ -244,17 +244,17 @@ class _InviteUserFormState extends State<InviteUserForm> {
         _isLoading = true;
       });
 
-      final invitationData = {
-        'email': _emailController.text.trim(),
-        'role': _selectedRole,
-        'branchIds': _selectedBranchIds.isEmpty ? null : _selectedBranchIds,
-        'message': _messageController.text.trim().isEmpty
-            ? null
-            : _messageController.text.trim(),
-      };
+      final email = _emailController.text.trim();
+      final role = _selectedRole;
+      final branchIds = _selectedBranchIds.isEmpty ? <String>[] : _selectedBranchIds.cast<String>();
 
-      context.read<BrandBloc>().add(
-        InviteUserEvent(widget.brand.id, invitationData),
+      context.read<BrandInvitationBloc>().add(
+        CreateInvitationEvent(
+          brandId: widget.brand.id,
+          email: email,
+          role: role,
+          branchIds: branchIds,
+        ),
       );
 
       // Reset loading state after a delay

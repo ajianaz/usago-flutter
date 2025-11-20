@@ -11,8 +11,6 @@ import '../bloc/brand_switching/brand_switching_bloc.dart';
 import '../bloc/brand_switching/brand_switching_state.dart';
 import '../bloc/brand_invitation/brand_invitation_bloc.dart';
 import '../bloc/brand_invitation/brand_invitation_state.dart';
-import '../bloc/brand_bloc.dart';
-import '../bloc/brand_state.dart';
 
 // GetIt instance
 final getIt = GetIt.instance;
@@ -71,11 +69,6 @@ class BrandBlocProvider extends StatelessWidget {
         BlocProvider<BrandInvitationBloc>(
           create: (context) => getIt<BrandInvitationBloc>(),
         ),
-
-        // Legacy BrandBloc (deprecated) - untuk backward compatibility
-        BlocProvider<BrandBloc>(
-          create: (context) => getIt<BrandBloc>(),
-        ),
       ],
       child: child,
     );
@@ -128,11 +121,6 @@ class SpecificBrandBlocProvider extends StatelessWidget {
             create: (context) => getIt<BrandInvitationBloc>(),
           ));
           break;
-        case BrandBloc:
-          providers.add(BlocProvider<BrandBloc>(
-            create: (context) => getIt<BrandBloc>(),
-          ));
-          break;
       }
     }
 
@@ -174,12 +162,6 @@ extension BrandBlocContext on BuildContext {
 
   /// Watch Brand Invitation BLoC
   BrandInvitationState get watchBrandInvitation => watch<BrandInvitationBloc>().state;
-
-  /// Get Legacy Brand BLoC
-  BrandBloc get brandLegacy => read<BrandBloc>();
-
-  /// Watch Legacy Brand BLoC
-  BrandState get watchBrandLegacy => watch<BrandBloc>().state;
 }
 
 /// Helper untuk membuat provider dengan BLoCs yang sering digunakan bersama

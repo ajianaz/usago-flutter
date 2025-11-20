@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/errors/failure.dart';
+import '../../../../../i18n/translations.g.dart';
 import '../../../domain/entities/brand.dart';
 import '../../../domain/usecases/brand/get_user_brands_usecase.dart';
 import '../../../domain/usecases/brand/get_accessible_brands_usecase.dart';
@@ -158,7 +159,11 @@ class BrandListBloc extends Bloc<BrandListEvent, BrandListState> {
     } else {
       // Check jika tidak ada brand sama sekali
       if (userBrands.isEmpty && accessibleBrands.isEmpty) {
-        emit(const BrandListEmpty(message: 'Anda belum memiliki brand. Buat brand pertama Anda sekarang!'));
+        // Get translation based on current locale
+        final message = LocaleSettings.currentLocale == AppLocale.id
+            ? 'Anda belum memiliki brand. Buat brand pertama Anda sekarang!'
+            : 'You don\'t have any brands yet. Create your first brand now!';
+        emit(BrandListEmpty(message: message));
       } else {
         emit(BrandListLoaded(
           userBrands: userBrands,
@@ -288,13 +293,19 @@ class BrandListBloc extends Bloc<BrandListEvent, BrandListState> {
       case ServerFailure:
         return failure.message;
       case NetworkFailure:
-        return 'Tidak ada koneksi internet. Periksa koneksi Anda dan coba lagi.';
+        return LocaleSettings.currentLocale == AppLocale.id
+            ? 'Tidak ada koneksi internet. Periksa koneksi Anda dan coba lagi.'
+            : 'No internet connection. Please check your connection and try again.';
       case ValidationFailure:
         return failure.message;
       case BetterAuthFailure:
-        return 'Anda tidak memiliki izin untuk mengakses data brand';
+        return LocaleSettings.currentLocale == AppLocale.id
+            ? 'Anda tidak memiliki izin untuk mengakses data brand'
+            : 'You don\'t have permission to access brand data';
       default:
-        return 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.';
+        return LocaleSettings.currentLocale == AppLocale.id
+            ? 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.'
+            : 'An unexpected error occurred. Please try again.';
     }
   }
 

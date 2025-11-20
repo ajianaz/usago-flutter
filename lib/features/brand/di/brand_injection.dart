@@ -6,7 +6,6 @@ import '../data/datasources/brand_local_datasource_impl.dart';
 import '../data/repositories/brand_repository_impl.dart';
 import '../domain/repositories/brand_repository.dart';
 import '../domain/usecases/index.dart';
-import '../presentation/bloc/brand_bloc.dart';
 // Import BLoCs baru
 import '../presentation/bloc/brand_management/brand_management_bloc.dart';
 import '../presentation/bloc/brand_list/brand_list_bloc.dart';
@@ -216,12 +215,13 @@ class BrandInjection {
       ),
     );
 
-    // Legacy BrandBloc (deprecated) - Factory untuk backward compatibility
-    getIt.registerFactory<BrandBloc>(
-      () => BrandBloc(
-        brandRepository: getIt<BrandRepository>(),
-      ),
-    );
+    // Legacy BrandBloc (deprecated) - Tidak didaftarkan lagi
+    // Gunakan BLoCs baru yang lebih fokus:
+    // - BrandManagementBloc untuk CRUD operations
+    // - BrandListBloc untuk load user brands, accessible brands, active brand
+    // - BrandSearchBloc untuk search functionality, filter, pagination
+    // - BrandSwitchingBloc untuk switch active brand, handle switching flow
+    // - BrandInvitationBloc untuk invitation CRUD, accept/reject invitations
   }
 
   /// Register helper classes with lazy loading
@@ -261,7 +261,7 @@ class BrandInjection {
       getIt.unregister<BrandSearchBloc>();
       getIt.unregister<BrandSwitchingBloc>();
       getIt.unregister<BrandInvitationBloc>();
-      getIt.unregister<BrandBloc>();
+      // BrandBloc sudah dihapus (deprecated)
 
       // Reset helpers
       getIt.unregister<BrandFormatter>();

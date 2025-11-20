@@ -15,6 +15,9 @@ import '../bloc/brand_list/brand_list_event.dart';
 import '../bloc/brand_list/brand_list_state.dart';
 import '../bloc/brand_switching/brand_switching_bloc.dart';
 import '../bloc/brand_switching/brand_switching_event.dart';
+import '../bloc/brand_management/brand_management_bloc.dart';
+import '../bloc/brand_management/brand_management_event.dart';
+import '../bloc/brand_management/brand_management_state.dart';
 import '../widgets/brand_card.dart';
 import '../widgets/brand_card_skeleton.dart';
 import '../widgets/brand_selector.dart';
@@ -34,21 +37,49 @@ class BrandSelectionPage extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => context.read<BrandListBloc>()),
         BlocProvider(create: (context) => context.read<BrandSwitchingBloc>()),
+        BlocProvider(create: (context) => context.read<BrandManagementBloc>()),
       ],
-      child: BlocResponsiveLayout<BrandListBloc, BrandListState>(
-        builder: (context, bloc, state, deviceType) {
-          return BrandSelectionView(deviceType: deviceType);
-        },
-        listener: (context, state) {
-          if (state is BrandListError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.error,
-              ),
-            );
-          }
-        },
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<BrandListBloc, BrandListState>(
+            listener: (context, state) {
+              if (state is BrandListError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.error,
+                  ),
+                );
+              }
+            },
+          ),
+          BlocListener<BrandManagementBloc, BrandManagementState>(
+            listener: (context, state) {
+              if (state is BrandManagementDeleted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.success,
+                  ),
+                );
+                // Refresh brand list after deletion
+                context.read<BrandListBloc>().add(const LoadAllBrandDataEvent());
+              } else if (state is BrandManagementError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.error,
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+        child: BlocResponsiveLayout<BrandListBloc, BrandListState>(
+          builder: (context, bloc, state, deviceType) {
+            return BrandSelectionView(deviceType: deviceType);
+          },
+        ),
       ),
     );
   }
@@ -406,7 +437,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
                     ),
                     AppSpacing.verticalGapLg,
                     Text(
-                      'Terjadi Kesalahan',
+                      context.t.home.error_occurred,
                       style: AppTextStyles.headline6Dynamic(context).copyWith(
                         color: AppColors.getTextPrimary(context),
                         fontWeight: FontWeight.bold,
@@ -423,7 +454,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
                     ),
                     AppSpacing.verticalGapMd,
                     CustomButton(
-                      text: 'Coba Lagi',
+                      text: context.t.common.retry,
                       onPressed: () {
                         context.read<BrandListBloc>().add(const LoadAllBrandDataEvent());
                       },
@@ -448,7 +479,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
     final activeBrand = state.activeBrand;
 
     if (allBrands.isEmpty) {
-      return _buildEmptyState(context, 'Tidak ada brand ditemukan');
+      return _buildEmptyState(context, context.t.brand.no_brands_available);
     }
 
     return Scaffold(
@@ -598,7 +629,7 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
                   ),
                   AppSpacing.gapSm,
                   Text(
-                    'Filter by type:',
+                    context.t.brand.business_type,
                     style: AppTextStyles.bodySmallDynamic(context).copyWith(
                       color: AppColors.getTextSecondary(context),
                       fontWeight: FontWeight.w600,
@@ -853,8 +884,8 @@ class _BrandSelectionViewState extends State<BrandSelectionView>
           TextButton(
             onPressed: () {
               context.router.maybePop();
-              // TODO: Implement delete with BrandManagementBloc
-              // context.read<BrandManagementBloc>().add(DeleteBrandEvent(brand.id));
+              // Implement delete with BrandManagementBloc
+              context.read<BrandManagementBloc>().add(DeleteBrandEvent(brand.id));
             },
             style: TextButton.styleFrom(
               foregroundColor: AppColors.error,

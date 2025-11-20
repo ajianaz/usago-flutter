@@ -13,6 +13,7 @@ import '../bloc/brand_list/brand_list_bloc.dart';
 import '../bloc/brand_list/brand_list_event.dart';
 import '../bloc/brand_list/brand_list_state.dart';
 import '../bloc/brand_management/brand_management_bloc.dart';
+import '../bloc/brand_management/brand_management_state.dart';
 import '../helpers/index.dart'; // Import formatter helpers
 import '../../../../i18n/translations.g.dart';
 
@@ -34,20 +35,38 @@ class BrandStatsPage extends StatelessWidget {
         BlocProvider(create: (context) => context.read<BrandListBloc>()),
         BlocProvider(create: (context) => context.read<BrandManagementBloc>()),
       ],
-      child: BlocResponsiveLayout<BrandListBloc, BrandListState>(
-        builder: (context, bloc, state, deviceType) {
-          return _buildContent(context, deviceType);
-        },
-        listener: (context, state) {
-          if (state is BrandListError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.error,
-              ),
-            );
-          }
-        },
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<BrandListBloc, BrandListState>(
+            listener: (context, state) {
+              if (state is BrandListError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.error,
+                  ),
+                );
+              }
+            },
+          ),
+          BlocListener<BrandManagementBloc, BrandManagementState>(
+            listener: (context, state) {
+              if (state is BrandManagementError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.error,
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+        child: BlocResponsiveLayout<BrandListBloc, BrandListState>(
+          builder: (context, bloc, state, deviceType) {
+            return _buildContent(context, deviceType);
+          },
+        ),
       ),
     );
   }
