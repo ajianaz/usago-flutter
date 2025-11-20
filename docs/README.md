@@ -27,6 +27,9 @@ Dokumen terkait API endpoints, struktur data, dan integrasi backend.
 ### 🛠️ [Development](./development/)
 Dokumen terkait panduan development, setup, dan best practices.
 
+- **[Best Practices for Clean Architecture Implementation](./development/clean_architecture_best_practices.md)** - Best practices implementasi Clean Architecture berdasarkan debugging session
+- **[Internationalization Guidelines](./development/internationalization_guidelines.md)** - Panduan lengkap internasionalisasi dan multi-language support
+- **[Dependency Injection Best Practices](./development/dependency_injection_best_practices.md)** - Best practices implementasi Dependency Injection dengan GetIt
 - **[Architecture Rules](./development/architecture_rules.md)** - Aturan dan prinsip arsitektur Flutter
 - **[Dark Mode Theme Guide](./development/dark_mode_theme_guide.md)** - Panduan implementasi dark mode
 - **[Implementation Guide](./development/implementation_guide.md)** - Panduan umum implementasi
@@ -76,7 +79,7 @@ Dokumen terkait task, analisis, dan laporan implementasi.
 |-----------|----------------|----------|---------|
 | Architecture | 3 | November 19, 2025 | ✅ Up to date |
 | API | 5 | November 13, 2025 | ✅ Up to date |
-| Development | 7 | November 19, 2025 | ✅ Up to date |
+| Development | 10 | November 20, 2025 | ✅ Up to date |
 | Task | 11 | November 19, 2025 | ✅ Up to date |
 
 ---
@@ -85,7 +88,9 @@ Dokumen terkait task, analisis, dan laporan implementasi.
 
 ### Berdasarkan Topik
 
-- **Clean Architecture**: [`Template`](./architecture/clean_architecture_template.md) | [`Extension Analysis`](./architecture/clean_architecture_extension_analysis.md) | [`Brand Analysis`](./architecture/brand_architecture_analysis.md)
+- **Clean Architecture**: [`Best Practices`](./development/clean_architecture_best_practices.md) | [`Template`](./architecture/clean_architecture_template.md) | [`Extension Analysis`](./architecture/clean_architecture_extension_analysis.md) | [`Brand Analysis`](./architecture/brand_architecture_analysis.md)
+- **Internationalization**: [`Guidelines`](./development/internationalization_guidelines.md) | [`Implementation Guide`](./development/internationalization_guide.md) | [`Slang Solution`](./development/localization_slang_solution.md)
+- **Dependency Injection**: [`Best Practices`](./development/dependency_injection_best_practices.md) | [`Architecture Rules`](./development/architecture_rules.md)
 - **Brand Feature**: [`Architecture Analysis`](./architecture/brand_architecture_analysis.md) | [`Implementation Summary`](./task/brand_implementation_summary.md) | [`Dark Mode Fixes`](./task/brand_dark_mode_fixes_summary.md)
 - **Authentication**: [`Auth Analysis`](./task/auth_analysis_summary.md) | [`Better Auth Integration`](./task/better_auth_integration.md) | [`Auth Completion`](./task/better_auth_completion_summary.md)
 - **Theme & UI**: [`Dark Mode Guide`](./development/dark_mode_theme_guide.md) | [`Theme Consistency`](./task/brand_theme_consistency_report.md) | [`Responsive Layout`](./development/responsive_layout_strategy.md)
@@ -93,7 +98,7 @@ Dokumen terkait task, analisis, dan laporan implementasi.
 
 ### Berdasarkan Priority
 
-- **High Priority**: [`Clean Architecture Template`](./architecture/clean_architecture_template.md) | [`Architecture Rules`](./development/architecture_rules.md) | [`API Endpoints`](./api/01-API-Endpoints-Structure.md)
+- **High Priority**: [`Clean Architecture Best Practices`](./development/clean_architecture_best_practices.md) | [`Internationalization Guidelines`](./development/internationalization_guidelines.md) | [`Dependency Injection Best Practices`](./development/dependency_injection_best_practices.md) | [`Clean Architecture Template`](./architecture/clean_architecture_template.md) | [`Architecture Rules`](./development/architecture_rules.md) | [`API Endpoints`](./api/01-API-Endpoints-Structure.md)
 - **Medium Priority**: [`Brand Architecture Analysis`](./architecture/brand_architecture_analysis.md) | [`Implementation Guide`](./development/implementation_guide.md) | [`Brand Branch Guide`](./api/04-Brand-Branch-Implementation-Guide.md)
 - **Low Priority**: [`Quick Wins`](./task/quick_wins.md) | [`Shared Widgets Cleanup`](./task/shared_widgets_cleanup.md) | [`Testing Guides`](./development/responsive_testing_guide.md)
 
@@ -153,9 +158,9 @@ Dokumen terkait task, analisis, dan laporan implementasi.
 
 ---
 
-**Last Updated**: November 19, 2025
-**Next Review**: November 26, 2025
-**Document Version**: 1.0.0
+**Last Updated**: November 20, 2025
+**Next Review**: November 27, 2025
+**Document Version**: 1.1.0
 
 ---
 
