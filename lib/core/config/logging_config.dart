@@ -85,7 +85,7 @@ class LoggingConfig {
     } catch (e) {
       // Fallback to compile-time environment if .env file not found
       if (kDebugMode) {
-        print('Warning: .env file not found, using compile-time environment variables');
+        print('Warning: .env file not found in assets/, using compile-time environment variables');
       }
     }
   }
