@@ -37,11 +37,68 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         },
       );
 
-      // Extract Bearer token from response headers
-      final authToken = response.headers['set-auth-token'];
-      if (authToken != null && authToken.isNotEmpty) {
-        await _localDatasource.saveToken(authToken.first);
-        _logger.info('Bearer token extracted and saved');
+      // Extract JWT token from response headers or body
+      String? newToken;
+
+      // Try to get token from headers first (JWT standard)
+      final headerToken = response.headers['set-authorization'];
+      if (headerToken != null && headerToken.isNotEmpty) {
+        newToken = headerToken.first;
+        await _localDatasource.saveToken(newToken);
+        _logger.info('JWT token extracted from headers and saved after login');
+      } else {
+        // Fallback to response body (JWT plugin response format)
+        final responseData = response.data;
+        if (responseData != null && responseData is Map<String, dynamic>) {
+          // Check for token in different possible locations
+          if (responseData['token'] != null) {
+            newToken = responseData['token'] as String?;
+            if (newToken != null && newToken.isNotEmpty) {
+              await _localDatasource.saveToken(newToken);
+              _logger.info(
+                  'JWT token extracted from body (direct) and saved after login');
+            }
+          } else if (responseData['session'] != null &&
+              responseData['session']['token'] != null) {
+            newToken = responseData['session']['token'] as String?;
+            if (newToken != null && newToken.isNotEmpty) {
+              await _localDatasource.saveToken(newToken);
+              _logger.info(
+                  'JWT token extracted from body (session) and saved after login');
+            }
+          } else if (responseData['data'] != null &&
+              responseData['data']['token'] != null) {
+            newToken = responseData['data']['token'] as String?;
+            if (newToken != null && newToken.isNotEmpty) {
+              await _localDatasource.saveToken(newToken);
+              _logger.info(
+                  'JWT token extracted from body (data) and saved after login');
+            }
+          }
+        }
+      }
+
+      // Extract and save refresh token if provided
+      final refreshToken = response.headers['set-refresh-token'];
+      if (refreshToken != null && refreshToken.isNotEmpty) {
+        await _localDatasource.saveRefreshToken(refreshToken.first);
+        _logger
+            .info('Refresh token extracted from headers and saved after login');
+      } else {
+        // Check if refresh token is in response body
+        final responseData = response.data;
+        if (responseData != null &&
+            responseData is Map<String, dynamic> &&
+            responseData['session'] != null &&
+            responseData['session']['refreshToken'] != null) {
+          final newRefreshToken =
+              responseData['session']['refreshToken'] as String?;
+          if (newRefreshToken != null && newRefreshToken.isNotEmpty) {
+            await _localDatasource.saveRefreshToken(newRefreshToken);
+            _logger.info(
+                'Refresh token extracted from body and saved after login');
+          }
+        }
       }
 
       _logger.info('Login successful for user: ${response.data['user']['id']}');
@@ -75,14 +132,81 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         },
       );
 
-      // Extract Bearer token from response headers
-      final authToken = response.headers['set-auth-token'];
-      if (authToken != null && authToken.isNotEmpty) {
-        await _localDatasource.saveToken(authToken.first);
-        _logger.info('Bearer token extracted and saved after registration');
+      // Extract JWT token from response headers or body
+      String? newToken;
+
+      // Try to get token from headers first (JWT standard)
+      final headerToken = response.headers['set-authorization'];
+      if (headerToken != null && headerToken.isNotEmpty) {
+        newToken = headerToken.first;
+        await _localDatasource.saveToken(newToken);
+        _logger.info(
+            'JWT token extracted from headers and saved after registration');
+      } else {
+        // Fallback to response body (JWT plugin response format)
+        final responseData = response.data;
+        if (responseData != null && responseData is Map<String, dynamic>) {
+          // Check for token in different possible locations
+          if (responseData['token'] != null) {
+            newToken = responseData['token'] as String?;
+            if (newToken != null && newToken.isNotEmpty) {
+              await _localDatasource.saveToken(newToken);
+              _logger.info(
+                  'JWT token extracted from body (direct) and saved after registration');
+            }
+          } else if (responseData['session'] != null &&
+              responseData['session']['token'] != null) {
+            newToken = responseData['session']['token'] as String?;
+            if (newToken != null && newToken.isNotEmpty) {
+              await _localDatasource.saveToken(newToken);
+              _logger.info(
+                  'JWT token extracted from body (session) and saved after registration');
+            }
+          } else if (responseData['data'] != null &&
+              responseData['data']['token'] != null) {
+            newToken = responseData['data']['token'] as String?;
+            if (newToken != null && newToken.isNotEmpty) {
+              await _localDatasource.saveToken(newToken);
+              _logger.info(
+                  'JWT token extracted from body (data) and saved after registration');
+            }
+          }
+        }
       }
 
-      _logger.info('Registration successful for user: ${response.data['user']['id']}');
+      // Extract and save refresh token if provided
+      final refreshToken = response.headers['set-refresh-token'];
+      if (refreshToken != null && refreshToken.isNotEmpty) {
+        await _localDatasource.saveRefreshToken(refreshToken.first);
+        _logger.info(
+            'Refresh token extracted from headers and saved after registration');
+      } else {
+        // Check if refresh token is in response body
+        final responseData = response.data;
+        if (responseData != null && responseData is Map<String, dynamic>) {
+          // Check for refresh token in different possible locations
+          String? newRefreshToken;
+          if (responseData['refreshToken'] != null) {
+            newRefreshToken = responseData['refreshToken'] as String?;
+          } else if (responseData['session'] != null &&
+              responseData['session']['refreshToken'] != null) {
+            newRefreshToken =
+                responseData['session']['refreshToken'] as String?;
+          } else if (responseData['data'] != null &&
+              responseData['data']['refreshToken'] != null) {
+            newRefreshToken = responseData['data']['refreshToken'] as String?;
+          }
+
+          if (newRefreshToken != null && newRefreshToken.isNotEmpty) {
+            await _localDatasource.saveRefreshToken(newRefreshToken);
+            _logger.info(
+                'Refresh token extracted from body and saved after registration');
+          }
+        }
+      }
+
+      _logger.info(
+          'Registration successful for user: ${response.data['user']['id']}');
 
       return UserModel.fromJson(response.data['user']);
     } on DioException catch (e) {
@@ -125,16 +249,89 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         throw Exception('No token available for refresh');
       }
 
-      final response = await _dioClient.postWithHeaders(AppConstants.refreshTokenEndpoint);
+      // Get refresh token from local storage
+      final refreshToken = await _localDatasource.getRefreshToken();
+      if (refreshToken == null || refreshToken.isEmpty) {
+        _logger.warning('No refresh token available for refresh');
+        throw Exception('No refresh token available for refresh');
+      }
 
-      // Extract new Bearer token from response headers
-      final authToken = response.headers['set-auth-token'];
-      if (authToken != null && authToken.isNotEmpty) {
-        await _localDatasource.saveToken(authToken.first);
-        _logger.info('New Bearer token extracted and saved after refresh');
+      final response = await _dioClient.postWithHeaders(
+        AppConstants.refreshTokenEndpoint,
+        data: {
+          'refreshToken': refreshToken,
+        },
+      );
+
+      // Extract new JWT token from response headers or body
+      String? newToken;
+
+      // Try to get token from headers first (JWT standard)
+      final headerToken = response.headers['set-authorization'];
+      if (headerToken != null && headerToken.isNotEmpty) {
+        newToken = headerToken.first;
+        _logger.info('New JWT token extracted from headers after refresh');
+      } else {
+        // Fallback to response body (JWT plugin response format)
+        final responseData = response.data;
+        if (responseData != null && responseData is Map<String, dynamic>) {
+          // Check for token in different possible locations
+          if (responseData['token'] != null) {
+            newToken = responseData['token'] as String?;
+            _logger.info(
+                'New JWT token extracted from body (direct) after refresh');
+          } else if (responseData['session'] != null &&
+              responseData['session']['token'] != null) {
+            newToken = responseData['session']['token'] as String?;
+            _logger.info(
+                'New JWT token extracted from body (session) after refresh');
+          } else if (responseData['data'] != null &&
+              responseData['data']['token'] != null) {
+            newToken = responseData['data']['token'] as String?;
+            _logger
+                .info('New JWT token extracted from body (data) after refresh');
+          }
+        }
+      }
+
+      if (newToken != null && newToken.isNotEmpty) {
+        await _localDatasource.saveToken(newToken);
       } else {
         _logger.warning('Token refresh response did not contain new token');
+        _logger.debug('Refresh response data: ${response.data}');
+        _logger.debug('Refresh response headers: ${response.headers}');
         throw Exception('Token refresh response did not contain new token');
+      }
+
+      // Extract and save new refresh token if provided
+      final newRefreshToken = response.headers['set-refresh-token'];
+      if (newRefreshToken != null && newRefreshToken.isNotEmpty) {
+        await _localDatasource.saveRefreshToken(newRefreshToken.first);
+        _logger.info(
+            'New refresh token extracted from headers and saved after refresh');
+      } else {
+        // Check if refresh token is in response body
+        final responseData = response.data;
+        if (responseData != null && responseData is Map<String, dynamic>) {
+          // Check for refresh token in different possible locations
+          String? newRefreshToken;
+          if (responseData['refreshToken'] != null) {
+            newRefreshToken = responseData['refreshToken'] as String?;
+          } else if (responseData['session'] != null &&
+              responseData['session']['refreshToken'] != null) {
+            newRefreshToken =
+                responseData['session']['refreshToken'] as String?;
+          } else if (responseData['data'] != null &&
+              responseData['data']['refreshToken'] != null) {
+            newRefreshToken = responseData['data']['refreshToken'] as String?;
+          }
+
+          if (newRefreshToken != null && newRefreshToken.isNotEmpty) {
+            await _localDatasource.saveRefreshToken(newRefreshToken);
+            _logger.info(
+                'New refresh token extracted from body and saved after refresh');
+          }
+        }
       }
 
       _logger.info('Token refresh successful');
@@ -142,6 +339,12 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       // Update user data if provided in response
       if (response.data != null && response.data['user'] != null) {
         return UserModel.fromJson(response.data['user']);
+      } else if (response.data != null &&
+          response.data is Map<String, dynamic> &&
+          response.data['session'] != null &&
+          response.data['session']['user'] != null) {
+        // Check for user in session data
+        return UserModel.fromJson(response.data['session']['user']);
       } else {
         // If no user data in response, get current user from local storage
         final currentUser = await _localDatasource.getUser();
@@ -156,9 +359,11 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
 
       // Handle specific token refresh errors
       if (e.response?.statusCode == 401) {
-        _logger.warning('Token refresh failed - token may be invalid or expired');
-        // Clear invalid token
+        _logger
+            .warning('Token refresh failed - token may be invalid or expired');
+        // Clear invalid tokens
         await _localDatasource.clearToken();
+        await _localDatasource.clearRefreshToken();
         throw Exception('Token refresh failed - please login again');
       }
 

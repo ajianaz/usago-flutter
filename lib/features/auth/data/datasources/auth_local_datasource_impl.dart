@@ -91,6 +91,40 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
   }
 
   @override
+  Future<void> saveRefreshToken(String refreshToken) async {
+    try {
+      await _prefs.setString('refresh_token', refreshToken);
+      _logger.info('Refresh token saved to local storage');
+    } catch (e) {
+      _logger.error('Failed to save refresh token to local storage', e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String?> getRefreshToken() async {
+    try {
+      final refreshToken = _prefs.getString('refresh_token');
+      _logger.info('Refresh token retrieved from local storage');
+      return refreshToken;
+    } catch (e) {
+      _logger.error('Failed to get refresh token from local storage', e);
+      return null;
+    }
+  }
+
+  @override
+  Future<void> clearRefreshToken() async {
+    try {
+      await _prefs.remove('refresh_token');
+      _logger.info('Refresh token cleared from local storage');
+    } catch (e) {
+      _logger.error('Failed to clear refresh token from local storage', e);
+      rethrow;
+    }
+  }
+
+  @override
   Future<void> saveSessionData(Map<String, dynamic> sessionData) async {
     try {
       final sessionJson = jsonEncode(sessionData);
@@ -134,7 +168,8 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
     try {
       final token = await getToken();
       final user = await getUser();
-      _logger.info('User login status checked: ${token != null && user != null}');
+      _logger
+          .info('User login status checked: ${token != null && user != null}');
       return token != null && user != null;
     } catch (e) {
       _logger.error('Failed to check user login status', e);
@@ -178,6 +213,7 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
     try {
       await clearUser();
       await clearToken();
+      await clearRefreshToken();
       await clearSessionData();
       _logger.info('All auth data cleared from local storage');
     } catch (e) {

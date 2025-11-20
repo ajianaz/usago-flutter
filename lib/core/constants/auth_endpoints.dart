@@ -3,7 +3,7 @@ class AuthEndpoints {
   static const String signIn = '/api/auth/sign-in/email';
   static const String signUp = '/api/auth/sign-up/email';
   static const String signOut = '/api/auth/sign-out';
-  static const String refreshToken = '/api/auth/refresh-token';
+  static const String refreshToken = '/api/auth/refresh';
 
   // Email Verification
   static const String verifyEmail = '/api/auth/verify-email';

@@ -21,6 +21,15 @@ abstract interface class AuthLocalDatasource {
   /// Clear auth token from local storage
   Future<void> clearToken();
 
+  /// Save refresh token
+  Future<void> saveRefreshToken(String refreshToken);
+
+  /// Get refresh token from local storage
+  Future<String?> getRefreshToken();
+
+  /// Clear refresh token from local storage
+  Future<void> clearRefreshToken();
+
   /// Save user session data
   Future<void> saveSessionData(Map<String, dynamic> sessionData);
 
