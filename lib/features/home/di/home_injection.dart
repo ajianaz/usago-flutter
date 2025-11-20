@@ -6,13 +6,20 @@ import '../data/repositories/home_repository_impl.dart';
 import '../domain/usecases/get_menu_items_usecase.dart';
 import '../domain/usecases/get_user_dashboard_usecase.dart';
 import '../presentation/bloc/home_bloc.dart';
+import '../../../../core/utils/logger.dart';
+import '../../../../core/errors/error_handler.dart';
 
 /// Setup home feature dependencies
 Future<void> setupHomeDependencies(GetIt getIt) async {
+  // Get existing instances from core
+  final logger = getIt<AppLogger>();
+  final errorHandler = getIt<ErrorHandler>();
+
   // Data sources
   getIt.registerLazySingleton<HomeRemoteDataSource>(
     () => HomeRemoteDataSourceImpl(
-      logger: getIt(),
+      logger: logger,
+      errorHandler: errorHandler,
     ),
   );
 
@@ -20,6 +27,8 @@ Future<void> setupHomeDependencies(GetIt getIt) async {
   getIt.registerLazySingleton<HomeRepository>(
     () => HomeRepositoryImpl(
       remoteDataSource: getIt(),
+      errorHandler: errorHandler,
+      logger: logger,
     ),
   );
 
