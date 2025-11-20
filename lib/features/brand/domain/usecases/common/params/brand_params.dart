@@ -13,6 +13,7 @@ class BrandIdParams extends Equatable {
 /// Parameter class untuk membuat brand baru
 class CreateBrandParams extends Equatable {
   final String name;
+  final String slug;
   final String businessType;
   final String? industry;
   final String? description;
@@ -21,6 +22,7 @@ class CreateBrandParams extends Equatable {
 
   const CreateBrandParams({
     required this.name,
+    required this.slug,
     required this.businessType,
     this.industry,
     this.description,
@@ -31,6 +33,7 @@ class CreateBrandParams extends Equatable {
   @override
   List<Object?> get props => [
         name,
+        slug,
         businessType,
         industry,
         description,

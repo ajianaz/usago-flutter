@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/errors/failure.dart';
+import '../../../../../core/utils/slug_utils.dart';
 import '../../../domain/usecases/brand/create_brand_usecase.dart';
 import '../../../domain/usecases/brand/update_brand_usecase.dart';
 import '../../../domain/usecases/brand/delete_brand_usecase.dart';
@@ -49,6 +50,7 @@ class BrandManagementBloc extends Bloc<BrandManagementEvent, BrandManagementStat
     // Buat parameter untuk use case
     final params = CreateBrandParams(
       name: event.name,
+      slug: SlugUtils.sanitize(event.name),
       businessType: event.businessType,
       industry: event.industry,
       description: event.description,
@@ -311,6 +313,12 @@ class BrandManagementBloc extends Bloc<BrandManagementEvent, BrandManagementStat
         return failure.message;
       case BetterAuthFailure:
         return 'Anda tidak memiliki izin untuk melakukan operasi ini';
+      case ConflictFailure:
+        final conflictFailure = failure as ConflictFailure;
+        if (conflictFailure.code == 'BRAND_SLUG_EXISTS') {
+          return 'Slug brand sudah digunakan. Silakan gunakan slug lain atau ubah sedikit nama brand.';
+        }
+        return conflictFailure.message;
       default:
         return 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.';
     }
@@ -333,6 +341,9 @@ class BrandManagementBloc extends Bloc<BrandManagementEvent, BrandManagementStat
         return 'VALIDATION_ERROR';
       case BetterAuthFailure:
         return 'UNAUTHORIZED';
+      case ConflictFailure:
+        final conflictFailure = failure as ConflictFailure;
+        return conflictFailure.code ?? 'CONFLICT';
       default:
         return 'UNKNOWN_ERROR';
     }

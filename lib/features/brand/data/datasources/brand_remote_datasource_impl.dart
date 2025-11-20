@@ -143,6 +143,19 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
       return Right(brand);
     } on DioException catch (e) {
       _logger.error('Dio error in createBrand: $e');
+
+      // Check for specific BRAND_SLUG_EXISTS error
+      if (e.response?.statusCode == 409) {
+        final responseData = e.response?.data;
+        if (responseData is Map && responseData['code'] == 'BRAND_SLUG_EXISTS') {
+          return Left(ConflictFailure(
+            message: responseData['error'] ?? 'Brand slug already exists',
+            code: responseData['code'],
+            originalError: e,
+          ));
+        }
+      }
+
       return Left(ServerFailure(
         message: e.message ?? 'Network error occurred',
         statusCode: e.response?.statusCode,
@@ -173,6 +186,19 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
       return Right(brand);
     } on DioException catch (e) {
       _logger.error('Dio error in updateBrand: $e');
+
+      // Check for specific BRAND_SLUG_EXISTS error
+      if (e.response?.statusCode == 409) {
+        final responseData = e.response?.data;
+        if (responseData is Map && responseData['code'] == 'BRAND_SLUG_EXISTS') {
+          return Left(ConflictFailure(
+            message: responseData['error'] ?? 'Brand slug already exists',
+            code: responseData['code'],
+            originalError: e,
+          ));
+        }
+      }
+
       return Left(ServerFailure(
         message: e.message ?? 'Network error occurred',
         statusCode: e.response?.statusCode,

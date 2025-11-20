@@ -31,6 +31,7 @@ class CreateBrandUseCase implements UseCase<Brand, CreateBrandParams> {
       // Persiapkan data brand
       final brandData = {
         'name': params.name.trim(),
+        'slug': params.slug.trim(),
         'businessType': params.businessType,
         'industry': params.industry,
         'description': params.description?.trim(),
@@ -71,6 +72,34 @@ class CreateBrandUseCase implements UseCase<Brand, CreateBrandParams> {
 
     if (params.name.trim().length > 100) {
       return const ValidationFailure(message: 'Nama brand maksimal 100 karakter');
+    }
+
+    // Validasi slug
+    if (params.slug.trim().isEmpty) {
+      return const ValidationFailure(message: 'Slug brand tidak boleh kosong');
+    }
+
+    if (params.slug.trim().length < 2) {
+      return const ValidationFailure(message: 'Slug brand minimal 2 karakter');
+    }
+
+    if (params.slug.trim().length > 100) {
+      return const ValidationFailure(message: 'Slug brand maksimal 100 karakter');
+    }
+
+    // Validasi format slug (hanya lowercase, angka, dan dash)
+    final slugRegex = RegExp(r'^[a-z0-9-]+$');
+    if (!slugRegex.hasMatch(params.slug.trim())) {
+      return const ValidationFailure(
+        message: 'Slug hanya boleh berisi huruf kecil, angka, dan tanda hubung (-)',
+      );
+    }
+
+    // Slug tidak boleh dimulai atau diakhiri dengan dash
+    if (params.slug.trim().startsWith('-') || params.slug.trim().endsWith('-')) {
+      return const ValidationFailure(
+        message: 'Slug tidak boleh dimulai atau diakhiri dengan tanda hubung (-)',
+      );
     }
 
     // Validasi business type

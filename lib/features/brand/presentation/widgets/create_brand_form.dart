@@ -235,13 +235,48 @@ class _CreateBrandFormState extends State<CreateBrandForm> {
           );
           Navigator.of(context).pop();
         } else if (state is BrandManagementError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          // Special handling for slug conflict errors
+          if (state.errorCode == 'BRAND_SLUG_EXISTS') {
+            // Show a more detailed snackbar for slug conflicts
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(state.message),
+                    SizedBox(height: 8),
+                    Text(
+                      'Coba ubah slug atau tambahkan angka/ kata unik.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ],
+                ),
+                backgroundColor: AppColors.error,
+                behavior: SnackBarBehavior.floating,
+                duration: Duration(seconds: 5),
+              ),
+            );
+
+            // Enable manual slug editing if auto-generation is on
+            if (_autoGenerateSlug && !_isEditMode) {
+              setState(() {
+                _autoGenerateSlug = false;
+              });
+            }
+          } else {
+            // Standard error handling for other errors
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.error,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
         }
       },
       child: Form(

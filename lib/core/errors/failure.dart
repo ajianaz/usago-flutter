@@ -68,3 +68,16 @@ class BetterAuthFailure extends Failure {
   @override
   List<Object?> get props => [message, code, originalError];
 }
+
+class ConflictFailure extends Failure {
+  final String? code;
+
+  const ConflictFailure({
+    required String message,
+    this.code,
+    dynamic originalError,
+  }) : super(message: message, originalError: originalError);
+
+  @override
+  List<Object?> get props => [message, code, originalError];
+}
