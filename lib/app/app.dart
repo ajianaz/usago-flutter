@@ -16,13 +16,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appRouter = AppRouter();
+    final authBloc = di.getIt<AuthBloc>();
 
     return TranslationProvider(
       child: BrandBlocProvider(
         child: MultiBlocProvider(
           providers: [
             BlocProvider.value(
-              value: di.getIt<AuthBloc>(),
+              value: authBloc,
             ),
           ],
           child: ValueListenableBuilder<ThemeMode>(

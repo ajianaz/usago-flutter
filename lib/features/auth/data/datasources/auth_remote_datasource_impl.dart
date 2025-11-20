@@ -118,6 +118,13 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     try {
       _logger.info('Attempting token refresh');
 
+      // Check if we have a token to refresh
+      final currentToken = await _localDatasource.getToken();
+      if (currentToken == null || currentToken.isEmpty) {
+        _logger.warning('No token available for refresh');
+        throw Exception('No token available for refresh');
+      }
+
       final response = await _dioClient.postWithHeaders(AppConstants.refreshTokenEndpoint);
 
       // Extract new Bearer token from response headers
@@ -125,13 +132,36 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       if (authToken != null && authToken.isNotEmpty) {
         await _localDatasource.saveToken(authToken.first);
         _logger.info('New Bearer token extracted and saved after refresh');
+      } else {
+        _logger.warning('Token refresh response did not contain new token');
+        throw Exception('Token refresh response did not contain new token');
       }
 
       _logger.info('Token refresh successful');
 
-      return UserModel.fromJson(response.data['user']);
+      // Update user data if provided in response
+      if (response.data != null && response.data['user'] != null) {
+        return UserModel.fromJson(response.data['user']);
+      } else {
+        // If no user data in response, get current user from local storage
+        final currentUser = await _localDatasource.getUser();
+        if (currentUser != null) {
+          return currentUser;
+        } else {
+          throw Exception('No user data available after token refresh');
+        }
+      }
     } on DioException catch (e) {
       _logger.error('Token refresh failed', e);
+
+      // Handle specific token refresh errors
+      if (e.response?.statusCode == 401) {
+        _logger.warning('Token refresh failed - token may be invalid or expired');
+        // Clear invalid token
+        await _localDatasource.clearToken();
+        throw Exception('Token refresh failed - please login again');
+      }
+
       _handleBetterAuthError(e);
       rethrow;
     } catch (e) {

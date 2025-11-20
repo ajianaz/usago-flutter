@@ -11,6 +11,7 @@ import '../../domain/usecases/reset_password_usecase.dart';
 import '../../domain/usecases/verify_email_usecase.dart';
 import '../../domain/usecases/resend_verification_email_usecase.dart';
 import '../../domain/usecases/delete_account_usecase.dart';
+import '../../domain/usecases/refresh_token_usecase.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -28,6 +29,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final VerifyEmailUsecase _verifyEmailUsecase;
   final ResendVerificationEmailUsecase _resendVerificationEmailUsecase;
   final DeleteAccountUsecase _deleteAccountUsecase;
+  final RefreshTokenUsecase _refreshTokenUsecase;
 
   AuthBloc({
     required LoginUsecase loginUsecase,
@@ -41,6 +43,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required VerifyEmailUsecase verifyEmailUsecase,
     required ResendVerificationEmailUsecase resendVerificationEmailUsecase,
     required DeleteAccountUsecase deleteAccountUsecase,
+    required RefreshTokenUsecase refreshTokenUsecase,
   }) : _loginUsecase = loginUsecase,
         _registerUsecase = registerUsecase,
         _logoutUsecase = logoutUsecase,
@@ -52,6 +55,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _verifyEmailUsecase = verifyEmailUsecase,
         _resendVerificationEmailUsecase = resendVerificationEmailUsecase,
         _deleteAccountUsecase = deleteAccountUsecase,
+        _refreshTokenUsecase = refreshTokenUsecase,
         super(const AuthInitial()) {
     // Register event handlers
     on<LoginEvent>(_onLoginEvent);
@@ -65,6 +69,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<VerifyEmailEvent>(_onVerifyEmailEvent);
     on<ResendVerificationEmailEvent>(_onResendVerificationEmailEvent);
     on<DeleteAccountEvent>(_onDeleteAccountEvent);
+    on<RefreshTokenEvent>(_onRefreshTokenEvent);
 
     // Check auth status on initialization
     add(CheckAuthStatusEvent());
@@ -211,6 +216,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(result.fold(
       (failure) => AuthFailure(message: failure.message),
       (_) => const AuthLoggedOut(),
+    ));
+  }
+
+  Future<void> _onRefreshTokenEvent(RefreshTokenEvent event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+
+    final result = await _refreshTokenUsecase(const RefreshTokenParams());
+
+    emit(result.fold(
+      (failure) => AuthFailure(message: failure.message),
+      (user) => TokenRefreshSuccess(user: user),
     ));
   }
 

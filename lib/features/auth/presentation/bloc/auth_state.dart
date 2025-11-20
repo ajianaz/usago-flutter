@@ -85,3 +85,13 @@ class ProfileUpdateSuccess extends AuthState {
   @override
   List<Object?> get props => [user];
 }
+
+/// Token refresh successful state
+class TokenRefreshSuccess extends AuthState {
+  final User user;
+
+  const TokenRefreshSuccess({required this.user});
+
+  @override
+  List<Object?> get props => [user];
+}

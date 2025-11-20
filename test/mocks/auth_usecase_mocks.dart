@@ -1,4 +1,7 @@
+import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:usago/core/errors/failure.dart';
+import 'package:usago/features/auth/domain/entities/user.dart';
 import 'package:usago/features/auth/domain/usecases/change_password_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/check_auth_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/delete_account_usecase.dart';
@@ -10,6 +13,8 @@ import 'package:usago/features/auth/domain/usecases/reset_password_usecase.dart'
 import 'package:usago/features/auth/domain/usecases/resend_verification_email_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/update_profile_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/verify_email_usecase.dart';
+import 'package:usago/features/auth/domain/usecases/refresh_token_usecase.dart';
+import 'package:usago/features/auth/domain/usecases/refresh_token_usecase.dart';
 
 /// Mock LoginUsecase
 class MockLoginUsecase extends Mock implements LoginUsecase {}
@@ -43,3 +48,6 @@ class MockResendVerificationEmailUsecase extends Mock implements ResendVerificat
 
 /// Mock DeleteAccountUsecase
 class MockDeleteAccountUsecase extends Mock implements DeleteAccountUsecase {}
+
+/// Mock RefreshTokenUsecase
+class MockRefreshTokenUsecase extends Mock implements RefreshTokenUsecase {}

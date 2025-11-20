@@ -3,12 +3,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_constants.dart';
 import '../utils/logger.dart';
 import '../context/context_manager.dart';
+import '../../features/auth/domain/repositories/auth_repository.dart';
 
 class DioClient {
   late Dio _dio;
   final AppLogger _logger;
 
-  DioClient({AppLogger? logger}) : _logger = logger ?? AppLogger() {
+  DioClient({
+    AppLogger? logger,
+    AuthRepository? authRepository,
+  }) : _logger = logger ?? AppLogger() {
     _dio = Dio(BaseOptions(
       baseUrl: AppConstants.apiBaseUrl,
       connectTimeout: AppConstants.apiTimeout,
@@ -23,10 +27,17 @@ class DioClient {
 
     // Add interceptors
     _dio.interceptors.add(LogInterceptor(logger: _logger));
-    _dio.interceptors.add(AuthInterceptor(logger: _logger));
+    _dio.interceptors.add(AuthInterceptor(logger: _logger, authRepository: authRepository));
   }
 
   Dio get dio => _dio;
+
+  /// Update AuthRepository in AuthInterceptor after dependency injection is complete
+  void updateAuthRepository(AuthRepository authRepository) {
+    // Find and update the AuthInterceptor
+    final authInterceptor = _dio.interceptors.whereType<AuthInterceptor>().first;
+    authInterceptor._updateAuthRepository(authRepository);
+  }
 
   Future<Map<String, dynamic>> get(
     String path, {
@@ -187,12 +198,22 @@ class LogInterceptor extends Interceptor {
 
 class AuthInterceptor extends Interceptor {
   final AppLogger _logger;
+  late AuthRepository? _authRepository;
   bool _isRefreshing = false;
   String? _cachedToken;
 
-  AuthInterceptor({required AppLogger logger}) : _logger = logger {
+  AuthInterceptor({
+    required AppLogger logger,
+    AuthRepository? authRepository,
+  }) : _logger = logger,
+       _authRepository = authRepository {
     // Load token synchronously at initialization
     _loadToken();
+  }
+
+  /// Update AuthRepository after dependency injection is complete
+  void _updateAuthRepository(AuthRepository authRepository) {
+    _authRepository = authRepository;
   }
 
   Future<void> _loadToken() async {
@@ -241,44 +262,84 @@ class AuthInterceptor extends Interceptor {
         // Get current request options
         final options = error.requestOptions;
 
-        // Create a new Dio instance to avoid infinite loop
-        final dio = Dio(BaseOptions(
-          baseUrl: AppConstants.apiBaseUrl,
-          connectTimeout: AppConstants.apiTimeout,
-          receiveTimeout: AppConstants.apiTimeout,
-        ));
+        // Use RefreshTokenUsecase if available, fallback to manual refresh
+        if (_authRepository != null) {
+          final result = await _authRepository!.refreshToken();
 
-        // Refresh token
-        final refreshResponse = await dio.post(
-          AppConstants.refreshTokenEndpoint,
-          options: Options(
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
+          result.fold(
+            (failure) {
+              _logger.error('Token refresh failed via usecase: ${failure.message}');
+              handler.next(error);
             },
-          ),
-        );
+            (user) async {
+              // Get the new token from local storage
+              final prefs = await SharedPreferences.getInstance();
+              final newToken = prefs.getString(AppConstants.bearerTokenKey);
 
-        // Extract new token from response headers
-        final newToken = refreshResponse.headers['set-auth-token'];
-        if (newToken != null && newToken.isNotEmpty) {
-          // Save new token
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString(AppConstants.bearerTokenKey, newToken.first);
+              if (newToken != null) {
+                // Update cached token for immediate use
+                _cachedToken = newToken;
+                _logger.info('Token refreshed and saved via usecase');
 
-          // Update cached token for immediate use
-          _cachedToken = newToken.first;
-          _logger.info('Token refreshed and saved');
+                // Update original request with new token
+                options.headers['Authorization'] = 'Bearer $newToken';
 
-          // Update original request with new token
-          options.headers['Authorization'] = 'Bearer ${newToken.first}';
+                // Create a new Dio instance to avoid infinite loop
+                final dio = Dio(BaseOptions(
+                  baseUrl: AppConstants.apiBaseUrl,
+                  connectTimeout: AppConstants.apiTimeout,
+                  receiveTimeout: AppConstants.apiTimeout,
+                ));
 
-          // Retry original request with new token
-          final retryResponse = await dio.fetch(options);
-          handler.resolve(retryResponse);
+                // Retry original request with new token
+                final retryResponse = await dio.fetch(options);
+                handler.resolve(retryResponse);
+              } else {
+                _logger.warning('Token refresh via usecase succeeded but no token found');
+                handler.next(error);
+              }
+            },
+          );
         } else {
-          _logger.warning('Token refresh failed - no new token in response');
-          handler.next(error);
+          // Fallback to manual token refresh
+          final dio = Dio(BaseOptions(
+            baseUrl: AppConstants.apiBaseUrl,
+            connectTimeout: AppConstants.apiTimeout,
+            receiveTimeout: AppConstants.apiTimeout,
+          ));
+
+          // Refresh token
+          final refreshResponse = await dio.post(
+            AppConstants.refreshTokenEndpoint,
+            options: Options(
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+              },
+            ),
+          );
+
+          // Extract new token from response headers
+          final newToken = refreshResponse.headers['set-auth-token'];
+          if (newToken != null && newToken.isNotEmpty) {
+            // Save new token
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString(AppConstants.bearerTokenKey, newToken.first);
+
+            // Update cached token for immediate use
+            _cachedToken = newToken.first;
+            _logger.info('Token refreshed and saved manually');
+
+            // Update original request with new token
+            options.headers['Authorization'] = 'Bearer ${newToken.first}';
+
+            // Retry original request with new token
+            final retryResponse = await dio.fetch(options);
+            handler.resolve(retryResponse);
+          } else {
+            _logger.warning('Token refresh failed - no new token in response');
+            handler.next(error);
+          }
         }
       } catch (e) {
         _logger.error('Token refresh failed', e);

@@ -23,7 +23,8 @@ export 'auth_usecase_mocks.dart'
         MockResetPasswordUsecase,
         MockVerifyEmailUsecase,
         MockResendVerificationEmailUsecase,
-        MockDeleteAccountUsecase;
+        MockDeleteAccountUsecase,
+        MockRefreshTokenUsecase;
 export 'auth_utility_mocks.dart' show MockErrorHandler, MockAppLogger;
 
 /// Legacy MockSetup class for backward compatibility

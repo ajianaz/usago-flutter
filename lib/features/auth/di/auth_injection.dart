@@ -16,6 +16,7 @@ import '../domain/usecases/reset_password_usecase.dart';
 import '../domain/usecases/verify_email_usecase.dart';
 import '../domain/usecases/resend_verification_email_usecase.dart';
 import '../domain/usecases/delete_account_usecase.dart';
+import '../domain/usecases/refresh_token_usecase.dart';
 import '../presentation/bloc/auth_bloc.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
@@ -24,7 +25,6 @@ import '../../../../core/errors/error_handler.dart';
 /// Register auth feature dependencies
 void setupAuthDependencies(GetIt getIt) {
   // Get existing instances from core
-  final dioClient = getIt<DioClient>();
   final logger = getIt<AppLogger>();
   final errorHandler = getIt<ErrorHandler>();
 
@@ -33,10 +33,13 @@ void setupAuthDependencies(GetIt getIt) {
     AuthLocalDatasourceImpl(logger: logger, prefs: getIt()),
   );
 
-  // Register remote datasource with local datasource dependency
+  // DioClient is already registered in core services, so we just get it
+  final dioClient = getIt<DioClient>();
+
+  // Register remote datasource with DioClient dependency
   getIt.registerSingleton<AuthRemoteDatasource>(
     AuthRemoteDatasourceImpl(
-      dioClient: dioClient,
+      dioClient: getIt(),
       logger: logger,
       localDatasource: getIt(),
     ),
@@ -51,6 +54,10 @@ void setupAuthDependencies(GetIt getIt) {
       logger: logger,
     ),
   );
+
+  // Update DioClient with AuthRepository after registration
+  final authRepository = getIt<AuthRepository>();
+  dioClient.updateAuthRepository(authRepository);
 
   // Register usecases
   getIt.registerSingleton(
@@ -86,6 +93,9 @@ void setupAuthDependencies(GetIt getIt) {
   getIt.registerSingleton(
     DeleteAccountUsecase(repository: getIt()),
   );
+  getIt.registerSingleton(
+    RefreshTokenUsecase(repository: getIt()),
+  );
 
   // Register BLoC
   getIt.registerSingleton(
@@ -101,6 +111,7 @@ void setupAuthDependencies(GetIt getIt) {
       verifyEmailUsecase: getIt(),
       resendVerificationEmailUsecase: getIt(),
       deleteAccountUsecase: getIt(),
+      refreshTokenUsecase: getIt(),
     ),
   );
 }

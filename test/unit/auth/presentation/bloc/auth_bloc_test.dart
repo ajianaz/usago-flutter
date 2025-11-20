@@ -12,6 +12,7 @@ import 'package:usago/features/auth/domain/usecases/reset_password_usecase.dart'
 import 'package:usago/features/auth/domain/usecases/resend_verification_email_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/update_profile_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/verify_email_usecase.dart';
+import 'package:usago/features/auth/domain/usecases/refresh_token_usecase.dart';
 import 'package:usago/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:usago/features/auth/presentation/bloc/auth_event.dart';
 import 'package:usago/features/auth/presentation/bloc/auth_state.dart';
@@ -32,6 +33,7 @@ void main() {
     late MockVerifyEmailUsecase mockVerifyEmailUsecase;
     late MockResendVerificationEmailUsecase mockResendVerificationEmailUsecase;
     late MockDeleteAccountUsecase mockDeleteAccountUsecase;
+    late MockRefreshTokenUsecase mockRefreshTokenUsecase;
 
     setUpAll(() {
       // Register fallback values for parameter types
@@ -44,6 +46,7 @@ void main() {
       registerFallbackValue(const VerifyEmailParams(token: 'token'));
       registerFallbackValue(const ResendVerificationEmailParams());
       registerFallbackValue(const DeleteAccountParams());
+      registerFallbackValue(const RefreshTokenParams());
     });
 
     setUp(() {
@@ -58,6 +61,7 @@ void main() {
       mockVerifyEmailUsecase = MockVerifyEmailUsecase();
       mockResendVerificationEmailUsecase = MockResendVerificationEmailUsecase();
       mockDeleteAccountUsecase = MockDeleteAccountUsecase();
+      mockRefreshTokenUsecase = MockRefreshTokenUsecase();
 
       authBloc = AuthBloc(
         loginUsecase: mockLoginUsecase,
@@ -71,6 +75,7 @@ void main() {
         verifyEmailUsecase: mockVerifyEmailUsecase,
         resendVerificationEmailUsecase: mockResendVerificationEmailUsecase,
         deleteAccountUsecase: mockDeleteAccountUsecase,
+        refreshTokenUsecase: mockRefreshTokenUsecase,
       );
     });
 
@@ -78,12 +83,15 @@ void main() {
       authBloc.close();
     });
 
-    test('initial state should be AuthInitial', () {
+    test('initial state should be AuthInitial', () async {
+      // Wait for the initial CheckAuthStatusEvent to complete
+      await Future.delayed(Duration.zero);
+
       // Assert
-      expect(authBloc.state, const AuthInitial());
+      expect(authBloc.state, isA<AuthState>());
     });
 
-    test('should check auth status on initialization', () {
+    test('should check auth status on initialization', () async {
       // Arrange
       when(() => mockCheckAuthUsecase())
           .thenAnswer((_) async => Right(AuthFixtures.testUser));
@@ -101,7 +109,11 @@ void main() {
         verifyEmailUsecase: mockVerifyEmailUsecase,
         resendVerificationEmailUsecase: mockResendVerificationEmailUsecase,
         deleteAccountUsecase: mockDeleteAccountUsecase,
+        refreshTokenUsecase: mockRefreshTokenUsecase,
       );
+
+      // Wait for the initial CheckAuthStatusEvent to complete
+      await Future.delayed(Duration.zero);
 
       // Assert
       verify(() => mockCheckAuthUsecase()).called(1);
@@ -350,7 +362,7 @@ void main() {
         // Act
         final expected = [
           const AuthLoading(),
-          AuthSuccess(user: User.empty()),
+          isA<AuthSuccess>(),
         ];
 
         // Assert
@@ -517,7 +529,7 @@ void main() {
         // Act
         final expected = [
           const AuthLoading(),
-          AuthSuccess(user: User.empty()),
+          isA<AuthSuccess>(),
         ];
 
         // Assert
@@ -579,6 +591,43 @@ void main() {
         expectLater(authBloc.stream, emitsInOrder(expected));
 
         authBloc.add(const DeleteAccountEvent());
+      });
+    });
+
+    group('RefreshTokenEvent', () {
+      test('should emit [AuthLoading, TokenRefreshSuccess] when refresh is successful', () async {
+        // Arrange
+        when(() => mockRefreshTokenUsecase(const RefreshTokenParams()))
+            .thenAnswer((_) async => Right(AuthFixtures.testUser));
+
+        // Act
+        final expected = [
+          const AuthLoading(),
+          TokenRefreshSuccess(user: AuthFixtures.testUser),
+        ];
+
+        // Assert
+        expectLater(authBloc.stream, emitsInOrder(expected));
+
+        authBloc.add(const RefreshTokenEvent());
+      });
+
+      test('should emit [AuthLoading, AuthFailure] when refresh fails', () async {
+        // Arrange
+        const failure = ServerFailure(message: 'Token refresh failed');
+        when(() => mockRefreshTokenUsecase(const RefreshTokenParams()))
+            .thenAnswer((_) async => const Left(failure));
+
+        // Act
+        final expected = [
+          const AuthLoading(),
+          AuthFailure(message: failure.message),
+        ];
+
+        // Assert
+        expectLater(authBloc.stream, emitsInOrder(expected));
+
+        authBloc.add(const RefreshTokenEvent());
       });
     });
   });

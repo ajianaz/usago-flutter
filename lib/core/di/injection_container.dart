@@ -45,7 +45,6 @@ Future<void> _setupCoreServices() async {
     prefs: sharedPreferences,
     logger: getIt(),
   ));
-
 }
 
 /// Reset all dependencies

@@ -132,3 +132,11 @@ class DeleteAccountEvent extends AuthEvent {
   @override
   List<Object?> get props => [];
 }
+
+/// Refresh token event
+class RefreshTokenEvent extends AuthEvent {
+  const RefreshTokenEvent();
+
+  @override
+  List<Object?> get props => [];
+}
