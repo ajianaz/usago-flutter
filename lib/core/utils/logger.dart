@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 import '../config/logging_config.dart';
+import 'log_sanitizer.dart';
 
 /// Custom output that does nothing (for disabled logging)
 class EmptyOutput extends LogOutput {
@@ -44,7 +45,6 @@ class AppLogger {
         printTime: _config.enableTimestamps,
       ),
       output: MultiOutput([
-        ConsoleOutput(),
         if (kDebugMode) ConsoleOutput(),
       ]),
     );
@@ -207,8 +207,11 @@ class AppLogger {
   }) {
     if (!_config.isLogEnabled(level)) return;
 
-    final structuredMessage = context != null
-        ? '$message | Context: ${context.toString()}'
+    // Sanitize context data to remove sensitive information
+    final sanitizedContext = LogSanitizer.sanitizeMap(context);
+
+    final structuredMessage = sanitizedContext != null
+        ? '$message | Context: ${sanitizedContext.toString()}'
         : message;
 
     _logWithPlatform(level, structuredMessage, error, stackTrace);
@@ -223,14 +226,18 @@ class AppLogger {
   }) {
     if (!_config.isLogEnabled(LogLevel.debug)) return;
 
+    // Sanitize headers and body to remove sensitive information
+    final sanitizedHeaders = LogSanitizer.sanitizeHeaders(headers);
+    final sanitizedBody = _sanitizeBody(body);
+
     logStructured(
       LogLevel.debug,
       '🌐 $method $url',
       context: {
         'method': method,
         'url': url,
-        'headers': headers,
-        'body': body,
+        'headers': sanitizedHeaders,
+        'body': sanitizedBody,
       },
     );
   }
@@ -246,6 +253,10 @@ class AppLogger {
   }) {
     if (!_config.isLogEnabled(LogLevel.debug)) return;
 
+    // Sanitize headers and body to remove sensitive information
+    final sanitizedHeaders = LogSanitizer.sanitizeHeaders(headers);
+    final sanitizedBody = _sanitizeBody(body);
+
     logStructured(
       LogLevel.debug,
       '🌐 $method $url - $statusCode${duration != null ? ' (${duration}ms)' : ''}',
@@ -253,8 +264,8 @@ class AppLogger {
         'method': method,
         'url': url,
         'statusCode': statusCode,
-        'headers': headers,
-        'body': body,
+        'headers': sanitizedHeaders,
+        'body': sanitizedBody,
         'duration': duration,
       },
     );
@@ -264,15 +275,48 @@ class AppLogger {
   void logUserAction(String action, {Map<String, dynamic>? properties}) {
     if (!_config.isLogEnabled(LogLevel.info)) return;
 
+    // Sanitize properties to remove sensitive information
+    final sanitizedProperties = LogSanitizer.sanitizeMap(properties);
+
     logStructured(
       LogLevel.info,
       '👤 User action: $action',
-      context: properties,
+      context: sanitizedProperties,
     );
   }
 
   /// Clear all performance timers
   void clearPerformanceTimers() {
     _performanceTimers.clear();
+  }
+
+  /// Helper method to sanitize body data based on its type
+  dynamic _sanitizeBody(dynamic body) {
+    if (body == null) {
+      return null;
+    }
+
+    if (body is Map<String, dynamic>) {
+      return LogSanitizer.sanitizeMap(body);
+    } else if (body is String) {
+      // Try to parse as JSON first, otherwise sanitize as string
+      try {
+        return LogSanitizer.sanitizeJsonString(body);
+      } catch (e) {
+        return LogSanitizer.sanitizeString(body);
+      }
+    } else if (body is List) {
+      return body.map((item) {
+        if (item is Map<String, dynamic>) {
+          return LogSanitizer.sanitizeMap(item);
+        } else if (item is String) {
+          return LogSanitizer.sanitizeString(item);
+        } else {
+          return item;
+        }
+      }).toList();
+    }
+
+    return body;
   }
 }
