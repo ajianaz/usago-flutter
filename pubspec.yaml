@@ -40,6 +40,9 @@ dependencies:
   # Utilities
   logger: ^2.0.0
   fpdart: ^1.2.0
+  crypto: ^3.0.7
+  device_info_plus: ^12.2.0
+  package_info_plus: ^9.0.0
 
   # Internationalization
   slang: ^4.10.0

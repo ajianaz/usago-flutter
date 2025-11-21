@@ -4,6 +4,7 @@ import '../network/dio_client.dart';
 import '../utils/logger.dart';
 import '../errors/error_handler.dart';
 import '../services/locale_service.dart';
+import '../services/device_info_service.dart';
 import '../config/logging_config.dart';
 import '../../features/auth/di/auth_injection.dart';
 import '../../features/home/di/home_injection.dart';
@@ -53,6 +54,9 @@ Future<void> _setupCoreServices() async {
     prefs: sharedPreferences,
     logger: getIt(),
   ));
+
+  // Register Device Info Service
+  getIt.registerSingleton(DeviceInfoService());
 }
 
 /// Reset all dependencies

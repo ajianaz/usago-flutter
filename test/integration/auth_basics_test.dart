@@ -8,7 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 
 import 'package:usago/core/constants/app_constants.dart';
+import 'package:usago/core/config/logging_config.dart';
 import 'package:usago/core/network/dio_client.dart';
+import 'package:usago/core/services/device_info_service.dart';
 import 'package:usago/features/auth/data/datasources/auth_local_datasource_impl.dart';
 import 'package:usago/features/auth/data/datasources/auth_remote_datasource_impl.dart';
 import 'package:usago/features/auth/data/models/user_model.dart';
@@ -34,12 +36,19 @@ void main() {
     late AuthRemoteDatasourceImpl remoteDatasource;
     late SharedPreferences prefs;
     late Dio mockDio;
+    late DeviceInfoService deviceInfoService;
+
+    setUpAll(() async {
+      // Initialize dotenv for all tests
+      await LoggingConfig.initialize();
+    });
 
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       prefs = await SharedPreferences.getInstance();
       mockDio = MockDio();
       dioClient = DioClient();
+      deviceInfoService = DeviceInfoService();
 
       localDatasource = AuthLocalDatasourceImpl(
         prefs: prefs,
@@ -50,6 +59,7 @@ void main() {
         dioClient: dioClient,
         logger: AppLogger(),
         localDatasource: localDatasource,
+        deviceInfoService: deviceInfoService,
       );
     });
 
@@ -71,10 +81,10 @@ void main() {
         loginResponse.headers.set('set-auth-token', testToken);
 
         when(() => mockDio.post(
-          AppConstants.signInEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => loginResponse);
+              AppConstants.signInEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => loginResponse);
 
         // Act
         final user = await remoteDatasource.login(
@@ -97,10 +107,10 @@ void main() {
         );
 
         when(() => mockDio.post(
-          AppConstants.signInEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenThrow(DioException(
+              AppConstants.signInEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenThrow(DioException(
           requestOptions: RequestOptions(path: AppConstants.signInEndpoint),
           response: errorResponse,
         ));
@@ -117,7 +127,8 @@ void main() {
     });
 
     group('Token Storage', () {
-      testWidgets('should save and retrieve token', (WidgetTester tester) async {
+      testWidgets('should save and retrieve token',
+          (WidgetTester tester) async {
         // Arrange
         const testToken = 'Bearer storage_test_token';
 
@@ -142,10 +153,10 @@ void main() {
         );
 
         when(() => mockDio.post(
-          AppConstants.signOutEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => logoutResponse);
+              AppConstants.signOutEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => logoutResponse);
 
         // Act
         await remoteDatasource.logout();
@@ -157,7 +168,8 @@ void main() {
     });
 
     group('User Data Storage', () {
-      testWidgets('should save and retrieve user data', (WidgetTester tester) async {
+      testWidgets('should save and retrieve user data',
+          (WidgetTester tester) async {
         // Arrange
         final testUser = AuthFixtures.testUserModel;
 
@@ -191,16 +203,18 @@ void main() {
         expect(AppConstants.signInEndpoint, equals('/api/auth/sign-in/email'));
         expect(AppConstants.signUpEndpoint, equals('/api/auth/sign-up/email'));
         expect(AppConstants.signOutEndpoint, equals('/api/auth/sign-out'));
-        expect(AppConstants.refreshTokenEndpoint, equals('/api/auth/refresh-token'));
+        expect(AppConstants.refreshTokenEndpoint,
+            equals('/api/auth/refresh-token'));
       });
 
-      testWidgets('should handle endpoint not found', (WidgetTester tester) async {
+      testWidgets('should handle endpoint not found',
+          (WidgetTester tester) async {
         // Arrange
         when(() => mockDio.post(
-          any(),
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenThrow(DioException(
+              any(),
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenThrow(DioException(
           requestOptions: RequestOptions(path: '/invalid-endpoint'),
           response: Response(
             statusCode: 404,
@@ -223,10 +237,10 @@ void main() {
       testWidgets('should handle network timeout', (WidgetTester tester) async {
         // Arrange
         when(() => mockDio.post(
-          any(),
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenThrow(DioException(
+              any(),
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenThrow(DioException(
           requestOptions: RequestOptions(path: AppConstants.signInEndpoint),
           type: DioExceptionType.receiveTimeout,
         ));
@@ -244,10 +258,10 @@ void main() {
       testWidgets('should handle server error', (WidgetTester tester) async {
         // Arrange
         when(() => mockDio.post(
-          any(),
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenThrow(DioException(
+              any(),
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenThrow(DioException(
           requestOptions: RequestOptions(path: AppConstants.signInEndpoint),
           response: Response(
             statusCode: 500,
@@ -267,7 +281,8 @@ void main() {
     });
 
     group('Complete Auth Flow', () {
-      testWidgets('should handle complete auth cycle', (WidgetTester tester) async {
+      testWidgets('should handle complete auth cycle',
+          (WidgetTester tester) async {
         // Arrange
         const testToken = 'Bearer cycle_test_token';
         final testUser = AuthFixtures.testUserModel;
@@ -286,16 +301,16 @@ void main() {
         );
 
         when(() => mockDio.post(
-          AppConstants.signInEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => loginResponse);
+              AppConstants.signInEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => loginResponse);
 
         when(() => mockDio.post(
-          AppConstants.signOutEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => logoutResponse);
+              AppConstants.signOutEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => logoutResponse);
 
         // Act - Login
         final user = await remoteDatasource.login(

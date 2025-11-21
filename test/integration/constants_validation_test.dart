@@ -8,7 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 
 import 'package:usago/core/constants/app_constants.dart';
+import 'package:usago/core/config/logging_config.dart';
 import 'package:usago/core/network/dio_client.dart';
+import 'package:usago/core/services/device_info_service.dart';
 import 'package:usago/features/auth/data/datasources/auth_local_datasource_impl.dart';
 import 'package:usago/features/auth/data/datasources/auth_remote_datasource_impl.dart';
 import 'package:usago/core/utils/logger.dart';
@@ -35,6 +37,12 @@ void main() {
     late AuthRemoteDatasourceImpl remoteDatasource;
     late SharedPreferences prefs;
     late Dio mockDio;
+    late DeviceInfoService deviceInfoService;
+
+    setUpAll(() async {
+      // Initialize dotenv for all tests
+      await LoggingConfig.initialize();
+    });
 
     setUp(() async {
       // Setup real SharedPreferences for testing
@@ -44,6 +52,7 @@ void main() {
       // Setup mock Dio
       mockDio = MockDio();
       dioClient = DioClient();
+      deviceInfoService = DeviceInfoService();
 
       // Setup datasources
       localDatasource = AuthLocalDatasourceImpl(
@@ -55,6 +64,7 @@ void main() {
         dioClient: dioClient,
         logger: AppLogger(),
         localDatasource: localDatasource,
+        deviceInfoService: deviceInfoService,
       );
     });
 
@@ -63,7 +73,8 @@ void main() {
     });
 
     group('API Endpoint Constants Validation', () {
-      testWidgets('should use correct sign-in endpoint constant', (WidgetTester tester) async {
+      testWidgets('should use correct sign-in endpoint constant',
+          (WidgetTester tester) async {
         // Arrange
         final testUser = AuthFixtures.testUserModel;
         final loginResponse = Response(
@@ -73,10 +84,10 @@ void main() {
         );
 
         when(() => mockDio.post(
-          any(),
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => loginResponse);
+              any(),
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => loginResponse);
 
         // Act
         await remoteDatasource.login(
@@ -86,16 +97,17 @@ void main() {
 
         // Assert - Verify the correct endpoint constant is used
         verify(() => mockDio.post(
-          AppConstants.signInEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).called(1);
+              AppConstants.signInEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).called(1);
 
         // Verify endpoint matches expected value
         expect(AppConstants.signInEndpoint, equals('/api/auth/sign-in/email'));
       });
 
-      testWidgets('should use correct sign-up endpoint constant', (WidgetTester tester) async {
+      testWidgets('should use correct sign-up endpoint constant',
+          (WidgetTester tester) async {
         // Arrange
         final testUser = AuthFixtures.testUserModel;
         final registerResponse = Response(
@@ -105,10 +117,10 @@ void main() {
         );
 
         when(() => mockDio.post(
-          any(),
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => registerResponse);
+              any(),
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => registerResponse);
 
         // Act
         await remoteDatasource.register(
@@ -119,16 +131,17 @@ void main() {
 
         // Assert - Verify the correct endpoint constant is used
         verify(() => mockDio.post(
-          AppConstants.signUpEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).called(1);
+              AppConstants.signUpEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).called(1);
 
         // Verify endpoint matches expected value
         expect(AppConstants.signUpEndpoint, equals('/api/auth/sign-up/email'));
       });
 
-      testWidgets('should use correct sign-out endpoint constant', (WidgetTester tester) async {
+      testWidgets('should use correct sign-out endpoint constant',
+          (WidgetTester tester) async {
         // Arrange
         final logoutResponse = Response(
           data: {'message': 'Logout successful'},
@@ -137,95 +150,103 @@ void main() {
         );
 
         when(() => mockDio.post(
-          any(),
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => logoutResponse);
+              any(),
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => logoutResponse);
 
         // Act
         await remoteDatasource.logout();
 
         // Assert - Verify the correct endpoint constant is used
         verify(() => mockDio.post(
-          AppConstants.signOutEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).called(1);
+              AppConstants.signOutEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).called(1);
 
         // Verify endpoint matches expected value
         expect(AppConstants.signOutEndpoint, equals('/api/auth/sign-out'));
       });
 
-      testWidgets('should use correct refresh token endpoint constant', (WidgetTester tester) async {
+      testWidgets('should use correct refresh token endpoint constant',
+          (WidgetTester tester) async {
         // Arrange
         final testUser = AuthFixtures.testUserModel;
         final refreshResponse = Response(
           data: {'user': testUser.toJson()},
           statusCode: 200,
-          requestOptions: RequestOptions(path: AppConstants.refreshTokenEndpoint),
+          requestOptions:
+              RequestOptions(path: AppConstants.refreshTokenEndpoint),
         );
 
         when(() => mockDio.post(
-          any(),
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => refreshResponse);
+              any(),
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => refreshResponse);
 
         // Act
         await remoteDatasource.refreshToken();
 
         // Assert - Verify the correct endpoint constant is used
         verify(() => mockDio.post(
-          AppConstants.refreshTokenEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).called(1);
+              AppConstants.refreshTokenEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).called(1);
 
         // Verify endpoint matches expected value
-        expect(AppConstants.refreshTokenEndpoint, equals('/api/auth/refresh-token'));
+        expect(AppConstants.refreshTokenEndpoint,
+            equals('/api/auth/refresh-token'));
       });
 
-      testWidgets('should use correct forgot password endpoint constant', (WidgetTester tester) async {
+      testWidgets('should use correct forgot password endpoint constant',
+          (WidgetTester tester) async {
         // Arrange
         final forgotResponse = Response(
           data: {'message': 'Password reset email sent'},
           statusCode: 200,
-          requestOptions: RequestOptions(path: AppConstants.forgotPasswordEndpoint),
+          requestOptions:
+              RequestOptions(path: AppConstants.forgotPasswordEndpoint),
         );
 
         when(() => mockDio.post(
-          any(),
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => forgotResponse);
+              any(),
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => forgotResponse);
 
         // Act
         await remoteDatasource.forgotPassword(AuthFixtures.validEmail);
 
         // Assert - Verify the correct endpoint constant is used
         verify(() => mockDio.post(
-          AppConstants.forgotPasswordEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).called(1);
+              AppConstants.forgotPasswordEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).called(1);
 
         // Verify endpoint matches expected value
-        expect(AppConstants.forgotPasswordEndpoint, equals('/api/auth/forgot-password'));
+        expect(AppConstants.forgotPasswordEndpoint,
+            equals('/api/auth/forgot-password'));
       });
 
-      testWidgets('should use correct reset password endpoint constant', (WidgetTester tester) async {
+      testWidgets('should use correct reset password endpoint constant',
+          (WidgetTester tester) async {
         // Arrange
         final resetResponse = Response(
           data: {'message': 'Password reset successful'},
           statusCode: 200,
-          requestOptions: RequestOptions(path: AppConstants.resetPasswordEndpoint),
+          requestOptions:
+              RequestOptions(path: AppConstants.resetPasswordEndpoint),
         );
 
         when(() => mockDio.post(
-          any(),
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => resetResponse);
+              any(),
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => resetResponse);
 
         // Act
         await remoteDatasource.resetPassword(
@@ -235,18 +256,20 @@ void main() {
 
         // Assert - Verify the correct endpoint constant is used
         verify(() => mockDio.post(
-          AppConstants.resetPasswordEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).called(1);
+              AppConstants.resetPasswordEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).called(1);
 
         // Verify endpoint matches expected value
-        expect(AppConstants.resetPasswordEndpoint, equals('/api/auth/reset-password'));
+        expect(AppConstants.resetPasswordEndpoint,
+            equals('/api/auth/reset-password'));
       });
     });
 
     group('Storage Key Constants Validation', () {
-      testWidgets('should use correct bearer token key constant', (WidgetTester tester) async {
+      testWidgets('should use correct bearer token key constant',
+          (WidgetTester tester) async {
         // Arrange
         const testToken = 'Bearer test_token_123';
 
@@ -261,7 +284,8 @@ void main() {
         expect(AppConstants.bearerTokenKey, equals('bearer_token'));
       });
 
-      testWidgets('should use correct user data key constant', (WidgetTester tester) async {
+      testWidgets('should use correct user data key constant',
+          (WidgetTester tester) async {
         // Arrange
         final testUser = AuthFixtures.testUserModel;
 
@@ -276,7 +300,8 @@ void main() {
         expect(AppConstants.userDataKey, equals('user_data'));
       });
 
-      testWidgets('should retrieve token using correct constant key', (WidgetTester tester) async {
+      testWidgets('should retrieve token using correct constant key',
+          (WidgetTester tester) async {
         // Arrange
         const testToken = 'Bearer retrieval_test_token';
         await prefs.setString(AppConstants.bearerTokenKey, testToken);
@@ -288,7 +313,8 @@ void main() {
         expect(retrievedToken, equals(testToken));
       });
 
-      testWidgets('should clear token using correct constant key', (WidgetTester tester) async {
+      testWidgets('should clear token using correct constant key',
+          (WidgetTester tester) async {
         // Arrange
         const testToken = 'Bearer clear_test_token';
         await prefs.setString(AppConstants.bearerTokenKey, testToken);
@@ -305,7 +331,8 @@ void main() {
     });
 
     group('Token Format Constants Validation', () {
-      testWidgets('should validate Bearer token format constant', (WidgetTester tester) async {
+      testWidgets('should validate Bearer token format constant',
+          (WidgetTester tester) async {
         // Arrange & Act - Test various token formats
         const validTokens = [
           'Bearer abc123',
@@ -323,7 +350,8 @@ void main() {
         }
       });
 
-      testWidgets('should handle tokens without Bearer prefix', (WidgetTester tester) async {
+      testWidgets('should handle tokens without Bearer prefix',
+          (WidgetTester tester) async {
         // Arrange
         const tokenWithoutPrefix = 'abc123token';
 
@@ -338,7 +366,8 @@ void main() {
     });
 
     group('Timeout Constants Validation', () {
-      testWidgets('should use correct API timeout constant', (WidgetTester tester) async {
+      testWidgets('should use correct API timeout constant',
+          (WidgetTester tester) async {
         // Arrange & Act - Create DioClient and check timeout
         final client = DioClient();
 
@@ -350,22 +379,27 @@ void main() {
         expect(AppConstants.apiTimeout.inSeconds, equals(30));
       });
 
-      testWidgets('should use correct default animation duration constant', (WidgetTester tester) async {
+      testWidgets('should use correct default animation duration constant',
+          (WidgetTester tester) async {
         // Assert - Verify animation duration constant
-        expect(AppConstants.defaultAnimationDuration, equals(const Duration(milliseconds: 300)));
-        expect(AppConstants.defaultAnimationDuration.inMilliseconds, equals(300));
+        expect(AppConstants.defaultAnimationDuration,
+            equals(const Duration(milliseconds: 300)));
+        expect(
+            AppConstants.defaultAnimationDuration.inMilliseconds, equals(300));
       });
     });
 
     group('Validation Constants Validation', () {
-      testWidgets('should use correct password length constants', (WidgetTester tester) async {
+      testWidgets('should use correct password length constants',
+          (WidgetTester tester) async {
         // Assert - Verify password validation constants
         expect(AppConstants.minPasswordLength, equals(6));
         expect(AppConstants.maxPasswordLength, equals(50));
         expect(AppConstants.maxUsernameLength, equals(30));
       });
 
-      testWidgets('should enforce minimum password length constant', (WidgetTester tester) async {
+      testWidgets('should enforce minimum password length constant',
+          (WidgetTester tester) async {
         // Arrange
         const shortPassword = '123'; // Less than minPasswordLength (6)
 
@@ -374,17 +408,20 @@ void main() {
         expect(shortPassword.length, lessThan(AppConstants.minPasswordLength));
       });
 
-      testWidgets('should enforce maximum password length constant', (WidgetTester tester) async {
+      testWidgets('should enforce maximum password length constant',
+          (WidgetTester tester) async {
         // Arrange
         final longPassword = 'a' * 51; // More than maxPasswordLength (50)
 
         // Act & Assert - Verify constant enforcement
-        expect(longPassword.length, greaterThan(AppConstants.maxPasswordLength));
+        expect(
+            longPassword.length, greaterThan(AppConstants.maxPasswordLength));
       });
     });
 
     group('UI Constants Validation', () {
-      testWidgets('should use correct UI spacing constants', (WidgetTester tester) async {
+      testWidgets('should use correct UI spacing constants',
+          (WidgetTester tester) async {
         // Assert - Verify UI constants
         expect(AppConstants.defaultPadding, equals(16.0));
         expect(AppConstants.defaultBorderRadius, equals(8.0));
@@ -392,7 +429,8 @@ void main() {
     });
 
     group('Constants Consistency Check', () {
-      testWidgets('should have consistent endpoint naming pattern', (WidgetTester tester) async {
+      testWidgets('should have consistent endpoint naming pattern',
+          (WidgetTester tester) async {
         // Assert - Verify all auth endpoints follow consistent pattern
         final authEndpoints = [
           AppConstants.signInEndpoint,
@@ -408,7 +446,8 @@ void main() {
         }
       });
 
-      testWidgets('should have consistent storage key naming', (WidgetTester tester) async {
+      testWidgets('should have consistent storage key naming',
+          (WidgetTester tester) async {
         // Assert - Verify storage keys follow consistent pattern
         final storageKeys = [
           AppConstants.bearerTokenKey,
@@ -422,7 +461,8 @@ void main() {
         }
       });
 
-      testWidgets('should have no hardcoded values in implementation', (WidgetTester tester) async {
+      testWidgets('should have no hardcoded values in implementation',
+          (WidgetTester tester) async {
         // This test ensures that constants are used instead of hardcoded values
         // We verify this by checking that the constants exist and have expected values
 
@@ -442,7 +482,8 @@ void main() {
     });
 
     group('Constants Integration with Real Components', () {
-      testWidgets('should integrate constants across auth flow', (WidgetTester tester) async {
+      testWidgets('should integrate constants across auth flow',
+          (WidgetTester tester) async {
         // Arrange
         const testToken = 'Bearer integration_test_token';
         final testUser = AuthFixtures.testUserModel;
@@ -461,16 +502,16 @@ void main() {
         );
 
         when(() => mockDio.post(
-          AppConstants.signInEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => loginResponse);
+              AppConstants.signInEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => loginResponse);
 
         when(() => mockDio.post(
-          AppConstants.signOutEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => logoutResponse);
+              AppConstants.signOutEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => logoutResponse);
 
         // Act - Complete auth flow
         await remoteDatasource.login(
@@ -488,16 +529,16 @@ void main() {
         expect(savedUser?.email, equals(testUser.email));
 
         verify(() => mockDio.post(
-          AppConstants.signInEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).called(1);
+              AppConstants.signInEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).called(1);
 
         verify(() => mockDio.post(
-          AppConstants.signOutEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).called(1);
+              AppConstants.signOutEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).called(1);
 
         // Verify final state
         final clearedToken = await localDatasource.getToken();

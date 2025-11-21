@@ -1,9 +1,9 @@
 class AuthEndpoints {
   // Authentication
-  static const String signIn = '/api/auth/sign-in/email';
-  static const String signUp = '/api/auth/sign-up/email';
+  static const String signIn = '/api/auth/login-with-refresh';
+  static const String signUp = '/api/auth/register-with-refresh';
   static const String signOut = '/api/auth/sign-out';
-  static const String refreshToken = '/api/auth/refresh';
+  static const String refreshToken = '/api/auth/refresh-token';
 
   // Email Verification
   static const String verifyEmail = '/api/auth/verify-email';
@@ -23,4 +23,10 @@ class AuthEndpoints {
   static const String getSession = '/api/auth/session';
   static const String validateSession = '/api/auth/validate';
   static const String switchSession = '/api/auth/switch';
+
+  // Token Management
+  static const String createRefreshToken = '/api/auth/create-refresh-token';
+  static const String revokeToken = '/api/auth/revoke-token';
+  static const String revokeAllTokens = '/api/auth/revoke-all-tokens';
+  static const String getRefreshTokens = '/api/auth/refresh-tokens';
 }

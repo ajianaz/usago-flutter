@@ -10,7 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 
 import 'package:usago/core/constants/app_constants.dart';
+import 'package:usago/core/config/logging_config.dart';
 import 'package:usago/core/network/dio_client.dart';
+import 'package:usago/core/services/device_info_service.dart';
 import 'package:usago/core/utils/logger.dart';
 import 'package:usago/features/auth/data/datasources/auth_local_datasource_impl.dart';
 import 'package:usago/features/auth/data/datasources/auth_remote_datasource_impl.dart';
@@ -40,6 +42,12 @@ void main() {
     late AuthRemoteDatasourceImpl remoteDatasource;
     late SharedPreferences prefs;
     late Dio mockDio;
+    late DeviceInfoService deviceInfoService;
+
+    setUpAll(() async {
+      // Initialize dotenv for all tests
+      await LoggingConfig.initialize();
+    });
 
     setUp(() async {
       // Setup real SharedPreferences for testing
@@ -49,6 +57,7 @@ void main() {
       // Setup mock Dio
       mockDio = MockDio();
       dioClient = DioClient();
+      deviceInfoService = DeviceInfoService();
 
       // Setup datasources
       localDatasource = AuthLocalDatasourceImpl(
@@ -60,6 +69,7 @@ void main() {
         dioClient: dioClient,
         logger: AppLogger(),
         localDatasource: localDatasource,
+        deviceInfoService: deviceInfoService,
       );
     });
 
@@ -68,7 +78,8 @@ void main() {
     });
 
     group('Complete Token Lifecycle', () {
-      testWidgets('should handle complete token lifecycle from login to logout', (WidgetTester tester) async {
+      testWidgets('should handle complete token lifecycle from login to logout',
+          (WidgetTester tester) async {
         // Arrange
         const testToken = 'Bearer test_token_123';
         final testUser = AuthFixtures.testUserModel;
@@ -89,16 +100,16 @@ void main() {
         );
 
         when(() => mockDio.post(
-          AppConstants.signInEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => loginResponse);
+              AppConstants.signInEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => loginResponse);
 
         when(() => mockDio.post(
-          AppConstants.signOutEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => logoutResponse);
+              AppConstants.signOutEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => logoutResponse);
 
         // Act - Login and extract token
         final user = await remoteDatasource.login(
@@ -120,19 +131,20 @@ void main() {
 
         // Verify API calls were made
         verify(() => mockDio.post(
-          AppConstants.signInEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).called(1);
+              AppConstants.signInEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).called(1);
 
         verify(() => mockDio.post(
-          AppConstants.signOutEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).called(1);
+              AppConstants.signOutEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).called(1);
       });
 
-      testWidgets('should handle token refresh and update storage', (WidgetTester tester) async {
+      testWidgets('should handle token refresh and update storage',
+          (WidgetTester tester) async {
         // Arrange
         const oldToken = 'Bearer old_token_123';
         const newToken = 'Bearer new_token_456';
@@ -145,15 +157,16 @@ void main() {
         final refreshResponse = Response(
           data: {'user': testUser.toJson()},
           statusCode: 200,
-          requestOptions: RequestOptions(path: AppConstants.refreshTokenEndpoint),
+          requestOptions:
+              RequestOptions(path: AppConstants.refreshTokenEndpoint),
         );
         refreshResponse.headers.set('set-auth-token', newToken);
 
         when(() => mockDio.post(
-          AppConstants.refreshTokenEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => refreshResponse);
+              AppConstants.refreshTokenEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => refreshResponse);
 
         // Act - Refresh token
         final user = await remoteDatasource.refreshToken();
@@ -165,15 +178,16 @@ void main() {
 
         // Verify API call was made
         verify(() => mockDio.post(
-          AppConstants.refreshTokenEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).called(1);
+              AppConstants.refreshTokenEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).called(1);
       });
     });
 
     group('Token Storage and Retrieval', () {
-      testWidgets('should save and retrieve Bearer token correctly', (WidgetTester tester) async {
+      testWidgets('should save and retrieve Bearer token correctly',
+          (WidgetTester tester) async {
         // Arrange
         const testToken = 'Bearer test_token_abc123';
 
@@ -189,7 +203,8 @@ void main() {
         expect(storedValue, equals(testToken));
       });
 
-      testWidgets('should handle token storage with empty token', (WidgetTester tester) async {
+      testWidgets('should handle token storage with empty token',
+          (WidgetTester tester) async {
         // Arrange
         const emptyToken = '';
 
@@ -201,7 +216,8 @@ void main() {
         expect(retrievedToken, equals(emptyToken));
       });
 
-      testWidgets('should handle token clearing correctly', (WidgetTester tester) async {
+      testWidgets('should handle token clearing correctly',
+          (WidgetTester tester) async {
         // Arrange
         const testToken = 'Bearer test_token_to_clear';
         await localDatasource.saveToken(testToken);
@@ -223,7 +239,8 @@ void main() {
     });
 
     group('Bearer Token Format Validation', () {
-      testWidgets('should validate Bearer token format in storage', (WidgetTester tester) async {
+      testWidgets('should validate Bearer token format in storage',
+          (WidgetTester tester) async {
         // Arrange
         const validTokens = [
           'Bearer abc123',
@@ -242,7 +259,8 @@ void main() {
         }
       });
 
-      testWidgets('should handle tokens without Bearer prefix', (WidgetTester tester) async {
+      testWidgets('should handle tokens without Bearer prefix',
+          (WidgetTester tester) async {
         // Arrange
         const tokenWithoutPrefix = 'abc123token';
 
@@ -257,7 +275,8 @@ void main() {
     });
 
     group('Token Lifecycle with User Data', () {
-      testWidgets('should save both token and user data during login', (WidgetTester tester) async {
+      testWidgets('should save both token and user data during login',
+          (WidgetTester tester) async {
         // Arrange
         const testToken = 'Bearer user_token_123';
         final testUser = AuthFixtures.testUserModel;
@@ -270,10 +289,10 @@ void main() {
         loginResponse.headers.set('set-auth-token', testToken);
 
         when(() => mockDio.post(
-          AppConstants.signInEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => loginResponse);
+              AppConstants.signInEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => loginResponse);
 
         // Act - Login
         final user = await remoteDatasource.login(
@@ -291,7 +310,8 @@ void main() {
         expect(user.email, equals(testUser.email));
       });
 
-      testWidgets('should clear both token and user data during logout', (WidgetTester tester) async {
+      testWidgets('should clear both token and user data during logout',
+          (WidgetTester tester) async {
         // Arrange
         const testToken = 'Bearer logout_token_123';
         final testUser = AuthFixtures.testUserModel;
@@ -312,10 +332,10 @@ void main() {
         );
 
         when(() => mockDio.post(
-          AppConstants.signOutEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenAnswer((_) async => logoutResponse);
+              AppConstants.signOutEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenAnswer((_) async => logoutResponse);
 
         // Act - Logout
         await remoteDatasource.logout();
@@ -330,7 +350,8 @@ void main() {
     });
 
     group('Error Handling in Token Lifecycle', () {
-      testWidgets('should handle login failure without token extraction', (WidgetTester tester) async {
+      testWidgets('should handle login failure without token extraction',
+          (WidgetTester tester) async {
         // Arrange
         final errorResponse = Response(
           data: {'message': 'Invalid credentials'},
@@ -339,10 +360,10 @@ void main() {
         );
 
         when(() => mockDio.post(
-          AppConstants.signInEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenThrow(DioException(
+              AppConstants.signInEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenThrow(DioException(
           requestOptions: RequestOptions(path: AppConstants.signInEndpoint),
           response: errorResponse,
         ));
@@ -361,7 +382,8 @@ void main() {
         expect(savedToken, isNull);
       });
 
-      testWidgets('should handle token refresh failure', (WidgetTester tester) async {
+      testWidgets('should handle token refresh failure',
+          (WidgetTester tester) async {
         // Arrange
         const oldToken = 'Bearer old_token_123';
         await localDatasource.saveToken(oldToken);
@@ -369,15 +391,17 @@ void main() {
         final errorResponse = Response(
           data: {'message': 'Invalid refresh token'},
           statusCode: 401,
-          requestOptions: RequestOptions(path: AppConstants.refreshTokenEndpoint),
+          requestOptions:
+              RequestOptions(path: AppConstants.refreshTokenEndpoint),
         );
 
         when(() => mockDio.post(
-          AppConstants.refreshTokenEndpoint,
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        )).thenThrow(DioException(
-          requestOptions: RequestOptions(path: AppConstants.refreshTokenEndpoint),
+              AppConstants.refreshTokenEndpoint,
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            )).thenThrow(DioException(
+          requestOptions:
+              RequestOptions(path: AppConstants.refreshTokenEndpoint),
           response: errorResponse,
         ));
 
@@ -394,27 +418,33 @@ void main() {
     });
 
     group('Token Lifecycle Edge Cases', () {
-      testWidgets('should handle multiple rapid token refreshes', (WidgetTester tester) async {
+      testWidgets('should handle multiple rapid token refreshes',
+          (WidgetTester tester) async {
         // Arrange
         const initialToken = 'Bearer initial_token';
         await localDatasource.saveToken(initialToken);
 
         final testUser = AuthFixtures.testUserModel;
-        final refreshTokens = ['Bearer token_1', 'Bearer token_2', 'Bearer token_3'];
+        final refreshTokens = [
+          'Bearer token_1',
+          'Bearer token_2',
+          'Bearer token_3'
+        ];
 
         for (int i = 0; i < refreshTokens.length; i++) {
           final refreshResponse = Response(
             data: {'user': testUser.toJson()},
             statusCode: 200,
-            requestOptions: RequestOptions(path: AppConstants.refreshTokenEndpoint),
+            requestOptions:
+                RequestOptions(path: AppConstants.refreshTokenEndpoint),
           );
           refreshResponse.headers.set('set-auth-token', refreshTokens[i]);
 
           when(() => mockDio.post(
-            AppConstants.refreshTokenEndpoint,
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => refreshResponse);
+                AppConstants.refreshTokenEndpoint,
+                data: any(named: 'data'),
+                options: any(named: 'options'),
+              )).thenAnswer((_) async => refreshResponse);
 
           // Act
           await remoteDatasource.refreshToken();
@@ -425,7 +455,8 @@ void main() {
         }
       });
 
-      testWidgets('should handle token storage corruption', (WidgetTester tester) async {
+      testWidgets('should handle token storage corruption',
+          (WidgetTester tester) async {
         // Arrange - Corrupt the storage directly
         await prefs.setString(AppConstants.bearerTokenKey, 'invalid_json');
 

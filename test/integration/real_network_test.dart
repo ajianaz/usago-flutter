@@ -10,7 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 
 import 'package:usago/core/constants/app_constants.dart';
+import 'package:usago/core/config/logging_config.dart';
 import 'package:usago/core/network/dio_client.dart';
+import 'package:usago/core/services/device_info_service.dart';
 import 'package:usago/features/auth/data/datasources/auth_local_datasource_impl.dart';
 import 'package:usago/features/auth/data/datasources/auth_remote_datasource_impl.dart';
 import 'package:usago/features/auth/data/models/user_model.dart';
@@ -38,8 +40,11 @@ void main() {
     late AuthRemoteDatasourceImpl remoteDatasource;
     late SharedPreferences prefs;
     late bool isNetworkAvailable;
+    late DeviceInfoService deviceInfoService;
 
     setUpAll(() async {
+      // Initialize dotenv for all tests
+      await LoggingConfig.initialize();
       // Check if test server is available
       isNetworkAvailable = await _checkServerAvailability();
     });
@@ -51,6 +56,7 @@ void main() {
 
       // Setup real DioClient for network tests
       dioClient = DioClient();
+      deviceInfoService = DeviceInfoService();
 
       // Setup datasources
       localDatasource = AuthLocalDatasourceImpl(
@@ -62,6 +68,7 @@ void main() {
         dioClient: dioClient,
         logger: AppLogger(),
         localDatasource: localDatasource,
+        deviceInfoService: deviceInfoService,
       );
     });
 
@@ -70,7 +77,8 @@ void main() {
     });
 
     group('Server Connectivity Tests', () {
-      testWidgets('should connect to Better Auth server', (WidgetTester tester) async {
+      testWidgets('should connect to Better Auth server',
+          (WidgetTester tester) async {
         // Skip if network not available
         if (!isNetworkAvailable) {
           return;
@@ -79,23 +87,27 @@ void main() {
         // Act - Try to connect to server
         try {
           final client = HttpClient();
-          final request = await client.getUrl(Uri.parse(AppConstants.apiBaseUrl));
+          final request =
+              await client.getUrl(Uri.parse(AppConstants.apiBaseUrl));
           final response = await request.close();
 
           // Assert - Server should respond
-          expect(response.statusCode, isIn([200, 404])); // 404 is OK, means server is up
+          expect(response.statusCode,
+              isIn([200, 404])); // 404 is OK, means server is up
         } catch (e) {
           fail('Server connection failed: $e');
         }
       });
 
-      testWidgets('should handle server unreachable gracefully', (WidgetTester tester) async {
+      testWidgets('should handle server unreachable gracefully',
+          (WidgetTester tester) async {
         // Arrange - Use invalid URL to simulate unreachable server
         final invalidDioClient = DioClient();
         final invalidRemoteDatasource = AuthRemoteDatasourceImpl(
           dioClient: invalidDioClient,
           logger: AppLogger(),
           localDatasource: localDatasource,
+          deviceInfoService: deviceInfoService,
         );
 
         // Act & Assert - Should handle unreachable server
@@ -110,7 +122,8 @@ void main() {
     });
 
     group('Real API Endpoint Tests', () {
-      testWidgets('should handle real login request', (WidgetTester tester) async {
+      testWidgets('should handle real login request',
+          (WidgetTester tester) async {
         // Skip if network not available
         if (!isNetworkAvailable) {
           return;
@@ -131,7 +144,8 @@ void main() {
         }
       });
 
-      testWidgets('should handle real registration request', (WidgetTester tester) async {
+      testWidgets('should handle real registration request',
+          (WidgetTester tester) async {
         // Skip if network not available
         if (!isNetworkAvailable) {
           return;
@@ -153,7 +167,8 @@ void main() {
         }
       });
 
-      testWidgets('should handle real logout request', (WidgetTester tester) async {
+      testWidgets('should handle real logout request',
+          (WidgetTester tester) async {
         // Skip if network not available
         if (!isNetworkAvailable) {
           return;
@@ -185,6 +200,7 @@ void main() {
           dioClient: DioClient(),
           logger: AppLogger(),
           localDatasource: localDatasource,
+          deviceInfoService: deviceInfoService,
         );
 
         // Act & Assert - Should handle timeout gracefully
@@ -197,7 +213,8 @@ void main() {
         );
       });
 
-      testWidgets('should handle invalid response format', (WidgetTester tester) async {
+      testWidgets('should handle invalid response format',
+          (WidgetTester tester) async {
         // Skip if network not available
         if (!isNetworkAvailable) {
           return;
@@ -217,7 +234,8 @@ void main() {
     });
 
     group('Concurrent Request Handling', () {
-      testWidgets('should handle multiple concurrent requests', (WidgetTester tester) async {
+      testWidgets('should handle multiple concurrent requests',
+          (WidgetTester tester) async {
         // Skip if network not available
         if (!isNetworkAvailable) {
           return;
@@ -245,7 +263,8 @@ void main() {
     });
 
     group('Token Flow with Real Network', () {
-      testWidgets('should handle complete token flow with real network', (WidgetTester tester) async {
+      testWidgets('should handle complete token flow with real network',
+          (WidgetTester tester) async {
         // Skip if network not available
         if (!isNetworkAvailable) {
           return;
@@ -272,14 +291,14 @@ void main() {
           // Verify cleanup
           final clearedToken = await localDatasource.getToken();
           expect(clearedToken, isNull);
-
         } catch (e) {
           // It's OK if flow fails with proper error
           expect(e, isA<Exception>());
         }
       });
 
-      testWidgets('should handle token refresh with real network', (WidgetTester tester) async {
+      testWidgets('should handle token refresh with real network',
+          (WidgetTester tester) async {
         // Skip if network not available
         if (!isNetworkAvailable) {
           return;
@@ -296,7 +315,6 @@ void main() {
           final newToken = await localDatasource.getToken();
           expect(newToken, isNotNull);
           expect(newToken, isNot(equals('Bearer initial_token')));
-
         } catch (e) {
           // It's OK if refresh fails with proper error
           expect(e, isA<Exception>());
@@ -305,7 +323,8 @@ void main() {
     });
 
     group('Network Performance Tests', () {
-      testWidgets('should complete requests within reasonable time', (WidgetTester tester) async {
+      testWidgets('should complete requests within reasonable time',
+          (WidgetTester tester) async {
         // Skip if network not available
         if (!isNetworkAvailable) {
           return;
@@ -326,12 +345,14 @@ void main() {
         stopwatch.stop();
 
         // Assert - Request should complete within reasonable time
-        expect(stopwatch.elapsedMilliseconds, lessThan(10000)); // 10 seconds max
+        expect(
+            stopwatch.elapsedMilliseconds, lessThan(10000)); // 10 seconds max
       });
     });
 
     group('Error Recovery Tests', () {
-      testWidgets('should recover from network errors', (WidgetTester tester) async {
+      testWidgets('should recover from network errors',
+          (WidgetTester tester) async {
         // Skip if network not available
         if (!isNetworkAvailable) {
           return;

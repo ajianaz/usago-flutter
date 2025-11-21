@@ -42,6 +42,7 @@ void setupAuthDependencies(GetIt getIt) {
       dioClient: getIt(),
       logger: logger,
       localDatasource: getIt(),
+      deviceInfoService: getIt(),
     ),
   );
 

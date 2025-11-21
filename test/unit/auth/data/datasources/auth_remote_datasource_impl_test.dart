@@ -4,6 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usago/core/constants/app_constants.dart';
 import 'package:usago/core/network/dio_client.dart';
+import 'package:usago/core/services/device_info_service.dart';
 import 'package:usago/core/utils/logger.dart';
 import 'package:usago/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:usago/features/auth/data/datasources/auth_local_datasource_impl.dart';
@@ -21,6 +22,7 @@ void main() {
     late AuthLocalDatasource localDatasource;
     late AppLogger logger;
     late SharedPreferences prefs;
+    late DeviceInfoService deviceInfoService;
 
     setUp(() async {
       TestHelpers.setUpMocktailFallbacks();
@@ -30,13 +32,16 @@ void main() {
 
       // Use real components instead of mocks
       dioClient = DioClient(logger: AppLogger());
-      localDatasource = AuthLocalDatasourceImpl(prefs: prefs, logger: AppLogger());
+      localDatasource =
+          AuthLocalDatasourceImpl(prefs: prefs, logger: AppLogger());
       logger = AppLogger();
+      deviceInfoService = DeviceInfoService();
 
       datasource = AuthRemoteDatasourceImpl(
         dioClient: dioClient,
         logger: logger,
         localDatasource: localDatasource,
+        deviceInfoService: deviceInfoService,
       );
     });
 
@@ -79,7 +84,8 @@ void main() {
       test('should validate register parameters and structure', () async {
         // Test parameter validation
         expect(
-          () => datasource.register(email: '', password: 'password', name: 'name'),
+          () => datasource.register(
+              email: '', password: 'password', name: 'name'),
           throwsA(isA<Exception>()),
         );
 
@@ -89,7 +95,8 @@ void main() {
         );
 
         expect(
-          () => datasource.register(email: 'email', password: 'password', name: ''),
+          () => datasource.register(
+              email: 'email', password: 'password', name: ''),
           throwsA(isA<Exception>()),
         );
 
@@ -128,7 +135,8 @@ void main() {
         );
 
         // Test that the method exists and has correct signature
-        expect(() => datasource.forgotPassword(AuthFixtures.testUserEmail), returnsNormally);
+        expect(() => datasource.forgotPassword(AuthFixtures.testUserEmail),
+            returnsNormally);
       });
     });
 
@@ -160,12 +168,14 @@ void main() {
       test('should validate changePassword method structure', () async {
         // Test parameter validation
         expect(
-          () => datasource.changePassword(currentPassword: '', newPassword: 'password'),
+          () => datasource.changePassword(
+              currentPassword: '', newPassword: 'password'),
           throwsA(isA<Exception>()),
         );
 
         expect(
-          () => datasource.changePassword(currentPassword: 'password', newPassword: ''),
+          () => datasource.changePassword(
+              currentPassword: 'password', newPassword: ''),
           throwsA(isA<Exception>()),
         );
 
@@ -216,7 +226,8 @@ void main() {
     });
 
     group('resendVerificationEmail', () {
-      test('should validate resendVerificationEmail method structure', () async {
+      test('should validate resendVerificationEmail method structure',
+          () async {
         // Test that the method exists and has correct signature
         expect(() => datasource.resendVerificationEmail(), returnsNormally);
       });
