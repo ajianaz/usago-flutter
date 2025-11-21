@@ -31,8 +31,16 @@ dependencies:
 
   # Storage
   shared_preferences: ^2.0.0
+  flutter_secure_storage: ^9.2.4
+  flutter_secure_storage_web: ^1.2.1
+  flutter_secure_storage_windows: ^3.1.2
+  flutter_secure_storage_linux: ^1.2.3
+  flutter_secure_storage_macos: ^3.1.3
   hive: ^2.2.0
   hive_flutter: ^1.1.0
+
+  # Platform detection
+  # foundation is included in Flutter SDK
 
   # Environment Variables
   flutter_dotenv: ^6.0.0
@@ -112,3 +120,4 @@ assets:
 #
 # For details regarding fonts from package dependencies,
 # see https://flutter.dev/to/font-from-package
+
