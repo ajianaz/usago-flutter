@@ -1,28 +1,30 @@
 import 'dart:convert';
-import 'dart:io' show Platform;
 import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io' show Platform;
 
 /// Service untuk mendapatkan informasi device dan generate fingerprint
 ///
 /// Service ini menyediakan fungsi untuk:
 /// - Mendapatkan informasi device (ID, name, type, platform, app version)
 /// - Generate device fingerprint untuk validasi
-/// - Support untuk Android dan iOS
+/// - Support untuk Android, iOS, Web, Desktop (Windows, macOS, Linux)
 class DeviceInfoService {
   static final DeviceInfoPlugin _deviceInfoPlugin = DeviceInfoPlugin();
+  static const String _webDeviceIdKey = 'web_device_id';
 
   /// Mendapatkan informasi device lengkap
   ///
   /// Returns [Map<String, dynamic>] dengan informasi:
   /// - deviceId: Unique identifier device
   /// - deviceName: Nama device (manufacturer + model)
-  /// - deviceType: Tipe device (MOBILE)
-  /// - platform: Platform dan versi (Android/iOS)
+  /// - deviceType: Tipe device (MOBILE, WEB, DESKTOP)
+  /// - platform: Platform dan versi (Android/iOS/Web Browser/Windows/macOS/Linux)
   /// - appVersion: Versi aplikasi
   ///
-  /// Throws [UnsupportedError] jika platform tidak didukung
   /// Throws [Exception] jika terjadi error saat mengambil informasi
   Future<Map<String, dynamic>> getDeviceInfo() async {
     try {
@@ -31,10 +33,13 @@ class DeviceInfoService {
 
       // Tentukan device type berdasarkan platform
       String deviceType = 'MOBILE';
-      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-        deviceType = 'DESKTOP';
-      } else if (deviceInfo['platform']?.contains('Web') == true) {
+      if (kIsWeb) {
         deviceType = 'WEB';
+      } else if (!kIsWeb) {
+        // Only check Platform on non-web platforms
+        if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+          deviceType = 'DESKTOP';
+        }
       }
 
       return {
@@ -51,7 +56,8 @@ class DeviceInfoService {
 
   /// Generate device fingerprint dari informasi device
   ///
-  /// Menggunakan SHA256 hash dari deviceId dan platform
+  /// Menggunakan SHA256 hash dari deviceId, platform, dan additional info
+  /// untuk match dengan server-side generation
   ///
   /// [deviceInfo] Map yang berisi informasi device
   /// Returns [String] fingerprint dalam bentuk hash
@@ -64,12 +70,37 @@ class DeviceInfoService {
         throw Exception('Device ID and Platform cannot be null');
       }
 
-      final data = '${deviceId}_$platform';
-      final bytes = utf8.encode(data);
+      // Match server implementation exactly: "${deviceId}_${platform}" -> SHA256
+      // Server uses: const data = `${deviceInfo.deviceId}_${deviceInfo.platform || 'unknown'}`;
+      final fingerprintData = '${deviceId}_${platform}';
+      final bytes = utf8.encode(fingerprintData);
       final digest = sha256.convert(bytes);
       return digest.toString();
     } catch (e) {
       throw Exception('Failed to generate device fingerprint: $e');
+    }
+  }
+
+  /// Generate device ID yang konsisten dengan server
+  ///
+  /// Menggunakan format yang sama dengan server untuk memastikan compatibility
+  /// Returns [String] device ID dalam format yang diharapkan server
+  String generateConsistentDeviceId(Map<String, dynamic> deviceInfo) {
+    try {
+      final deviceId = deviceInfo['deviceId'];
+      final platform = deviceInfo['platform'];
+
+      if (deviceId == null || platform == null) {
+        throw Exception('Device ID and Platform cannot be null');
+      }
+
+      // Generate consistent device ID (32 characters like server)
+      final deviceData = '${deviceId}_$platform';
+      final bytes = utf8.encode(deviceData);
+      final digest = sha256.convert(bytes);
+      return digest.toString().substring(0, 32);
+    } catch (e) {
+      throw Exception('Failed to generate consistent device ID: $e');
     }
   }
 
@@ -80,9 +111,15 @@ class DeviceInfoService {
   /// - name: Nama device
   /// - platform: Platform dan versi
   ///
-  /// Throws [UnsupportedError] jika platform tidak didukung
+  /// Throws [Exception] jika terjadi error
   Future<Map<String, String>> _getDeviceInfo() async {
     try {
+      // Check for web first, before any Platform checks
+      if (kIsWeb) {
+        return await _getWebDeviceInfo();
+      }
+
+      // For non-web platforms, use Platform checks
       if (Platform.isAndroid) {
         final androidInfo = await _deviceInfoPlugin.androidInfo;
         return {
@@ -121,8 +158,8 @@ class DeviceInfoService {
               'macOS ${macOsInfo.majorVersion}.${macOsInfo.minorVersion}',
         };
       } else {
-        // Fallback untuk web atau platform lainnya
-        return _getWebDeviceInfo();
+        // Fallback
+        throw UnsupportedError('Unsupported platform');
       }
     } catch (e) {
       throw Exception('Failed to get platform device info: $e');
@@ -132,41 +169,59 @@ class DeviceInfoService {
   /// Mendapatkan informasi device untuk web
   ///
   /// Returns [Map<String, String>] dengan informasi device web
-  Map<String, String> _getWebDeviceInfo() {
+  /// Menggunakan webBrowserInfo dari device_info_plus dan persistent device ID
+  Future<Map<String, String>> _getWebDeviceInfo() async {
     try {
-      // Untuk web, kita menggunakan user agent dan generate ID
-      final userAgent = _getUserAgent();
-      final platform = _getWebPlatform(userAgent);
+      final webInfo = await _deviceInfoPlugin.webBrowserInfo;
+
+      // Get or create persistent device ID for web
+      final deviceId = await _getOrCreateWebDeviceId();
+
+      // Extract browser information
+      final browserName = webInfo.browserName.name;
+      final userAgent = webInfo.userAgent ?? 'Unknown';
+
+      // Determine platform from user agent
+      String platform = 'Web';
+      if (userAgent.toLowerCase().contains('chrome')) {
+        platform = 'Chrome';
+      } else if (userAgent.toLowerCase().contains('firefox')) {
+        platform = 'Firefox';
+      } else if (userAgent.toLowerCase().contains('safari')) {
+        platform = 'Safari';
+      } else if (userAgent.toLowerCase().contains('edge')) {
+        platform = 'Edge';
+      }
 
       return {
-        'id': _generateUUID(),
-        'name': 'Web Browser',
-        'platform': platform,
+        'id': deviceId,
+        'name': '$platform Browser',
+        'platform': 'Web $browserName',
       };
     } catch (e) {
       throw Exception('Failed to get web device info: $e');
     }
   }
 
-  /// Mendapatkan user agent untuk web
-  String _getUserAgent() {
-    // Untuk sekarang, kita gunakan fallback sederhana
-    // Di implementasi production, bisa ditambahkan web-specific logic
-    return 'Web Browser';
-  }
+  /// Get or create persistent device ID for web platform
+  /// Menggunakan SharedPreferences untuk menyimpan device ID yang persistent
+  Future<String> _getOrCreateWebDeviceId() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
 
-  /// Mendapatkan platform dari user agent
-  String _getWebPlatform(String userAgent) {
-    if (userAgent.contains('Chrome')) {
-      return 'Web Chrome';
-    } else if (userAgent.contains('Firefox')) {
-      return 'Web Firefox';
-    } else if (userAgent.contains('Safari')) {
-      return 'Web Safari';
-    } else if (userAgent.contains('Edge')) {
-      return 'Web Edge';
-    } else {
-      return 'Web Browser';
+      // Try to get existing device ID
+      String? deviceId = prefs.getString(_webDeviceIdKey);
+
+      // If no device ID exists, create new one
+      if (deviceId == null || deviceId.isEmpty) {
+        deviceId = _generateUUID();
+        await prefs.setString(_webDeviceIdKey, deviceId);
+      }
+
+      return deviceId;
+    } catch (e) {
+      // Fallback to non-persistent UUID if localStorage fails
+      return _generateUUID();
     }
   }
 
