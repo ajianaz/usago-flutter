@@ -81,18 +81,14 @@ class LoggingConfig {
   /// Initialize dotenv for environment variables
   static Future<void> initialize() async {
     try {
-      // Try loading from assets first
-      await dotenv.load(fileName: 'assets/.env');
+      // Load from assets - Flutter automatically prepends 'assets/' path
+      await dotenv.load(fileName: '.env');
     } catch (e) {
-      try {
-        // Fallback to root directory
-        await dotenv.load(fileName: '.env');
-      } catch (e2) {
-        // Fallback to compile-time environment if .env file not found
-        if (kDebugMode) {
-          print(
-              'Warning: .env file not found, using compile-time environment variables');
-        }
+      // Fallback to compile-time environment if .env file not found
+      if (kDebugMode) {
+        print(
+            'Warning: .env file not found, using compile-time environment variables');
+        print('Error details: $e');
       }
     }
   }

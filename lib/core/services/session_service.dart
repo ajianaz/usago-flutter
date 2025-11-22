@@ -22,12 +22,12 @@ class SessionService {
 
   SessionService({
     required Dio dio,
-    SecureStorageService? secureStorage,
+    required SecureStorageService secureStorage,
     DeviceInfoService? deviceInfoService,
     BetterAuthErrorHandler? errorHandler,
     AppLogger? logger,
   })  : _dio = dio,
-        _secureStorage = secureStorage ?? SecureStorageService(),
+        _secureStorage = secureStorage,
         _deviceInfoService = deviceInfoService ?? DeviceInfoService(),
         _errorHandler = errorHandler ?? BetterAuthErrorHandler(),
         _logger = logger ?? AppLogger();

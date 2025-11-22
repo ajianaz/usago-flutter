@@ -30,7 +30,11 @@ void setupAuthDependencies(GetIt getIt) {
 
   // Register local datasource first
   getIt.registerSingleton<AuthLocalDatasource>(
-    AuthLocalDatasourceImpl(logger: logger, prefs: getIt()),
+    AuthLocalDatasourceImpl(
+      logger: logger,
+      prefs: getIt(),
+      secureStorage: getIt(),
+    ),
   );
 
   // DioClient is already registered in core services, so we just get it

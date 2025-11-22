@@ -1,8 +1,12 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
 import '../network/dio_client.dart';
+import '../services/secure_storage_service.dart';
+import '../services/session_service.dart';
 import '../utils/logger.dart';
 import '../errors/error_handler.dart';
+import '../errors/better_auth_error_handler.dart';
 import '../services/locale_service.dart';
 import '../services/device_info_service.dart';
 import '../config/logging_config.dart';
@@ -32,31 +36,51 @@ Future<void> setupDependencies() async {
 /// Setup core layer services
 /// These have no dependencies on features
 Future<void> _setupCoreServices() async {
-  // Register shared preferences
+  // 1. Register shared preferences (no dependencies)
   final sharedPreferences = await SharedPreferences.getInstance();
   getIt.registerSingleton(sharedPreferences);
 
-  // Register Logging Configuration
+  // 2. Register Logging Configuration (no dependencies)
   final loggingConfig = LoggingConfig.fromEnvironment();
   getIt.registerSingleton(loggingConfig);
 
-  // Register Dio HTTP client
-  getIt.registerSingleton(DioClient());
+  // 3. Register Logger with configuration (depends on LoggingConfig)
+  final logger = AppLogger(loggingConfig);
+  getIt.registerSingleton(logger);
 
-  // Register Logger with configuration
-  getIt.registerSingleton(AppLogger(loggingConfig));
+  // 4. Register Device Info Service (no dependencies)
+  getIt.registerSingleton(DeviceInfoService());
 
-  // Register Error Handler
+  // 5. Register Secure Storage Service (depends on AppLogger)
+  final secureStorageService = SecureStorageService(logger: logger);
+  await secureStorageService.initialize();
+  getIt.registerSingleton(secureStorageService);
+
+  // 6. Register Dio HTTP client (depends on AppLogger)
+  final dioClient = DioClient(logger: logger);
+  getIt.registerSingleton(dioClient);
+
+  // 6b. Register Dio instance separately for services that need it
+  getIt.registerSingleton<Dio>(dioClient.dio);
+
+  // 7. Register Error Handlers (no dependencies)
   getIt.registerSingleton(ErrorHandler());
+  getIt.registerSingleton(BetterAuthErrorHandler(logger: logger));
 
-  // Register Locale Service
+  // 8. Register Locale Service (depends on SharedPreferences, AppLogger)
   getIt.registerSingleton(LocaleService(
     prefs: sharedPreferences,
-    logger: getIt(),
+    logger: logger,
   ));
 
-  // Register Device Info Service
-  getIt.registerSingleton(DeviceInfoService());
+  // 9. Register Session Service (depends on multiple services)
+  getIt.registerSingleton(SessionService(
+    dio: getIt<Dio>(),
+    secureStorage: secureStorageService,
+    deviceInfoService: getIt(),
+    errorHandler: getIt(),
+    logger: logger,
+  ));
 }
 
 /// Reset all dependencies
