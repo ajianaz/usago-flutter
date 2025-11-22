@@ -18,7 +18,7 @@ import 'desktop_secure_storage.dart';
 /// Class ini menyediakan interface yang konsisten untuk semua operasi storage
 /// di semua platform dengan fallback mechanism untuk error handling.
 class SecureStorageService {
-  late PlatformStorageInterface _secureStorage;
+  PlatformStorageInterface? _secureStorage;
   final AppLogger _logger;
   bool _isInitialized = false;
 
@@ -28,28 +28,29 @@ class SecureStorageService {
   }) : _logger = logger ?? AppLogger() {
     if (secureStorage != null) {
       _secureStorage = secureStorage;
+      _isInitialized = true; // Mark as initialized if provided
     }
   }
 
   /// Initialize secure storage with platform-specific implementation
   Future<void> initialize() async {
-    if (_isInitialized) return;
+    if (_isInitialized && _secureStorage != null) return;
 
     try {
       // Initialize platform-specific secure storage
       if (PlatformDetector.isMobile) {
         _secureStorage = MobileSecureStorage(logger: _logger);
-        await _secureStorage.initialize();
+        await _secureStorage!.initialize();
       } else if (PlatformDetector.isWeb) {
         _secureStorage = WebSecureStorage(logger: _logger);
-        await _secureStorage.initialize();
+        await _secureStorage!.initialize();
       } else if (PlatformDetector.isDesktop) {
         _secureStorage = DesktopSecureStorage(logger: _logger);
-        await _secureStorage.initialize();
+        await _secureStorage!.initialize();
       } else {
         // Fallback to basic implementation
         _secureStorage = _createFallbackStorage();
-        await _secureStorage.initialize();
+        await _secureStorage!.initialize();
       }
 
       _isInitialized = true;
@@ -59,7 +60,7 @@ class SecureStorageService {
       _logger.error('Failed to initialize SecureStorageService', e);
       // Fallback to SharedPreferences in case of initialization failure
       _secureStorage = _createFallbackStorage();
-      await _secureStorage.initialize();
+      await _secureStorage!.initialize();
       _isInitialized = true;
       _logger.warning('SecureStorageService initialized with fallback storage');
     }
@@ -72,7 +73,7 @@ class SecureStorageService {
 
   /// Ensure storage is initialized before operations
   Future<void> _ensureInitialized() async {
-    if (!_isInitialized) {
+    if (!_isInitialized || _secureStorage == null) {
       await initialize();
     }
   }
@@ -84,6 +85,9 @@ class SecureStorageService {
   /// [isSecure] Whether to use secure storage (default: true for sensitive keys)
   Future<void> save(String key, dynamic value, {bool isSecure = true}) async {
     try {
+      // Ensure storage is initialized before operations
+      await _ensureInitialized();
+
       // Determine if this is sensitive data based on key or explicit parameter
       final shouldUseSecureStorage = isSecure || _isSensitiveKey(key);
 
@@ -95,7 +99,7 @@ class SecureStorageService {
       }
 
       if (shouldUseSecureStorage) {
-        await _secureStorage.write(key, stringValue);
+        await _secureStorage!.write(key, stringValue);
         _logger.info('Secure data saved for key: $key');
       } else {
         final prefs = await SharedPreferences.getInstance();
@@ -115,13 +119,16 @@ class SecureStorageService {
   /// Returns [T?] or null if not found
   Future<T?> get<T>(String key, {bool isSecure = true}) async {
     try {
+      // Ensure storage is initialized before operations
+      await _ensureInitialized();
+
       // Determine if this is sensitive data based on key or explicit parameter
       final shouldUseSecureStorage = isSecure || _isSensitiveKey(key);
 
       String? stringValue;
 
       if (shouldUseSecureStorage) {
-        stringValue = await _secureStorage.read(key);
+        stringValue = await _secureStorage!.read(key);
       } else {
         final prefs = await SharedPreferences.getInstance();
         stringValue = prefs.getString(key);
@@ -169,11 +176,14 @@ class SecureStorageService {
   /// [isSecure] Whether to use secure storage (default: true for sensitive keys)
   Future<void> remove(String key, {bool isSecure = true}) async {
     try {
+      // Ensure storage is initialized before operations
+      await _ensureInitialized();
+
       // Determine if this is sensitive data based on key or explicit parameter
       final shouldUseSecureStorage = isSecure || _isSensitiveKey(key);
 
       if (shouldUseSecureStorage) {
-        await _secureStorage.delete(key);
+        await _secureStorage!.delete(key);
         _logger.info('Secure data removed for key: $key');
       } else {
         final prefs = await SharedPreferences.getInstance();
@@ -189,8 +199,11 @@ class SecureStorageService {
   /// Clear all data from both secure and regular storage
   Future<void> clearAll() async {
     try {
+      // Ensure storage is initialized before operations
+      await _ensureInitialized();
+
       // Clear secure storage
-      await _secureStorage.deleteAll();
+      await _secureStorage!.deleteAll();
 
       // Clear shared preferences
       final prefs = await SharedPreferences.getInstance();
@@ -210,11 +223,14 @@ class SecureStorageService {
   /// Returns [bool] true if key exists
   Future<bool> containsKey(String key, {bool isSecure = true}) async {
     try {
+      // Ensure storage is initialized before operations
+      await _ensureInitialized();
+
       // Determine if this is sensitive data based on key or explicit parameter
       final shouldUseSecureStorage = isSecure || _isSensitiveKey(key);
 
       if (shouldUseSecureStorage) {
-        final value = await _secureStorage.read(key);
+        final value = await _secureStorage!.read(key);
         return value != null;
       } else {
         final prefs = await SharedPreferences.getInstance();
@@ -229,7 +245,10 @@ class SecureStorageService {
   /// Get all keys from secure storage
   Future<Set<String>> getSecureKeys() async {
     try {
-      return await _secureStorage.getAllKeys();
+      // Ensure storage is initialized before operations
+      await _ensureInitialized();
+
+      return await _secureStorage!.getAllKeys();
     } catch (e) {
       _logger.error('Failed to get secure keys', e);
       return <String>{};

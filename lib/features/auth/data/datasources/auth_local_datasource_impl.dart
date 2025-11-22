@@ -17,9 +17,9 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
   AuthLocalDatasourceImpl({
     required SharedPreferences prefs,
     required AppLogger logger,
-    SecureStorageService? secureStorage,
+    required SecureStorageService secureStorage,
   })  : _prefs = prefs,
-        _secureStorage = secureStorage ?? SecureStorageService(),
+        _secureStorage = secureStorage,
         _logger = logger;
 
   @override

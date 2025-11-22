@@ -5,6 +5,7 @@ import '../utils/logger.dart';
 import '../errors/error_handler.dart';
 import '../services/locale_service.dart';
 import '../services/device_info_service.dart';
+import '../services/secure_storage_service.dart';
 import '../config/logging_config.dart';
 import '../../features/auth/di/auth_injection.dart';
 import '../../features/home/di/home_injection.dart';
@@ -57,6 +58,11 @@ Future<void> _setupCoreServices() async {
 
   // Register Device Info Service
   getIt.registerSingleton(DeviceInfoService());
+
+  // Register Secure Storage Service and initialize it
+  final secureStorageService = SecureStorageService(logger: getIt());
+  await secureStorageService.initialize();
+  getIt.registerSingleton(secureStorageService);
 }
 
 /// Reset all dependencies

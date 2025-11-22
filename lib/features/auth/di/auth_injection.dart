@@ -21,6 +21,7 @@ import '../presentation/bloc/auth_bloc.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/errors/error_handler.dart';
+import '../../../../core/services/secure_storage_service.dart';
 
 /// Register auth feature dependencies
 void setupAuthDependencies(GetIt getIt) {
@@ -30,7 +31,11 @@ void setupAuthDependencies(GetIt getIt) {
 
   // Register local datasource first
   getIt.registerSingleton<AuthLocalDatasource>(
-    AuthLocalDatasourceImpl(logger: logger, prefs: getIt()),
+    AuthLocalDatasourceImpl(
+      logger: logger,
+      prefs: getIt(),
+      secureStorage: getIt<SecureStorageService>(),
+    ),
   );
 
   // DioClient is already registered in core services, so we just get it

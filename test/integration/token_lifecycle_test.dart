@@ -13,6 +13,7 @@ import 'package:usago/core/constants/app_constants.dart';
 import 'package:usago/core/config/logging_config.dart';
 import 'package:usago/core/network/dio_client.dart';
 import 'package:usago/core/services/device_info_service.dart';
+import 'package:usago/core/services/secure_storage_service.dart';
 import 'package:usago/core/utils/logger.dart';
 import 'package:usago/features/auth/data/datasources/auth_local_datasource_impl.dart';
 import 'package:usago/features/auth/data/datasources/auth_remote_datasource_impl.dart';
@@ -43,6 +44,7 @@ void main() {
     late SharedPreferences prefs;
     late Dio mockDio;
     late DeviceInfoService deviceInfoService;
+    late SecureStorageService secureStorage;
 
     setUpAll(() async {
       // Initialize dotenv for all tests
@@ -58,11 +60,14 @@ void main() {
       mockDio = MockDio();
       dioClient = DioClient();
       deviceInfoService = DeviceInfoService();
+      secureStorage = SecureStorageService(logger: AppLogger());
+      await secureStorage.initialize();
 
       // Setup datasources
       localDatasource = AuthLocalDatasourceImpl(
         prefs: prefs,
         logger: AppLogger(),
+        secureStorage: secureStorage,
       );
 
       remoteDatasource = AuthRemoteDatasourceImpl(

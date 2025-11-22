@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usago/core/constants/app_constants.dart';
 import 'package:usago/core/network/dio_client.dart';
 import 'package:usago/core/services/device_info_service.dart';
+import 'package:usago/core/services/secure_storage_service.dart';
 import 'package:usago/core/utils/logger.dart';
 import 'package:usago/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:usago/features/auth/data/datasources/auth_local_datasource_impl.dart';
@@ -23,6 +24,7 @@ void main() {
     late AppLogger logger;
     late SharedPreferences prefs;
     late DeviceInfoService deviceInfoService;
+    late SecureStorageService secureStorage;
 
     setUp(() async {
       TestHelpers.setUpMocktailFallbacks();
@@ -32,10 +34,13 @@ void main() {
 
       // Use real components instead of mocks
       dioClient = DioClient(logger: AppLogger());
-      localDatasource =
-          AuthLocalDatasourceImpl(prefs: prefs, logger: AppLogger());
       logger = AppLogger();
       deviceInfoService = DeviceInfoService();
+      secureStorage = SecureStorageService(logger: logger);
+      await secureStorage.initialize();
+
+      localDatasource = AuthLocalDatasourceImpl(
+          prefs: prefs, logger: logger, secureStorage: secureStorage);
 
       datasource = AuthRemoteDatasourceImpl(
         dioClient: dioClient,

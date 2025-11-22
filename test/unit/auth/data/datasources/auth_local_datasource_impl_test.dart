@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usago/core/constants/app_constants.dart';
 import 'package:usago/core/utils/logger.dart';
+import 'package:usago/core/services/secure_storage_service.dart';
 import 'package:usago/features/auth/data/datasources/auth_local_datasource_impl.dart';
 import 'package:usago/features/auth/data/models/user_model.dart';
 
@@ -14,17 +15,22 @@ void main() {
     late AuthLocalDatasourceImpl datasource;
     late SharedPreferences prefs;
     late AppLogger logger;
+    late SecureStorageService secureStorage;
 
     setUp(() async {
+      TestWidgetsFlutterBinding.ensureInitialized();
       TestHelpers.setUpMocktailFallbacks();
 
       SharedPreferences.setMockInitialValues({});
       prefs = await SharedPreferences.getInstance();
       logger = AppLogger();
+      secureStorage = SecureStorageService(logger: logger);
+      await secureStorage.initialize();
 
       datasource = AuthLocalDatasourceImpl(
         prefs: prefs,
         logger: logger,
+        secureStorage: secureStorage,
       );
     });
 
@@ -47,7 +53,8 @@ void main() {
 
       test('should handle save user error gracefully', () async {
         // This test verifies error handling structure
-        expect(() => datasource.saveUser(AuthFixtures.testUserModel), returnsNormally);
+        expect(() => datasource.saveUser(AuthFixtures.testUserModel),
+            returnsNormally);
       });
     });
 
@@ -112,7 +119,8 @@ void main() {
 
       test('should handle save token error gracefully', () async {
         // This test verifies error handling structure
-        expect(() => datasource.saveToken(AuthFixtures.testToken), returnsNormally);
+        expect(() => datasource.saveToken(AuthFixtures.testToken),
+            returnsNormally);
       });
     });
 
@@ -128,7 +136,8 @@ void main() {
         expect(result, equals(AuthFixtures.testToken));
       });
 
-      test('should return null when no token exists in local storage', () async {
+      test('should return null when no token exists in local storage',
+          () async {
         // Act
         final result = await datasource.getToken();
 
@@ -167,7 +176,8 @@ void main() {
         final savedSessionJson = prefs.getString('session_data');
         expect(savedSessionJson, isNotNull);
 
-        final savedSessionData = jsonDecode(savedSessionJson!) as Map<String, dynamic>;
+        final savedSessionData =
+            jsonDecode(savedSessionJson!) as Map<String, dynamic>;
         expect(savedSessionData['userId'], equals(AuthFixtures.testUserId));
         expect(savedSessionData['loginTime'], isNotNull);
       });
@@ -180,7 +190,8 @@ void main() {
     });
 
     group('getSessionData', () {
-      test('should return session data when session exists in local storage', () async {
+      test('should return session data when session exists in local storage',
+          () async {
         // Arrange
         final sessionData = {
           'userId': AuthFixtures.testUserId,
@@ -197,7 +208,8 @@ void main() {
         expect(result['loginTime'], isNotNull);
       });
 
-      test('should return null when no session exists in local storage', () async {
+      test('should return null when no session exists in local storage',
+          () async {
         // Act
         final result = await datasource.getSessionData();
 
@@ -302,7 +314,8 @@ void main() {
         expect(result, isNull);
       });
 
-      test('should return null when session data exists but no last_login', () async {
+      test('should return null when session data exists but no last_login',
+          () async {
         // Arrange
         final sessionData = {'other_data': 'value'};
         await datasource.saveSessionData(sessionData);
@@ -388,7 +401,8 @@ void main() {
         expect(retrievedUser?.id, equals(originalUser.id));
         expect(retrievedUser?.email, equals(originalUser.email));
         expect(retrievedToken, equals(originalToken));
-        expect(retrievedSessionData?['userId'], equals(originalSessionData['userId']));
+        expect(retrievedSessionData?['userId'],
+            equals(originalSessionData['userId']));
       });
 
       test('should handle concurrent operations safely', () async {
