@@ -24,7 +24,7 @@ dependencies:
   injectable: ^2.3.0
 
   # Network
-  dio: ^5.0.0
+  dio: ^5.9.0
 
   # JSON Serialization
   json_annotation: ^4.8.0

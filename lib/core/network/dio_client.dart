@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
 import '../constants/app_constants.dart';
 import '../constants/storage_constants.dart';
@@ -224,13 +225,16 @@ class AuthInterceptor extends Interceptor {
   late AuthRepository? _authRepository;
   bool _isRefreshing = false;
   String? _cachedToken;
+  bool _isTokenLoaded = false;
+  final List<Completer<void>> _tokenLoadCompleters = [];
+  final List<Completer<void>> _refreshCompleters = [];
 
   AuthInterceptor({
     required AppLogger logger,
     AuthRepository? authRepository,
   })  : _logger = logger,
         _authRepository = authRepository {
-    // Load token synchronously at initialization
+    // Load token asynchronously at initialization
     _loadToken();
   }
 
@@ -240,19 +244,60 @@ class AuthInterceptor extends Interceptor {
   }
 
   Future<void> _loadToken() async {
+    // If token is already being loaded, wait for it
+    if (!_isTokenLoaded && _tokenLoadCompleters.isNotEmpty) {
+      final completer = Completer<void>();
+      _tokenLoadCompleters.add(completer);
+      await completer.future;
+      return;
+    }
+
+    // If token is already loaded, return immediately
+    if (_isTokenLoaded) {
+      return;
+    }
+
+    // Start loading token
+    final completer = Completer<void>();
+    _tokenLoadCompleters.add(completer);
+
     try {
       // Use secure storage for tokens
       final secureStorage = SecureStorageService();
       _cachedToken =
           await secureStorage.get<String>(AppConstants.bearerTokenKey);
+      _isTokenLoaded = true;
+      _logger.debug(
+          'Token loaded successfully: ${_cachedToken != null ? 'Present' : 'Null'}');
     } catch (error) {
       _logger.error('Error loading token', error);
       _cachedToken = null;
+      _isTokenLoaded = true;
+    } finally {
+      // Complete all waiting completers
+      for (final c in _tokenLoadCompleters) {
+        if (!c.isCompleted) {
+          c.complete();
+        }
+      }
+      _tokenLoadCompleters.clear();
     }
   }
 
+  /// Force reload token from storage
+  Future<void> _reloadToken() async {
+    _isTokenLoaded = false;
+    await _loadToken();
+  }
+
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    // Ensure token is loaded before making request
+    if (!_isTokenLoaded) {
+      await _loadToken();
+    }
+
     // Add context headers first (synchronous)
     final contextManager = ContextManager();
     final context = contextManager.currentContext;
@@ -289,6 +334,51 @@ class AuthInterceptor extends Interceptor {
       _logger.warning('Unauthorized - attempting token refresh');
       _isRefreshing = true;
 
+      // If another request is already refreshing, wait for it
+      if (_refreshCompleters.isNotEmpty) {
+        final completer = Completer<void>();
+        _refreshCompleters.add(completer);
+
+        try {
+          await completer.future;
+          // After waiting, retry the original request with new token
+          await _loadToken(); // Reload to get the latest token
+
+          final options = error.requestOptions;
+          if (_cachedToken != null) {
+            options.headers['Authorization'] = 'Bearer $_cachedToken';
+            await _addContextHeaders(options);
+
+            // Create new Dio instance for retry
+            final dio = Dio(BaseOptions(
+              baseUrl: AppConstants.apiBaseUrl,
+              connectTimeout: AppConstants.apiTimeout,
+              receiveTimeout: AppConstants.apiTimeout,
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+              },
+            ));
+
+            try {
+              final retryResponse = await dio.fetch(options);
+              _logger.info('Retry successful after waiting for token refresh');
+              handler.resolve(retryResponse);
+              return;
+            } catch (retryError) {
+              _logger.error(
+                  'Retry failed after waiting for token refresh', retryError);
+            }
+          }
+        } catch (e) {
+          _logger.error('Error while waiting for token refresh', e);
+        }
+
+        _isRefreshing = false;
+        handler.next(error);
+        return;
+      }
+
       try {
         // Get current request options
         final options = error.requestOptions;
@@ -319,6 +409,9 @@ class AuthInterceptor extends Interceptor {
                   _cachedToken = newToken;
                   _logger.info('Token refreshed and saved via usecase');
 
+                  // Force reload token from storage to ensure consistency
+                  await _reloadToken();
+
                   // Add context headers to the retry request
                   await _addContextHeaders(options);
 
@@ -344,22 +437,58 @@ class AuthInterceptor extends Interceptor {
                     _isRefreshing = false;
                     _logger
                         .info('Retry request successful after token refresh');
+
+                    // Complete all waiting refresh completers
+                    for (final c in _refreshCompleters) {
+                      if (!c.isCompleted) {
+                        c.complete();
+                      }
+                    }
+                    _refreshCompleters.clear();
+
                     handler.resolve(retryResponse);
                   } catch (retryError) {
                     _logger.error(
                         'Retry request failed after token refresh', retryError);
                     _isRefreshing = false;
+
+                    // Complete all waiting refresh completers even on failure
+                    for (final c in _refreshCompleters) {
+                      if (!c.isCompleted) {
+                        c.complete();
+                      }
+                    }
+                    _refreshCompleters.clear();
+
                     handler.next(error);
                   }
                 } else {
                   _logger.warning(
                       'Token refresh via usecase succeeded but no token found');
                   _isRefreshing = false;
+
+                  // Complete all waiting refresh completers even on failure
+                  for (final c in _refreshCompleters) {
+                    if (!c.isCompleted) {
+                      c.complete();
+                    }
+                  }
+                  _refreshCompleters.clear();
+
                   handler.next(error);
                 }
               } catch (e) {
                 _logger.error('Error during token refresh retry', e);
                 _isRefreshing = false;
+
+                // Complete all waiting refresh completers even on error
+                for (final c in _refreshCompleters) {
+                  if (!c.isCompleted) {
+                    c.complete();
+                  }
+                }
+                _refreshCompleters.clear();
+
                 handler.next(error);
               }
             },
@@ -441,6 +570,9 @@ class AuthInterceptor extends Interceptor {
               _cachedToken = newToken;
               _logger.info('Token refreshed and saved manually');
 
+              // Force reload token from storage to ensure consistency
+              await _reloadToken();
+
               // Add context headers to the retry request
               await _addContextHeaders(options);
 
@@ -466,11 +598,29 @@ class AuthInterceptor extends Interceptor {
                 _isRefreshing = false;
                 _logger.info(
                     'Retry request successful after manual token refresh');
+
+                // Complete all waiting refresh completers
+                for (final c in _refreshCompleters) {
+                  if (!c.isCompleted) {
+                    c.complete();
+                  }
+                }
+                _refreshCompleters.clear();
+
                 handler.resolve(retryResponse);
               } catch (retryError) {
                 _logger.error('Retry request failed after manual token refresh',
                     retryError);
                 _isRefreshing = false;
+
+                // Complete all waiting refresh completers even on failure
+                for (final c in _refreshCompleters) {
+                  if (!c.isCompleted) {
+                    c.complete();
+                  }
+                }
+                _refreshCompleters.clear();
+
                 handler.next(error);
               }
             } else {
@@ -480,17 +630,44 @@ class AuthInterceptor extends Interceptor {
               _logger.debug(
                   'Refresh response headers: ${refreshResponse.headers}');
               _isRefreshing = false;
+
+              // Complete all waiting refresh completers even on failure
+              for (final c in _refreshCompleters) {
+                if (!c.isCompleted) {
+                  c.complete();
+                }
+              }
+              _refreshCompleters.clear();
+
               handler.next(error);
             }
           } catch (e) {
             _logger.error('Manual token refresh failed', e);
             _isRefreshing = false;
+
+            // Complete all waiting refresh completers even on error
+            for (final c in _refreshCompleters) {
+              if (!c.isCompleted) {
+                c.complete();
+              }
+            }
+            _refreshCompleters.clear();
+
             handler.next(error);
           }
         }
       } catch (e) {
         _logger.error('Token refresh failed', e);
         _isRefreshing = false;
+
+        // Complete all waiting refresh completers even on error
+        for (final c in _refreshCompleters) {
+          if (!c.isCompleted) {
+            c.complete();
+          }
+        }
+        _refreshCompleters.clear();
+
         handler.next(error);
       }
     } else {
