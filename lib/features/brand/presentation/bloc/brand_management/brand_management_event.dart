@@ -12,29 +12,35 @@ abstract class BrandManagementEvent extends Equatable {
 /// Event untuk membuat brand baru
 class CreateBrandEvent extends BrandManagementEvent {
   final String name;
+  final String? logoUrl;
   final String businessType;
   final String? industry;
   final String? description;
   final String timezone;
   final String currency;
+  final Map<String, dynamic>? settings;
 
   const CreateBrandEvent({
     required this.name,
+    this.logoUrl,
     required this.businessType,
     this.industry,
     this.description,
     required this.timezone,
     required this.currency,
+    this.settings,
   });
 
   @override
   List<Object> get props => [
         name,
+        logoUrl ?? '',
         businessType,
         industry ?? '',
         description ?? '',
         timezone,
         currency,
+        settings ?? {},
       ];
 }
 

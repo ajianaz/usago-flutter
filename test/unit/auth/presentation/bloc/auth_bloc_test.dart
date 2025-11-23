@@ -13,6 +13,10 @@ import 'package:usago/features/auth/domain/usecases/resend_verification_email_us
 import 'package:usago/features/auth/domain/usecases/update_profile_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/verify_email_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/refresh_token_usecase.dart';
+import 'package:usago/features/auth/domain/usecases/create_refresh_token_usecase.dart';
+import 'package:usago/features/auth/domain/usecases/get_refresh_tokens_usecase.dart';
+import 'package:usago/features/auth/domain/usecases/revoke_token_usecase.dart';
+import 'package:usago/features/auth/domain/usecases/revoke_all_tokens_usecase.dart';
 import 'package:usago/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:usago/features/auth/presentation/bloc/auth_event.dart';
 import 'package:usago/features/auth/presentation/bloc/auth_state.dart';
@@ -34,15 +38,31 @@ void main() {
     late MockResendVerificationEmailUsecase mockResendVerificationEmailUsecase;
     late MockDeleteAccountUsecase mockDeleteAccountUsecase;
     late MockRefreshTokenUsecase mockRefreshTokenUsecase;
+    late MockCreateRefreshTokenUsecase mockCreateRefreshTokenUsecase;
+    late MockGetRefreshTokensUsecase mockGetRefreshTokensUsecase;
+    late MockRevokeTokenUsecase mockRevokeTokenUsecase;
+    late MockRevokeAllTokensUsecase mockRevokeAllTokensUsecase;
 
     setUpAll(() {
       // Register fallback values for parameter types
-      registerFallbackValue(const LoginParams(email: 'test@example.com', password: 'password'));
-      registerFallbackValue(const RegisterParams(email: 'test@example.com', password: 'password', name: 'Test'));
-      registerFallbackValue(const UpdateProfileParams(name: 'Test', profilePicture: null));
-      registerFallbackValue(const ChangePasswordParams(currentPassword: 'old', newPassword: 'new'));
-      registerFallbackValue(const ForgotPasswordParams(email: 'test@example.com'));
-      registerFallbackValue(const ResetPasswordParams(token: 'token', newPassword: 'password'));
+      registerFallbackValue(const CreateRefreshTokenParams());
+      registerFallbackValue(const GetRefreshTokensParams());
+      registerFallbackValue(
+          const RevokeTokenParams(refreshToken: 'test-token-id'));
+      registerFallbackValue(const RevokeAllTokensParams());
+      // Register fallback values for parameter types
+      registerFallbackValue(
+          const LoginParams(email: 'test@example.com', password: 'password'));
+      registerFallbackValue(const RegisterParams(
+          email: 'test@example.com', password: 'password', name: 'Test'));
+      registerFallbackValue(
+          const UpdateProfileParams(name: 'Test', profilePicture: null));
+      registerFallbackValue(const ChangePasswordParams(
+          currentPassword: 'old', newPassword: 'new'));
+      registerFallbackValue(
+          const ForgotPasswordParams(email: 'test@example.com'));
+      registerFallbackValue(
+          const ResetPasswordParams(token: 'token', newPassword: 'password'));
       registerFallbackValue(const VerifyEmailParams(token: 'token'));
       registerFallbackValue(const ResendVerificationEmailParams());
       registerFallbackValue(const DeleteAccountParams());
@@ -62,6 +82,10 @@ void main() {
       mockResendVerificationEmailUsecase = MockResendVerificationEmailUsecase();
       mockDeleteAccountUsecase = MockDeleteAccountUsecase();
       mockRefreshTokenUsecase = MockRefreshTokenUsecase();
+      mockCreateRefreshTokenUsecase = MockCreateRefreshTokenUsecase();
+      mockGetRefreshTokensUsecase = MockGetRefreshTokensUsecase();
+      mockRevokeTokenUsecase = MockRevokeTokenUsecase();
+      mockRevokeAllTokensUsecase = MockRevokeAllTokensUsecase();
 
       authBloc = AuthBloc(
         loginUsecase: mockLoginUsecase,
@@ -76,6 +100,10 @@ void main() {
         resendVerificationEmailUsecase: mockResendVerificationEmailUsecase,
         deleteAccountUsecase: mockDeleteAccountUsecase,
         refreshTokenUsecase: mockRefreshTokenUsecase,
+        createRefreshTokenUsecase: mockCreateRefreshTokenUsecase,
+        getRefreshTokensUsecase: mockGetRefreshTokensUsecase,
+        revokeTokenUsecase: mockRevokeTokenUsecase,
+        revokeAllTokensUsecase: mockRevokeAllTokensUsecase,
       );
     });
 
@@ -110,6 +138,10 @@ void main() {
         resendVerificationEmailUsecase: mockResendVerificationEmailUsecase,
         deleteAccountUsecase: mockDeleteAccountUsecase,
         refreshTokenUsecase: mockRefreshTokenUsecase,
+        createRefreshTokenUsecase: mockCreateRefreshTokenUsecase,
+        getRefreshTokensUsecase: mockGetRefreshTokensUsecase,
+        revokeTokenUsecase: mockRevokeTokenUsecase,
+        revokeAllTokensUsecase: mockRevokeAllTokensUsecase,
       );
 
       // Wait for the initial CheckAuthStatusEvent to complete
@@ -123,9 +155,11 @@ void main() {
       const email = AuthFixtures.validEmail;
       const password = AuthFixtures.validPassword;
 
-      test('should emit [AuthLoading, AuthSuccess] when login is successful', () async {
+      test('should emit [AuthLoading, AuthSuccess] when login is successful',
+          () async {
         // Arrange
-        when(() => mockLoginUsecase(const LoginParams(email: email, password: password)))
+        when(() => mockLoginUsecase(
+                const LoginParams(email: email, password: password)))
             .thenAnswer((_) async => Right(AuthFixtures.testUser));
 
         // Act
@@ -143,7 +177,8 @@ void main() {
       test('should emit [AuthLoading, AuthFailure] when login fails', () async {
         // Arrange
         const failure = ValidationFailure(message: 'Invalid credentials');
-        when(() => mockLoginUsecase(const LoginParams(email: email, password: password)))
+        when(() => mockLoginUsecase(
+                const LoginParams(email: email, password: password)))
             .thenAnswer((_) async => const Left(failure));
 
         // Act
@@ -164,13 +199,14 @@ void main() {
       const password = AuthFixtures.validPassword;
       const name = AuthFixtures.testUserName;
 
-      test('should emit [AuthLoading, AuthSuccess] when register is successful', () async {
+      test('should emit [AuthLoading, AuthSuccess] when register is successful',
+          () async {
         // Arrange
         when(() => mockRegisterUsecase(const RegisterParams(
-          email: email,
-          password: password,
-          name: name,
-        ))).thenAnswer((_) async => Right(AuthFixtures.testUser));
+              email: email,
+              password: password,
+              name: name,
+            ))).thenAnswer((_) async => Right(AuthFixtures.testUser));
 
         // Act
         final expected = [
@@ -181,17 +217,19 @@ void main() {
         // Assert
         expectLater(authBloc.stream, emitsInOrder(expected));
 
-        authBloc.add(const RegisterEvent(email: email, password: password, name: name));
+        authBloc.add(
+            const RegisterEvent(email: email, password: password, name: name));
       });
 
-      test('should emit [AuthLoading, AuthFailure] when register fails', () async {
+      test('should emit [AuthLoading, AuthFailure] when register fails',
+          () async {
         // Arrange
         const failure = ValidationFailure(message: 'Email already exists');
         when(() => mockRegisterUsecase(const RegisterParams(
-          email: email,
-          password: password,
-          name: name,
-        ))).thenAnswer((_) async => const Left(failure));
+              email: email,
+              password: password,
+              name: name,
+            ))).thenAnswer((_) async => const Left(failure));
 
         // Act
         final expected = [
@@ -202,12 +240,14 @@ void main() {
         // Assert
         expectLater(authBloc.stream, emitsInOrder(expected));
 
-        authBloc.add(const RegisterEvent(email: email, password: password, name: name));
+        authBloc.add(
+            const RegisterEvent(email: email, password: password, name: name));
       });
     });
 
     group('LogoutEvent', () {
-      test('should emit [AuthLoading, AuthLoggedOut] when logout is successful', () async {
+      test('should emit [AuthLoading, AuthLoggedOut] when logout is successful',
+          () async {
         // Arrange
         when(() => mockLogoutUsecase())
             .thenAnswer((_) async => const Right(null));
@@ -224,7 +264,8 @@ void main() {
         authBloc.add(const LogoutEvent());
       });
 
-      test('should emit [AuthLoading, AuthFailure] when logout fails', () async {
+      test('should emit [AuthLoading, AuthFailure] when logout fails',
+          () async {
         // Arrange
         const failure = ServerFailure(message: 'Logout failed');
         when(() => mockLogoutUsecase())
@@ -244,7 +285,8 @@ void main() {
     });
 
     group('CheckAuthStatusEvent', () {
-      test('should emit [AuthLoading, AuthSuccess] when user is authenticated', () async {
+      test('should emit [AuthLoading, AuthSuccess] when user is authenticated',
+          () async {
         // Arrange
         when(() => mockCheckAuthUsecase())
             .thenAnswer((_) async => Right(AuthFixtures.testUser));
@@ -261,7 +303,9 @@ void main() {
         authBloc.add(const CheckAuthStatusEvent());
       });
 
-      test('should emit [AuthLoading, AuthLoggedOut] when user is not authenticated', () async {
+      test(
+          'should emit [AuthLoading, AuthLoggedOut] when user is not authenticated',
+          () async {
         // Arrange
         when(() => mockCheckAuthUsecase())
             .thenAnswer((_) async => const Right(null));
@@ -278,7 +322,8 @@ void main() {
         authBloc.add(const CheckAuthStatusEvent());
       });
 
-      test('should emit [AuthLoading, AuthFailure] when check auth fails', () async {
+      test('should emit [AuthLoading, AuthFailure] when check auth fails',
+          () async {
         // Arrange
         const failure = ServerFailure(message: 'Auth check failed');
         when(() => mockCheckAuthUsecase())
@@ -301,13 +346,15 @@ void main() {
       const newName = 'Updated Name';
       const newProfilePicture = 'https://example.com/new-avatar.jpg';
 
-      test('should emit [AuthLoading, ProfileUpdateSuccess] when update is successful', () async {
+      test(
+          'should emit [AuthLoading, ProfileUpdateSuccess] when update is successful',
+          () async {
         // Arrange
         final updatedUser = AuthFixtures.testUser.copyWith(name: newName);
         when(() => mockUpdateProfileUsecase(const UpdateProfileParams(
-          name: newName,
-          profilePicture: newProfilePicture,
-        ))).thenAnswer((_) async => Right(updatedUser));
+              name: newName,
+              profilePicture: newProfilePicture,
+            ))).thenAnswer((_) async => Right(updatedUser));
 
         // Act
         final expected = [
@@ -324,13 +371,14 @@ void main() {
         ));
       });
 
-      test('should emit [AuthLoading, AuthFailure] when update fails', () async {
+      test('should emit [AuthLoading, AuthFailure] when update fails',
+          () async {
         // Arrange
         const failure = ValidationFailure(message: 'Update failed');
         when(() => mockUpdateProfileUsecase(const UpdateProfileParams(
-          name: newName,
-          profilePicture: newProfilePicture,
-        ))).thenAnswer((_) async => const Left(failure));
+              name: newName,
+              profilePicture: newProfilePicture,
+            ))).thenAnswer((_) async => const Left(failure));
 
         // Act
         final expected = [
@@ -352,12 +400,13 @@ void main() {
       const currentPassword = 'oldPassword123';
       const newPassword = 'newPassword123';
 
-      test('should emit [AuthLoading, AuthSuccess] when change is successful', () async {
+      test('should emit [AuthLoading, AuthSuccess] when change is successful',
+          () async {
         // Arrange
         when(() => mockChangePasswordUsecase(const ChangePasswordParams(
-          currentPassword: currentPassword,
-          newPassword: newPassword,
-        ))).thenAnswer((_) async => const Right(null));
+              currentPassword: currentPassword,
+              newPassword: newPassword,
+            ))).thenAnswer((_) async => const Right(null));
 
         // Act
         final expected = [
@@ -374,13 +423,15 @@ void main() {
         ));
       });
 
-      test('should emit [AuthLoading, AuthFailure] when change fails', () async {
+      test('should emit [AuthLoading, AuthFailure] when change fails',
+          () async {
         // Arrange
-        const failure = ValidationFailure(message: 'Current password is incorrect');
+        const failure =
+            ValidationFailure(message: 'Current password is incorrect');
         when(() => mockChangePasswordUsecase(const ChangePasswordParams(
-          currentPassword: currentPassword,
-          newPassword: newPassword,
-        ))).thenAnswer((_) async => const Left(failure));
+              currentPassword: currentPassword,
+              newPassword: newPassword,
+            ))).thenAnswer((_) async => const Left(failure));
 
         // Act
         final expected = [
@@ -401,9 +452,12 @@ void main() {
     group('ForgotPasswordEvent', () {
       const email = AuthFixtures.validEmail;
 
-      test('should emit [AuthLoading, PasswordResetEmailSent] when request is successful', () async {
+      test(
+          'should emit [AuthLoading, PasswordResetEmailSent] when request is successful',
+          () async {
         // Arrange
-        when(() => mockForgotPasswordUsecase(const ForgotPasswordParams(email: email)))
+        when(() => mockForgotPasswordUsecase(
+                const ForgotPasswordParams(email: email)))
             .thenAnswer((_) async => const Right(null));
 
         // Act
@@ -418,10 +472,12 @@ void main() {
         authBloc.add(const ForgotPasswordEvent(email: email));
       });
 
-      test('should emit [AuthLoading, AuthFailure] when request fails', () async {
+      test('should emit [AuthLoading, AuthFailure] when request fails',
+          () async {
         // Arrange
         const failure = ValidationFailure(message: 'Email not found');
-        when(() => mockForgotPasswordUsecase(const ForgotPasswordParams(email: email)))
+        when(() => mockForgotPasswordUsecase(
+                const ForgotPasswordParams(email: email)))
             .thenAnswer((_) async => const Left(failure));
 
         // Act
@@ -441,12 +497,14 @@ void main() {
       const token = AuthFixtures.testResetToken;
       const newPassword = 'newPassword123';
 
-      test('should emit [AuthLoading, PasswordResetSuccess] when reset is successful', () async {
+      test(
+          'should emit [AuthLoading, PasswordResetSuccess] when reset is successful',
+          () async {
         // Arrange
         when(() => mockResetPasswordUsecase(const ResetPasswordParams(
-          token: token,
-          newPassword: newPassword,
-        ))).thenAnswer((_) async => const Right(null));
+              token: token,
+              newPassword: newPassword,
+            ))).thenAnswer((_) async => const Right(null));
 
         // Act
         final expected = [
@@ -457,16 +515,17 @@ void main() {
         // Assert
         expectLater(authBloc.stream, emitsInOrder(expected));
 
-        authBloc.add(const ResetPasswordEvent(token: token, newPassword: newPassword));
+        authBloc.add(
+            const ResetPasswordEvent(token: token, newPassword: newPassword));
       });
 
       test('should emit [AuthLoading, AuthFailure] when reset fails', () async {
         // Arrange
         const failure = ValidationFailure(message: 'Invalid token');
         when(() => mockResetPasswordUsecase(const ResetPasswordParams(
-          token: token,
-          newPassword: newPassword,
-        ))).thenAnswer((_) async => const Left(failure));
+              token: token,
+              newPassword: newPassword,
+            ))).thenAnswer((_) async => const Left(failure));
 
         // Act
         final expected = [
@@ -477,16 +536,20 @@ void main() {
         // Assert
         expectLater(authBloc.stream, emitsInOrder(expected));
 
-        authBloc.add(const ResetPasswordEvent(token: token, newPassword: newPassword));
+        authBloc.add(
+            const ResetPasswordEvent(token: token, newPassword: newPassword));
       });
     });
 
     group('VerifyEmailEvent', () {
       const token = AuthFixtures.testVerificationToken;
 
-      test('should emit [AuthLoading, EmailVerificationSuccess] when verification is successful', () async {
+      test(
+          'should emit [AuthLoading, EmailVerificationSuccess] when verification is successful',
+          () async {
         // Arrange
-        when(() => mockVerifyEmailUsecase(const VerifyEmailParams(token: token)))
+        when(() =>
+                mockVerifyEmailUsecase(const VerifyEmailParams(token: token)))
             .thenAnswer((_) async => const Right(null));
 
         // Act
@@ -501,10 +564,12 @@ void main() {
         authBloc.add(const VerifyEmailEvent(token: token));
       });
 
-      test('should emit [AuthLoading, AuthFailure] when verification fails', () async {
+      test('should emit [AuthLoading, AuthFailure] when verification fails',
+          () async {
         // Arrange
         const failure = ValidationFailure(message: 'Invalid token');
-        when(() => mockVerifyEmailUsecase(const VerifyEmailParams(token: token)))
+        when(() =>
+                mockVerifyEmailUsecase(const VerifyEmailParams(token: token)))
             .thenAnswer((_) async => const Left(failure));
 
         // Act
@@ -521,9 +586,11 @@ void main() {
     });
 
     group('ResendVerificationEmailEvent', () {
-      test('should emit [AuthLoading, AuthSuccess] when resend is successful', () async {
+      test('should emit [AuthLoading, AuthSuccess] when resend is successful',
+          () async {
         // Arrange
-        when(() => mockResendVerificationEmailUsecase(const ResendVerificationEmailParams()))
+        when(() => mockResendVerificationEmailUsecase(
+                const ResendVerificationEmailParams()))
             .thenAnswer((_) async => const Right(null));
 
         // Act
@@ -538,10 +605,12 @@ void main() {
         authBloc.add(const ResendVerificationEmailEvent());
       });
 
-      test('should emit [AuthLoading, AuthFailure] when resend fails', () async {
+      test('should emit [AuthLoading, AuthFailure] when resend fails',
+          () async {
         // Arrange
         const failure = ServerFailure(message: 'Failed to resend email');
-        when(() => mockResendVerificationEmailUsecase(const ResendVerificationEmailParams()))
+        when(() => mockResendVerificationEmailUsecase(
+                const ResendVerificationEmailParams()))
             .thenAnswer((_) async => const Left(failure));
 
         // Act
@@ -558,7 +627,9 @@ void main() {
     });
 
     group('DeleteAccountEvent', () {
-      test('should emit [AuthLoading, AuthLoggedOut] when deletion is successful', () async {
+      test(
+          'should emit [AuthLoading, AuthLoggedOut] when deletion is successful',
+          () async {
         // Arrange
         when(() => mockDeleteAccountUsecase(const DeleteAccountParams()))
             .thenAnswer((_) async => const Right(null));
@@ -575,7 +646,8 @@ void main() {
         authBloc.add(const DeleteAccountEvent());
       });
 
-      test('should emit [AuthLoading, AuthFailure] when deletion fails', () async {
+      test('should emit [AuthLoading, AuthFailure] when deletion fails',
+          () async {
         // Arrange
         const failure = ServerFailure(message: 'Failed to delete account');
         when(() => mockDeleteAccountUsecase(const DeleteAccountParams()))
@@ -595,7 +667,9 @@ void main() {
     });
 
     group('RefreshTokenEvent', () {
-      test('should emit [AuthLoading, TokenRefreshSuccess] when refresh is successful', () async {
+      test(
+          'should emit [AuthLoading, TokenRefreshSuccess] when refresh is successful',
+          () async {
         // Arrange
         when(() => mockRefreshTokenUsecase(const RefreshTokenParams()))
             .thenAnswer((_) async => Right(AuthFixtures.testUser));
@@ -612,7 +686,8 @@ void main() {
         authBloc.add(const RefreshTokenEvent());
       });
 
-      test('should emit [AuthLoading, AuthFailure] when refresh fails', () async {
+      test('should emit [AuthLoading, AuthFailure] when refresh fails',
+          () async {
         // Arrange
         const failure = ServerFailure(message: 'Token refresh failed');
         when(() => mockRefreshTokenUsecase(const RefreshTokenParams()))
@@ -628,6 +703,176 @@ void main() {
         expectLater(authBloc.stream, emitsInOrder(expected));
 
         authBloc.add(const RefreshTokenEvent());
+      });
+    });
+
+    group('CreateRefreshTokenEvent', () {
+      test(
+          'should emit [AuthLoading, CreateRefreshTokenSuccess] when creation is successful',
+          () async {
+        // Arrange
+        final tokenData = {'refreshToken': 'test-refresh-token'};
+        when(() =>
+                mockCreateRefreshTokenUsecase(const CreateRefreshTokenParams()))
+            .thenAnswer((_) async => Right(tokenData));
+
+        // Act
+        final expected = [
+          const AuthLoading(),
+          CreateRefreshTokenSuccess(tokenData: tokenData),
+        ];
+
+        // Assert
+        expectLater(authBloc.stream, emitsInOrder(expected));
+
+        authBloc.add(const CreateRefreshTokenEvent());
+      });
+
+      test('should emit [AuthLoading, AuthFailure] when creation fails',
+          () async {
+        // Arrange
+        const failure = ServerFailure(message: 'Token creation failed');
+        when(() =>
+                mockCreateRefreshTokenUsecase(const CreateRefreshTokenParams()))
+            .thenAnswer((_) async => const Left(failure));
+
+        // Act
+        final expected = [
+          const AuthLoading(),
+          AuthFailure(message: failure.message),
+        ];
+
+        // Assert
+        expectLater(authBloc.stream, emitsInOrder(expected));
+
+        authBloc.add(const CreateRefreshTokenEvent());
+      });
+    });
+
+    group('GetRefreshTokensEvent', () {
+      test(
+          'should emit [AuthLoading, GetRefreshTokensSuccess] when fetch is successful',
+          () async {
+        // Arrange
+        final tokens = [
+          {'id': 'token1', 'deviceId': 'device1'},
+          {'id': 'token2', 'deviceId': 'device2'},
+        ];
+        when(() => mockGetRefreshTokensUsecase(const GetRefreshTokensParams()))
+            .thenAnswer((_) async => Right(tokens));
+
+        // Act
+        final expected = [
+          const AuthLoading(),
+          GetRefreshTokensSuccess(tokens: tokens),
+        ];
+
+        // Assert
+        expectLater(authBloc.stream, emitsInOrder(expected));
+
+        authBloc.add(const GetRefreshTokensEvent());
+      });
+
+      test('should emit [AuthLoading, AuthFailure] when fetch fails', () async {
+        // Arrange
+        const failure = ServerFailure(message: 'Failed to fetch tokens');
+        when(() => mockGetRefreshTokensUsecase(const GetRefreshTokensParams()))
+            .thenAnswer((_) async => const Left(failure));
+
+        // Act
+        final expected = [
+          const AuthLoading(),
+          AuthFailure(message: failure.message),
+        ];
+
+        // Assert
+        expectLater(authBloc.stream, emitsInOrder(expected));
+
+        authBloc.add(const GetRefreshTokensEvent());
+      });
+    });
+
+    group('RevokeTokenEvent', () {
+      const refreshToken = 'test-refresh-token';
+
+      test(
+          'should emit [AuthLoading, RevokeTokenSuccess] when revocation is successful',
+          () async {
+        // Arrange
+        when(() => mockRevokeTokenUsecase(
+                const RevokeTokenParams(refreshToken: refreshToken)))
+            .thenAnswer((_) async => const Right(null));
+
+        // Act
+        final expected = [
+          const AuthLoading(),
+          RevokeTokenSuccess(tokenId: refreshToken),
+        ];
+
+        // Assert
+        expectLater(authBloc.stream, emitsInOrder(expected));
+
+        authBloc.add(const RevokeTokenEvent(refreshToken: refreshToken));
+      });
+
+      test('should emit [AuthLoading, AuthFailure] when revocation fails',
+          () async {
+        // Arrange
+        const failure = ServerFailure(message: 'Token revocation failed');
+        when(() => mockRevokeTokenUsecase(
+                const RevokeTokenParams(refreshToken: refreshToken)))
+            .thenAnswer((_) async => const Left(failure));
+
+        // Act
+        final expected = [
+          const AuthLoading(),
+          AuthFailure(message: failure.message),
+        ];
+
+        // Assert
+        expectLater(authBloc.stream, emitsInOrder(expected));
+
+        authBloc.add(const RevokeTokenEvent(refreshToken: refreshToken));
+      });
+    });
+
+    group('RevokeAllTokensEvent', () {
+      test(
+          'should emit [AuthLoading, RevokeAllTokensSuccess] when revocation is successful',
+          () async {
+        // Arrange
+        when(() => mockRevokeAllTokensUsecase(const RevokeAllTokensParams()))
+            .thenAnswer((_) async => const Right(null));
+
+        // Act
+        final expected = [
+          const AuthLoading(),
+          const RevokeAllTokensSuccess(),
+        ];
+
+        // Assert
+        expectLater(authBloc.stream, emitsInOrder(expected));
+
+        authBloc.add(const RevokeAllTokensEvent());
+      });
+
+      test('should emit [AuthLoading, AuthFailure] when revocation fails',
+          () async {
+        // Arrange
+        const failure = ServerFailure(message: 'Bulk revocation failed');
+        when(() => mockRevokeAllTokensUsecase(const RevokeAllTokensParams()))
+            .thenAnswer((_) async => const Left(failure));
+
+        // Act
+        final expected = [
+          const AuthLoading(),
+          AuthFailure(message: failure.message),
+        ];
+
+        // Assert
+        expectLater(authBloc.stream, emitsInOrder(expected));
+
+        authBloc.add(const RevokeAllTokensEvent());
       });
     });
   });

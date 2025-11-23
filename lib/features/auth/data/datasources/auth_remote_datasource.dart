@@ -51,4 +51,16 @@ abstract interface class AuthRemoteDatasource {
 
   /// Delete user account
   Future<void> deleteAccount();
+
+  /// Create new refresh token
+  Future<Map<String, dynamic>> createRefreshToken();
+
+  /// Get list of refresh tokens
+  Future<List<Map<String, dynamic>>> getRefreshTokens();
+
+  /// Revoke specific refresh token
+  Future<void> revokeToken(String tokenId);
+
+  /// Revoke all refresh tokens
+  Future<void> revokeAllTokens();
 }

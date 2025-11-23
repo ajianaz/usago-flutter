@@ -26,9 +26,8 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
       final response = await _dioClient.get(BrandEndpoints.getUserBrands);
 
       final List<dynamic> dataList = response['data'] ?? [];
-      final List<Brand> brands = dataList
-          .map((json) => BrandModel.fromJson(json).toEntity())
-          .toList();
+      final List<Brand> brands =
+          dataList.map((json) => BrandModel.fromJson(json).toEntity()).toList();
 
       _logger.info('Successfully fetched ${brands.length} user brands');
       return Right(brands);
@@ -54,9 +53,8 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
       final response = await _dioClient.get(BrandEndpoints.getAccessibleBrands);
 
       final List<dynamic> dataList = response['data'] ?? [];
-      final List<Brand> brands = dataList
-          .map((json) => BrandModel.fromJson(json).toEntity())
-          .toList();
+      final List<Brand> brands =
+          dataList.map((json) => BrandModel.fromJson(json).toEntity()).toList();
 
       _logger.info('Successfully fetched ${brands.length} accessible brands');
       return Right(brands);
@@ -129,7 +127,8 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, Brand>> createBrand(Map<String, dynamic> brandData) async {
+  Future<Either<Failure, Brand>> createBrand(
+      Map<String, dynamic> brandData) async {
     try {
       // Send data as Map object, let Dio handle JSON serialization
       final response = await _dioClient.post(
@@ -137,17 +136,26 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
         data: brandData,
       );
 
-      final brand = BrandModel.fromJson(response['data']).toEntity();
-
-      _logger.info('Successfully created brand: ${brand.name}');
-      return Right(brand);
+      // Handle nested response structure with success, data, and message
+      final responseData = response['data'];
+      if (responseData is Map<String, dynamic>) {
+        final brand = BrandModel.fromJson(responseData).toEntity();
+        _logger.info('Successfully created brand: ${brand.name}');
+        return Right(brand);
+      } else {
+        return Left(ServerFailure(
+          message: 'Invalid response format',
+          originalError: response,
+        ));
+      }
     } on DioException catch (e) {
       _logger.error('Dio error in createBrand: $e');
 
       // Check for specific BRAND_SLUG_EXISTS error
       if (e.response?.statusCode == 409) {
         final responseData = e.response?.data;
-        if (responseData is Map && responseData['code'] == 'BRAND_SLUG_EXISTS') {
+        if (responseData is Map &&
+            responseData['code'] == 'BRAND_SLUG_EXISTS') {
           return Left(ConflictFailure(
             message: responseData['error'] ?? 'Brand slug already exists',
             code: responseData['code'],
@@ -171,7 +179,8 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, Brand>> updateBrand(String id, Map<String, dynamic> brandData) async {
+  Future<Either<Failure, Brand>> updateBrand(
+      String id, Map<String, dynamic> brandData) async {
     try {
       // Send data as Map object, let Dio handle JSON serialization
       final endpoint = BrandEndpoints.updateBrand.replaceAll('{id}', id);
@@ -180,17 +189,26 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
         data: brandData,
       );
 
-      final brand = BrandModel.fromJson(response['data']).toEntity();
-
-      _logger.info('Successfully updated brand: $id');
-      return Right(brand);
+      // Handle nested response structure with success, data, and message
+      final responseData = response['data'];
+      if (responseData is Map<String, dynamic>) {
+        final brand = BrandModel.fromJson(responseData).toEntity();
+        _logger.info('Successfully updated brand: $id');
+        return Right(brand);
+      } else {
+        return Left(ServerFailure(
+          message: 'Invalid response format',
+          originalError: response,
+        ));
+      }
     } on DioException catch (e) {
       _logger.error('Dio error in updateBrand: $e');
 
       // Check for specific BRAND_SLUG_EXISTS error
       if (e.response?.statusCode == 409) {
         final responseData = e.response?.data;
-        if (responseData is Map && responseData['code'] == 'BRAND_SLUG_EXISTS') {
+        if (responseData is Map &&
+            responseData['code'] == 'BRAND_SLUG_EXISTS') {
           return Left(ConflictFailure(
             message: responseData['error'] ?? 'Brand slug already exists',
             code: responseData['code'],
@@ -238,18 +256,36 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, Brand>> switchActiveBrand(String brandId) async {
+  Future<Either<Failure, Brand>> switchActiveBrand(String brandId,
+      {String? branchId}) async {
     try {
       // Send data as Map object, let Dio handle JSON serialization
+      final requestData = <String, dynamic>{
+        'brandId': brandId,
+      };
+
+      // Add branchId if provided
+      if (branchId != null) {
+        requestData['branchId'] = branchId;
+      }
+
       final response = await _dioClient.post(
         BrandEndpoints.switchActiveBrand,
-        data: {'brandId': brandId},
+        data: requestData,
       );
 
-      final brand = BrandModel.fromJson(response['data']).toEntity();
-
-      _logger.info('Successfully switched to active brand: $brandId');
-      return Right(brand);
+      // Handle nested response structure with success, data, and message
+      final responseData = response['data'];
+      if (responseData is Map<String, dynamic>) {
+        final brand = BrandModel.fromJson(responseData).toEntity();
+        _logger.info('Successfully switched to active brand: $brandId');
+        return Right(brand);
+      } else {
+        return Left(ServerFailure(
+          message: 'Invalid response format',
+          originalError: response,
+        ));
+      }
     } on DioException catch (e) {
       _logger.error('Dio error in switchActiveBrand: $e');
       return Left(ServerFailure(
@@ -274,7 +310,8 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
   ) async {
     try {
       // Send data as Map object, let Dio handle JSON serialization
-      final endpoint = BrandEndpoints.transferOwnership.replaceAll('{id}', brandId);
+      final endpoint =
+          BrandEndpoints.transferOwnership.replaceAll('{id}', brandId);
       await _dioClient.post(
         endpoint,
         data: {
@@ -314,7 +351,8 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
         data: invitationData,
       );
 
-      final invitation = BrandInvitationModel.fromJson(response['data']).toEntity();
+      final invitation =
+          BrandInvitationModel.fromJson(response['data']).toEntity();
 
       _logger.info('Successfully invited user to brand: $brandId');
       return Right(invitation);
@@ -370,7 +408,8 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
   @override
   Future<Either<Failure, void>> declineInvitation(String invitationId) async {
     try {
-      final endpoint = BrandEndpoints.declineInvitation.replaceAll('{invitationId}', invitationId);
+      final endpoint = BrandEndpoints.declineInvitation
+          .replaceAll('{invitationId}', invitationId);
       await _dioClient.post(endpoint);
 
       _logger.info('Successfully declined invitation: $invitationId');
@@ -392,9 +431,11 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, List<BrandInvitation>>> getBrandInvitations(String brandId) async {
+  Future<Either<Failure, List<BrandInvitation>>> getBrandInvitations(
+      String brandId) async {
     try {
-      final endpoint = BrandEndpoints.getBrandInvitations.replaceAll('{id}', brandId);
+      final endpoint =
+          BrandEndpoints.getBrandInvitations.replaceAll('{id}', brandId);
       final response = await _dioClient.get(endpoint);
 
       final List<dynamic> dataList = response['data'] ?? [];
@@ -402,7 +443,8 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
           .map((json) => BrandInvitationModel.fromJson(json).toEntity())
           .toList();
 
-      _logger.info('Successfully fetched ${invitations.length} invitations for brand: $brandId');
+      _logger.info(
+          'Successfully fetched ${invitations.length} invitations for brand: $brandId');
       return Right(invitations);
     } on DioException catch (e) {
       _logger.error('Dio error in getBrandInvitations: $e');
@@ -421,7 +463,8 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, Map<String, dynamic>>> getBrandStats(String brandId) async {
+  Future<Either<Failure, Map<String, dynamic>>> getBrandStats(
+      String brandId) async {
     try {
       final endpoint = BrandEndpoints.getBrandStats.replaceAll('{id}', brandId);
       final response = await _dioClient.get(endpoint);
@@ -456,7 +499,8 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
           .map((json) => BrandInvitationModel.fromJson(json).toEntity())
           .toList();
 
-      _logger.info('Successfully fetched ${invitations.length} user invitations');
+      _logger
+          .info('Successfully fetched ${invitations.length} user invitations');
       return Right(invitations);
     } on DioException catch (e) {
       _logger.error('Dio error in getUserInvitations: $e');
@@ -477,7 +521,8 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
   @override
   Future<Either<Failure, void>> cancelInvitation(String invitationId) async {
     try {
-      final endpoint = BrandEndpoints.cancelInvitation.replaceAll('{invitationId}', invitationId);
+      final endpoint = BrandEndpoints.cancelInvitation
+          .replaceAll('{invitationId}', invitationId);
       await _dioClient.delete(endpoint);
 
       _logger.info('Successfully cancelled invitation: $invitationId');
@@ -501,7 +546,8 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
   @override
   Future<Either<Failure, void>> resendInvitation(String invitationId) async {
     try {
-      final endpoint = BrandEndpoints.resendInvitation.replaceAll('{invitationId}', invitationId);
+      final endpoint = BrandEndpoints.resendInvitation
+          .replaceAll('{invitationId}', invitationId);
       await _dioClient.post(endpoint);
 
       _logger.info('Successfully resent invitation: $invitationId');

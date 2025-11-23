@@ -20,7 +20,8 @@ class CreateBrandUseCase implements UseCase<Brand, CreateBrandParams> {
   Future<Either<Failure, Brand>> call(CreateBrandParams params) async {
     try {
       // Log execution
-      print('CreateBrandUseCase: Creating brand "${params.name}" for user $_currentUserId');
+      print(
+          'CreateBrandUseCase: Creating brand "${params.name}" for user $_currentUserId');
 
       // Validasi input
       final validationResult = _validateBrandData(params);
@@ -32,13 +33,20 @@ class CreateBrandUseCase implements UseCase<Brand, CreateBrandParams> {
       final brandData = {
         'name': params.name.trim(),
         'slug': params.slug.trim(),
+        'logoUrl': params.logoUrl,
         'businessType': params.businessType,
         'industry': params.industry,
         'description': params.description?.trim(),
         'timezone': params.timezone,
         'currency': params.currency,
         'ownerId': _currentUserId,
-        'settings': {},
+        'settings': params.settings ??
+            {
+              'timezone': params.timezone,
+              'currency': params.currency,
+              'businessType': params.businessType,
+              'single_brand_mode': true,
+            },
         'subscriptionTier': 'BASIC',
         'subscriptionStatus': 'ACTIVE',
       };
@@ -48,14 +56,17 @@ class CreateBrandUseCase implements UseCase<Brand, CreateBrandParams> {
 
       // Log result
       result.fold(
-        (failure) => print('CreateBrandUseCase: Failed to create brand - ${failure.message}'),
-        (brand) => print('CreateBrandUseCase: Successfully created brand "${brand.name}" (${brand.id})'),
+        (failure) => print(
+            'CreateBrandUseCase: Failed to create brand - ${failure.message}'),
+        (brand) => print(
+            'CreateBrandUseCase: Successfully created brand "${brand.name}" (${brand.id})'),
       );
 
       return result;
     } catch (e) {
       print('CreateBrandUseCase: Unexpected error - $e');
-      return Left(ServerFailure(message: 'Gagal membuat brand: ${e.toString()}'));
+      return Left(
+          ServerFailure(message: 'Gagal membuat brand: ${e.toString()}'));
     }
   }
 
@@ -71,7 +82,8 @@ class CreateBrandUseCase implements UseCase<Brand, CreateBrandParams> {
     }
 
     if (params.name.trim().length > 100) {
-      return const ValidationFailure(message: 'Nama brand maksimal 100 karakter');
+      return const ValidationFailure(
+          message: 'Nama brand maksimal 100 karakter');
     }
 
     // Validasi slug
@@ -84,21 +96,25 @@ class CreateBrandUseCase implements UseCase<Brand, CreateBrandParams> {
     }
 
     if (params.slug.trim().length > 100) {
-      return const ValidationFailure(message: 'Slug brand maksimal 100 karakter');
+      return const ValidationFailure(
+          message: 'Slug brand maksimal 100 karakter');
     }
 
     // Validasi format slug (hanya lowercase, angka, dan dash)
     final slugRegex = RegExp(r'^[a-z0-9-]+$');
     if (!slugRegex.hasMatch(params.slug.trim())) {
       return const ValidationFailure(
-        message: 'Slug hanya boleh berisi huruf kecil, angka, dan tanda hubung (-)',
+        message:
+            'Slug hanya boleh berisi huruf kecil, angka, dan tanda hubung (-)',
       );
     }
 
     // Slug tidak boleh dimulai atau diakhiri dengan dash
-    if (params.slug.trim().startsWith('-') || params.slug.trim().endsWith('-')) {
+    if (params.slug.trim().startsWith('-') ||
+        params.slug.trim().endsWith('-')) {
       return const ValidationFailure(
-        message: 'Slug tidak boleh dimulai atau diakhiri dengan tanda hubung (-)',
+        message:
+            'Slug tidak boleh dimulai atau diakhiri dengan tanda hubung (-)',
       );
     }
 
@@ -124,7 +140,8 @@ class CreateBrandUseCase implements UseCase<Brand, CreateBrandParams> {
 
     // Validasi description jika ada
     if (params.description != null && params.description!.trim().length > 500) {
-      return const ValidationFailure(message: 'Deskripsi maksimal 500 karakter');
+      return const ValidationFailure(
+          message: 'Deskripsi maksimal 500 karakter');
     }
 
     return null;

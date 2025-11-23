@@ -17,7 +17,12 @@ import '../domain/usecases/verify_email_usecase.dart';
 import '../domain/usecases/resend_verification_email_usecase.dart';
 import '../domain/usecases/delete_account_usecase.dart';
 import '../domain/usecases/refresh_token_usecase.dart';
+import '../domain/usecases/create_refresh_token_usecase.dart';
+import '../domain/usecases/get_refresh_tokens_usecase.dart';
+import '../domain/usecases/revoke_token_usecase.dart';
+import '../domain/usecases/revoke_all_tokens_usecase.dart';
 import '../presentation/bloc/auth_bloc.dart';
+import '../presentation/bloc/token_management/token_management_bloc.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/errors/error_handler.dart';
@@ -101,6 +106,18 @@ void setupAuthDependencies(GetIt getIt) {
   getIt.registerSingleton(
     RefreshTokenUsecase(repository: getIt()),
   );
+  getIt.registerSingleton(
+    CreateRefreshTokenUsecase(repository: getIt()),
+  );
+  getIt.registerSingleton(
+    GetRefreshTokensUsecase(repository: getIt()),
+  );
+  getIt.registerSingleton(
+    RevokeTokenUsecase(repository: getIt()),
+  );
+  getIt.registerSingleton(
+    RevokeAllTokensUsecase(repository: getIt()),
+  );
 
   // Register BLoC
   getIt.registerSingleton(
@@ -117,6 +134,19 @@ void setupAuthDependencies(GetIt getIt) {
       resendVerificationEmailUsecase: getIt(),
       deleteAccountUsecase: getIt(),
       refreshTokenUsecase: getIt(),
+      createRefreshTokenUsecase: getIt(),
+      getRefreshTokensUsecase: getIt(),
+      revokeTokenUsecase: getIt(),
+      revokeAllTokensUsecase: getIt(),
+    ),
+  );
+  // Register Token Management BLoC
+  getIt.registerSingleton(
+    TokenManagementBloc(
+      getRefreshTokensUsecase: getIt<GetRefreshTokensUsecase>(),
+      revokeTokenUsecase: getIt<RevokeTokenUsecase>(),
+      revokeAllTokensUsecase: getIt<RevokeAllTokensUsecase>(),
+      logger: logger,
     ),
   );
 }

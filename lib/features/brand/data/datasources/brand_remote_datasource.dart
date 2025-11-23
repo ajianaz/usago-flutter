@@ -22,13 +22,15 @@ abstract interface class BrandRemoteDataSource {
   Future<Either<Failure, Brand>> createBrand(Map<String, dynamic> brandData);
 
   /// Update an existing brand via remote API
-  Future<Either<Failure, Brand>> updateBrand(String id, Map<String, dynamic> brandData);
+  Future<Either<Failure, Brand>> updateBrand(
+      String id, Map<String, dynamic> brandData);
 
   /// Delete a brand via remote API
   Future<Either<Failure, void>> deleteBrand(String id);
 
   /// Switch the active brand for the current user via remote API
-  Future<Either<Failure, Brand>> switchActiveBrand(String brandId);
+  Future<Either<Failure, Brand>> switchActiveBrand(String brandId,
+      {String? branchId});
 
   /// Transfer brand ownership to another user via remote API
   Future<Either<Failure, void>> transferOwnership(
@@ -53,7 +55,8 @@ abstract interface class BrandRemoteDataSource {
   Future<Either<Failure, void>> declineInvitation(String invitationId);
 
   /// Get all invitations for a specific brand from remote API
-  Future<Either<Failure, List<BrandInvitation>>> getBrandInvitations(String brandId);
+  Future<Either<Failure, List<BrandInvitation>>> getBrandInvitations(
+      String brandId);
 
   /// Get all invitations for the current user (both sent and received) from remote API
   Future<Either<Failure, List<BrandInvitation>>> getUserInvitations();

@@ -421,6 +421,129 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     }
   }
 
+  @override
+  Future<Map<String, dynamic>> createRefreshToken() async {
+    try {
+      _logger.info('Creating new refresh token');
+
+      // Get device info
+      final deviceInfo = await _deviceInfoService.getDeviceInfo();
+      _logger.info(
+          'Device info retrieved for create refresh token: ${deviceInfo['deviceId']}');
+
+      final response = await _dioClient.postWithHeaders(
+        AuthEndpoints.createRefreshToken,
+        data: {
+          'deviceId': deviceInfo['deviceId'],
+          'deviceName': deviceInfo['deviceName'],
+          'deviceType': deviceInfo['deviceType'],
+          'platform': deviceInfo['platform'],
+          'appVersion': deviceInfo['appVersion'],
+        },
+      );
+
+      final responseData = response.data;
+      if (responseData != null && responseData is Map<String, dynamic>) {
+        final data = responseData['data'] as Map<String, dynamic>?;
+        if (data != null) {
+          // Save new refresh token if provided
+          final refreshToken = data['refreshToken'] as String?;
+          if (refreshToken != null && refreshToken.isNotEmpty) {
+            await _localDatasource.saveRefreshToken(refreshToken);
+            _logger.info('New refresh token saved after creation');
+          }
+
+          _logger.info('Refresh token creation successful');
+          return data;
+        }
+      }
+
+      throw Exception(
+          'Invalid response format from create refresh token endpoint');
+    } on DioException catch (e) {
+      _logger.error('Create refresh token failed', e);
+      _handleBetterAuthError(e);
+      rethrow;
+    } catch (e) {
+      _logger.error('Unexpected error during create refresh token', e);
+      throw Exception('Create refresh token failed: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getRefreshTokens() async {
+    try {
+      _logger.info('Getting list of refresh tokens');
+
+      final response = await _dioClient.get(
+        AuthEndpoints.getRefreshTokens,
+      );
+
+      if (response != null && response is Map<String, dynamic>) {
+        final data = response['data'] as List<dynamic>?;
+        if (data != null) {
+          final tokens =
+              data.map((token) => token as Map<String, dynamic>).toList();
+          _logger.info('Retrieved ${tokens.length} refresh tokens');
+          return tokens;
+        }
+      }
+
+      throw Exception(
+          'Invalid response format from get refresh tokens endpoint');
+    } on DioException catch (e) {
+      _logger.error('Get refresh tokens failed', e);
+      _handleBetterAuthError(e);
+      rethrow;
+    } catch (e) {
+      _logger.error('Unexpected error during get refresh tokens', e);
+      throw Exception('Get refresh tokens failed: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> revokeToken(String tokenId) async {
+    try {
+      _logger.info('Revoking refresh token: $tokenId');
+
+      await _dioClient.postWithHeaders(
+        AuthEndpoints.revokeToken,
+        data: {
+          'refreshToken': tokenId,
+        },
+      );
+
+      _logger.info('Refresh token revoked successfully: $tokenId');
+    } on DioException catch (e) {
+      _logger.error('Revoke token failed', e);
+      _handleBetterAuthError(e);
+      rethrow;
+    } catch (e) {
+      _logger.error('Unexpected error during revoke token', e);
+      throw Exception('Revoke token failed: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> revokeAllTokens() async {
+    try {
+      _logger.info('Revoking all refresh tokens');
+
+      await _dioClient.postWithHeaders(
+        AuthEndpoints.revokeAllTokens,
+      );
+
+      _logger.info('All refresh tokens revoked successfully');
+    } on DioException catch (e) {
+      _logger.error('Revoke all tokens failed', e);
+      _handleBetterAuthError(e);
+      rethrow;
+    } catch (e) {
+      _logger.error('Unexpected error during revoke all tokens', e);
+      throw Exception('Revoke all tokens failed: ${e.toString()}');
+    }
+  }
+
   /// Handle Better Auth specific error format
   void _handleBetterAuthError(DioException e) {
     if (e.response?.data != null) {

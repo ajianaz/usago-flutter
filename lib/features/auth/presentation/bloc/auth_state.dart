@@ -95,3 +95,41 @@ class TokenRefreshSuccess extends AuthState {
   @override
   List<Object?> get props => [user];
 }
+
+/// Create refresh token successful state
+class CreateRefreshTokenSuccess extends AuthState {
+  final Map<String, dynamic> tokenData;
+
+  const CreateRefreshTokenSuccess({required this.tokenData});
+
+  @override
+  List<Object?> get props => [tokenData];
+}
+
+/// Get refresh tokens successful state
+class GetRefreshTokensSuccess extends AuthState {
+  final List<Map<String, dynamic>> tokens;
+
+  const GetRefreshTokensSuccess({required this.tokens});
+
+  @override
+  List<Object?> get props => [tokens];
+}
+
+/// Revoke token successful state
+class RevokeTokenSuccess extends AuthState {
+  final String tokenId;
+
+  const RevokeTokenSuccess({required this.tokenId});
+
+  @override
+  List<Object?> get props => [tokenId];
+}
+
+/// Revoke all tokens successful state
+class RevokeAllTokensSuccess extends AuthState {
+  const RevokeAllTokensSuccess();
+
+  @override
+  List<Object?> get props => [];
+}

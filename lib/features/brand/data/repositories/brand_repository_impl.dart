@@ -18,7 +18,7 @@ class BrandRepositoryImpl implements BrandRepository {
     required BrandRemoteDataSource remoteDataSource,
     required BrandLocalDataSource localDataSource,
     required AppLogger logger,
-  }) : _remoteDataSource = remoteDataSource,
+  })  : _remoteDataSource = remoteDataSource,
         _localDataSource = localDataSource,
         _logger = logger;
 
@@ -29,7 +29,8 @@ class BrandRepositoryImpl implements BrandRepository {
       final cachedResult = await _localDataSource.getCachedBrands();
       final cachedBrands = cachedResult.fold(
         (failure) {
-          _logger.warning('Failed to get cached brands, fetching from remote: ${failure.message}');
+          _logger.warning(
+              'Failed to get cached brands, fetching from remote: ${failure.message}');
           return <Brand>[];
         },
         (brands) => brands,
@@ -40,7 +41,9 @@ class BrandRepositoryImpl implements BrandRepository {
 
       return remoteResult.fold(
         (failure) {
-          _logger.error('Failed to fetch user brands from remote: ${failure.message}', failure);
+          _logger.error(
+              'Failed to fetch user brands from remote: ${failure.message}',
+              failure);
           // Return cached brands if remote fails
           if (cachedBrands.isNotEmpty) {
             _logger.info('Returning cached brands as fallback');
@@ -70,7 +73,8 @@ class BrandRepositoryImpl implements BrandRepository {
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to get accessible brands: ${failure.message}', failure);
+          _logger.error(
+              'Failed to get accessible brands: ${failure.message}', failure);
           return Left(failure);
         },
         (brands) async {
@@ -95,7 +99,8 @@ class BrandRepositoryImpl implements BrandRepository {
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to get brand by ID: ${failure.message}', failure);
+          _logger.error(
+              'Failed to get brand by ID: ${failure.message}', failure);
           return Left(failure);
         },
         (brand) async {
@@ -120,7 +125,8 @@ class BrandRepositoryImpl implements BrandRepository {
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to get brand by slug: ${failure.message}', failure);
+          _logger.error(
+              'Failed to get brand by slug: ${failure.message}', failure);
           return Left(failure);
         },
         (brand) async {
@@ -139,7 +145,8 @@ class BrandRepositoryImpl implements BrandRepository {
   }
 
   @override
-  Future<Either<Failure, Brand>> createBrand(Map<String, dynamic> brandData) async {
+  Future<Either<Failure, Brand>> createBrand(
+      Map<String, dynamic> brandData) async {
     try {
       final result = await _remoteDataSource.createBrand(brandData);
 
@@ -155,7 +162,8 @@ class BrandRepositoryImpl implements BrandRepository {
           // Set as active brand
           await _localDataSource.saveActiveBrandId(brand.id);
 
-          _logger.info('Successfully created and activated brand: ${brand.name}');
+          _logger
+              .info('Successfully created and activated brand: ${brand.name}');
           return Right(brand);
         },
       );
@@ -169,7 +177,8 @@ class BrandRepositoryImpl implements BrandRepository {
   }
 
   @override
-  Future<Either<Failure, Brand>> updateBrand(String id, Map<String, dynamic> brandData) async {
+  Future<Either<Failure, Brand>> updateBrand(
+      String id, Map<String, dynamic> brandData) async {
     try {
       final result = await _remoteDataSource.updateBrand(id, brandData);
 
@@ -208,20 +217,25 @@ class BrandRepositoryImpl implements BrandRepository {
           // Clear from cache
           final cachedBrandResult = await _localDataSource.getCachedBrand(id);
           cachedBrandResult.fold(
-            (failure) => _logger.warning('Failed to get cached brand for deletion: ${failure.message}'),
+            (failure) => _logger.warning(
+                'Failed to get cached brand for deletion: ${failure.message}'),
             (cachedBrand) async {
               // Get all cached brands and remove the deleted one
               final allBrandsResult = await _localDataSource.getCachedBrands();
               allBrandsResult.fold(
-                (failure) => _logger.warning('Failed to get all cached brands: ${failure.message}'),
+                (failure) => _logger.warning(
+                    'Failed to get all cached brands: ${failure.message}'),
                 (allBrands) async {
-                  final updatedBrands = allBrands.where((brand) => brand.id != id).toList();
+                  final updatedBrands =
+                      allBrands.where((brand) => brand.id != id).toList();
                   await _localDataSource.cacheBrands(updatedBrands);
 
                   // Clear active brand if it was the deleted one
-                  final activeBrandResult = await _localDataSource.getActiveBrandId();
+                  final activeBrandResult =
+                      await _localDataSource.getActiveBrandId();
                   activeBrandResult.fold(
-                    (failure) => _logger.warning('Failed to get active brand ID: ${failure.message}'),
+                    (failure) => _logger.warning(
+                        'Failed to get active brand ID: ${failure.message}'),
                     (activeBrandId) async {
                       if (activeBrandId == id) {
                         await _localDataSource.clearActiveBrandId();
@@ -247,13 +261,16 @@ class BrandRepositoryImpl implements BrandRepository {
   }
 
   @override
-  Future<Either<Failure, Brand>> switchActiveBrand(String brandId) async {
+  Future<Either<Failure, Brand>> switchActiveBrand(String brandId,
+      {String? branchId}) async {
     try {
-      final result = await _remoteDataSource.switchActiveBrand(brandId);
+      final result = await _remoteDataSource.switchActiveBrand(brandId,
+          branchId: branchId);
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to switch active brand: ${failure.message}', failure);
+          _logger.error(
+              'Failed to switch active brand: ${failure.message}', failure);
           return Left(failure);
         },
         (brand) async {
@@ -283,15 +300,18 @@ class BrandRepositoryImpl implements BrandRepository {
     String confirmationCode,
   ) async {
     try {
-      final result = await _remoteDataSource.transferOwnership(brandId, newOwnerId, confirmationCode);
+      final result = await _remoteDataSource.transferOwnership(
+          brandId, newOwnerId, confirmationCode);
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to transfer ownership: ${failure.message}', failure);
+          _logger.error(
+              'Failed to transfer ownership: ${failure.message}', failure);
           return Left(failure);
         },
         (_) async {
-          _logger.info('Successfully transferred ownership for brand: $brandId');
+          _logger
+              .info('Successfully transferred ownership for brand: $brandId');
           return const Right(null);
         },
       );
@@ -310,7 +330,8 @@ class BrandRepositoryImpl implements BrandRepository {
     Map<String, dynamic> invitationData,
   ) async {
     try {
-      final result = await _remoteDataSource.inviteUser(brandId, invitationData);
+      final result =
+          await _remoteDataSource.inviteUser(brandId, invitationData);
 
       return result.fold(
         (failure) {
@@ -319,10 +340,12 @@ class BrandRepositoryImpl implements BrandRepository {
         },
         (invitation) async {
           // Cache the invitation
-          final cachedInvitationsResult = await _localDataSource.getCachedBrandInvitations();
+          final cachedInvitationsResult =
+              await _localDataSource.getCachedBrandInvitations();
           final updatedInvitations = cachedInvitationsResult.fold(
             (failure) {
-              _logger.warning('Failed to get cached invitations: ${failure.message}');
+              _logger.warning(
+                  'Failed to get cached invitations: ${failure.message}');
               return <BrandInvitation>[];
             },
             (invitations) => [...invitations, invitation],
@@ -349,11 +372,13 @@ class BrandRepositoryImpl implements BrandRepository {
     String token,
   ) async {
     try {
-      final result = await _remoteDataSource.acceptInvitation(invitationId, token);
+      final result =
+          await _remoteDataSource.acceptInvitation(invitationId, token);
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to accept invitation: ${failure.message}', failure);
+          _logger.error(
+              'Failed to accept invitation: ${failure.message}', failure);
           return Left(failure);
         },
         (_) async {
@@ -377,7 +402,8 @@ class BrandRepositoryImpl implements BrandRepository {
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to decline invitation: ${failure.message}', failure);
+          _logger.error(
+              'Failed to decline invitation: ${failure.message}', failure);
           return Left(failure);
         },
         (_) async {
@@ -395,19 +421,22 @@ class BrandRepositoryImpl implements BrandRepository {
   }
 
   @override
-  Future<Either<Failure, List<BrandInvitation>>> getBrandInvitations(String brandId) async {
+  Future<Either<Failure, List<BrandInvitation>>> getBrandInvitations(
+      String brandId) async {
     try {
       final result = await _remoteDataSource.getBrandInvitations(brandId);
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to get brand invitations: ${failure.message}', failure);
+          _logger.error(
+              'Failed to get brand invitations: ${failure.message}', failure);
           return Left(failure);
         },
         (invitations) async {
           // Cache the invitations
           await _localDataSource.cacheBrandInvitations(invitations);
-          _logger.info('Successfully retrieved ${invitations.length} invitations for brand: $brandId');
+          _logger.info(
+              'Successfully retrieved ${invitations.length} invitations for brand: $brandId');
           return Right(invitations);
         },
       );
@@ -421,13 +450,15 @@ class BrandRepositoryImpl implements BrandRepository {
   }
 
   @override
-  Future<Either<Failure, Map<String, dynamic>>> getBrandStats(String brandId) async {
+  Future<Either<Failure, Map<String, dynamic>>> getBrandStats(
+      String brandId) async {
     try {
       final result = await _remoteDataSource.getBrandStats(brandId);
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to get brand stats: ${failure.message}', failure);
+          _logger.error(
+              'Failed to get brand stats: ${failure.message}', failure);
           return Left(failure);
         },
         (stats) {
@@ -452,7 +483,8 @@ class BrandRepositoryImpl implements BrandRepository {
 
       return activeBrandIdResult.fold(
         (failure) {
-          _logger.error('Failed to get active brand ID: ${failure.message}', failure);
+          _logger.error(
+              'Failed to get active brand ID: ${failure.message}', failure);
           return const Right(null);
         },
         (activeBrandId) async {
@@ -462,15 +494,18 @@ class BrandRepositoryImpl implements BrandRepository {
           }
 
           // Get brand from cache
-          final cachedBrandResult = await _localDataSource.getCachedBrand(activeBrandId);
+          final cachedBrandResult =
+              await _localDataSource.getCachedBrand(activeBrandId);
 
           return cachedBrandResult.fold(
             (failure) {
-              _logger.error('Failed to get cached brand: ${failure.message}', failure);
+              _logger.error(
+                  'Failed to get cached brand: ${failure.message}', failure);
               return const Right(null);
             },
             (brand) {
-              _logger.info('Successfully retrieved active brand: ${brand?.name ?? 'Unknown'}');
+              _logger.info(
+                  'Successfully retrieved active brand: ${brand?.name ?? 'Unknown'}');
               return Right(brand);
             },
           );
@@ -516,7 +551,8 @@ class BrandRepositoryImpl implements BrandRepository {
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to get cached brands: ${failure.message}', failure);
+          _logger.error(
+              'Failed to get cached brands: ${failure.message}', failure);
           return Left(failure);
         },
         (brands) {
@@ -540,7 +576,8 @@ class BrandRepositoryImpl implements BrandRepository {
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to clear brand cache: ${failure.message}', failure);
+          _logger.error(
+              'Failed to clear brand cache: ${failure.message}', failure);
           return Left(failure);
         },
         (_) {
@@ -564,7 +601,8 @@ class BrandRepositoryImpl implements BrandRepository {
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to save active brand ID: ${failure.message}', failure);
+          _logger.error(
+              'Failed to save active brand ID: ${failure.message}', failure);
           return Left(failure);
         },
         (_) {
@@ -588,11 +626,13 @@ class BrandRepositoryImpl implements BrandRepository {
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to get active brand ID: ${failure.message}', failure);
+          _logger.error(
+              'Failed to get active brand ID: ${failure.message}', failure);
           return Left(failure);
         },
         (activeBrandId) {
-          _logger.info('Successfully retrieved active brand ID: $activeBrandId');
+          _logger
+              .info('Successfully retrieved active brand ID: $activeBrandId');
           return Right(activeBrandId);
         },
       );
@@ -612,7 +652,8 @@ class BrandRepositoryImpl implements BrandRepository {
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to clear active brand ID: ${failure.message}', failure);
+          _logger.error(
+              'Failed to clear active brand ID: ${failure.message}', failure);
           return Left(failure);
         },
         (_) {
@@ -636,13 +677,15 @@ class BrandRepositoryImpl implements BrandRepository {
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to get user invitations: ${failure.message}', failure);
+          _logger.error(
+              'Failed to get user invitations: ${failure.message}', failure);
           return Left(failure);
         },
         (invitations) async {
           // Cache the invitations
           await _localDataSource.cacheBrandInvitations(invitations);
-          _logger.info('Successfully retrieved ${invitations.length} user invitations');
+          _logger.info(
+              'Successfully retrieved ${invitations.length} user invitations');
           return Right(invitations);
         },
       );
@@ -662,7 +705,8 @@ class BrandRepositoryImpl implements BrandRepository {
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to cancel invitation: ${failure.message}', failure);
+          _logger.error(
+              'Failed to cancel invitation: ${failure.message}', failure);
           return Left(failure);
         },
         (_) async {
@@ -686,7 +730,8 @@ class BrandRepositoryImpl implements BrandRepository {
 
       return result.fold(
         (failure) {
-          _logger.error('Failed to resend invitation: ${failure.message}', failure);
+          _logger.error(
+              'Failed to resend invitation: ${failure.message}', failure);
           return Left(failure);
         },
         (_) async {

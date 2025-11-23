@@ -69,4 +69,20 @@ abstract interface class AuthRepository {
   /// Delete user account
   /// Returns [void] on success or [Failure] on error
   Future<Either<Failure, void>> deleteAccount();
+
+  /// Create new refresh token
+  /// Returns [Map<String, dynamic>] with token data on success or [Failure] on error
+  Future<Either<Failure, Map<String, dynamic>>> createRefreshToken();
+
+  /// Get list of refresh tokens
+  /// Returns [List<Map<String, dynamic>>] with tokens on success or [Failure] on error
+  Future<Either<Failure, List<Map<String, dynamic>>>> getRefreshTokens();
+
+  /// Revoke specific refresh token
+  /// Returns [void] on success or [Failure] on error
+  Future<Either<Failure, void>> revokeToken(String tokenId);
+
+  /// Revoke all refresh tokens
+  /// Returns [void] on success or [Failure] on error
+  Future<Either<Failure, void>> revokeAllTokens();
 }

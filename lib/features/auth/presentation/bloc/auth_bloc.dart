@@ -12,6 +12,10 @@ import '../../domain/usecases/verify_email_usecase.dart';
 import '../../domain/usecases/resend_verification_email_usecase.dart';
 import '../../domain/usecases/delete_account_usecase.dart';
 import '../../domain/usecases/refresh_token_usecase.dart';
+import '../../domain/usecases/create_refresh_token_usecase.dart';
+import '../../domain/usecases/get_refresh_tokens_usecase.dart';
+import '../../domain/usecases/revoke_token_usecase.dart';
+import '../../domain/usecases/revoke_all_tokens_usecase.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -30,6 +34,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final ResendVerificationEmailUsecase _resendVerificationEmailUsecase;
   final DeleteAccountUsecase _deleteAccountUsecase;
   final RefreshTokenUsecase _refreshTokenUsecase;
+  final CreateRefreshTokenUsecase _createRefreshTokenUsecase;
+  final GetRefreshTokensUsecase _getRefreshTokensUsecase;
+  final RevokeTokenUsecase _revokeTokenUsecase;
+  final RevokeAllTokensUsecase _revokeAllTokensUsecase;
 
   AuthBloc({
     required LoginUsecase loginUsecase,
@@ -44,7 +52,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required ResendVerificationEmailUsecase resendVerificationEmailUsecase,
     required DeleteAccountUsecase deleteAccountUsecase,
     required RefreshTokenUsecase refreshTokenUsecase,
-  }) : _loginUsecase = loginUsecase,
+    required CreateRefreshTokenUsecase createRefreshTokenUsecase,
+    required GetRefreshTokensUsecase getRefreshTokensUsecase,
+    required RevokeTokenUsecase revokeTokenUsecase,
+    required RevokeAllTokensUsecase revokeAllTokensUsecase,
+  })  : _loginUsecase = loginUsecase,
         _registerUsecase = registerUsecase,
         _logoutUsecase = logoutUsecase,
         _checkAuthUsecase = checkAuthUsecase,
@@ -56,6 +68,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _resendVerificationEmailUsecase = resendVerificationEmailUsecase,
         _deleteAccountUsecase = deleteAccountUsecase,
         _refreshTokenUsecase = refreshTokenUsecase,
+        _createRefreshTokenUsecase = createRefreshTokenUsecase,
+        _getRefreshTokensUsecase = getRefreshTokensUsecase,
+        _revokeTokenUsecase = revokeTokenUsecase,
+        _revokeAllTokensUsecase = revokeAllTokensUsecase,
         super(const AuthInitial()) {
     // Register event handlers
     on<LoginEvent>(_onLoginEvent);
@@ -70,6 +86,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ResendVerificationEmailEvent>(_onResendVerificationEmailEvent);
     on<DeleteAccountEvent>(_onDeleteAccountEvent);
     on<RefreshTokenEvent>(_onRefreshTokenEvent);
+    on<CreateRefreshTokenEvent>(_onCreateRefreshTokenEvent);
+    on<GetRefreshTokensEvent>(_onGetRefreshTokensEvent);
+    on<RevokeTokenEvent>(_onRevokeTokenEvent);
+    on<RevokeAllTokensEvent>(_onRevokeAllTokensEvent);
 
     // Check auth status on initialization
     add(CheckAuthStatusEvent());
@@ -88,7 +108,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
-  Future<void> _onRegisterEvent(RegisterEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onRegisterEvent(
+      RegisterEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
     final result = await _registerUsecase(
@@ -105,7 +126,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
-  Future<void> _onLogoutEvent(LogoutEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onLogoutEvent(
+      LogoutEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
     final result = await _logoutUsecase();
@@ -116,7 +138,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
-  Future<void> _onCheckAuthStatusEvent(CheckAuthStatusEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onCheckAuthStatusEvent(
+      CheckAuthStatusEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
     final result = await _checkAuthUsecase();
@@ -133,11 +156,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
-  Future<void> _onUpdateProfileEvent(UpdateProfileEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onUpdateProfileEvent(
+      UpdateProfileEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
     final result = await _updateProfileUsecase(
-      UpdateProfileParams(name: event.name, profilePicture: event.profilePicture),
+      UpdateProfileParams(
+          name: event.name, profilePicture: event.profilePicture),
     );
 
     emit(result.fold(
@@ -146,7 +171,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
-  Future<void> _onChangePasswordEvent(ChangePasswordEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onChangePasswordEvent(
+      ChangePasswordEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
     final result = await _changePasswordUsecase(
@@ -162,10 +188,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
-  Future<void> _onForgotPasswordEvent(ForgotPasswordEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onForgotPasswordEvent(
+      ForgotPasswordEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
-    final result = await _forgotPasswordUsecase(ForgotPasswordParams(email: event.email));
+    final result =
+        await _forgotPasswordUsecase(ForgotPasswordParams(email: event.email));
 
     emit(result.fold(
       (failure) => AuthFailure(message: failure.message),
@@ -173,7 +201,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
-  Future<void> _onResetPasswordEvent(ResetPasswordEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onResetPasswordEvent(
+      ResetPasswordEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
     final result = await _resetPasswordUsecase(
@@ -186,10 +215,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
-  Future<void> _onVerifyEmailEvent(VerifyEmailEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onVerifyEmailEvent(
+      VerifyEmailEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
-    final result = await _verifyEmailUsecase(VerifyEmailParams(token: event.token));
+    final result =
+        await _verifyEmailUsecase(VerifyEmailParams(token: event.token));
 
     emit(result.fold(
       (failure) => AuthFailure(message: failure.message),
@@ -197,10 +228,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
-  Future<void> _onResendVerificationEmailEvent(ResendVerificationEmailEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onResendVerificationEmailEvent(
+      ResendVerificationEmailEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
-    final result = await _resendVerificationEmailUsecase(const ResendVerificationEmailParams());
+    final result = await _resendVerificationEmailUsecase(
+        const ResendVerificationEmailParams());
 
     emit(result.fold(
       (failure) => AuthFailure(message: failure.message),
@@ -208,7 +241,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
-  Future<void> _onDeleteAccountEvent(DeleteAccountEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onDeleteAccountEvent(
+      DeleteAccountEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
     final result = await _deleteAccountUsecase(const DeleteAccountParams());
@@ -219,7 +253,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
-  Future<void> _onRefreshTokenEvent(RefreshTokenEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onRefreshTokenEvent(
+      RefreshTokenEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
     final result = await _refreshTokenUsecase(const RefreshTokenParams());
@@ -230,4 +265,55 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
+  Future<void> _onCreateRefreshTokenEvent(
+      CreateRefreshTokenEvent event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+
+    final result =
+        await _createRefreshTokenUsecase(const CreateRefreshTokenParams());
+
+    emit(result.fold(
+      (failure) => AuthFailure(message: failure.message),
+      (tokenData) => CreateRefreshTokenSuccess(tokenData: tokenData),
+    ));
+  }
+
+  Future<void> _onGetRefreshTokensEvent(
+      GetRefreshTokensEvent event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+
+    final result =
+        await _getRefreshTokensUsecase(const GetRefreshTokensParams());
+
+    emit(result.fold(
+      (failure) => AuthFailure(message: failure.message),
+      (tokens) => GetRefreshTokensSuccess(tokens: tokens),
+    ));
+  }
+
+  Future<void> _onRevokeTokenEvent(
+      RevokeTokenEvent event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+
+    final result = await _revokeTokenUsecase(
+      RevokeTokenParams(refreshToken: event.refreshToken),
+    );
+
+    emit(result.fold(
+      (failure) => AuthFailure(message: failure.message),
+      (_) => RevokeTokenSuccess(tokenId: event.refreshToken),
+    ));
+  }
+
+  Future<void> _onRevokeAllTokensEvent(
+      RevokeAllTokensEvent event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+
+    final result = await _revokeAllTokensUsecase(const RevokeAllTokensParams());
+
+    emit(result.fold(
+      (failure) => AuthFailure(message: failure.message),
+      (_) => const RevokeAllTokensSuccess(),
+    ));
+  }
 }

@@ -14,31 +14,37 @@ class BrandIdParams extends Equatable {
 class CreateBrandParams extends Equatable {
   final String name;
   final String slug;
+  final String? logoUrl;
   final String businessType;
   final String? industry;
   final String? description;
   final String timezone;
   final String currency;
+  final Map<String, dynamic>? settings;
 
   const CreateBrandParams({
     required this.name,
     required this.slug,
+    this.logoUrl,
     required this.businessType,
     this.industry,
     this.description,
     required this.timezone,
     required this.currency,
+    this.settings,
   });
 
   @override
   List<Object?> get props => [
         name,
         slug,
+        logoUrl,
         businessType,
         industry,
         description,
         timezone,
         currency,
+        settings,
       ];
 }
 
@@ -106,9 +112,13 @@ class SearchBrandsParams extends Equatable {
 /// Parameter class untuk switch active brand
 class SwitchActiveBrandParams extends Equatable {
   final String brandId;
+  final String? branchId;
 
-  const SwitchActiveBrandParams({required this.brandId});
+  const SwitchActiveBrandParams({
+    required this.brandId,
+    this.branchId,
+  });
 
   @override
-  List<Object?> get props => [brandId];
+  List<Object?> get props => [brandId, branchId];
 }

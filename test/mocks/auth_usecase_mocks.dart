@@ -14,7 +14,10 @@ import 'package:usago/features/auth/domain/usecases/resend_verification_email_us
 import 'package:usago/features/auth/domain/usecases/update_profile_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/verify_email_usecase.dart';
 import 'package:usago/features/auth/domain/usecases/refresh_token_usecase.dart';
-import 'package:usago/features/auth/domain/usecases/refresh_token_usecase.dart';
+import 'package:usago/features/auth/domain/usecases/create_refresh_token_usecase.dart';
+import 'package:usago/features/auth/domain/usecases/get_refresh_tokens_usecase.dart';
+import 'package:usago/features/auth/domain/usecases/revoke_token_usecase.dart';
+import 'package:usago/features/auth/domain/usecases/revoke_all_tokens_usecase.dart';
 
 /// Mock LoginUsecase
 class MockLoginUsecase extends Mock implements LoginUsecase {}
@@ -44,10 +47,26 @@ class MockResetPasswordUsecase extends Mock implements ResetPasswordUsecase {}
 class MockVerifyEmailUsecase extends Mock implements VerifyEmailUsecase {}
 
 /// Mock ResendVerificationEmailUsecase
-class MockResendVerificationEmailUsecase extends Mock implements ResendVerificationEmailUsecase {}
+class MockResendVerificationEmailUsecase extends Mock
+    implements ResendVerificationEmailUsecase {}
 
 /// Mock DeleteAccountUsecase
 class MockDeleteAccountUsecase extends Mock implements DeleteAccountUsecase {}
 
 /// Mock RefreshTokenUsecase
 class MockRefreshTokenUsecase extends Mock implements RefreshTokenUsecase {}
+
+/// Mock CreateRefreshTokenUsecase
+class MockCreateRefreshTokenUsecase extends Mock
+    implements CreateRefreshTokenUsecase {}
+
+/// Mock GetRefreshTokensUsecase
+class MockGetRefreshTokensUsecase extends Mock
+    implements GetRefreshTokensUsecase {}
+
+/// Mock RevokeTokenUsecase
+class MockRevokeTokenUsecase extends Mock implements RevokeTokenUsecase {}
+
+/// Mock RevokeAllTokensUsecase
+class MockRevokeAllTokensUsecase extends Mock
+    implements RevokeAllTokensUsecase {}

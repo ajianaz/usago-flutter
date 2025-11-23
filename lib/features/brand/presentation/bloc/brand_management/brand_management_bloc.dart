@@ -11,7 +11,8 @@ import 'brand_management_state.dart';
 /// Brand Management BLoC
 /// Bertanggung jawab untuk operasi CRUD pada brand
 /// Menggunakan use cases untuk business logic
-class BrandManagementBloc extends Bloc<BrandManagementEvent, BrandManagementState> {
+class BrandManagementBloc
+    extends Bloc<BrandManagementEvent, BrandManagementState> {
   final CreateBrandUseCase _createBrandUseCase;
   final UpdateBrandUseCase _updateBrandUseCase;
   final DeleteBrandUseCase _deleteBrandUseCase;
@@ -51,11 +52,19 @@ class BrandManagementBloc extends Bloc<BrandManagementEvent, BrandManagementStat
     final params = CreateBrandParams(
       name: event.name,
       slug: SlugUtils.sanitize(event.name),
+      logoUrl: event.logoUrl,
       businessType: event.businessType,
       industry: event.industry,
       description: event.description,
       timezone: event.timezone,
       currency: event.currency,
+      settings: event.settings ??
+          {
+            'timezone': event.timezone,
+            'currency': event.currency,
+            'businessType': event.businessType,
+            'single_brand_mode': true,
+          },
     );
 
     // Panggil use case
@@ -350,7 +359,8 @@ class BrandManagementBloc extends Bloc<BrandManagementEvent, BrandManagementStat
   }
 
   /// Validasi data untuk transfer ownership
-  Map<String, String> _validateTransferOwnershipData(TransferOwnershipEvent event) {
+  Map<String, String> _validateTransferOwnershipData(
+      TransferOwnershipEvent event) {
     final errors = <String, String>{};
 
     // Validasi brand ID
@@ -361,7 +371,8 @@ class BrandManagementBloc extends Bloc<BrandManagementEvent, BrandManagementStat
     // Validasi email pemilik baru
     if (event.newOwnerEmail.trim().isEmpty) {
       errors['newOwnerEmail'] = 'Email pemilik baru tidak boleh kosong';
-    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$').hasMatch(event.newOwnerEmail.trim())) {
+    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$')
+        .hasMatch(event.newOwnerEmail.trim())) {
       errors['newOwnerEmail'] = 'Format email tidak valid';
     }
 

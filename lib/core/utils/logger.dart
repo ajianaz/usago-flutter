@@ -6,7 +6,8 @@ import '../config/logging_config.dart';
 /// Provides centralized logging with different levels and environment control
 @singleton
 class AppLogger {
-  late final LoggingConfig _config;
+  late LoggingConfig _config;
+  final Map<String, DateTime> _performanceTimers = {};
 
   AppLogger([LoggingConfig? config]) {
     _config = config ?? LoggingConfig.fromEnvironment();
@@ -54,6 +55,100 @@ class AppLogger {
   void wtf(dynamic message, [dynamic error, StackTrace? stackTrace]) {
     if (!_config.isLogEnabled(LogLevel.wtf)) return;
     _logWithPlatform(LogLevel.wtf, message, error, stackTrace);
+  }
+
+  /// Start a performance timer
+  void startPerformanceTimer(String name) {
+    _performanceTimers[name] = DateTime.now();
+    debug('⏱️ Performance timer started: $name');
+  }
+
+  /// End a performance timer and log the duration
+  void endPerformanceTimer(String name) {
+    final startTime = _performanceTimers[name];
+    if (startTime == null) {
+      warning('⏱️ Performance timer not found: $name');
+      return;
+    }
+
+    final duration = DateTime.now().difference(startTime);
+    _performanceTimers.remove(name);
+    info('⏱️ Performance timer [$name]: ${duration.inMilliseconds}ms');
+  }
+
+  /// Clear all performance timers
+  void clearPerformanceTimers() {
+    _performanceTimers.clear();
+    debug('⏱️ All performance timers cleared');
+  }
+
+  /// Log structured data with context
+  void logStructured(
+    LogLevel level,
+    String message, {
+    Map<String, dynamic>? context,
+    dynamic error,
+    StackTrace? stackTrace,
+  }) {
+    if (!_config.isLogEnabled(level)) return;
+
+    final contextStr = context != null ? ' | Context: $context' : '';
+    final fullMessage = '$message$contextStr';
+    _logWithPlatform(level, fullMessage, error, stackTrace);
+  }
+
+  /// Log HTTP request
+  void logRequest(
+    String method,
+    String url, {
+    Map<String, dynamic>? headers,
+    dynamic body,
+  }) {
+    if (!_config.isLogEnabled(LogLevel.debug)) return;
+
+    final buffer = StringBuffer('🌐 HTTP Request: $method $url');
+    if (headers != null && headers.isNotEmpty) {
+      buffer.write(' | Headers: $headers');
+    }
+    if (body != null) {
+      buffer.write(' | Body: $body');
+    }
+
+    debug(buffer.toString());
+  }
+
+  /// Log HTTP response
+  void logResponse(
+    String method,
+    String url,
+    int statusCode, {
+    dynamic body,
+    int? duration,
+  }) {
+    if (!_config.isLogEnabled(LogLevel.debug)) return;
+
+    final buffer =
+        StringBuffer('🌐 HTTP Response: $method $url | Status: $statusCode');
+    if (duration != null) {
+      buffer.write(' | Duration: ${duration}ms');
+    }
+    if (body != null) {
+      buffer.write(' | Body: $body');
+    }
+
+    debug(buffer.toString());
+  }
+
+  /// Log user action
+  void logUserAction(
+    String action, {
+    Map<String, dynamic>? properties,
+  }) {
+    if (!_config.isLogEnabled(LogLevel.info)) return;
+
+    final propertiesStr =
+        properties != null ? ' | Properties: $properties' : '';
+    info('👤 User Action: $action$propertiesStr');
   }
 
   /// Platform-aware logging with developer.log for clean output

@@ -209,7 +209,8 @@ class AuthRepositoryImpl implements AuthRepository {
       // Update cached user verification status
       final cachedUserModel = await _localDatasource.getUser();
       if (cachedUserModel != null) {
-        final updatedUserModel = cachedUserModel.copyWith(isEmailVerified: true);
+        final updatedUserModel =
+            cachedUserModel.copyWith(isEmailVerified: true);
         await _localDatasource.saveUser(UserModel.fromEntity(updatedUserModel));
       }
 
@@ -241,6 +242,59 @@ class AuthRepositoryImpl implements AuthRepository {
       await _localDatasource.clearAllAuthData();
 
       _logger.info('Account deletion successful');
+    });
+  }
+
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> createRefreshToken() async {
+    return _errorHandler.safeExecute(() async {
+      _logger.info('Create refresh token attempt');
+
+      // Call remote datasource
+      final tokenData = await _remoteDatasource.createRefreshToken();
+
+      _logger.info('Create refresh token successful');
+
+      return tokenData;
+    });
+  }
+
+  @override
+  Future<Either<Failure, List<Map<String, dynamic>>>> getRefreshTokens() async {
+    return _errorHandler.safeExecute(() async {
+      _logger.info('Get refresh tokens attempt');
+
+      // Call remote datasource
+      final tokens = await _remoteDatasource.getRefreshTokens();
+
+      _logger.info(
+          'Get refresh tokens successful, retrieved ${tokens.length} tokens');
+
+      return tokens;
+    });
+  }
+
+  @override
+  Future<Either<Failure, void>> revokeToken(String tokenId) async {
+    return _errorHandler.safeExecute(() async {
+      _logger.info('Revoke token attempt for token: $tokenId');
+
+      // Call remote datasource
+      await _remoteDatasource.revokeToken(tokenId);
+
+      _logger.info('Revoke token successful for token: $tokenId');
+    });
+  }
+
+  @override
+  Future<Either<Failure, void>> revokeAllTokens() async {
+    return _errorHandler.safeExecute(() async {
+      _logger.info('Revoke all tokens attempt');
+
+      // Call remote datasource
+      await _remoteDatasource.revokeAllTokens();
+
+      _logger.info('Revoke all tokens successful');
     });
   }
 }

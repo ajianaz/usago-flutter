@@ -12,6 +12,7 @@ export 'brand/update_brand_usecase.dart';
 export 'brand/delete_brand_usecase.dart';
 export 'brand/switch_active_brand_usecase.dart';
 export 'brand/search_brands_usecase.dart';
+export 'brand/get_brand_stats_usecase.dart';
 
 // Invitation Use Cases
 export 'invitation/get_brand_invitations_usecase.dart';

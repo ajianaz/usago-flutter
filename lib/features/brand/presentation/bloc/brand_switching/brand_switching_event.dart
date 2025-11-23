@@ -12,11 +12,15 @@ abstract class BrandSwitchingEvent extends Equatable {
 /// Event untuk switch active brand
 class SwitchActiveBrandEvent extends BrandSwitchingEvent {
   final String brandId;
+  final String? branchId;
 
-  const SwitchActiveBrandEvent({required this.brandId});
+  const SwitchActiveBrandEvent({
+    required this.brandId,
+    this.branchId,
+  });
 
   @override
-  List<Object> get props => [brandId];
+  List<Object> get props => [brandId, branchId ?? ''];
 }
 
 /// Event untuk get active brand status

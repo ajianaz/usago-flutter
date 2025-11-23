@@ -11,7 +11,8 @@ import 'brand_switching_state.dart';
 /// Brand Switching BLoC
 /// Bertanggung jawab untuk operasi switch active brand dan handle switching flow
 /// Menggunakan use cases untuk business logic
-class BrandSwitchingBloc extends Bloc<BrandSwitchingEvent, BrandSwitchingState> {
+class BrandSwitchingBloc
+    extends Bloc<BrandSwitchingEvent, BrandSwitchingState> {
   final SwitchActiveBrandUseCase _switchActiveBrandUseCase;
   final GetActiveBrandUseCase _getActiveBrandUseCase;
 
@@ -49,7 +50,10 @@ class BrandSwitchingBloc extends Bloc<BrandSwitchingEvent, BrandSwitchingState> 
     final previousBrand = _currentActiveBrand;
 
     // Buat parameter untuk use case
-    final params = SwitchActiveBrandParams(brandId: event.brandId);
+    final params = SwitchActiveBrandParams(
+      brandId: event.brandId,
+      branchId: event.branchId,
+    );
 
     // Panggil use case
     final result = await _switchActiveBrandUseCase(params);
@@ -80,7 +84,8 @@ class BrandSwitchingBloc extends Bloc<BrandSwitchingEvent, BrandSwitchingState> 
         }
 
         emit(BrandSwitchingSuccess(
-          previousBrand: previousBrand ?? brand, // Fallback ke brand baru jika tidak ada previous
+          previousBrand: previousBrand ??
+              brand, // Fallback ke brand baru jika tidak ada previous
           newActiveBrand: brand,
           message: 'Berhasil beralih ke brand "${brand.name}"',
         ));
@@ -157,7 +162,8 @@ class BrandSwitchingBloc extends Bloc<BrandSwitchingEvent, BrandSwitchingState> 
 
     // Mock pre-check result
     final canSwitch = true;
-    final warningMessage = 'Anda akan beralih ke brand "${targetBrand.name}". Semua perubahan yang belum disimpan akan hilang.';
+    final warningMessage =
+        'Anda akan beralih ke brand "${targetBrand.name}". Semua perubahan yang belum disimpan akan hilang.';
     final requirements = <String>[];
 
     emit(BrandSwitchPreCheckCompleted(
