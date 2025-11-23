@@ -9,7 +9,13 @@ import 'package:usago/features/auth/data/models/user_model.dart';
 import '../../../../fixtures/auth_fixtures.dart';
 import '../../../../helpers/test_helpers.dart';
 
+import 'package:flutter_test/flutter_test.dart';
+import 'package:usago/core/services/secure_storage_service.dart';
+
 void main() {
+  // Initialize Flutter bindings for tests
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('AuthLocalDatasourceImpl', () {
     late AuthLocalDatasourceImpl datasource;
     late SharedPreferences prefs;
@@ -21,6 +27,10 @@ void main() {
       SharedPreferences.setMockInitialValues({});
       prefs = await SharedPreferences.getInstance();
       logger = AppLogger();
+
+      // Initialize SecureStorageService for testing
+      final secureStorageService = SecureStorageService(logger: logger);
+      await secureStorageService.initialize();
 
       datasource = AuthLocalDatasourceImpl(
         prefs: prefs,
@@ -47,7 +57,8 @@ void main() {
 
       test('should handle save user error gracefully', () async {
         // This test verifies error handling structure
-        expect(() => datasource.saveUser(AuthFixtures.testUserModel), returnsNormally);
+        expect(() => datasource.saveUser(AuthFixtures.testUserModel),
+            returnsNormally);
       });
     });
 
@@ -112,7 +123,8 @@ void main() {
 
       test('should handle save token error gracefully', () async {
         // This test verifies error handling structure
-        expect(() => datasource.saveToken(AuthFixtures.testToken), returnsNormally);
+        expect(() => datasource.saveToken(AuthFixtures.testToken),
+            returnsNormally);
       });
     });
 
@@ -128,7 +140,8 @@ void main() {
         expect(result, equals(AuthFixtures.testToken));
       });
 
-      test('should return null when no token exists in local storage', () async {
+      test('should return null when no token exists in local storage',
+          () async {
         // Act
         final result = await datasource.getToken();
 
@@ -167,7 +180,8 @@ void main() {
         final savedSessionJson = prefs.getString('session_data');
         expect(savedSessionJson, isNotNull);
 
-        final savedSessionData = jsonDecode(savedSessionJson!) as Map<String, dynamic>;
+        final savedSessionData =
+            jsonDecode(savedSessionJson!) as Map<String, dynamic>;
         expect(savedSessionData['userId'], equals(AuthFixtures.testUserId));
         expect(savedSessionData['loginTime'], isNotNull);
       });
@@ -180,7 +194,8 @@ void main() {
     });
 
     group('getSessionData', () {
-      test('should return session data when session exists in local storage', () async {
+      test('should return session data when session exists in local storage',
+          () async {
         // Arrange
         final sessionData = {
           'userId': AuthFixtures.testUserId,
@@ -197,7 +212,8 @@ void main() {
         expect(result['loginTime'], isNotNull);
       });
 
-      test('should return null when no session exists in local storage', () async {
+      test('should return null when no session exists in local storage',
+          () async {
         // Act
         final result = await datasource.getSessionData();
 
@@ -302,7 +318,8 @@ void main() {
         expect(result, isNull);
       });
 
-      test('should return null when session data exists but no last_login', () async {
+      test('should return null when session data exists but no last_login',
+          () async {
         // Arrange
         final sessionData = {'other_data': 'value'};
         await datasource.saveSessionData(sessionData);
@@ -388,7 +405,8 @@ void main() {
         expect(retrievedUser?.id, equals(originalUser.id));
         expect(retrievedUser?.email, equals(originalUser.email));
         expect(retrievedToken, equals(originalToken));
-        expect(retrievedSessionData?['userId'], equals(originalSessionData['userId']));
+        expect(retrievedSessionData?['userId'],
+            equals(originalSessionData['userId']));
       });
 
       test('should handle concurrent operations safely', () async {

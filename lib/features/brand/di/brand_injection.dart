@@ -76,6 +76,13 @@ class BrandInjection {
     final currentUserId = 'current_user_id';
 
     // Brand Use Cases
+    getIt.registerLazySingleton<GetAllBrandsUseCase>(
+      () => GetAllBrandsUseCase(
+        repository: getIt<BrandRepository>(),
+        currentUserId: currentUserId,
+      ),
+    );
+
     getIt.registerLazySingleton<GetUserBrandsUseCase>(
       () => GetUserBrandsUseCase(
         repository: getIt<BrandRepository>(),
@@ -174,6 +181,7 @@ class BrandInjection {
     // Brand Management BLoC - Factory untuk state management yang proper
     getIt.registerFactory<BrandManagementBloc>(
       () => BrandManagementBloc(
+        getAllBrandsUseCase: getIt<GetAllBrandsUseCase>(),
         createBrandUseCase: getIt<CreateBrandUseCase>(),
         updateBrandUseCase: getIt<UpdateBrandUseCase>(),
         deleteBrandUseCase: getIt<DeleteBrandUseCase>(),
@@ -241,6 +249,7 @@ class BrandInjection {
       getIt.unregister<BrandRepository>();
 
       // Reset use cases
+      getIt.unregister<GetAllBrandsUseCase>();
       getIt.unregister<GetUserBrandsUseCase>();
       getIt.unregister<GetAccessibleBrandsUseCase>();
       getIt.unregister<GetActiveBrandUseCase>();

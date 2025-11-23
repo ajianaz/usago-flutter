@@ -9,6 +9,14 @@ abstract class BrandManagementEvent extends Equatable {
   List<Object> get props => [];
 }
 
+/// Event untuk mendapatkan semua brands
+class GetAllBrandsEvent extends BrandManagementEvent {
+  const GetAllBrandsEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
 /// Event untuk membuat brand baru
 class CreateBrandEvent extends BrandManagementEvent {
   final String name;

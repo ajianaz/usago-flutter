@@ -36,6 +36,16 @@ class BrandManagementLoaded extends BrandManagementState {
   List<Object> get props => [brand];
 }
 
+/// State ketika semua brands berhasil dimuat
+class BrandManagementAllBrandsLoaded extends BrandManagementState {
+  final List<Brand> brands;
+
+  const BrandManagementAllBrandsLoaded({required this.brands});
+
+  @override
+  List<Object> get props => [brands];
+}
+
 /// State ketika brand berhasil dibuat
 class BrandManagementCreated extends BrandManagementState {
   final Brand brand;

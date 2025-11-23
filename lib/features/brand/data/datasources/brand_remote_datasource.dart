@@ -6,6 +6,9 @@ import '../../../../core/errors/failure.dart';
 /// Abstract interface for brand remote data source
 /// Defines contract for all remote brand operations
 abstract interface class BrandRemoteDataSource {
+  /// Get all brands from remote API (admin/system-wide access)
+  Future<Either<Failure, List<Brand>>> getAllBrands();
+
   /// Get all brands belonging to the current user from remote API
   Future<Either<Failure, List<Brand>>> getUserBrands();
 

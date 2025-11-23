@@ -21,6 +21,33 @@ class BrandRemoteDataSourceImpl implements BrandRemoteDataSource {
         _logger = logger;
 
   @override
+  Future<Either<Failure, List<Brand>>> getAllBrands() async {
+    try {
+      final response = await _dioClient.get(BrandEndpoints.getAllBrands);
+
+      final List<dynamic> dataList = response['data'] ?? [];
+      final List<Brand> brands =
+          dataList.map((json) => BrandModel.fromJson(json).toEntity()).toList();
+
+      _logger.info('Successfully fetched ${brands.length} all brands');
+      return Right(brands);
+    } on DioException catch (e) {
+      _logger.error('Dio error in getAllBrands: $e');
+      return Left(ServerFailure(
+        message: e.message ?? 'Network error occurred',
+        statusCode: e.response?.statusCode,
+        originalError: e,
+      ));
+    } catch (e) {
+      _logger.error('Unexpected error in getAllBrands: $e');
+      return Left(ServerFailure(
+        message: e.toString(),
+        originalError: e,
+      ));
+    }
+  }
+
+  @override
   Future<Either<Failure, List<Brand>>> getUserBrands() async {
     try {
       final response = await _dioClient.get(BrandEndpoints.getUserBrands);

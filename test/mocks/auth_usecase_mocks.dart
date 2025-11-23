@@ -29,7 +29,13 @@ class MockRegisterUsecase extends Mock implements RegisterUsecase {}
 class MockLogoutUsecase extends Mock implements LogoutUsecase {}
 
 /// Mock CheckAuthUsecase
-class MockCheckAuthUsecase extends Mock implements CheckAuthUsecase {}
+class MockCheckAuthUsecase extends Mock implements CheckAuthUsecase {
+  @override
+  Future<Either<Failure, User?>> call() {
+    // Return a default successful result for testing
+    return Future.value(const Right(null));
+  }
+}
 
 /// Mock UpdateProfileUsecase
 class MockUpdateProfileUsecase extends Mock implements UpdateProfileUsecase {}

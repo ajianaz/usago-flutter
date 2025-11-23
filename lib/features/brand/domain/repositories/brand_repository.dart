@@ -6,6 +6,9 @@ import '../../../../core/errors/failure.dart';
 /// Abstract interface for brand repository operations
 /// Following the repository pattern for clean architecture
 abstract class BrandRepository {
+  /// Get all brands (admin/system-wide access)
+  Future<Either<Failure, List<Brand>>> getAllBrands();
+
   /// Get all brands belonging to the current user
   Future<Either<Failure, List<Brand>>> getUserBrands();
 

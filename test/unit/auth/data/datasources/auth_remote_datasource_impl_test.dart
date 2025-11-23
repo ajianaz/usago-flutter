@@ -35,7 +35,11 @@ void main() {
       localDatasource =
           AuthLocalDatasourceImpl(prefs: prefs, logger: AppLogger());
       logger = AppLogger();
+
+      // Initialize DeviceInfoService for testing
       deviceInfoService = DeviceInfoService();
+      // Note: In real tests, we might need to mock device info
+      // For now, we'll test the structure exists
 
       datasource = AuthRemoteDatasourceImpl(
         dioClient: dioClient,

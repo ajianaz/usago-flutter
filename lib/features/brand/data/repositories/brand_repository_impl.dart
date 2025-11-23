@@ -23,6 +23,33 @@ class BrandRepositoryImpl implements BrandRepository {
         _logger = logger;
 
   @override
+  Future<Either<Failure, List<Brand>>> getAllBrands() async {
+    try {
+      final result = await _remoteDataSource.getAllBrands();
+
+      return result.fold(
+        (failure) {
+          _logger.error(
+              'Failed to get all brands: ${failure.message}', failure);
+          return Left(failure);
+        },
+        (brands) async {
+          // Cache all brands
+          await _localDataSource.cacheBrands(brands);
+          _logger.info('Successfully retrieved ${brands.length} all brands');
+          return Right(brands);
+        },
+      );
+    } catch (e) {
+      _logger.error('Unexpected error in getAllBrands', e);
+      return Left(ServerFailure(
+        message: 'An unexpected error occurred',
+        originalError: e,
+      ));
+    }
+  }
+
+  @override
   Future<Either<Failure, List<Brand>>> getUserBrands() async {
     try {
       // Try to get cached brands first for offline support

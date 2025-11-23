@@ -4,6 +4,7 @@ export 'common/params/brand_params.dart';
 export 'common/params/invitation_params.dart';
 
 // Brand Use Cases
+export 'brand/get_all_brands_usecase.dart';
 export 'brand/get_user_brands_usecase.dart';
 export 'brand/get_accessible_brands_usecase.dart';
 export 'brand/get_active_brand_usecase.dart';

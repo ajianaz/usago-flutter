@@ -24,6 +24,9 @@ import '../../../../fixtures/auth_fixtures.dart';
 import '../../../../mocks/auth_mocks.dart';
 
 void main() {
+  // Initialize Flutter bindings for BLoC tests
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('AuthBloc', () {
     late AuthBloc authBloc;
     late MockLoginUsecase mockLoginUsecase;
@@ -69,7 +72,7 @@ void main() {
       registerFallbackValue(const RefreshTokenParams());
     });
 
-    setUp(() {
+    setUp(() async {
       mockLoginUsecase = MockLoginUsecase();
       mockRegisterUsecase = MockRegisterUsecase();
       mockLogoutUsecase = MockLogoutUsecase();
@@ -86,6 +89,10 @@ void main() {
       mockGetRefreshTokensUsecase = MockGetRefreshTokensUsecase();
       mockRevokeTokenUsecase = MockRevokeTokenUsecase();
       mockRevokeAllTokensUsecase = MockRevokeAllTokensUsecase();
+
+      // Setup default behavior for CheckAuthUsecase (called during AuthBloc initialization)
+      when(() => mockCheckAuthUsecase())
+          .thenAnswer((_) async => const Right(null));
 
       authBloc = AuthBloc(
         loginUsecase: mockLoginUsecase,
@@ -105,6 +112,9 @@ void main() {
         revokeTokenUsecase: mockRevokeTokenUsecase,
         revokeAllTokensUsecase: mockRevokeAllTokensUsecase,
       );
+
+      // Wait for initial CheckAuthStatusEvent to complete
+      await Future.delayed(Duration.zero);
     });
 
     tearDown(() {

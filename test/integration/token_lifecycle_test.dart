@@ -14,6 +14,7 @@ import 'package:usago/core/config/logging_config.dart';
 import 'package:usago/core/network/dio_client.dart';
 import 'package:usago/core/services/device_info_service.dart';
 import 'package:usago/core/utils/logger.dart';
+import 'package:usago/core/services/secure_storage_service.dart';
 import 'package:usago/features/auth/data/datasources/auth_local_datasource_impl.dart';
 import 'package:usago/features/auth/data/datasources/auth_remote_datasource_impl.dart';
 import 'package:usago/features/auth/data/models/user_model.dart';
@@ -60,9 +61,13 @@ void main() {
       deviceInfoService = DeviceInfoService();
 
       // Setup datasources
+      final secureStorageService = SecureStorageService();
+      await secureStorageService.initialize();
+
       localDatasource = AuthLocalDatasourceImpl(
         prefs: prefs,
         logger: AppLogger(),
+        secureStorage: secureStorageService,
       );
 
       remoteDatasource = AuthRemoteDatasourceImpl(

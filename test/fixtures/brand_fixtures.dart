@@ -19,9 +19,12 @@ class BrandFixtures {
   static const String testBrandSubscriptionTier = 'BASIC';
   static const String testBrandSubscriptionStatus = 'ACTIVE';
 
-  static final DateTime testBrandCreatedAt = DateTime.parse('2023-01-01T00:00:00Z');
-  static final DateTime testBrandUpdatedAt = DateTime.parse('2023-01-02T00:00:00Z');
-  static final DateTime testBrandSubscriptionExpiresAt = DateTime.parse('2024-01-01T00:00:00Z');
+  static final DateTime testBrandCreatedAt =
+      DateTime.parse('2023-01-01T00:00:00Z');
+  static final DateTime testBrandUpdatedAt =
+      DateTime.parse('2023-01-02T00:00:00Z');
+  static final DateTime testBrandSubscriptionExpiresAt =
+      DateTime.parse('2024-01-01T00:00:00Z');
 
   // Sample brand invitation data
   static const String testInvitationId = 'test-invitation-123';
@@ -34,9 +37,12 @@ class BrandFixtures {
   static const String testInvitationStatus = 'PENDING';
   static const String testInvitationToken = 'test-token-123';
 
-  static final DateTime testInvitationCreatedAt = DateTime.parse('2023-01-01T00:00:00Z');
-  static final DateTime testInvitationUpdatedAt = DateTime.parse('2023-01-02T00:00:00Z');
-  static final DateTime testInvitationExpiresAt = DateTime.parse('2023-02-01T00:00:00Z');
+  static final DateTime testInvitationCreatedAt =
+      DateTime.parse('2023-01-01T00:00:00Z');
+  static final DateTime testInvitationUpdatedAt =
+      DateTime.parse('2023-01-02T00:00:00Z');
+  static final DateTime testInvitationExpiresAt =
+      DateTime.parse('2023-02-01T00:00:00Z');
 
   // Sample JSON data for brand
   static const Map<String, dynamic> testBrandJson = {
@@ -76,149 +82,185 @@ class BrandFixtures {
 
   // Sample Brand entity
   static Brand get testBrand => Brand(
-    id: testBrandId,
-    name: testBrandName,
-    slug: testBrandSlug,
-    ownerId: testBrandOwnerId,
-    logoUrl: testBrandLogoUrl,
-    businessType: testBrandBusinessType,
-    industry: testBrandIndustry,
-    description: testBrandDescription,
-    settings: {},
-    timezone: testBrandTimezone,
-    currency: testBrandCurrency,
-    subscriptionTier: testBrandSubscriptionTier,
-    subscriptionStatus: testBrandSubscriptionStatus,
-    subscriptionExpiresAt: testBrandSubscriptionExpiresAt,
-    createdAt: testBrandCreatedAt,
-    updatedAt: testBrandUpdatedAt,
-  );
+        id: testBrandId,
+        name: testBrandName,
+        slug: testBrandSlug,
+        ownerId: testBrandOwnerId,
+        logoUrl: testBrandLogoUrl,
+        businessType: testBrandBusinessType,
+        industry: testBrandIndustry,
+        description: testBrandDescription,
+        settings: {},
+        timezone: testBrandTimezone,
+        currency: testBrandCurrency,
+        subscriptionTier: testBrandSubscriptionTier,
+        subscriptionStatus: testBrandSubscriptionStatus,
+        subscriptionExpiresAt: testBrandSubscriptionExpiresAt,
+        createdAt: testBrandCreatedAt,
+        updatedAt: testBrandUpdatedAt,
+      );
 
   // Sample Brand entity without optional fields
   static Brand get testBrandWithoutOptional => Brand(
-    id: testBrandId,
-    name: testBrandName,
-    slug: testBrandSlug,
-    ownerId: testBrandOwnerId,
-    businessType: testBrandBusinessType,
-    description: null,
-    industry: null,
-    logoUrl: null,
-    settings: {},
-    timezone: testBrandTimezone,
-    currency: testBrandCurrency,
-    subscriptionTier: testBrandSubscriptionTier,
-    subscriptionStatus: testBrandSubscriptionStatus,
-    subscriptionExpiresAt: null,
-    createdAt: testBrandCreatedAt,
-    updatedAt: testBrandUpdatedAt,
-  );
+        id: testBrandId,
+        name: testBrandName,
+        slug: testBrandSlug,
+        ownerId: testBrandOwnerId,
+        businessType: testBrandBusinessType,
+        description: null,
+        industry: null,
+        logoUrl: null,
+        settings: {},
+        timezone: testBrandTimezone,
+        currency: testBrandCurrency,
+        subscriptionTier: testBrandSubscriptionTier,
+        subscriptionStatus: testBrandSubscriptionStatus,
+        subscriptionExpiresAt: null,
+        createdAt: testBrandCreatedAt,
+        updatedAt: testBrandUpdatedAt,
+      );
 
   // Sample BrandInvitation entity
   static BrandInvitation get testInvitation => BrandInvitation(
-    id: testInvitationId,
-    brandId: testInvitationBrandId,
-    brandName: testInvitationBrandName,
-    inviterId: testInvitationInviterId,
-    inviterName: testInvitationInviterName,
-    inviteeEmail: testInvitationInviteeEmail,
-    role: testInvitationRole,
-    status: testInvitationStatus,
-    branchIds: [],
-    expiresAt: testInvitationExpiresAt,
-    createdAt: testInvitationCreatedAt,
-    updatedAt: testInvitationUpdatedAt,
-  );
+        id: testInvitationId,
+        brandId: testInvitationBrandId,
+        brandName: testInvitationBrandName,
+        inviterId: testInvitationInviterId,
+        inviterName: testInvitationInviterName,
+        inviteeEmail: testInvitationInviteeEmail,
+        role: testInvitationRole,
+        status: testInvitationStatus,
+        branchIds: [],
+        expiresAt: testInvitationExpiresAt,
+        createdAt: testInvitationCreatedAt,
+        updatedAt: testInvitationUpdatedAt,
+      );
 
   // Sample BrandInvitation entity without optional fields
   static BrandInvitation get testInvitationWithoutOptional => BrandInvitation(
-    id: testInvitationId,
-    brandId: testInvitationBrandId,
-    brandName: testInvitationBrandName,
-    inviterId: testInvitationInviterId,
-    inviterName: testInvitationInviterName,
-    inviteeEmail: testInvitationInviteeEmail,
-    role: testInvitationRole,
-    status: testInvitationStatus,
-    branchIds: [],
-    expiresAt: null,
-    createdAt: testInvitationCreatedAt,
-    updatedAt: null,
-  );
+        id: testInvitationId,
+        brandId: testInvitationBrandId,
+        brandName: testInvitationBrandName,
+        inviterId: testInvitationInviterId,
+        inviterName: testInvitationInviterName,
+        inviteeEmail: testInvitationInviteeEmail,
+        role: testInvitationRole,
+        status: testInvitationStatus,
+        branchIds: [],
+        expiresAt: null,
+        createdAt: testInvitationCreatedAt,
+        updatedAt: null,
+      );
 
   // Sample BrandModel
   static BrandModel get testBrandModel => BrandModel(
-    id: testBrandId,
-    name: testBrandName,
-    slug: testBrandSlug,
-    ownerId: testBrandOwnerId,
-    logoUrl: testBrandLogoUrl,
-    businessType: testBrandBusinessType,
-    industry: testBrandIndustry,
-    description: testBrandDescription,
-    settings: {},
-    timezone: testBrandTimezone,
-    currency: testBrandCurrency,
-    subscriptionTier: testBrandSubscriptionTier,
-    subscriptionStatus: testBrandSubscriptionStatus,
-    subscriptionExpiresAt: testBrandSubscriptionExpiresAt,
-    createdAt: testBrandCreatedAt,
-    updatedAt: testBrandUpdatedAt,
-  );
+        id: testBrandId,
+        name: testBrandName,
+        slug: testBrandSlug,
+        ownerId: testBrandOwnerId,
+        logoUrl: testBrandLogoUrl,
+        businessType: testBrandBusinessType,
+        industry: testBrandIndustry,
+        description: testBrandDescription,
+        settings: {},
+        timezone: testBrandTimezone,
+        currency: testBrandCurrency,
+        subscriptionTier: testBrandSubscriptionTier,
+        subscriptionStatus: testBrandSubscriptionStatus,
+        subscriptionExpiresAt: testBrandSubscriptionExpiresAt,
+        createdAt: testBrandCreatedAt,
+        updatedAt: testBrandUpdatedAt,
+      );
 
   // Sample BrandInvitationModel
   static BrandInvitationModel get testInvitationModel => BrandInvitationModel(
-    id: testInvitationId,
-    brandId: testInvitationBrandId,
-    brandName: testInvitationBrandName,
-    inviterId: testInvitationInviterId,
-    inviterName: testInvitationInviterName,
-    inviteeEmail: testInvitationInviteeEmail,
-    role: testInvitationRole,
-    status: testInvitationStatus,
-    branchIds: [],
-    expiresAt: testInvitationExpiresAt,
-    createdAt: testInvitationCreatedAt,
-    updatedAt: testInvitationUpdatedAt,
-  );
+        id: testInvitationId,
+        brandId: testInvitationBrandId,
+        brandName: testInvitationBrandName,
+        inviterId: testInvitationInviterId,
+        inviterName: testInvitationInviterName,
+        inviteeEmail: testInvitationInviteeEmail,
+        role: testInvitationRole,
+        status: testInvitationStatus,
+        branchIds: [],
+        expiresAt: testInvitationExpiresAt,
+        createdAt: testInvitationCreatedAt,
+        updatedAt: testInvitationUpdatedAt,
+      );
 
   // Test data for various scenarios
   static List<Brand> get testBrandList => [
-    testBrand,
-    testBrandWithoutOptional,
-    Brand(
-      id: 'test-brand-456',
-      name: 'Another Brand',
-      slug: 'another-brand',
-      ownerId: 'test-owner-456',
-      businessType: 'SERVICE',
-      settings: {},
-      timezone: testBrandTimezone,
-      currency: testBrandCurrency,
-      subscriptionTier: 'PRO',
-      subscriptionStatus: 'ACTIVE',
-      createdAt: testBrandCreatedAt,
-      updatedAt: testBrandUpdatedAt,
-    ),
-  ];
+        testBrand,
+        testBrandWithoutOptional,
+        Brand(
+          id: 'test-brand-456',
+          name: 'Another Brand',
+          slug: 'another-brand',
+          ownerId: 'test-owner-456',
+          businessType: 'SERVICE',
+          settings: {},
+          timezone: testBrandTimezone,
+          currency: testBrandCurrency,
+          subscriptionTier: 'PRO',
+          subscriptionStatus: 'ACTIVE',
+          createdAt: testBrandCreatedAt,
+          updatedAt: testBrandUpdatedAt,
+        ),
+      ];
+
+  static List<BrandModel> get testBrandModelList => [
+        testBrandModel,
+        BrandModel(
+          id: testBrandId,
+          name: testBrandName,
+          slug: testBrandSlug,
+          ownerId: testBrandOwnerId,
+          businessType: testBrandBusinessType,
+          description: null,
+          industry: null,
+          logoUrl: null,
+          settings: {},
+          timezone: testBrandTimezone,
+          currency: testBrandCurrency,
+          subscriptionTier: testBrandSubscriptionTier,
+          subscriptionStatus: testBrandSubscriptionStatus,
+          subscriptionExpiresAt: null,
+          createdAt: testBrandCreatedAt,
+          updatedAt: testBrandUpdatedAt,
+        ),
+        BrandModel(
+          id: 'test-brand-456',
+          name: 'Another Brand',
+          slug: 'another-brand',
+          ownerId: 'test-owner-456',
+          businessType: 'SERVICE',
+          settings: {},
+          timezone: testBrandTimezone,
+          currency: testBrandCurrency,
+          subscriptionTier: 'PRO',
+          subscriptionStatus: 'ACTIVE',
+          createdAt: testBrandCreatedAt,
+          updatedAt: testBrandUpdatedAt,
+        ),
+      ];
 
   static List<BrandInvitation> get testInvitationList => [
-    testInvitation,
-    testInvitationWithoutOptional,
-    BrandInvitation(
-      id: 'test-invitation-456',
-      brandId: 'test-brand-456',
-      brandName: 'Another Brand',
-      inviterId: 'test-inviter-456',
-      inviterName: 'Another Inviter',
-      inviteeEmail: 'another@example.com',
-      role: 'BRANCH_ADMIN',
-      status: 'ACCEPTED',
-      branchIds: [],
-      createdAt: testInvitationCreatedAt,
-      updatedAt: testInvitationUpdatedAt,
-    ),
-  ];
+        testInvitation,
+        testInvitationWithoutOptional,
+        BrandInvitation(
+          id: 'test-invitation-456',
+          brandId: 'test-brand-456',
+          brandName: 'Another Brand',
+          inviterId: 'test-inviter-456',
+          inviterName: 'Another Inviter',
+          inviteeEmail: 'another@example.com',
+          role: 'BRANCH_ADMIN',
+          status: 'ACCEPTED',
+          branchIds: [],
+          createdAt: testInvitationCreatedAt,
+          updatedAt: testInvitationUpdatedAt,
+        ),
+      ];
 
   // Test data for brand creation/update
   static const Map<String, dynamic> testBrandData = {

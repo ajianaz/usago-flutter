@@ -1,5 +1,6 @@
 class BrandEndpoints {
   // Brand CRUD
+  static const String getAllBrands = '/api/brands';
   static const String brands = '/api/brands';
   static const String createBrand = '/api/brands';
   static const String getBrand = '/api/brands/{id}';
@@ -19,9 +20,12 @@ class BrandEndpoints {
   // Brand Invitations
   static const String inviteUser = '/api/brands/{id}/invite';
   static const String acceptInvitation = '/api/invitations/accept';
-  static const String declineInvitation = '/api/invitations/{invitationId}/decline';
+  static const String declineInvitation =
+      '/api/invitations/{invitationId}/decline';
   static const String getBrandInvitations = '/api/brands/{id}/invitations';
   static const String getUserInvitations = '/api/invitations/user';
-  static const String cancelInvitation = '/api/invitations/{invitationId}/cancel';
-  static const String resendInvitation = '/api/invitations/{invitationId}/resend';
+  static const String cancelInvitation =
+      '/api/invitations/{invitationId}/cancel';
+  static const String resendInvitation =
+      '/api/invitations/{invitationId}/resend';
 }

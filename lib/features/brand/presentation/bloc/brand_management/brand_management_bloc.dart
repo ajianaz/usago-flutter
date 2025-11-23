@@ -1,10 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/utils/slug_utils.dart';
+import '../../../domain/usecases/brand/get_all_brands_usecase.dart';
 import '../../../domain/usecases/brand/create_brand_usecase.dart';
 import '../../../domain/usecases/brand/update_brand_usecase.dart';
 import '../../../domain/usecases/brand/delete_brand_usecase.dart';
 import '../../../domain/usecases/common/params/brand_params.dart';
+import '../../../domain/usecases/common/usecase.dart';
 import 'brand_management_event.dart';
 import 'brand_management_state.dart';
 
@@ -13,25 +15,51 @@ import 'brand_management_state.dart';
 /// Menggunakan use cases untuk business logic
 class BrandManagementBloc
     extends Bloc<BrandManagementEvent, BrandManagementState> {
+  final GetAllBrandsUseCase _getAllBrandsUseCase;
   final CreateBrandUseCase _createBrandUseCase;
   final UpdateBrandUseCase _updateBrandUseCase;
   final DeleteBrandUseCase _deleteBrandUseCase;
 
   BrandManagementBloc({
+    required GetAllBrandsUseCase getAllBrandsUseCase,
     required CreateBrandUseCase createBrandUseCase,
     required UpdateBrandUseCase updateBrandUseCase,
     required DeleteBrandUseCase deleteBrandUseCase,
-  })  : _createBrandUseCase = createBrandUseCase,
+  })  : _getAllBrandsUseCase = getAllBrandsUseCase,
+        _createBrandUseCase = createBrandUseCase,
         _updateBrandUseCase = updateBrandUseCase,
         _deleteBrandUseCase = deleteBrandUseCase,
         super(const BrandManagementInitial()) {
     // Register event handlers
+    on<GetAllBrandsEvent>(_onGetAllBrands);
     on<CreateBrandEvent>(_onCreateBrand);
     on<UpdateBrandEvent>(_onUpdateBrand);
     on<DeleteBrandEvent>(_onDeleteBrand);
     on<RefreshBrandEvent>(_onRefreshBrand);
     on<TransferOwnershipEvent>(_onTransferOwnership);
     on<ResetBrandManagementEvent>(_onResetBrandManagement);
+  }
+
+  /// Handler untuk mendapatkan semua brands
+  Future<void> _onGetAllBrands(
+    GetAllBrandsEvent event,
+    Emitter<BrandManagementState> emit,
+  ) async {
+    emit(const BrandManagementLoading());
+
+    // Panggil use case
+    final result = await _getAllBrandsUseCase(const NoParams());
+
+    // Handle result
+    result.fold(
+      (failure) => emit(BrandManagementError(
+        message: _mapFailureToMessage(failure),
+        errorCode: _mapFailureToErrorCode(failure),
+      )),
+      (brands) => emit(BrandManagementAllBrandsLoaded(
+        brands: brands,
+      )),
+    );
   }
 
   /// Handler untuk membuat brand baru

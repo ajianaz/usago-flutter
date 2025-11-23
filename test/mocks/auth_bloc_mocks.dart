@@ -11,92 +11,35 @@ import 'package:usago/features/auth/presentation/bloc/auth_state.dart';
 import 'package:usago/features/auth/domain/entities/user.dart';
 import '../fixtures/auth_fixtures.dart';
 
+// Register fallback values for mocktail
+void setUpAuthBlocMocks() {
+  registerFallbackValue(
+      const LoginEvent(email: 'test@example.com', password: 'password'));
+  registerFallbackValue(const RegisterEvent(
+      email: 'test@example.com', password: 'password', name: 'Test'));
+  registerFallbackValue(const LogoutEvent());
+  registerFallbackValue(const CheckAuthStatusEvent());
+  registerFallbackValue(const UpdateProfileEvent(name: 'Test'));
+  registerFallbackValue(
+      const ChangePasswordEvent(currentPassword: 'old', newPassword: 'new'));
+  registerFallbackValue(const ForgotPasswordEvent(email: 'test@example.com'));
+  registerFallbackValue(
+      const ResetPasswordEvent(token: 'token', newPassword: 'password'));
+  registerFallbackValue(const VerifyEmailEvent(token: 'token'));
+  registerFallbackValue(const ResendVerificationEmailEvent());
+  registerFallbackValue(const DeleteAccountEvent());
+  registerFallbackValue(const RefreshTokenEvent());
+  registerFallbackValue(const CreateRefreshTokenEvent());
+  registerFallbackValue(const GetRefreshTokensEvent());
+  registerFallbackValue(const RevokeTokenEvent(refreshToken: 'token'));
+  registerFallbackValue(const RevokeAllTokensEvent());
+}
+
 /// Mock Auth BLoC for authentication testing
 ///
 /// Provides controlled behavior for authentication state management
 /// including success, failure, loading, and error scenarios.
-class MockAuthBloc extends Mock implements AuthBloc {
-  AuthState _currentState = const AuthInitial();
-  final StreamController<AuthState> _stateController = StreamController<AuthState>.broadcast();
-
-  MockAuthBloc() {
-    // Setup default behaviors
-    when(() => stream).thenAnswer((_) => _stateController.stream);
-    when(() => state).thenAnswer((_) => _currentState);
-  }
-
-  @override
-  AuthState get state => _currentState;
-
-  @override
-  Stream<AuthState> get stream => _stateController.stream;
-
-  @override
-  void add(AuthEvent event) {
-    // Mock implementation that simulates real BLoC behavior
-    _handleEvent(event);
-  }
-
-  @override
-  Future<void> close() async {
-    await _stateController.close();
-  }
-
-  /// Simulate successful login
-  void simulateLoginSuccess(User user) {
-    _currentState = AuthSuccess(user: user);
-    _stateController.add(_currentState);
-  }
-
-  /// Simulate login failure
-  void simulateLoginFailure(String message) {
-    _currentState = AuthFailure(message: message);
-    _stateController.add(_currentState);
-  }
-
-  /// Simulate loading state
-  void simulateLoading() {
-    _currentState = const AuthLoading();
-    _stateController.add(_currentState);
-  }
-
-  /// Simulate initial state
-  void simulateInitial() {
-    _currentState = const AuthInitial();
-    _stateController.add(_currentState);
-  }
-
-  /// Handle events and update state accordingly
-  void _handleEvent(AuthEvent event) {
-    if (event is LoginEvent) {
-      simulateLoading();
-
-      // Simulate async operation
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (event.email.contains('invalid') || event.password.contains('wrong')) {
-          simulateLoginFailure('Invalid credentials');
-        } else {
-          simulateLoginSuccess(AuthFixtures.testUser);
-        }
-      });
-    } else if (event is RegisterEvent) {
-      simulateLoading();
-
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (event.email.contains('existing')) {
-          simulateLoginFailure('User already exists');
-        } else {
-          simulateLoginSuccess(AuthFixtures.testUser);
-        }
-      });
-    } else if (event is LogoutEvent) {
-      simulateLoading();
-      Future.delayed(const Duration(milliseconds: 300), () {
-        simulateInitial();
-      });
-    }
-  }
-}
+class MockAuthBloc extends Mock implements AuthBloc {}
 
 /// Mock User for testing user-related operations
 ///
@@ -129,27 +72,37 @@ class MockUser extends Mock implements User {
 class AuthBlocMockUtils {
   /// Create a mock Auth BLoC with initial state
   static MockAuthBloc createWithInitialState() {
-    return MockAuthBloc();
+    final bloc = MockAuthBloc();
+    when(() => bloc.stream).thenAnswer((_) => const Stream<AuthState>.empty());
+    when(() => bloc.state).thenReturn(const AuthInitial());
+    return bloc;
   }
 
   /// Create a mock Auth BLoC with success state
   static MockAuthBloc createWithSuccessState({User? user}) {
     final bloc = MockAuthBloc();
-    bloc.simulateLoginSuccess(user ?? AuthFixtures.testUser);
+    when(() => bloc.stream).thenAnswer(
+        (_) => Stream.value(AuthSuccess(user: user ?? AuthFixtures.testUser)));
+    when(() => bloc.state)
+        .thenReturn(AuthSuccess(user: user ?? AuthFixtures.testUser));
     return bloc;
   }
 
   /// Create a mock Auth BLoC with failure state
   static MockAuthBloc createWithFailureState({String message = 'Test error'}) {
     final bloc = MockAuthBloc();
-    bloc.simulateLoginFailure(message);
+    when(() => bloc.stream)
+        .thenAnswer((_) => Stream.value(AuthFailure(message: message)));
+    when(() => bloc.state).thenReturn(AuthFailure(message: message));
     return bloc;
   }
 
   /// Create a mock Auth BLoC with loading state
   static MockAuthBloc createWithLoadingState() {
     final bloc = MockAuthBloc();
-    bloc.simulateLoading();
+    when(() => bloc.stream)
+        .thenAnswer((_) => Stream.value(const AuthLoading()));
+    when(() => bloc.state).thenReturn(const AuthLoading());
     return bloc;
   }
 
@@ -170,7 +123,8 @@ class AuthBlocMockUtils {
   }
 
   /// Verify BLoC state transitions
-  static void verifyStateTransitions(MockAuthBloc bloc, List<AuthState> expectedStates) {
+  static void verifyStateTransitions(
+      MockAuthBloc bloc, List<AuthState> expectedStates) {
     final emittedStates = <AuthState>[];
 
     bloc.stream.listen((state) {
